@@ -172,14 +172,14 @@ class ShareInvite extends GetView<ShareInviteController> {
                   padding: EdgeInsets.only(
                     bottom: paddingSizeBottom(context),
                   ),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(8.w)),
-                      boxShadow: [
-                        BoxShadow(
-                            color: const Color(0x26000000), blurRadius: 5.w)
-                      ]),
+                  // decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     borderRadius:
+                  //         BorderRadius.vertical(top: Radius.circular(8.w)),
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //           color: const Color(0x26000000), blurRadius: 5.w)
+                  //     ]),
                   child: centRow([
                     shareButotn(3, context),
                     gwb(41.5),

@@ -1,13 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/home/machinetransfer/machine_transfer_order_detail.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'dart:math' as math;
 
 class MachineTransferHistoryBinding implements Bindings {
   @override
@@ -120,7 +118,7 @@ class MachineTransferHistory extends GetView<MachineTransferHistoryController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: getDefaultAppBar(context, "历史记录"),
+      appBar: getDefaultAppBar(context, "划拨记录"),
       body: Stack(
         children: [
           // Positioned(
@@ -204,6 +202,7 @@ class MachineTransferHistory extends GetView<MachineTransferHistoryController> {
                   },
                 )
               : ListView.builder(
+                  padding: EdgeInsets.only(bottom: 20.w),
                   itemCount: controller.dataLists[index] != null &&
                           controller.dataLists[index].isNotEmpty
                       ? controller.dataLists[index].length
@@ -230,117 +229,107 @@ class MachineTransferHistory extends GetView<MachineTransferHistoryController> {
               binding: MachineTransferOrderDetailBinding());
         },
         child: Container(
-          margin: EdgeInsets.only(top: 10.w),
+          margin: EdgeInsets.only(top: 15.w),
           width: 345.w,
-          decoration: getDefaultWhiteDec(),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(5.w),
-            child: Stack(
-              children: [
-                SizedBox(
-                  width: 345.w,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ghb(19),
-                      sbRow([
-                        Text.rich(TextSpan(
-                            text: "接收人：",
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: AppColor.textGrey,
-                            ),
-                            children: [
-                              TextSpan(
-                                  text:
-                                      "${data["suName"] ?? (hidePhoneNum(data["suMobile"] ?? ""))}(${hidePhoneNum(data["suMobile"])})",
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: AppColor.textBlack,
-                                      fontWeight: AppDefault.fontBold))
-                            ]))
-                      ], width: 345 - 20.5 * 2),
-                      ghb(19),
-                      sbRow([
-                        Text.rich(TextSpan(
-                            text: "${data["applyType"] == 1 ? "兑换" : "划拨"}台数：",
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: AppColor.textGrey,
-                            ),
-                            children: [
-                              TextSpan(
-                                  text: "${data["applyNum"]}台",
-                                  style: TextStyle(
-                                      fontSize: 16.sp,
-                                      color: AppColor.textBlack,
-                                      fontWeight: AppDefault.fontBold))
-                            ]))
-                      ], width: 345 - 20.5 * 2),
-                      ghb(19),
-                      data["applyType"] == 1
-                          ? sbRow([
-                              Text.rich(TextSpan(
-                                  text: "兑换产品：",
-                                  style: TextStyle(
-                                    fontSize: 16.sp,
-                                    color: AppColor.textGrey,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                        text: "${data["applyTerminal"]}",
-                                        style: TextStyle(
-                                            fontSize: 16.sp,
-                                            color: AppColor.textBlack,
-                                            fontWeight: AppDefault.fontBold))
-                                  ]))
-                            ], width: 345 - 20.5 * 2)
-                          : const SizedBox(),
-                      ghb(data["applyType"] == 1 ? 19 : 0),
-                      sbRow([
-                        getSimpleText(data["applyTime"], 16, AppColor.textBlack,
-                            isBold: true),
-                        CustomButton(
-                          onPressed: () {},
-                          child: centRow([
-                            getSimpleText("查看详情", 16, const Color(0xFFA20606)),
-                            Icon(
-                              Icons.chevron_right_rounded,
-                              size: 18.w,
-                              color: const Color(0xFFA20606),
-                            ),
-                          ]),
-                        )
-                      ], width: 345 - 20.5 * 2),
-                      ghb(19),
-                    ],
-                  ),
+          decoration: getDefaultWhiteDec(radius: 4),
+          child: Stack(
+            children: [
+              SizedBox(
+                width: 345.w,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    sbhRow([
+                      centRow([
+                        getSimpleText(
+                            "发给${data["suName"] ?? (hidePhoneNum(data["suMobile"] ?? ""))}的划拨订单",
+                            14,
+                            AppColor.textBlack,
+                            isBold: true)
+                      ])
+                    ], width: 315, height: 50),
+                    // ghb(19),
+                    // sbRow([
+                    //   Text.rich(TextSpan(
+                    //       text: "接收人：",
+                    //       style: TextStyle(
+                    //         fontSize: 16.sp,
+                    //         color: AppColor.textGrey,
+                    //       ),
+                    //       children: [
+                    //         TextSpan(
+                    //             text:
+                    //                 "${data["suName"] ?? (hidePhoneNum(data["suMobile"] ?? ""))}(${hidePhoneNum(data["suMobile"])})",
+                    //             style: TextStyle(
+                    //                 fontSize: 16.sp,
+                    //                 color: AppColor.textBlack,
+                    //                 fontWeight: AppDefault.fontBold))
+                    //       ]))
+                    // ], width: 345 - 20.5 * 2),
+                    // ghb(19),
+                    Container(
+                      width: 315.w,
+                      height: 80.w,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: AppColor.pageBackgroundColor,
+                          borderRadius: BorderRadius.circular(4.w)),
+                      child: centClm(List.generate(
+                          3,
+                          (index) => sbhRow([
+                                getWidthText(
+                                    index == 0
+                                        ? "接收人"
+                                        : index == 1
+                                            ? "划拨台数"
+                                            : "划拨时间",
+                                    12,
+                                    AppColor.textGrey,
+                                    55.5,
+                                    1,
+                                    textHeight: 1.3),
+                                getWidthText(
+                                    index == 0
+                                        ? data["suName"] ?? ""
+                                        : index == 1
+                                            ? "${data["applyNum"] ?? ""}台"
+                                            : data["applyTime"] ?? "",
+                                    12,
+                                    AppColor.textGrey,
+                                    315 - 15 * 2 - 55.5,
+                                    1,
+                                    textHeight: 1.3),
+                              ], width: 315 - 15 * 2, height: 25))),
+                    ),
+
+                    ghb(15),
+                  ],
                 ),
-                Positioned(
-                    top: -24.w,
-                    right: -24.w,
-                    width: 60.w,
-                    height: 50.w,
-                    child: Transform.rotate(
-                      angle: math.pi / 2 * 0.45,
-                      child: Container(
-                        width: 60.w,
-                        height: 50.w,
-                        color: data["applyType"] == 1
-                            ? const Color(0xFFEB6100)
-                            : const Color(0xFF72C36C),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: getSimpleText(
-                              data["applyType"] == 1 ? "兑换" : "划拨",
-                              12,
-                              Colors.white,
-                              isBold: true),
-                        ),
-                      ),
-                    )),
-              ],
-            ),
+              ),
+              // Positioned(
+              //     top: -24.w,
+              //     right: -24.w,
+              //     width: 60.w,
+              //     height: 50.w,
+              //     child: Transform.rotate(
+              //       angle: math.pi / 2 * 0.45,
+              //       child: Container(
+              //         width: 60.w,
+              //         height: 50.w,
+              //         color: data["applyType"] == 1
+              //             ? const Color(0xFFEB6100)
+              //             : const Color(0xFF72C36C),
+              //         child: Align(
+              //           alignment: Alignment.bottomCenter,
+              //           child: getSimpleText(
+              //               data["applyType"] == 1 ? "兑换" : "划拨",
+              //               12,
+              //               Colors.white,
+              //               isBold: true),
+              //         ),
+              //       ),
+              //     )),
+            ],
           ),
         ),
       ),

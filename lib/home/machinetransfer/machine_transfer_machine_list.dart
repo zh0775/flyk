@@ -8,7 +8,7 @@ import 'package:cxhighversion2/util/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -66,6 +66,7 @@ class MachineTransferMachineListController extends GetxController {
     if (value < 1) return;
     quickCountTextCtrl.text = "$value";
     _quickSearchCount.value = value;
+    quickCountSelectionToEnd();
   }
 
   get quickSearchCount => _quickSearchCount.value;
@@ -75,6 +76,7 @@ class MachineTransferMachineListController extends GetxController {
   final endSearchTextCtrl = TextEditingController();
   final quickSearchTextCtrl = TextEditingController();
   final quickCountTextCtrl = TextEditingController();
+  final quickCountTextNode = FocusNode();
 
   List policyList = [
     {"id": -1, "name": "政策筛选"},
@@ -127,7 +129,12 @@ class MachineTransferMachineListController extends GetxController {
   loadMachineListRequest(Map? data) {
     brandData = data ?? {};
     if (data != null && data["enumValue"] != null) {
-      terminalBrandId = data["enumValue"];
+      if (data["enumValue"] is int) {
+        terminalBrandId = data["enumValue"];
+      } else if (data["enumValue"] is String) {
+        terminalBrandId = int.parse(data["enumValue"]);
+      }
+
       if (isFirst) {
         isFirst = false;
         getMachineList();
@@ -169,6 +176,13 @@ class MachineTransferMachineListController extends GetxController {
     update();
   }
 
+  String seqNumFormat(String no) {
+    String replacedStr = no.replaceAll(RegExp('[a-zA-Z]'), '');
+    return replacedStr.length <= 5
+        ? replacedStr
+        : replacedStr.substring(replacedStr.length - 5);
+  }
+
   getMachineList({
     bool isLoad = false,
     int? dataSize,
@@ -178,12 +192,11 @@ class MachineTransferMachineListController extends GetxController {
     } else {
       pageNo = 1;
     }
-
     pageSize = dataSize ?? 20;
 
     Map<String, dynamic> params = {
+      // "tId": terminalBrandId,
       "terminalBrandId": terminalBrandId,
-      // "terminalBrandId": -1,
       "teamType": 0,
       "status": status,
       "terminalModel": -1,
@@ -196,10 +209,10 @@ class MachineTransferMachineListController extends GetxController {
         params["terminalNo"] = normalSearchTextCtrl.text;
       }
       if (startSearchTextCtrl.text.isNotEmpty && searchButtonIdx == 1) {
-        params["terminal_Start"] = startSearchTextCtrl.text;
+        params["terminal_Start"] = seqNumFormat(startSearchTextCtrl.text);
       }
       if (endSearchTextCtrl.text.isNotEmpty && searchButtonIdx == 1) {
-        params["terminal_End"] = endSearchTextCtrl.text;
+        params["terminal_End"] = seqNumFormat(endSearchTextCtrl.text);
       }
     } else {
       params["terminalNo"] = quickSearchTextCtrl.text;
@@ -246,9 +259,30 @@ class MachineTransferMachineListController extends GetxController {
     );
   }
 
+  quickCountSelectionToEnd() {
+    quickCountTextCtrl.selection = TextSelection.fromPosition(
+        TextPosition(offset: quickCountTextCtrl.text.length));
+  }
+
+  quickCountTextCtrlListener() {
+    if (int.tryParse(quickCountTextCtrl.text) != null) {
+      _quickSearchCount.value = int.parse(quickCountTextCtrl.text);
+    } else {
+      ShowToast.normal("请输入正确的数量");
+    }
+  }
+
+  quickCountTextNodeListener() {
+    if (quickCountTextNode.hasFocus) {
+      quickCountSelectionToEnd();
+    }
+  }
+
   @override
   void onInit() {
     quickCountTextCtrl.text = "$quickSearchCount";
+    quickCountTextNode.addListener(quickCountTextNodeListener);
+    quickCountTextCtrl.addListener(quickCountTextCtrlListener);
     super.onInit();
   }
 
@@ -258,8 +292,11 @@ class MachineTransferMachineListController extends GetxController {
     startSearchTextCtrl.dispose();
     endSearchTextCtrl.dispose();
     quickSearchTextCtrl.dispose();
+    quickCountTextCtrl.removeListener(quickCountTextCtrlListener);
     quickCountTextCtrl.dispose();
     pullCtrl.dispose();
+    quickCountTextNode.removeListener(quickCountTextNodeListener);
+    quickCountTextNode.dispose();
     super.onClose();
   }
 }
@@ -297,23 +334,27 @@ class MachineTransferMachineList
               ),
             ),
             actions: [
-              CustomButton(
-                onPressed: () {
-                  showSearchModel(context);
-                },
-                child: SizedBox(
-                  width: 50.w,
-                  height: 50.w,
-                  child: Center(
-                    child: Image.asset(
-                      assetsName("home/machinetransfer/btn_search"),
-                      width: 20.w,
-                      height: 20.w,
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-              )
+              GetX<MachineTransferMachineListController>(builder: (_) {
+                return controller.topIdx == 1
+                    ? gwb(0)
+                    : CustomButton(
+                        onPressed: () {
+                          showSearchModel(context);
+                        },
+                        child: SizedBox(
+                          width: 50.w,
+                          height: 50.w,
+                          child: Center(
+                            child: Image.asset(
+                              assetsName("home/machinetransfer/btn_search"),
+                              width: 20.w,
+                              height: 20.w,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                      );
+              })
             ],
           ),
           body: getInputSubmitBody(
@@ -441,9 +482,8 @@ class MachineTransferMachineList
                                                                     controller.statusIndex ==
                                                                             e
                                                                                 .key
-                                                                        ? AppDefault().getThemeColor() ??
-                                                                            AppColor
-                                                                                .buttonTextBlue
+                                                                        ? AppColor
+                                                                            .theme
                                                                         : const Color(
                                                                             0xFFB3B3B3)),
                                                               ),
@@ -477,7 +517,7 @@ class MachineTransferMachineList
                                                   child: sbhRow([
                                                     Text.rich(TextSpan(
                                                         text:
-                                                            "${controller.brandData["enumName"]}-${controller.statusList[controller.statusIndex]["name"]}库存：",
+                                                            "${(controller.brandData["enumName"] ?? "") + (controller.brandData["terninal_Name"] ?? "")}-${controller.statusList[controller.statusIndex]["name"]}库存：",
                                                         style: TextStyle(
                                                             fontSize: 15.sp,
                                                             color: AppColor
@@ -598,7 +638,7 @@ class MachineTransferMachineList
                                                                                             width: (375 - 15 - 252 - 66).w,
                                                                                             child: Align(
                                                                                               alignment: Alignment.centerLeft,
-                                                                                              child: getSimpleText(controller.isAllSelected ? "反选" : "全选", 14, AppDefault().getThemeColor() ?? AppColor.buttonTextBlue),
+                                                                                              child: getSimpleText(controller.isAllSelected ? "反选" : "全选", 14, AppColor.theme),
                                                                                             ),
                                                                                           ),
                                                                                         );
@@ -763,6 +803,8 @@ class MachineTransferMachineList
                                                 child: CustomInput(
                                                   width: 150.w,
                                                   heigth: 55.w,
+                                                  focusNode: controller
+                                                      .quickCountTextNode,
                                                   keyboardType:
                                                       TextInputType.number,
                                                   placeholder: "请输入数量",
@@ -779,6 +821,9 @@ class MachineTransferMachineList
                                                       fontWeight:
                                                           AppDefault.fontBold),
                                                   textAlign: TextAlign.center,
+                                                  onSubmitted: (str) {
+                                                    takeBackKeyboard(context);
+                                                  },
                                                 ),
                                               ),
                                               CustomButton(
@@ -1379,12 +1424,10 @@ class MachineTransferMachineList
                   end: Alignment.bottomRight,
                   colors: [
                     idx == controller.topIdx
-                        ? AppDefault().getThemeColor() ??
-                            const Color(0xFF4282EB)
+                        ? AppColor.theme
                         : Colors.transparent,
                     idx == controller.topIdx
-                        ? AppDefault().getThemeColor(index: 2) ??
-                            const Color(0xFF5BA3F7)
+                        ? AppColor.theme.withOpacity(0.7)
                         : Colors.transparent,
                   ]),
               borderRadius: BorderRadius.circular(6.w)),
@@ -1501,8 +1544,7 @@ class MachineTransferMachineList
                                     "普通搜索",
                                     16,
                                     controller.searchButtonIdx == 0
-                                        ? AppDefault().getThemeColor() ??
-                                            AppColor.buttonTextBlue
+                                        ? AppColor.theme
                                         : const Color(0xFF808080),
                                   );
                                 },
@@ -1524,8 +1566,7 @@ class MachineTransferMachineList
                                     "连号搜索",
                                     16,
                                     controller.searchButtonIdx == 1
-                                        ? AppDefault().getThemeColor() ??
-                                            AppColor.buttonTextBlue
+                                        ? AppColor.theme
                                         : const Color(0xFF808080),
                                   );
                                 },
@@ -1562,19 +1603,24 @@ class MachineTransferMachineList
                                     ),
                                   ])
                                 : centClm([
-                                    getSearchInput("请输入起始机具号",
-                                        controller.startSearchTextCtrl,
-                                        scanSnClick: () {
-                                      toScanBarCode(((barCode) => controller
-                                          .startSearchTextCtrl.text = barCode));
-                                    }, maxLength: 5),
+                                    getSearchInput(
+                                      "请输入起始机具号",
+                                      controller.startSearchTextCtrl,
+                                      scanSnClick: () {
+                                        toScanBarCode(((barCode) => controller
+                                            .startSearchTextCtrl
+                                            .text = barCode));
+                                      },
+                                    ),
                                     ghb(12),
-                                    getSearchInput("请输入终点机具号",
-                                        controller.endSearchTextCtrl,
-                                        scanSnClick: () {
-                                      toScanBarCode(((barCode) => controller
-                                          .endSearchTextCtrl.text = barCode));
-                                    }, maxLength: 5),
+                                    getSearchInput(
+                                      "请输入终点机具号",
+                                      controller.endSearchTextCtrl,
+                                      scanSnClick: () {
+                                        toScanBarCode(((barCode) => controller
+                                            .endSearchTextCtrl.text = barCode));
+                                      },
+                                    ),
                                   ]);
                           },
                         ),
@@ -1652,7 +1698,12 @@ class MachineTransferMachineList
                 : CustomInput(
                     width: 266.w,
                     heigth: 70.w,
-                    onSubmitted: onSubmitted,
+                    onSubmitted: (str) {
+                      if (onSubmitted != null) {
+                        onSubmitted(str);
+                      }
+                      takeBackKeyboard(Global.navigatorKey.currentContext!);
+                    },
                     placeholder: placeholder,
                     textEditCtrl: ctrl,
                     maxLength: maxLength,
@@ -1662,22 +1713,24 @@ class MachineTransferMachineList
                     style:
                         TextStyle(fontSize: 15.sp, color: AppColor.textBlack),
                   ),
-            CustomButton(
-              onPressed: scanSnClick,
-              child: SizedBox(
-                width: (345 - 18.5 * 2 - 266).w,
-                height: 70.w,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Image.asset(
-                    assetsName("home/machinemanage/tiaoxingma"),
-                    width: 24.w,
-                    height: 24.w,
-                    fit: BoxFit.fill,
+            AppDefault().appHideScan()
+                ? gwb(345 - 18.5 * 2 - 266)
+                : CustomButton(
+                    onPressed: scanSnClick,
+                    child: SizedBox(
+                      width: (345 - 18.5 * 2 - 266).w,
+                      height: 70.w,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Image.asset(
+                          assetsName("home/machinemanage/tiaoxingma"),
+                          width: 24.w,
+                          height: 24.w,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
           ], height: 70, width: 345 - 18.5 * 2),
         ),
       ),
@@ -1795,7 +1848,7 @@ class MachineTransferMachineList
                             //     controller.quickSearchTextCtrl.text;
                             // controller.getMachineList(
                             //     dataSize: controller.quickSearchCount);
-                            // takeBackKeyboard(context);
+                            takeBackKeyboard(context);
                           },
                         ),
                         CustomButton(

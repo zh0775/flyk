@@ -1,15 +1,11 @@
-import 'package:cxhighversion2/app_binding.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/home/machinetransfer/machine_transfer.dart';
 import 'package:cxhighversion2/home/machinetransfer/machine_transfer_history.dart';
-import 'package:cxhighversion2/home/machinetransfer/machine_transfer_order_list.dart';
-import 'package:cxhighversion2/home/my_machine.dart';
 import 'package:cxhighversion2/main.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
 
 enum MachineTransferSuccessType {
   receiveSuccess,
@@ -70,139 +66,82 @@ class MachineTransferSuccess extends GetView<MachineTransferSuccessController> {
   @override
   Widget build(BuildContext context) {
     controller.dataInit(successType!, isLock);
-    return Scaffold(
-      backgroundColor: AppColor.pageBackgroundColor,
-      body: Stack(
-        children: [
-          Positioned(
-              top: paddingSizeTop(context),
-              left: 0,
-              height: kToolbarHeight,
-              child: defaultBackButton(
-                context,
-                backPressed: () {
-                  popToUntil();
-                },
-              )),
-          Positioned(
-              left: 0,
-              right: 0,
-              top: paddingSizeTop(context) + kToolbarHeight + 80,
-              height: 252.w,
-              child: Column(
-                children: [
-                  Image.asset(
-                    assetsName("home/machinetransfer/bg_hb_success"),
-                    width: 169.w,
-                    height: 60.w,
-                    fit: BoxFit.fill,
-                  ),
-                  ghb(40),
-                  getSimpleText(controller.successTitle, 22, AppColor.textBlack,
-                      isBold: true),
-                  ghb(15),
-                  getSimpleText(
-                      controller.subSuccessTitle, 14, AppColor.textGrey),
-                ],
-              )),
-          Positioned(
-              bottom: 85.w + paddingSizeBottom(context),
-              left: 0,
-              right: 0,
-              height: 107.5.w,
-              child: Column(
-                children: [
-                  // controller.myType ==
-                  //             MachineTransferSuccessType.receiveSuccess ||
-                  //         !isLock
-                  //     ?
 
-                  //     getSubmitBtn("查看我的机具", () {
-                  //         Get.offUntil(
-                  //             GetPageRoute(
-                  //               page: () => const MyMachine(),
-                  //               binding: MyMachineBinding(),
-                  //             ), (route) {
-                  //           if ((route as GetPageRoute).binding is AppBinding) {
-                  //             return true;
-                  //           }
-                  //           return false;
-                  //         });
-                  //       })
-                  //     :
-                  // getSubmitBtn("立即去发货", () {
-                  //     Get.find<MachineTransferController>().resetData();
-                  //     Get.offUntil(
-                  //         GetPageRoute(
-                  //           page: () => const MachineTransferOrderList(),
-                  //           binding: MachineTransferOrderListBinding(),
-                  //         ), (route) {
-                  //       if (route is GetPageRoute) {
-                  //         if (route.binding is MachineTransferBinding) {
-                  //           return true;
-                  //         } else {
-                  //           return false;
-                  //         }
-                  //       } else {
-                  //         return false;
-                  //       }
-                  //     });
-                  //   }),
-                  getSubmitBtn("查看订单", () {
-                    Get.find<MachineTransferController>().resetData();
-                    Get.offUntil(
-                        GetPageRoute(
-                          page: () => const MachineTransferHistory(
-                              // defaultIndex: 1,
-                              ),
-                          binding: MachineTransferHistoryBinding(),
-                        )
-                        // GetPageRoute(
-                        //   page: () => const MachineTransferOrderList(
-                        //       // defaultIndex: 1,
-                        //       ),
-                        //   binding: MachineTransferOrderListBinding(),
-                        // )
-                        , (route) {
-                      if (route is GetPageRoute) {
-                        if (route.binding is MachineTransferBinding) {
-                          return true;
-                        } else {
-                          return false;
-                        }
-                      } else {
-                        return false;
-                      }
-                    });
-                  }),
-                  ghb(7.5),
-                  controller.myType == MachineTransferSuccessType.receiveSuccess
-                      ? CustomButton(
-                          onPressed: () {
-                            Get.until((route) {
-                              if ((route as GetPageRoute).binding
-                                  is MainPageBinding) {
-                                return true;
-                              }
-                              return false;
-                            });
-                          },
-                          child: Container(
-                            width: 345.w,
-                            height: 50.w,
-                            decoration: getDefaultWhiteDec(),
-                            child: Center(
-                              child: getSimpleText(
-                                  "返回首页", 15, AppColor.textBlack,
-                                  isBold: true),
-                            ),
-                          ),
-                        )
-                      : ghb(50)
-                ],
-              )),
-        ],
+    return Scaffold(
+      appBar: getDefaultAppBar(
+        context,
+        "划拨结果",
+        backPressed: () {
+          Get.offUntil(
+              GetPageRoute(
+                  page: () => const MachineTransfer(),
+                  binding: MachineTransferBinding(),
+                  settings: const RouteSettings(name: "MachineTransfer")),
+              (route) => route is GetPageRoute
+                  ? route.binding is MainPageBinding
+                      ? true
+                      : false
+                  : false);
+        },
       ),
+      backgroundColor: AppColor.pageBackgroundColor,
+      body: SingleChildScrollView(
+          child: Column(
+        children: [
+          ghb(130),
+          Image.asset(
+            assetsName("home/machinetransfer/bg_hb_success"),
+            width: 129.w,
+            height: 137.w,
+            fit: BoxFit.fill,
+          ),
+          ghb(25),
+          getSimpleText("划拨成功", 22, AppColor.textBlack, isBold: true),
+          ghb(45),
+          getSubmitBtn("继续划拨", () {
+            Get.offUntil(
+                GetPageRoute(
+                    page: () => const MachineTransfer(),
+                    binding: MachineTransferBinding(),
+                    settings: const RouteSettings(name: "MachineTransfer")),
+                (route) => route is GetPageRoute
+                    ? route.binding is MainPageBinding
+                        ? true
+                        : false
+                    : false);
+          },
+              color: AppColor.theme,
+              height: 45,
+              width: 300,
+              fontSize: 15,
+              textColor: Colors.white),
+          CustomButton(
+            onPressed: () {
+              Get.offUntil(
+                  GetPageRoute(
+                      page: () => const MachineTransferHistory(),
+                      binding: MachineTransferHistoryBinding(),
+                      settings:
+                          const RouteSettings(name: "MachineTransferHistory")),
+                  (route) => route is GetPageRoute
+                      ? route.binding is MainPageBinding
+                          ? true
+                          : false
+                      : false);
+            },
+            child: Container(
+              width: 300.w,
+              height: 45.w,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(45.w / 2),
+                  border: Border.all(width: 0.5.w, color: AppColor.theme)),
+              child: getSimpleText("查看记录", 15, AppColor.theme),
+            ),
+          )
+        ],
+      )),
     );
   }
 }

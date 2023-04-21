@@ -8,7 +8,7 @@ import 'package:cxhighversion2/home/machinetransfer/machine_transfer_userlist.da
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class MachineTransferBinding extends Bindings {
@@ -154,130 +154,247 @@ class MachineTransfer extends GetView<MachineTransferController> {
           ),
         )
       ]),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            ghb(20),
-            gwb(375),
-            // Align(
-            //   child: sbRow([
-            //     topButton(0),
-            //     topButton(1),
-            //   ], width: 375 - 15 * 2),
-            // ),
-            ghb(controller.spaceHeight1),
-            sbRow(
-                [getSimpleText("选择划拨对象", 16, AppColor.textBlack, isBold: true)],
-                width: 375 - 24.5 * 2),
-            ghb(controller.spaceHeight1),
-            GetX<MachineTransferController>(
-              init: controller,
-              builder: (_) {
-                return transferSection(
-                    controller.selectUserData["uAvatar"] != null &&
-                            controller.imageUrl.isNotEmpty
-                        ? CustomNetworkImage(
-                            src:
-                                "${controller.imageUrl}${controller.selectUserData["uAvatar"]}",
-                            width: 60.w,
-                            height: 60.w,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.asset(
-                            assetsName(
-                                "home/machinetransfer/icon_machine_transfer_defaultpeople"),
-                            width: 60.w,
-                            height: 60.w,
-                            fit: BoxFit.fill),
-                    controller.selectUserData.isNotEmpty
-                        ? controller.selectUserData["uName"] ??
-                            (controller.selectUserData["uMobile"] ?? "")
-                        : "还未选择划拨对象",
-                    controller.selectUserData.isNotEmpty
-                        ? "${controller.selectUserData["uNumber"] ?? ""}|${controller.selectUserData["uMobile"] ?? ""}"
-                        : "请先选择划拨对象",
-                    AppColor.textGrey, () {
-                  // push(
-                  //     MachineTransferUserList(
-                  //       userData: controller.userList,
-                  //     ),
-                  //     context,
-                  //     bindings: MachineTransferUserListBinding());
+      body: Stack(
+        children: [
+          Positioned(
+              left: 0,
+              right: 0,
+              height: 60.w + paddingSizeBottom(context),
+              bottom: 0,
+              child: Column(
+                children: [
+                  getSubmitBtn("生成划拨清单", () {
+                    controller.terminalTransferAction();
+                  }),
+                ],
+              )),
+          Positioned.fill(
+            bottom: 60.w + paddingSizeBottom(context),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  gwb(375),
+                  ghb(7),
+                  sbhRow([getSimpleText("选择划拨对象", 12, AppColor.textGrey)],
+                      width: 375 - 15.5 * 2, height: 38.5),
+                  GetX<MachineTransferController>(
+                    init: controller,
+                    builder: (_) {
+                      return transferSection(
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(22.5.w),
+                            child: controller.selectUserData["uAvatar"] !=
+                                        null &&
+                                    controller.imageUrl.isNotEmpty
+                                ? CustomNetworkImage(
+                                    src:
+                                        "${controller.imageUrl}${controller.selectUserData["uAvatar"]}",
+                                    width: 45.w,
+                                    height: 45.w,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Image.asset(assetsName("common/default_head"),
+                                    width: 45.w,
+                                    height: 45.w,
+                                    fit: BoxFit.fill),
+                          ),
+                          controller.selectUserData.isNotEmpty
+                              ? controller.selectUserData["uName"] ??
+                                  (controller.selectUserData["uMobile"] ?? "")
+                              : "选择划拨对象",
+                          controller.selectUserData.isNotEmpty
+                              ? "${controller.selectUserData["uNumber"] ?? ""}|${controller.selectUserData["uMobile"] ?? ""}"
+                              : "未选择",
+                          AppColor.textGrey, () {
+                        // push(
+                        //     MachineTransferUserList(
+                        //       userData: controller.userList,
+                        //     ),
+                        //     context,
+                        //     bindings: MachineTransferUserListBinding());
 
-                  Get.to(const MachineTransferUserList(),
-                      binding: MachineTransferUserListBinding());
-                });
-              },
-            ),
-            ghb(controller.spaceHeight1),
-            sbRow([getSimpleText("选择设备", 16, AppColor.textBlack, isBold: true)],
-                width: 375 - 24.5 * 2),
-            ghb(controller.spaceHeight1),
-            GetX<MachineTransferController>(
-              init: controller,
-              builder: (_) {
-                return transferSection(
-                    Image.asset(
-                        assetsName(
-                            "home/machinetransfer/icon_machine_transfer_machine"),
-                        width: 60.w,
-                        height: 60.w,
-                        fit: BoxFit.fill),
-                    controller.selectMachineTilte,
-                    controller.selectMachineData.isEmpty
-                        ? "请先选择划拨设备"
-                        : "已经选择${controller.selectMachineData.length}台设备",
-                    controller.selectMachineData.isEmpty
-                        ? AppColor.textGrey
-                        : AppColor.textBlack, () {
-                  Get.to(() => const MachineTransferBrandList(),
-                      binding: MachineTransferBrandListBinding());
-                });
-              },
-            ),
-            // ghb(controller.spaceHeight1),
-            // sbRow([
-            //   centRow([
-            //     getSimpleText("选择划拨模版", 16, AppColor.textBlack, isBold: true),
-            //     gwb(5.5),
-            //     CustomButton(
-            //       onPressed: () {
-            //         showTips(context);
-            //       },
-            //       child: Image.asset(
-            //         assetsName("home/machinetransfer/btn_tips"),
-            //         width: 16.5.w,
-            //         height: 16.5.w,
-            //         fit: BoxFit.fill,
-            //       ),
-            //     )
-            //   ])
-            // ], width: 375 - 24.5 * 2),
-            // ghb(controller.spaceHeight1),
-            // transferSection(
-            //     Image.asset(
-            //         assetsName(
-            //             "home/machinetransfer/icon_machine_transfer_tmp"),
-            //         width: 60.w,
-            //         height: 60.w,
-            //         fit: BoxFit.fill),
-            //     "默认模版",
-            //     "可添加新模版",
-            //     AppColor.textGrey, () {
-            //   // push(const MachineTransferTmpList(), context,
-            //   //     bindings: MachineTransferTmpListBinding());
+                        Get.to(const MachineTransferUserList(),
+                            binding: MachineTransferUserListBinding());
+                      });
+                    },
+                  ),
+                  ghb(7),
+                  sbhRow([
+                    getSimpleText("选择设备", 12, AppColor.textGrey),
+                    GetX<MachineTransferController>(
+                      builder: (controller) {
+                        return getSimpleText(
+                            "已选择：${controller.selectMachineData.length}台",
+                            12,
+                            AppColor.textBlack);
+                      },
+                    )
+                  ], width: 375 - 15.5 * 2, height: 38.5),
 
-            //   Get.to(() => const MachineTransferTmpList(),
-            //       binding: MachineTransferTmpListBinding());
-            // }),
-            ghb(45),
-            getSubmitBtn("生成划拨清单", () {
-              controller.terminalTransferAction();
-            }),
-            ghb(30)
-          ],
-        ),
+                  Container(
+                    width: 345.w,
+                    decoration: getDefaultWhiteDec(radius: 4),
+                    child: GetX<MachineTransferController>(builder: (_) {
+                      return Column(
+                        children: [
+                          sbhRow([
+                            centRow([
+                              gwb(22.5),
+                              getSimpleText("设备列表", 14, AppColor.textBlack)
+                            ]),
+                            CustomButton(
+                              onPressed: () {
+                                push(const MachineTransferBrandList(), context,
+                                    binding: MachineTransferBrandListBinding());
+                              },
+                              child: SizedBox(
+                                height: 59.5.w,
+                                width: 58.w,
+                                child: Center(
+                                  child: Image.asset(
+                                    assetsName(
+                                        "home/machinetransfer/btn_machine_add"),
+                                    width: 18.w,
+                                    fit: BoxFit.fitWidth,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ], width: 345, height: 59.5),
+                          controller.selectMachineData.isNotEmpty
+                              ? gline(315, 0.5)
+                              : ghb(0),
+                          ...List.generate(controller.selectMachineData.length,
+                              (index) {
+                            Map data = controller.selectMachineData[index];
+                            return Container(
+                              width: 345.w,
+                              alignment: Alignment.center,
+                              margin: EdgeInsets.only(top: 15.w),
+                              child: sbRow([
+                                centRow([
+                                  gwb(15),
+                                  Image.asset(
+                                      assetsName(
+                                          "home/machinetransfer/icon_machine_transfer_machine"),
+                                      width: 45.w,
+                                      height: 45.w,
+                                      fit: BoxFit.fill),
+                                  gwb(12),
+                                  sbClm([
+                                    getWidthText(
+                                        "${data["tbName"] ?? ""}${data["tmName"] ?? ""}",
+                                        15,
+                                        AppColor.textBlack,
+                                        345 - 15 - 45 - 12 - 58,
+                                        1,
+                                        isBold: true),
+                                    getWidthText(
+                                      "设备编号：${data["tNo"] ?? ""}",
+                                      11,
+                                      AppColor.textGrey,
+                                      345 - 15 - 45 - 12 - 58,
+                                      1,
+                                    ),
+                                  ],
+                                      height: 40,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start),
+                                  CustomButton(
+                                    onPressed: () {
+                                      controller.selectMachineData = controller
+                                          .selectMachineData
+                                          .where((e) => e["tId"] != data["tId"])
+                                          .toList();
+                                    },
+                                    child: SizedBox(
+                                      // height: 59.5.w,
+                                      width: 58.w,
+                                      child: Center(
+                                        child: Image.asset(
+                                          assetsName(
+                                              "home/machinetransfer/btn_machine_sub"),
+                                          width: 18.w,
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ])
+                              ], width: 345),
+                            );
+                          }),
+                          ghb(controller.selectMachineData.isNotEmpty ? 15 : 0)
+                        ],
+                      );
+                    }),
+                  ),
+
+                  // GetX<MachineTransferController>(
+                  //   init: controller,
+                  //   builder: (_) {
+                  //     return transferSection(
+                  // Image.asset(
+                  //     assetsName(
+                  //         "home/machinetransfer/icon_machine_transfer_machine"),
+                  //     width: 45.w,
+                  //     height: 45.w,
+                  //     fit: BoxFit.fill),
+                  //         controller.selectMachineTilte,
+                  //         controller.selectMachineData.isEmpty
+                  //             ? "请先选择划拨设备"
+                  //             : "已经选择${controller.selectMachineData.length}台设备",
+                  //         controller.selectMachineData.isEmpty
+                  //             ? AppColor.textGrey
+                  //             : AppColor.textBlack, () {
+                  //       Get.to(() => const MachineTransferBrandList(),
+                  //           binding: MachineTransferBrandListBinding());
+                  //     });
+                  //   },
+                  // ),
+                  // ghb(controller.spaceHeight1),
+                  // sbRow([
+                  //   centRow([
+                  //     getSimpleText("选择划拨模版", 16, AppColor.textBlack, isBold: true),
+                  //     gwb(5.5),
+                  //     CustomButton(
+                  //       onPressed: () {
+                  //         showTips(context);
+                  //       },
+                  //       child: Image.asset(
+                  //         assetsName("home/machinetransfer/btn_tips"),
+                  //         width: 16.5.w,
+                  //         height: 16.5.w,
+                  //         fit: BoxFit.fill,
+                  //       ),
+                  //     )
+                  //   ])
+                  // ], width: 375 - 24.5 * 2),
+                  // ghb(controller.spaceHeight1),
+                  // transferSection(
+                  //     Image.asset(
+                  //         assetsName(
+                  //             "home/machinetransfer/icon_machine_transfer_tmp"),
+                  //         width: 60.w,
+                  //         height: 60.w,
+                  //         fit: BoxFit.fill),
+                  //     "默认模版",
+                  //     "可添加新模版",
+                  //     AppColor.textGrey, () {
+                  //   // push(const MachineTransferTmpList(), context,
+                  //   //     bindings: MachineTransferTmpListBinding());
+
+                  //   Get.to(() => const MachineTransferTmpList(),
+                  //       binding: MachineTransferTmpListBinding());
+                  // }),
+
+                  ghb(20)
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -355,28 +472,31 @@ class MachineTransfer extends GetView<MachineTransferController> {
       onPressed: toNextPage,
       child: Container(
           width: 345.w,
-          height: 100.w,
-          decoration: getDefaultWhiteDec(),
+          height: 75.w,
+          decoration: getDefaultWhiteDec(radius: 4),
           child: Center(
             child: sbRow([
               centRow([
+                gwb(15),
                 img,
                 gwb(18.5),
                 centClm([
-                  getWidthText(t1, 16, const Color(0xFF312F62), 159.5, 1,
+                  getWidthText(t1, 15, AppColor.textBlack, 159.5, 1,
                       isBold: true, textAlign: TextAlign.left),
                   ghb(6),
-                  getWidthText(t2, 13, t2Color, 159.5, 1,
+                  getWidthText(t2, 12, t2Color, 159.5, 1,
                       textAlign: TextAlign.left),
                 ], crossAxisAlignment: CrossAxisAlignment.start)
               ]),
-              Image.asset(
-                assetsName("common/icon_cell_right_arrow"),
-                width: 20.w,
-                height: 20.w,
-                fit: BoxFit.fill,
-              ),
-            ], width: 345 - 16 * 2),
+              centRow([
+                Image.asset(
+                  assetsName("home/machinetransfer/btn_right_circle"),
+                  width: 18.w,
+                  fit: BoxFit.fitWidth,
+                ),
+                gwb(20),
+              ])
+            ], width: 345),
           )),
     );
   }

@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/tools.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomInput extends StatefulWidget {
   final double? width;

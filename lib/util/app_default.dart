@@ -111,6 +111,12 @@ class AppDefault {
   String token = "";
   List requstCacheList = [];
   List themeColorList = [];
+  bool appHideScan() {
+    if (kIsWeb) {
+      return true;
+    }
+    return true;
+  }
 
   setThemeColorList() {
     if (publicHomeData.isEmpty) {

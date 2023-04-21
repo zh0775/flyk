@@ -84,6 +84,6 @@ git rm -r --cached .
 **/*.m.dart
 **/pubspec.lock
 **/.flutter-plugins-dependencies
-android/app/src/main/AndroidManifest.xml
-android/app/src/main/res
+# android/app/src/main/AndroidManifest.xml
+# android/app/src/main/res
 android/app/build.gradle

@@ -48,6 +48,7 @@ import 'package:cxhighversion2/pay/share_invite.dart' deferred as share_invite;
 import 'package:cxhighversion2/product/product.dart' deferred as product;
 import 'package:cxhighversion2/product/product_purchase_list.dart'
     deferred as product_purchase_list;
+import 'package:cxhighversion2/product/product_store/product_store_list.dart';
 import 'package:cxhighversion2/service/http.dart' as ht;
 import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/service/urls.dart';
@@ -1773,6 +1774,23 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           } else if (e["path"] == "/home/terminalbinding") {
             terminal_binding.loadLibrary().then(
                 (value) => push(terminal_binding.TerminalBinding(), context));
+          } else if (path == "/pages/store") {
+            int type = 1;
+            List subs = path.split("?");
+            path = subs.length > 1 ? subs[1] : "";
+            if (path.isNotEmpty) {
+              List params = path.split("&");
+              for (String e in params) {
+                List l = e.split("=");
+                if (l.isNotEmpty && l.length > 1 && l[0] == "type") {
+                  type = int.tryParse(l[1]) != null ? int.parse(l[1]) : 1;
+                  break;
+                }
+              }
+            }
+            push(const ProductStoreList(), context,
+                binding: ProductStoreListBinding(),
+                arguments: {"levelType": type, "title": e["name"] ?? ""});
           }
         },
         child: SizedBox(

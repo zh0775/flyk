@@ -1,12 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/home/machinetransfer/machine_transfer_express_detail.dart';
 import 'package:cxhighversion2/home/machinetransfer/machine_transfer_shipments.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class MachineTransferOrderDetailBinding extends Bindings {
   @override
