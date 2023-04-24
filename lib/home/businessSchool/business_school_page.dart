@@ -9,7 +9,7 @@ import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart';
 import 'package:cxhighversion2/home/businessSchool/business_school_list_page.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 

@@ -45,12 +45,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gallery_saver/gallery_saver.dart' deferred as gallery_saver;
 import 'package:get/get.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart'
-    deferred as image_gallery_saver;
 import 'package:intl/intl.dart';
 import 'package:ota_update/ota_update.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
@@ -807,18 +808,23 @@ void popToUntil<T>(
   }
 }
 
-void saveNetWorkImgToAlbum(String imgPath) {
-  Http().downImg(
-    imgPath,
-    {},
-    success: (json) async {
-      await image_gallery_saver.loadLibrary();
-      image_gallery_saver.ImageGallerySaver.saveImage(
-        Uint8List.fromList(json),
-      );
-      ShowToast.normal("保存成功");
-    },
-  );
+void saveNetWorkImgToAlbum(String imgPath) async {
+  await gallery_saver.loadLibrary();
+  bool? success = await gallery_saver.GallerySaver.saveImage(imgPath);
+  // Http().downImg(
+  //   imgPath,
+  //   {},
+  //   success: (json) async {
+  //     // await image_gallery_saver.loadLibrary();
+  //     // image_gallery_saver.ImageGallerySaver.saveImage(
+  //     //   Uint8List.fromList(json),
+  //     // );
+  //     ShowToast.normal("保存成功");
+  //   },
+  // );
+  if (success != null && success) {
+    ShowToast.normal("保存成功");
+  }
 }
 
 void toCheckImg({required dynamic image, bool needSave = false}) {
@@ -1821,14 +1827,41 @@ Widget gemp() {
   ));
 }
 
-saveImageToAlbum(Uint8List? imageBytes, {bool showToast = true}) async {
-  await image_gallery_saver.loadLibrary();
+saveImageToAlbum(Uint8List? imageBytes,
+    {bool showToast = true,
+    bool isVideo = false,
+    String suffix = "",
+    Function(bool? result)? resultCallback}) async {
+  await gallery_saver.loadLibrary();
   if (imageBytes != null) {
-    final result = await image_gallery_saver.ImageGallerySaver.saveImage(
-        imageBytes,
-        quality: 100);
+    Directory tmpDir = await getTemporaryDirectory();
+    bool? result;
+    if (isVideo) {
+      File myFile = await File(
+              "${tmpDir.path}/video_${DateTime.now().millisecond}${suffix.isNotEmpty ? ".$suffix" : ""}")
+          .create();
+      myFile.writeAsBytesSync(imageBytes);
+      result = await gallery_saver.GallerySaver.saveVideo(
+        myFile.path,
+      );
+    } else {
+      File myFile =
+          await File("${tmpDir.path}/img_${DateTime.now().millisecond}.jpg")
+              .create();
+      File file =
+          await FlutterNativeImage.compressImage(myFile.path, quality: 30);
+      result = await gallery_saver.GallerySaver.saveImage(
+        file.path,
+      );
+    }
+    print("result === $result");
+
+    if (resultCallback != null) {
+      resultCallback(result);
+    }
+
     if (showToast) {
-      if (result['isSuccess']) {
+      if (result != null && result) {
         ShowToast.normal("保存成功");
       } else {
         ShowToast.normal("保存失败");

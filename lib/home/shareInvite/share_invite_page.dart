@@ -1,18 +1,16 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
+import 'dart:ui' as ui;
+
 import 'package:cxhighversion2/component/custom_button.dart';
-import 'package:cxhighversion2/component/custom_check_photo.dart';
 import 'package:cxhighversion2/home/shareInvite/share_invite_preview.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:cxhighversion2/util/tools.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'dart:ui' as ui;
-
-import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class ShareInvitePageBinding implements Bindings {
   @override

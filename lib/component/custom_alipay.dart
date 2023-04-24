@@ -93,8 +93,9 @@ class _AlipayWebViewState extends State<AlipayWebView> {
       onWillPop: () async {
         if (widget.payBack != null) {
           widget.payBack!();
+          return true;
         }
-        return true;
+        return false;
       },
       child: Scaffold(
           appBar: getDefaultAppBar(context, "支付"),

@@ -36,8 +36,8 @@ class ProductStoreDetailController extends GetxController {
   final _pageIdx = 0.obs;
   set pageIdx(v) => _pageIdx.value = v;
   int get pageIdx => _pageIdx.value;
-
-  final numInputCtrl = TextEditingController(text: "1");
+  int minCount = 1;
+  final numInputCtrl = TextEditingController();
   final numNode = FocusNode();
 
   // 商品购买数量
@@ -86,7 +86,6 @@ class ProductStoreDetailController extends GetxController {
         orderData["levelGiftImg"].isNotEmpty) {
       bannerImgList = [orderData["levelGiftImg"] ?? ""];
     }
-
     // tmp = orderData["levelGiftPaymentMethod"] != null &&
     //         orderData["levelGiftPaymentMethod"].isNotEmpty
     //     ? convert.jsonDecode(orderData["levelGiftPaymentMethod"])
@@ -102,7 +101,17 @@ class ProductStoreDetailController extends GetxController {
 
   numNodeListener() {
     if (!numNode.hasFocus) {
-      numInputListener();
+      if (numInputCtrl.text.isEmpty) {
+        ShowToast.normal("最少购买$minCount件哦");
+        numInputCtrl.text = "$minCount";
+        cursorToEnd();
+        return;
+      }
+      if (int.tryParse(numInputCtrl.text) == null) {
+        ShowToast.normal("请输入正确的数量");
+        numInputCtrl.text = "$minCount";
+        cursorToEnd();
+      }
     } else {
       Future.delayed(const Duration(milliseconds: 200), () {
         cursorToEnd();
@@ -114,15 +123,12 @@ class ProductStoreDetailController extends GetxController {
     int? tNum = int.tryParse(numInputCtrl.text);
     if (tNum != null) {
       _num.value = tNum;
-    } else {
-      ShowToast.normal("请输入正确的数量");
-      numInputCtrl.text = "$num";
-      cursorToEnd();
     }
   }
 
   @override
   void onInit() {
+    numInputCtrl.text = "$minCount";
     numNode.addListener(numNodeListener);
     numInputCtrl.addListener(numInputListener);
     // 列表传过来的商品数据
@@ -476,6 +482,7 @@ class ProductStoreDetail extends GetView<ProductStoreDetailController> {
                                       textAlignVertical:
                                           TextAlignVertical.center,
                                       textAlign: TextAlign.center,
+                                      focusNode: controller.numNode,
                                       keyboardType: TextInputType.number,
                                       textEditCtrl: controller.numInputCtrl,
                                     ))

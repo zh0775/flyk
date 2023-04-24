@@ -51,7 +51,9 @@ class ShareInviteController extends GetxController {
   //     // _showTips('拉起小程序', content);
   //   }
   // }
-  int pageIndex = 0;
+  final _pageIndex = 0.obs;
+  int get pageIndex => _pageIndex.value;
+  set pageIndex(v) => _pageIndex.value = v;
   Map homeData = {};
 
   String shareUrl = "";
@@ -68,6 +70,13 @@ class ShareInviteController extends GetxController {
   //       after: () {},
   //       useCache: true);
   // }
+
+  List btns = [
+    // {"name": "微信好友", "img": "share/wx_friend2"},
+    // {"name": "朋友圈", "img": "share/pyq2"},
+    {"name": "保存图片", "img": "share/icon_share_download"}
+  ];
+
   double imageHeight = 0;
   double imageWidth = 300;
   Map publicHomeData = {};
@@ -105,6 +114,7 @@ class ShareInviteController extends GetxController {
   double boxHeight = 0;
   bool screenNotLong = false;
   bool isFirst = true;
+  // double pageScale = (300 - 22.5 * 2) / 300;
   double pageScale = (300 - 22.5 * 2) / 300;
   dataInit(BuildContext ctx) {
     if (!isFirst) return;
@@ -134,7 +144,7 @@ class ShareInvite extends GetView<ShareInviteController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: getDefaultAppBar(context, "邀请好友"),
+        appBar: getDefaultAppBar(context, "分享邀请"),
         body: Builder(builder: (buildCtx) {
           controller.dataInit(buildCtx);
           return Stack(
@@ -143,24 +153,50 @@ class ShareInvite extends GetView<ShareInviteController> {
                   top: 15.w,
                   left: 0,
                   right: 0,
-                  height: controller.imageHeight,
-                  child: SizedBox(
-                    width: 375.w,
-                    // height: !kIsWeb ? 567.w : 537.w,
-                    height: controller.imageHeight,
-                    child: Swiper(
-                      itemCount: controller.dataList.length,
-                      viewportFraction: controller.imageWidth / 375,
-                      scale: controller.pageScale,
-                      itemBuilder: (context, index) {
-                        print(
-                            "${controller.imageWidth / controller.imageHeight}");
-                        return sharePage(index);
-                      },
-                      onIndexChanged: (value) {
-                        controller.pageIndex = value;
-                      },
-                    ),
+                  // height: controller.imageHeight,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 375.w,
+                        // height: !kIsWeb ? 567.w : 537.w,
+
+                        height: controller.imageHeight,
+                        child: Swiper(
+                          itemCount: controller.dataList.length,
+                          viewportFraction: 300 / 375,
+                          // scale: controller.pageScale,
+                          scale: 0.65,
+                          itemBuilder: (context, index) {
+                            print(
+                                "${controller.imageWidth / controller.imageHeight}");
+                            return sharePage(index);
+                          },
+                          onIndexChanged: (value) {
+                            controller.pageIndex = value;
+                          },
+                        ),
+                      ),
+                      ghb(15),
+                      centRow(List.generate(
+                          controller.dataList.length,
+                          (index) => GetX<ShareInviteController>(builder: (_) {
+                                return AnimatedContainer(
+                                  margin: EdgeInsets.only(
+                                      left: index != 0 ? 5.w : 0),
+                                  duration: const Duration(milliseconds: 300),
+                                  width: controller.pageIndex == index
+                                      ? 15.w
+                                      : 5.w,
+                                  height: 5.w,
+                                  decoration: BoxDecoration(
+                                      color: controller.pageIndex == index
+                                          ? AppColor.theme
+                                          : AppColor.theme.withOpacity(0.1),
+                                      borderRadius:
+                                          BorderRadius.circular(2.5.w)),
+                                );
+                              })))
+                    ],
                   )),
               Positioned(
                 bottom: 0,
@@ -180,11 +216,13 @@ class ShareInvite extends GetView<ShareInviteController> {
                   //       BoxShadow(
                   //           color: const Color(0x26000000), blurRadius: 5.w)
                   //     ]),
-                  child: centRow([
-                    shareButotn(3, context),
-                    gwb(41.5),
-                    shareButotn(2, context),
-                  ]),
+                  child: centRow(List.generate(
+                      controller.btns.length,
+                      (index) => Padding(
+                            padding:
+                                EdgeInsets.only(left: index == 0 ? 0 : 36.w),
+                            child: shareButotn(index, context),
+                          ))),
                 ),
               ),
             ],
@@ -274,6 +312,7 @@ class ShareInvite extends GetView<ShareInviteController> {
   }
 
   Widget shareButotn(int idx, BuildContext context) {
+    Map btnData = controller.btns[idx];
     return CustomButton(
       onPressed: () async {
         // if (controller.webCtrl == null) {
@@ -310,41 +349,35 @@ class ShareInvite extends GetView<ShareInviteController> {
             delay: const Duration(milliseconds: 100),
             context: context);
 
-        if (idx == 0) {
+        if (btnData["name"] == "微信好友") {
           AppWechatManager().sharePriendWithFile(imageBytes);
-        } else if (idx == 1) {
+        } else if (btnData["name"] == "朋友圈") {
           AppWechatManager().shareTimelineWithFile(imageBytes);
-        } else if (idx == 2) {
+        } else if (btnData["name"] == "保存图片") {
           saveAssetsImg(imageBytes);
-        } else if (idx == 3) {
+        } else if (btnData["name"] == "复制链接") {
           copyClipboard(
               "${controller.shareUrl}?id=${controller.homeData["u_Number"] ?? ""}");
         }
       },
       child: centClm([
-        Image.asset(
-          assetsName(idx == 0
-              ? "share/wx_friend2"
-              : idx == 1
-                  ? "share/pyq2"
-                  : idx == 2
-                      ? "share/icon_share_download"
-                      : "share/icon_share_copy"),
-          // width: 30.5.w,
-          height: 50.w,
-          fit: BoxFit.fitHeight,
+        Container(
+          width: 52.5.w,
+          height: 52.5.w,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(52.5.w / 2)),
+          child: Image.asset(
+            assetsName(btnData["img"] ?? ""),
+            // width: 30.5.w,
+            height: 30.w,
+            width: 30.w,
+            fit: BoxFit.fill,
+          ),
         ),
-        ghb(5),
-        getSimpleText(
-            idx == 0
-                ? "微信好友"
-                : idx == 1
-                    ? "微信朋友圈"
-                    : idx == 2
-                        ? "保存图片"
-                        : "复制链接",
-            12,
-            AppColor.text2)
+        ghb(8),
+        getSimpleText(btnData["name"], 12, AppColor.text2)
       ]),
     );
   }

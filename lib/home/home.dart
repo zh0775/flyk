@@ -10,6 +10,8 @@ import 'package:cxhighversion2/component/custom_webview.dart'
     deferred as customwebview;
 import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart'
     deferred as business_school_detail;
+import 'package:cxhighversion2/home/businessSchool/promotion_skills.dart'
+    deferred as promotion_skills;
 import 'package:cxhighversion2/home/component/custom_message.dart';
 import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart'
     deferred as contact_customer_service;
@@ -48,7 +50,9 @@ import 'package:cxhighversion2/pay/share_invite.dart' deferred as share_invite;
 import 'package:cxhighversion2/product/product.dart' deferred as product;
 import 'package:cxhighversion2/product/product_purchase_list.dart'
     deferred as product_purchase_list;
-import 'package:cxhighversion2/product/product_store/product_store_list.dart';
+import 'package:cxhighversion2/product/product_store/product_store_list.dart'
+    deferred as product_store_list;
+import 'package:cxhighversion2/rank/rank.dart' deferred as rank;
 import 'package:cxhighversion2/service/http.dart' as ht;
 import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/service/urls.dart';
@@ -948,28 +952,63 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                     child: sbhRow(
                         List.generate(
                             4,
-                            (index) => SizedBox(
-                                  width: 345.w / 4,
-                                  child: centClm([
-                                    Image.asset(
-                                      assetsName(
-                                          "home/icon_${index == 0 ? "fxyq" : index == 1 ? "shzc" : index == 2 ? "zdhb" : "cgsc"}"),
-                                      width: 45.w,
-                                      height: 45.w,
-                                      fit: BoxFit.fill,
-                                    ),
-                                    ghb(3),
-                                    getSimpleText(
-                                        index == 0
-                                            ? "分享邀请"
-                                            : index == 1
-                                                ? "商户注册"
-                                                : index == 2
-                                                    ? "终端划拨"
-                                                    : "采购商城",
-                                        12,
-                                        AppColor.textBlack),
-                                  ]),
+                            (index) => CustomButton(
+                                  onPressed: () async {
+                                    if (index == 0) {
+                                      await share_invite.loadLibrary();
+                                      push(share_invite.ShareInvite(), null,
+                                          binding: share_invite
+                                              .ShareInviteBinding());
+                                    } else if (index == 1) {
+                                      await promotion_skills.loadLibrary();
+                                      push(promotion_skills.PromotionSkills(),
+                                          null,
+                                          binding: promotion_skills
+                                              .PromotionSkillsBinding());
+                                    } else if (index == 2) {
+                                      await machine_transfer.loadLibrary();
+                                      push(
+                                          machine_transfer.MachineTransfer(
+                                              isLock: false),
+                                          null,
+                                          binding: machine_transfer
+                                              .MachineTransferBinding());
+                                    } else if (index == 3) {
+                                      await product_store_list.loadLibrary();
+                                      push(
+                                          product_store_list.ProductStoreList(),
+                                          null,
+                                          binding: product_store_list
+                                              .ProductStoreListBinding(),
+                                          arguments: {
+                                            "levelType": 2,
+                                            "title": "采购商城"
+                                          });
+                                    }
+                                  },
+                                  child: SizedBox(
+                                    width: 345.w / 4,
+                                    child: centClm([
+                                      Image.asset(
+                                        assetsName(
+                                            "home/icon_${index == 0 ? "fxyq" : index == 1 ? "shzc" : index == 2 ? "zdhb" : "cgsc"}"),
+                                        width: 45.w,
+                                        height: 45.w,
+                                        fit: BoxFit.fill,
+                                      ),
+                                      ghb(3),
+                                      getSimpleText(
+                                          index == 0
+                                              ? "分享邀请"
+                                              : index == 1
+                                                  ? "商户注册"
+                                                  : index == 2
+                                                      ? "终端划拨"
+                                                      : "采购商城",
+                                          12,
+                                          AppColor.textBlack),
+                                    ]),
+                                  ),
                                 )),
                         width: 345,
                         height: 105),
@@ -1658,6 +1697,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             await machine_manage.loadLibrary();
             push(machine_manage.MachineManage(), null,
                 binding: machine_manage.MachineManageBinding());
+          } else if (path.contains("/home/rank")) {
+            // 排行榜
+            await rank.loadLibrary();
+            push(rank.Rank(), null, binding: rank.RankBinding());
           } else if (e['id'] == 2079) {
             // 分享注册
             await share_invite.loadLibrary();
@@ -1687,7 +1730,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           } else if (e["path"] == "/home/integralstore") {
             // 积分商城
             await points_mall_page.loadLibrary();
-
             push(points_mall_page.PointsMallPage(), null,
                 binding: points_mall_page.PointsMallPageBinding());
           } else if (e["path"] == "/home/machinetransfer") {
@@ -1775,6 +1817,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             terminal_binding.loadLibrary().then(
                 (value) => push(terminal_binding.TerminalBinding(), context));
           } else if (path == "/pages/store") {
+            await product_store_list.loadLibrary();
             int type = 1;
             List subs = path.split("?");
             path = subs.length > 1 ? subs[1] : "";
@@ -1788,8 +1831,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 }
               }
             }
-            push(const ProductStoreList(), context,
-                binding: ProductStoreListBinding(),
+            push(product_store_list.ProductStoreList(), null,
+                binding: product_store_list.ProductStoreListBinding(),
                 arguments: {"levelType": type, "title": e["name"] ?? ""});
           }
         },

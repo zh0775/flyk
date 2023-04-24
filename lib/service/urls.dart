@@ -696,4 +696,8 @@ class Urls {
 
   //实名认证(上传姓名和身份证号)(自己判断)
   static const userVerified = "/api/Member/UserVerified";
+
+  // 延长收货
+  static String orderProlongConfirm(dynamic id) =>
+      "/api/Order/User_OrderProlongConfirm/$id";
 }

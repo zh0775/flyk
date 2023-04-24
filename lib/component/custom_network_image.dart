@@ -61,11 +61,12 @@ class CustomNetworkImage extends StatelessWidget {
         : src;
 
     return imageUrl.contains("localhost") || src.isEmpty
-        ? Container(
-            width: width,
-            height: height,
-            color: errorColor ?? Colors.transparent,
-          )
+        ? errorWidget ??
+            Container(
+              width: width,
+              height: height,
+              color: errorColor ?? Colors.transparent,
+            )
         :
 
         // GetBuilder<CustomNetworkImageController>(
@@ -105,11 +106,12 @@ class CustomNetworkImage extends StatelessWidget {
               if (loadResult != null) {
                 loadResult!(false);
               }
-              return Container(
-                width: width,
-                height: height,
-                color: Colors.transparent,
-              );
+              return errorWidget ??
+                  Container(
+                    width: width,
+                    height: height,
+                    color: Colors.transparent,
+                  );
             },
           );
     // controller.showImage ?

@@ -1,14 +1,22 @@
+import 'dart:typed_data';
+
 import 'package:chewie/chewie.dart';
+import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/component/custom_html_view.dart';
 import 'package:cxhighversion2/home/businessSchool/business_school_collect.dart';
+import 'package:cxhighversion2/home/fodderlib/fodder_lib_detail.dart';
+import 'package:cxhighversion2/service/http.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
+import 'package:dio/dio.dart' as di;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:get/get.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:video_player/video_player.dart';
 
 class BusinessSchoolDetailBinding implements Bindings {
@@ -62,8 +70,9 @@ class BusinessSchoolDetailController extends GetxController {
             if (haveVideo &&
                 collectData["bS_Audio"] != null &&
                 collectData["bS_Audio"].isNotEmpty) {
+              // 如果从推广技巧过来并且有视频，开启保存按钮
+              haveSave = needSave;
               String bS_Audio = (collectData["bS_Audio"] ?? "");
-
               String vUrl = bS_Audio.contains("http")
                   ? bS_Audio
                   : AppDefault().imageUrl + bS_Audio;
@@ -163,8 +172,122 @@ class BusinessSchoolDetailController extends GetxController {
     }
   }
 
-  bool videoTool = false;
+  final _saveBtnEnable = true.obs;
+  bool get saveBtnEnable => _saveBtnEnable.value;
+  set saveBtnEnable(v) => _saveBtnEnable.value = v;
 
+  saveVideo() {
+    loadDownloadVideo();
+  }
+
+  showDownloadSucc() {
+    showGeneralDialog(
+      context: Global.navigatorKey.currentContext!,
+      barrierLabel: "",
+      barrierDismissible: true,
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return UnconstrainedBox(
+          child: Material(
+              color: Colors.transparent,
+              child: Center(
+                child: Container(
+                  width: 270.w,
+                  height: 330.w,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4.w)),
+                  child: Column(
+                    children: [
+                      ClipPath(
+                        clipper: ModelClippper(arc: 25.w),
+                        child: Container(
+                          width: 270.w,
+                          height: 98.w + 25.w / 2,
+                          color: AppColor.theme.withOpacity(0.7),
+                          child: Column(
+                            children: [
+                              ghb(23),
+                              getSimpleText("下载成功！", 18, Colors.white,
+                                  isBold: true),
+                              ghb(11),
+                              getSimpleText("视频已保存，可在“手机相册”中查看", 12,
+                                  Colors.white.withOpacity(0.5))
+                            ],
+                          ),
+                        ),
+                      ),
+                      ghb(19),
+                      Image.asset(
+                        assetsName("home/fodderlib/bg_download_succ"),
+                        height: 125.w,
+                        fit: BoxFit.fitHeight,
+                      ),
+                      ghb(21),
+                      getSubmitBtn("知道了", () {
+                        Get.back();
+                      },
+                          height: 40,
+                          width: 240,
+                          color: AppColor.theme,
+                          fontSize: 15)
+                    ],
+                  ),
+                ),
+              )),
+        );
+      },
+    );
+  }
+
+  loadDownloadVideo() {
+    saveBtnEnable = false;
+    downVideo(
+      (data, suffix) {
+        if (data != null) {
+          saveImageToAlbum(
+            data,
+            showToast: false,
+            isVideo: true,
+            suffix: suffix,
+            resultCallback: (result) {
+              if (result != null && result) {
+                showDownloadSucc();
+              }
+            },
+          );
+        } else {
+          ShowToast.normal("保存失败");
+        }
+        saveBtnEnable = true;
+      },
+    );
+  }
+
+  downVideo(Function(Uint8List? data, String suffix) result) async {
+    // Directory tempDir = await getTemporaryDirectory();
+    try {
+      di.Response res = await Http().dio.get(
+          AppDefault().imageUrl + (collectData["bS_Audio"] ?? ""),
+          // "https://img10.360buyimg.com/seckillcms/s500x500_jfs/t1/208940/25/29416/121995/63f2ef87F7b3b0d34/c700abc587a6b0b5.jpg",
+          options: di.Options(responseType: di.ResponseType.bytes));
+
+      String mySuffix = "";
+      res.headers.forEach((name, values) {
+        if (name == 'content-type') {
+          mySuffix = MediaType.parse(values[0]).subtype;
+        }
+      });
+      if (res.statusCode == 200) {
+        result(res.data, mySuffix);
+      } else {
+        result(null, "");
+      }
+    } on di.DioError catch (e) {
+      result(null, "");
+    }
+  }
+
+  bool videoTool = false;
   showVideoTools() {
     videoTool = true;
     update([videoBuildId]);
@@ -201,9 +324,15 @@ class BusinessSchoolDetailController extends GetxController {
 
   int type = 0;
   Map infoData = {};
+  bool needSave = false;
+  final _haveSave = false.obs;
+  bool get haveSave => _haveSave.value;
+  set haveSave(v) => _haveSave.value = v;
 
   @override
   void onInit() {
+    // 是否需要保存
+    needSave = kIsWeb ? false : (datas ?? {})["needSave"] ?? false;
     type = (datas ?? {})["type"] ?? 0;
     infoData = (datas ?? {})["data"] ?? {};
     super.onInit();
@@ -242,10 +371,29 @@ class BusinessSchoolDetail extends GetView<BusinessSchoolDetailController> {
     controller.dataInit(id, fromCollect);
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: getDefaultAppBar(
-        context,
-        "详情",
-      ),
+      appBar: getDefaultAppBar(context, "详情", action: [
+        GetX<BusinessSchoolDetailController>(
+          builder: (_) {
+            return !controller.haveSave
+                ? gwb(0)
+                : CustomButton(
+                    onPressed: () {
+                      controller.saveVideo();
+                    },
+                    child: SizedBox(
+                        width: 90.w,
+                        height: kToolbarHeight,
+                        child: Center(
+                            child: getSimpleText(
+                                "保存到本地",
+                                14,
+                                controller.saveBtnEnable
+                                    ? AppColor.textBlack
+                                    : AppColor.textGrey5))),
+                  );
+          },
+        )
+      ]),
       body: GetBuilder<BusinessSchoolDetailController>(
         init: controller,
         initState: (_) {},
