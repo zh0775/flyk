@@ -2,7 +2,8 @@ import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/main.dart';
 import 'package:cxhighversion2/mine/mine_account_manage.dart';
 import 'package:cxhighversion2/mine/mine_address_manager.dart';
-import 'package:cxhighversion2/mine/mine_setting_aboutme.dart';
+import 'package:cxhighversion2/mine/mine_certificate_authorization.dart';
+import 'package:cxhighversion2/mine/mine_protocol_page.dart';
 import 'package:cxhighversion2/mine/myWallet/receipt_setting.dart';
 import 'package:cxhighversion2/mine/personal_information.dart';
 import 'package:cxhighversion2/service/urls.dart';
@@ -27,11 +28,43 @@ class MineSettingListController extends GetxController {
   get notifierOpen => _notifierOpen.value;
 
   Map homeData = {};
-  bool isAuth = false;
 
   final _isCanCancel = false.obs;
   get isCanCancel => _isCanCancel.value;
   set isCanCancel(v) => _isCanCancel.value = v;
+
+  final _userAgreement = Rx<Map>({});
+  Map get userAgreement => _userAgreement.value;
+  set userAgreement(v) => _userAgreement.value = v;
+
+  final _privacyAgreement = Rx<Map>({});
+  Map get privacyAgreement => _privacyAgreement.value;
+  set privacyAgreement(v) => _privacyAgreement.value = v;
+  loadAgreement() {
+    simpleRequest(
+      url: Urls.agreementListByID(1),
+      params: {},
+      success: (success, json) {
+        if (success) {
+          userAgreement = json["data"] ?? {};
+        }
+      },
+      after: () {},
+    );
+  }
+
+  loadPrivacy() {
+    simpleRequest(
+      url: Urls.agreementListByID(5),
+      params: {},
+      success: (success, json) {
+        if (success) {
+          privacyAgreement = json["data"] ?? {};
+        }
+      },
+      after: () {},
+    );
+  }
 
   cancelAction() {
     showAlert(
@@ -65,7 +98,19 @@ class MineSettingListController extends GetxController {
   }
 
   @override
+  void onReady() {
+    loadAgreement();
+    loadPrivacy();
+    super.onReady();
+  }
+
+  String aboutMeInfoContent = "";
+  @override
   void onInit() {
+    aboutMeInfoContent =
+        ((AppDefault().publicHomeData["webSiteInfo"] ?? {})["app"] ??
+                {})["apP_Introduction"] ??
+            "";
     isCanCancel = homeData["isCanCancel"] ?? false;
     loadData();
     bus.on(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
@@ -78,7 +123,7 @@ class MineSettingListController extends GetxController {
 
   loadData() {
     homeData = AppDefault().homeData;
-    isAuth = (homeData["authentication"] ?? {})["isCertified"] ?? false;
+    // isAuth = (homeData["authentication"] ?? {})["isCertified"] ?? false;
     update();
   }
 
@@ -103,9 +148,9 @@ class MineSettingList extends GetView<MineSettingListController> {
               GetBuilder<MineSettingListController>(
                 builder: (_) {
                   return cell(
-                    "个人中心",
+                    "编辑资料",
                     0,
-                    t2: "${controller.isAuth ? "已" : "未"}认证",
+                    t2: "修改",
                     onPressed: () {
                       push(const PersonalInformation(), context,
                           binding: PersonalInformationBinding());
@@ -113,17 +158,16 @@ class MineSettingList extends GetView<MineSettingListController> {
                   );
                 },
               ),
-
               ghb(15),
               cell(
-                "安全中心",
+                "账户安全",
                 0,
                 onPressed: () {
                   push(const MineChangePwdList(), context);
                 },
               ),
               cell(
-                "收款设置",
+                "更换手机号",
                 0,
                 onPressed: () {
                   push(const ReceiptSetting(), context,
@@ -138,15 +182,67 @@ class MineSettingList extends GetView<MineSettingListController> {
                       binding: MineAddressManagerBinding());
                 },
               ),
-
               ghb(15),
+              cell(
+                "相关协议",
+                0,
+                onPressed: () {
+                  if (controller.userAgreement.isEmpty) {
+                    ShowToast.normal("正在获取数据，请稍后...");
+                    return;
+                  }
+                  push(
+                      OtherPolicyPage(
+                          userRegistPolicy:
+                              controller.userAgreement["content"] ?? "",
+                          userServicePolicy:
+                              controller.userAgreement["content"] ?? ""),
+                      context);
+                },
+              ),
+              cell(
+                "授权证书",
+                0,
+                onPressed: () {
+                  push(const MineCertificateAuthorization(), context,
+                      binding: MineCertificateAuthorizationBinding());
+                },
+              ),
+              cell(
+                "隐私政策",
+                0,
+                onPressed: () {
+                  if (controller.privacyAgreement.isEmpty) {
+                    ShowToast.normal("正在获取数据，请稍后...");
+                    return;
+                  }
+                  push(
+                      MineProtocolPage(
+                        title: "隐私政策",
+                        src: controller.privacyAgreement["content"] ?? "",
+                      ),
+                      context);
+                },
+              ),
+              ghb(15),
+              cell(
+                "关于我们",
+                0,
+                onPressed: () {
+                  push(
+                      MineProtocolPage(
+                        title: "关于我们",
+                        src: controller.aboutMeInfoContent,
+                      ),
+                      context);
+                },
+              ),
               cell(
                 "版本更新",
                 0,
-                t2: AppDefault().version,
+                t2: "V ${AppDefault().version}.${AppDefault().buildNumber}",
                 onPressed: () {},
               ),
-
               ghb(15),
               cell(
                 "安全退出",
@@ -154,7 +250,12 @@ class MineSettingList extends GetView<MineSettingListController> {
                 onPressed: () {
                   showAlert(
                     context,
-                    "确定要退出吗？",
+                    "您确定要退出当前账户吗",
+                    title: "退出登录",
+                    cancelText: "取消",
+                    confirmBtnColor: Colors.white,
+                    confirmStyle:
+                        TextStyle(fontSize: 16.sp, color: AppColor.theme),
                     confirmOnPressed: () {
                       setUserDataFormat(false, {}, {}, {})
                           .then((value) => popToLogin());
@@ -162,97 +263,6 @@ class MineSettingList extends GetView<MineSettingListController> {
                   );
                 },
               ),
-
-              // ghb(15),
-
-              // cell(
-              //   "账号管理",
-              //   0,
-              //   onPressed: () {
-              //     push(
-              //       const MineAccountManage(),
-              //       context,
-              //       binding: MineAccountManageBinding(),
-              //     );
-              //   },
-              // ),
-
-              // cell(
-              //   "地址管理",
-              //   0,
-              //   onPressed: () {
-              //     Get.to(const MineAddressManager(),
-              //         binding: MineAddressManagerBinding());
-              //   },
-              // ),
-
-              // cell(
-              //   "关于我们",
-              //   0,
-              //   onPressed: () {
-              //     push(const MineSettingAboutMe(), context,
-              //         binding: MineSettingAboutMeBinding());
-              //   },
-              // ),
-              // cell(
-              //   "设置支付密码",
-              //   0,
-              //   onPressed: () {
-              //     push(
-              //         const MineVerifyIdentity(
-              //           type: MineVerifyIdentityType.setPayPassword,
-              //         ),
-              //         null,
-              //         binding: MineVerifyIdentityBinding());
-              //   },
-              // ),
-              // cell(
-              //   "修改登陆密码",
-              //   0,
-              //   onPressed: () {
-              //     push(
-              //         const MineVerifyIdentity(
-              //           type: MineVerifyIdentityType.changeLoginPassword,
-              //         ),
-              //         null,
-              //         binding: MineVerifyIdentityBinding());
-              //   },
-              // ),
-              // cell(
-              //   "意见反馈",
-              //   0,
-              //   onPressed: () {
-              //     Get.to(const MineFeedback(), binding: MineFeedbackBinding());
-              //   },
-              // ),
-              // cell("当前版本", 1, onPressed: () {}, t2: "V${AppDefault().version}"),
-              // GetX<MineSettingListController>(
-              //   init: controller,
-              //   builder: (_) {
-              //     return controller.isCanCancel
-              //         ? cell("注销账号", 2, onPressed: () {
-              //             controller.cancelAction();
-              //             // showAlert(
-              //             //   context,
-              //             //   "确定要注销您的账号吗？",
-              //             //   confirmOnPressed: () {
-              //             //     controller.cancelAction();
-              //             //   },
-              //             // );
-              //           }, needLine: false)
-              //         : ghb(0);
-              //   },
-              // ),
-              // cell("退出登录", 2, onPressed: () {
-              //   showAlert(
-              //     context,
-              //     "确定要退出吗？",
-              //     confirmOnPressed: () {
-              //       setUserDataFormat(false, {}, {}, {})
-              //           .then((value) => popToLogin());
-              //     },
-              //   );
-              // }, needLine: false)
             ],
           ),
         ));
@@ -290,13 +300,15 @@ class MineSettingList extends GetView<MineSettingListController> {
             ),
             child: Center(
               child: t1 == "安全退出"
-                  ? getSimpleText("安全退出", 15, const Color(0xFFF93635))
+                  ? getSimpleText("安全退出", 16, const Color(0xFFF93635))
                   : sbhRow([
-                      centRow(
-                          [gwb(6.5), getSimpleText(t1, 15, AppColor.text2)]),
+                      centRow([
+                        gwb(6.5),
+                        getSimpleText(t1, 16, AppColor.textBlack)
+                      ]),
                       centRow([
                         t2 != null
-                            ? getSimpleText(t2, 15, AppColor.text3)
+                            ? getSimpleText(t2, 16, AppColor.textGrey5)
                             : gwb(0),
                         Image.asset(
                           assetsName("statistics/icon_arrow_right_gray"),
@@ -307,42 +319,53 @@ class MineSettingList extends GetView<MineSettingListController> {
                     ], width: 375 - 24.5 * 2, height: 55),
             ),
           ),
-        )
-
-        // centClm([
-        //   sbhRow([
-        //     getSimpleText(t1, 16, AppColor.textBlack, isBold: true),
-        //     type == 0
-        //         ? Image.asset(
-        //             assetsName("common/icon_cell_right_arrow"),
-        //             width: 20.w,
-        //             fit: BoxFit.fitWidth,
-        //           )
-        //         : type == 1
-        //             ? getSimpleText(t2 ?? "", 14, AppColor.textGrey)
-        //             : const SizedBox(),
-        //   ], height: 70, width: 345 - 19.5 * 2),
-        //   needLine ? gline(345, 0.5) : const SizedBox(),
-        // ]),
-        );
+        ));
   }
+}
 
-  showBackAlert(BuildContext context) {
-    showAlert(
-      context,
-      "1分钟“几百万”上下 确定留不住你？",
-      confirmOnPressed: () {
-        Get.until((route) {
-          if (route is GetPageRoute) {
-            if (route.binding is MainPageBinding) {
-              return true;
-            }
-            return false;
-          } else {
-            return false;
-          }
-        });
-      },
-    );
+// 相关协议
+class OtherPolicyPage extends StatelessWidget {
+  final String userServicePolicy;
+  final String userRegistPolicy;
+  const OtherPolicyPage(
+      {super.key, this.userServicePolicy = "", this.userRegistPolicy = ""});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: getDefaultAppBar(context, "相关协议"),
+        body: Column(
+          children: [
+            gline(375, 0.5),
+            ...List.generate(
+                2,
+                (index) => CustomButton(
+                      onPressed: () {
+                        push(
+                            MineProtocolPage(
+                                title: index == 0 ? "用户服务协议" : "用户注册协议",
+                                src: index == 0
+                                    ? userServicePolicy
+                                    : userRegistPolicy),
+                            context);
+                      },
+                      child: Container(
+                        width: 375.w,
+                        height: 55.w,
+                        alignment: Alignment.center,
+                        color: Colors.white,
+                        child: sbRow([
+                          getSimpleText(index == 0 ? "用户服务协议" : "用户注册协议", 16,
+                              AppColor.textBlack),
+                          Image.asset(
+                            assetsName("statistics/icon_arrow_right_gray"),
+                            width: 18.w,
+                            fit: BoxFit.fitWidth,
+                          )
+                        ], width: 375 - 24 * 2),
+                      ),
+                    ))
+          ],
+        ));
   }
 }

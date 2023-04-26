@@ -31,7 +31,7 @@ class MyWalletDrawDetailController extends GetxController {
   @override
   void onInit() {
     drawData = datas["drawData"] ?? {};
-    img = AppDefault().getAccountImg(drawData["account"]);
+    img = AppDefault().getAccountImg(drawData["account"] ?? "");
     accountName =
         drawData["bankName"] == null ? "支付宝账户" : "银行账户-${drawData["bankName"]}";
     currentAccound = drawData["bankName"] != null

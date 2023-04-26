@@ -176,13 +176,6 @@ class MachineTransferMachineListController extends GetxController {
     update();
   }
 
-  String seqNumFormat(String no) {
-    String replacedStr = no.replaceAll(RegExp('[a-zA-Z]'), '');
-    return replacedStr.length <= 5
-        ? replacedStr
-        : replacedStr.substring(replacedStr.length - 5);
-  }
-
   getMachineList({
     bool isLoad = false,
     int? dataSize,
@@ -206,7 +199,7 @@ class MachineTransferMachineListController extends GetxController {
     };
     if (topIdx == 0) {
       if (normalSearchTextCtrl.text.isNotEmpty && searchButtonIdx == 0) {
-        params["terminalNo"] = normalSearchTextCtrl.text;
+        params["terminalNo"] = seqNumFormat(normalSearchTextCtrl.text);
       }
       if (startSearchTextCtrl.text.isNotEmpty && searchButtonIdx == 1) {
         params["terminal_Start"] = seqNumFormat(startSearchTextCtrl.text);
@@ -215,7 +208,7 @@ class MachineTransferMachineListController extends GetxController {
         params["terminal_End"] = seqNumFormat(endSearchTextCtrl.text);
       }
     } else {
-      params["terminalNo"] = quickSearchTextCtrl.text;
+      params["terminalNo"] = seqNumFormat(quickSearchTextCtrl.text);
     }
 
     simpleRequest(

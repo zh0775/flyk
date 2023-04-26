@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import 'identityAuthentication/identity_authentication_check.dart';
 import 'identityAuthentication/identity_authentication_upload.dart';
@@ -118,6 +119,7 @@ class PersonalInformationController extends GetxController {
 
   String rzText = "";
   bool isAuth = false;
+  Map authentication = {};
 
   getInfo() {
     AppDefault appDefault = AppDefault();
@@ -129,7 +131,7 @@ class PersonalInformationController extends GetxController {
     imageUrl = appDefault.imageUrl;
     homeData = appDefault.homeData;
     publicHomeData = appDefault.publicHomeData;
-    Map authentication = homeData["authentication"] ?? {};
+    authentication = homeData["authentication"] ?? {};
     isAuth = authentication["isCertified"] ?? false;
 
     Map drawInfo = publicHomeData["drawInfo"] ?? {};
@@ -220,7 +222,7 @@ class PersonalInformation extends GetView<PersonalInformationController> {
         }
       },
       child: Scaffold(
-        appBar: getDefaultAppBar(context, "个人中心", color: Colors.white),
+        appBar: getDefaultAppBar(context, "编辑资料", color: Colors.white),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -229,29 +231,44 @@ class PersonalInformation extends GetView<PersonalInformationController> {
               ghb(15),
 
               infoSection("用户昵称"),
-              GetBuilder<PersonalInformationController>(
-                builder: (_) {
-                  return infoSection("提现认证", t2: controller.rzText);
-                },
-              ),
+              // GetBuilder<PersonalInformationController>(
+              //   builder: (_) {
+              //     return infoSection("提现认证", t2: controller.rzText);
+              //   },
+              // ),
               infoSection("手机号",
                   t2: hidePhoneNum(controller.homeData["u_Mobile"] ?? "")),
               infoSection("ID号", t2: controller.homeData["u_Number"] ?? ""),
+              infoSection("注册时间",
+                  t2: controller.homeData["u_Pass_Date"] != null &&
+                          controller.homeData["u_Pass_Date"].isNotEmpty
+                      ? DateFormat("yyyy-MM-dd").format(
+                          DateFormat("yyyy/MM/DD HH:ss:ss")
+                              .parse(controller.homeData["u_Pass_Date"]))
+                      : ""),
 
-              ghb(15),
-              infoSection("身份等级", t2: controller.homeData["uLevel"] ?? ""),
-              infoSection("当前状态",
-                  t2Widget: centRow([
-                    Container(
-                      width: 7.5.w,
-                      height: 7.5.w,
-                      decoration: BoxDecoration(
-                          color: const Color(0xFF3AD3D2),
-                          borderRadius: BorderRadius.circular(7.5.w / 2)),
-                    ),
-                    gwb(5),
-                    getSimpleText("正常", 15, AppColor.text3)
-                  ])),
+              GetBuilder<PersonalInformationController>(builder: (_) {
+                return controller.isAuth
+                    ? centClm([
+                        ghb(15),
+                        Container(
+                          width: 375.w,
+                          height: 55.w,
+                          color: Colors.white,
+                          alignment: Alignment.center,
+                          child: sbRow([
+                            getRichText("实名信息", "（已认证）", 16, AppColor.textBlack,
+                                14, AppColor.textGrey,
+                                isBold: true)
+                          ], width: 375 - 31 * 2),
+                        ),
+                        infoSection("真实姓名",
+                            t2: controller.authentication["u_Name"] ?? ""),
+                        infoSection("身份证号",
+                            t2: controller.authentication["u_IdCard"] ?? ""),
+                      ])
+                    : ghb(0);
+              }),
               // Column(
               //   children: [
               //     // userHeadCell(context),
@@ -299,7 +316,7 @@ class PersonalInformation extends GetView<PersonalInformationController> {
 
               // section("实名信息", "真实姓名", "身份证号", "realname", "person_code"),
               // section("支付宝信息", "真实姓名", "支付宝账号", "alipay_name", "alipay_account"),
-              ghb(50),
+              // ghb(50),
             ],
           ),
         ),
@@ -494,7 +511,7 @@ class PersonalInformation extends GetView<PersonalInformationController> {
           color: Colors.white,
           child: Center(
             child: sbhRow([
-              getSimpleText(t1, 15, AppColor.text),
+              getSimpleText(t1, 16, AppColor.textBlack),
               centRow([
                 t1 != "修改头像"
                     ? gwb(0)
@@ -532,7 +549,7 @@ class PersonalInformation extends GetView<PersonalInformationController> {
                             copyClipboard(t2);
                           }
                         },
-                        child: getSimpleText(t2, 15, AppColor.text3),
+                        child: getSimpleText(t2, 16, AppColor.textGrey5),
                       )
                     : gwb(0),
                 t1 == "用户昵称"
@@ -540,8 +557,8 @@ class PersonalInformation extends GetView<PersonalInformationController> {
                         builder: (_) {
                           return getSimpleText(
                               controller.homeData["nickName"] ?? "请设置昵称",
-                              15,
-                              AppColor.text3);
+                              16,
+                              AppColor.textGrey5);
                         },
                       )
                     : gwb(0),
@@ -557,7 +574,7 @@ class PersonalInformation extends GetView<PersonalInformationController> {
                     : gwb(0),
                 t2 == null ? t2Widget ?? ghb(0) : gwb(0),
               ])
-            ], width: 375 - 30 * 2, height: 55),
+            ], width: 375 - 30.5 * 2, height: 55),
           ),
         )
 

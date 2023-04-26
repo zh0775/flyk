@@ -252,16 +252,14 @@ class StatisticsMachineManageController extends GetxController {
           ["id"],
     };
     if (start != null && start.isNotEmpty) {
-      params["terminal_Start"] = start;
+      params["terminal_Start"] = seqNumFormat(start);
     }
     if (end != null && end.isNotEmpty) {
-      params["terminal_End"] = end;
+      params["terminal_End"] = seqNumFormat(end);
     }
-
     if (searchInputCtrl.text.isNotEmpty) {
-      params["terminalNo"] = searchInputCtrl.text;
+      params["terminalNo"] = seqNumFormat(searchInputCtrl.text);
     }
-
     simpleRequest(
       url: Urls.userPersonTerminalHighList,
       params: params,
@@ -274,11 +272,9 @@ class StatisticsMachineManageController extends GetxController {
           //   Map e = dList[index];
           //   return {...e, "open": false};
           // });
-
           if (dataList.isEmpty && !isLoad && dList.isNotEmpty) {
             dList[0]["open"] = true;
           }
-
           dataList = isLoad ? [...dataList, ...dList] : dList;
           isLoad ? pullCtrl.loadComplete() : pullCtrl.refreshCompleted();
           update();
@@ -323,7 +319,6 @@ class StatisticsMachineManageController extends GetxController {
     }
     // getFilterHeight();
     loadDatas();
-
     super.onInit();
   }
 

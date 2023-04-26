@@ -1,16 +1,17 @@
-import 'package:cxhighversion2/app_binding.dart';
-import 'package:cxhighversion2/component/app_success_page.dart';
 import 'package:cxhighversion2/component/bottom_paypassword.dart';
-import 'package:cxhighversion2/component/custom_html_view.dart';
+import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/home/home.dart';
-import 'package:cxhighversion2/main.dart';
-import 'package:cxhighversion2/mine/myWallet/my_wallet.dart';
+import 'package:cxhighversion2/mine/myWallet/my_wallet_convert_history.dart';
+import 'package:cxhighversion2/mine/myWallet/my_wallet_draw_history.dart';
 import 'package:cxhighversion2/service/urls.dart';
+import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
+import 'package:cxhighversion2/util/notify_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 
 class MyWalletConvertBinding implements Bindings {
@@ -27,7 +28,7 @@ class MyWalletConvertController extends GetxController {
   set submitBtnEnable(v) => _submitBtnEnable.value = v;
 
   bool isFirst = true;
-  Map walletData = {};
+
   late BottomPayPassword bottomPayPassword;
 
   // loadData() {
@@ -58,31 +59,33 @@ class MyWalletConvertController extends GetxController {
       success: (success, json) {
         if (success) {
           Get.find<HomeController>().refreshHomeData();
-          Get.to(
-              AppSuccessPage(
-                title: "转换成功",
-                subContentText: "恭喜转换红包成功",
-                buttons: [
-                  getSubmitBtn("返回我的钱包", () {
-                    Get.until((route) {
-                      if (route is GetPageRoute) {
-                        if (fromEarn) {
-                          return (route.binding is MainPageBinding)
-                              ? true
-                              : false;
-                        } else {
-                          return (route.binding is MyWalletBinding)
-                              ? true
-                              : false;
-                        }
-                      } else {
-                        return false;
-                      }
-                    });
-                  })
-                ],
-              ),
-              binding: AppSuccessPageBinding());
+          showAlert(Global.navigatorKey.currentContext!, "兑换金额已到账，可在“我的钱包”中查看",
+              title: "兑换成功", singleButton: true);
+          // Get.to(
+          //     AppSuccessPage(
+          //       title: "转换成功",
+          //       subContentText: "恭喜转换红包成功",
+          //       buttons: [
+          //         getSubmitBtn("返回我的钱包", () {
+          //           Get.until((route) {
+          //             if (route is GetPageRoute) {
+          //               if (fromEarn) {
+          //                 return (route.binding is MainPageBinding)
+          //                     ? true
+          //                     : false;
+          //               } else {
+          //                 return (route.binding is MyWalletBinding)
+          //                     ? true
+          //                     : false;
+          //               }
+          //             } else {
+          //               return false;
+          //             }
+          //           });
+          //         })
+          //       ],
+          //     ),
+          //     binding: AppSuccessPageBinding());
         } else {}
       },
       after: () {
@@ -92,6 +95,10 @@ class MyWalletConvertController extends GetxController {
   }
 
   convertAction() {
+    if (inputCtrl.text.isEmpty) {
+      ShowToast.normal("请输入要转换的${walletData["name"] ?? ""}数量");
+      return;
+    }
     if (double.tryParse(inputCtrl.text) == null) {
       ShowToast.normal("请输入正确的金额");
       return;
@@ -113,12 +120,31 @@ class MyWalletConvertController extends GetxController {
     bottomPayPassword.show();
   }
 
-  bool fromEarn = false;
-  dataInit(Map wallet, bool from) {
+  int walletNo = 4;
+  bool isRedPack = false;
+  final _walletData = Rx<Map>({});
+  Map get walletData => _walletData.value;
+  set walletData(v) => _walletData.value = v;
+  dataInit(int wNo, bool redPack) {
     if (!isFirst) return;
     isFirst = false;
-    walletData = wallet;
-    fromEarn = from;
+    walletNo = wNo;
+    isRedPack = redPack;
+    dataFormat();
+    bus.on(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
+  }
+
+  homeDataNotify(arg) {
+    dataFormat();
+  }
+
+  dataFormat() {
+    for (var e in (AppDefault().homeData["u_Account"] ?? [])) {
+      if ((e["a_No"] ?? 0) == walletNo) {
+        walletData = e;
+        break;
+      }
+    }
   }
 
   @override
@@ -133,38 +159,64 @@ class MyWalletConvertController extends GetxController {
   }
 
   @override
-  void dispose() {
+  void onClose() {
+    bus.off(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
     bottomPayPassword.dispos();
     inputCtrl.dispose();
-    super.dispose();
+    super.onClose();
   }
 }
 
 class MyWalletConvert extends GetView<MyWalletConvertController> {
-  final Map walletData;
-  final bool fromEarn;
-  const MyWalletConvert(
-      {super.key, this.walletData = const {}, this.fromEarn = false});
+  final int walletNo;
+  final bool isRedPack;
+  const MyWalletConvert({super.key, this.walletNo = 4, this.isRedPack = true});
 
   @override
   Widget build(BuildContext context) {
-    controller.dataInit(walletData, fromEarn);
+    controller.dataInit(walletNo, isRedPack);
     return GestureDetector(
       onTap: () => takeBackKeyboard(context),
       child: Scaffold(
-        appBar: getDefaultAppBar(context, "转换红包"),
+        appBar:
+            getDefaultAppBar(context, isRedPack ? "兑换成红包" : "兑换奖励金", action: [
+          CustomButton(
+            onPressed: () {
+              push(const MyWalletConvertHistory(), context,
+                  binding: MyWalletConvertHistoryBinding(),
+                  arguments: {"isRedPack": isRedPack});
+            },
+            child: SizedBox(
+              width: 80.w,
+              height: kToolbarHeight,
+              child: Center(
+                child: getSimpleText("兑换记录", 15, AppColor.textBlack),
+              ),
+            ),
+          )
+        ]),
         body: getInputBodyNoBtn(
           context,
-          buttonHeight: 80.w + paddingSizeBottom(context),
+          buttonHeight: 60.w + paddingSizeBottom(context),
           submitBtn: GetX<MyWalletConvertController>(
             builder: (_) {
-              return getBottomBlueSubmitBtn(context, "确认兑换", onPressed: () {
-                if (controller.inputCtrl.text.isEmpty) {
-                  ShowToast.normal("请输入要转换的${walletData["name"] ?? ""}数量");
-                  return;
-                }
-                controller.convertAction();
-              }, enalble: controller.submitBtnEnable);
+              return Container(
+                width: 375.w,
+                height: 60.w + paddingSizeBottom(context),
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    ghb(7.5),
+                    getSubmitBtn("确认兑换", () {
+                      controller.convertAction();
+                    },
+                        enable: controller.submitBtnEnable,
+                        height: 45,
+                        fontSize: 16,
+                        color: AppColor.theme)
+                  ],
+                ),
+              );
             },
           ),
           build: (boxHeight, context) {
@@ -174,72 +226,85 @@ class MyWalletConvert extends GetView<MyWalletConvertController> {
                   ghb(15),
                   Container(
                     width: 345.w,
+                    height: 129.w,
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(5.w)),
+                        borderRadius: BorderRadius.circular(
+                          8.w,
+                        ),
+                        gradient: LinearGradient(
+                            colors: [
+                              isRedPack
+                                  ? const Color(0xFFFF8B6A)
+                                  : const Color(0xFFF7C94F),
+                              isRedPack
+                                  ? const Color(0xFFFD5222)
+                                  : const Color(0xFFFDB82D)
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight)),
                     child: Column(
                       children: [
-                        ghb(
-                          20,
-                        ),
+                        ghb(28),
                         sbRow([
-                          getSimpleText(
-                              "可用${walletData["name"] ?? ""}：${integralFormat(walletData["amout"] ?? 0)}",
-                              14,
-                              AppColor.textBlack),
-                        ], width: 345 - 20 * 2),
-                        ghb(40),
-                        sbRow([
-                          getSimpleText("输入${walletData["name"] ?? ""}数额", 14,
-                              AppColor.textGrey),
-                        ], width: 345 - 20 * 2),
-                        ghb(20),
-                        sbRow([
-                          // getSimpleText("${walletData["name"] ?? ""}", 18,
-                          //     AppColor.textBlack,
-                          //     isBold: true),
-                          Image.asset(
-                            assetsName("home/icon_coin"),
-                            width: 30.w,
-                            height: 30.w,
-                            fit: BoxFit.fill,
-                          ),
-                          CustomInput(
-                            textEditCtrl: controller.inputCtrl,
-                            width: 305.w - 30.w - 15.w,
-                            heigth: 50.w,
-                            style: TextStyle(
-                                fontSize: 18.sp, color: AppColor.textBlack),
-                            placeholderStyle: TextStyle(
-                                fontSize: 18.sp, color: AppColor.textGrey),
-                            placeholder: "请输入",
-                            keyboardType: TextInputType.number,
-                          ),
-                        ], width: 345 - 20 * 2),
-                        ghb(20),
+                          centClm([
+                            getSimpleText("可用积分", 14, Colors.white),
+                            ghb(2),
+                            GetX<MyWalletConvertController>(builder: (_) {
+                              return getSimpleText(
+                                  priceFormat(
+                                      controller.walletData["amout"] ?? 0,
+                                      savePoint: 0),
+                                  30,
+                                  Colors.white,
+                                  isBold: true);
+                            })
+                          ], crossAxisAlignment: CrossAxisAlignment.start)
+                        ], width: 345 - 22 * 2)
                       ],
                     ),
                   ),
+                  Container(
+                    margin: EdgeInsets.only(top: 15.w),
+                    width: 345.w,
+                    height: 60.w,
+                    alignment: Alignment.center,
+                    decoration: getDefaultWhiteDec(radius: 4),
+                    child: sbRow([
+                      getSimpleText("兑换积分", 15, AppColor.textBlack),
+                      Container(
+                        width: 120.w,
+                        height: 45.w,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            color: const Color(0xFFFAFAFA),
+                            borderRadius: BorderRadius.circular(8.w)),
+                        child: CustomInput(
+                          width: 90.w,
+                          heigth: 45.w,
+                          textEditCtrl: controller.inputCtrl,
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                              fontSize: 15.sp, color: AppColor.textBlack),
+                          placeholderStyle: TextStyle(
+                              fontSize: 15.sp, color: AppColor.assisText),
+                          placeholder: "请输入",
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                    ], width: 315),
+                  ),
                   ghb(20),
-                  sbRow([
-                    getSimpleText("兑换说明", 18, AppColor.textBlack, isBold: true)
-                  ], width: 345),
+                  sbRow([getSimpleText("兑换说明", 12, AppColor.textGrey5)],
+                      width: 345),
                   ghb(10),
                   SizedBox(
                     width: 345.w,
-                    child: CustomHtmlView(
-                      src: AppDefault().homeData["investConfigDesc"] ?? "",
-                      // loadingWidget: Center(
-                      //     child:
-                      //         getSimpleText("页面正在加载中", 15, AppColor.textGrey)),
+                    child: HtmlWidget(
+                      AppDefault().homeData["investConfigDesc"] ?? "",
+                      textStyle:
+                          TextStyle(fontSize: 12.sp, color: AppColor.textGrey5),
                     ),
                   ),
-                  // getWidthText(
-                  //     "积分兑换说明：\n1.积分兑换红包为单次500积分的整数倍。\n1积分=1元红包。领取后到账余额钱包。",
-                  //     14,
-                  //     AppColor.textBlack,
-                  //     345,
-                  //     100),
                 ],
               ),
             );

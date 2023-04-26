@@ -700,4 +700,6 @@ class Urls {
   // 延长收货
   static String orderProlongConfirm(dynamic id) =>
       "/api/Order/User_OrderProlongConfirm/$id";
+  // 普通订单-生成订单
+  static const userGenerateOrders = "/api/Product/User_GenerateOrders";
 }

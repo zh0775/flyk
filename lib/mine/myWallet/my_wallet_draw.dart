@@ -3,6 +3,7 @@ import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/home/home.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet.dart';
+import 'package:cxhighversion2/mine/myWallet/my_wallet_draw_history.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_draw_result.dart';
 import 'package:cxhighversion2/mine/myWallet/receipt_setting.dart';
 import 'package:cxhighversion2/service/urls.dart';
@@ -323,7 +324,22 @@ class MyWalletDraw extends GetView<MyWalletDrawController> {
     return GestureDetector(
       onTap: () => takeBackKeyboard(context),
       child: Scaffold(
-        appBar: getDefaultAppBar(context, "提现"),
+        appBar: getDefaultAppBar(context, "提现", action: [
+          CustomButton(
+            onPressed: () {
+              push(const MyWalletDrawHistory(), null,
+                  binding: MyWalletDrawHistoryBinding(),
+                  arguments: {"a_No": walletData["a_No"] ?? 0});
+            },
+            child: SizedBox(
+              width: 80.w,
+              height: kToolbarHeight,
+              child: Center(
+                child: getSimpleText("提现记录", 14, AppColor.textBlack),
+              ),
+            ),
+          )
+        ]),
         body: getInputBodyNoBtn(context,
             contentColor: AppColor.pageBackgroundColor,
             buttonHeight: 0, build: (boxHeight, context) {

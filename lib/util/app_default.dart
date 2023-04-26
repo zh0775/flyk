@@ -495,136 +495,243 @@ void showUpdateEvent(String url, Map d) {
                   child: Material(
                       color: Colors.transparent,
                       child: SizedBox(
-                        width: 250.w,
+                        width: 265.w,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            SizedBox(
-                              width: 250.w,
-                              height: 167.w,
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  Positioned.fill(
-                                    bottom: -1.w,
-                                    child: Image.asset(
-                                      assetsName("common/bg_newversion"),
-                                      width: 250.w,
-                                      height: 168.w,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                  Positioned(
-                                      left: 18.w,
-                                      top: 84.w,
-                                      child: getSimpleText(
-                                          "V${d["newVersionNumber"] ?? ""}",
-                                          13.2,
-                                          Colors.white,
-                                          isBold: true))
-                                ],
-                              ),
-                            ),
-                            Container(
-                              width: 250.w,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.vertical(
-                                      bottom: Radius.circular(5.w))),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  ghb(30),
-                                  getSimpleText("正在为您升级，请耐心等待...", 12,
-                                      AppColor.textBlack),
-                                  ghb(18),
-                                  SizedBox(
-                                    width: 250.w,
-                                    child: Row(
-                                      children: [
-                                        SizedBox(
-                                          width:
-                                              ((250.w - percentMaxWidth) / 2 -
-                                                      20.w -
-                                                      1.w) +
-                                                  percentWidth,
-                                        ),
-                                        SizedBox(
-                                          width: 40.w,
-                                          height: 25.w,
-                                          child: Stack(
-                                            children: [
-                                              Positioned.fill(
-                                                child: Image.asset(
-                                                  assetsName(
-                                                      "common/icon_update_percent_pop"),
-                                                  width: 40.w,
-                                                  height: 25.w,
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              ),
-                                              Positioned.fill(
-                                                child: Align(
-                                                  alignment:
-                                                      Alignment.topCenter,
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: 3.5.w),
-                                                    child: getSimpleText(
-                                                        "${(downloadPercent * 100).floor()}%",
-                                                        12,
-                                                        Colors.white),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  ghb(7),
-                                  SizedBox(
-                                      width: percentMaxWidth,
-                                      height: 6.w,
-                                      child: Stack(
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12.w),
+                              child: Container(
+                                width: 265.w,
+                                // height: 370.w,
+                                decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                        fit: BoxFit.fitWidth,
+                                        alignment: Alignment.topCenter,
+                                        image: AssetImage(assetsName(
+                                            "common/bg_newversion")))),
+                                child: Column(
+                                  children: [
+                                    ghb(24),
+                                    sbRow([
+                                      Container(
+                                        height: 20.w,
+                                        alignment: Alignment.center,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 10.w),
+                                        decoration: BoxDecoration(
+                                            color: const Color(0xFFFD4536),
+                                            borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(8.w),
+                                                bottomRight:
+                                                    Radius.circular(8.w))),
+                                        child: getSimpleText(
+                                            "V${d["newVersionNumber"] ?? ""}",
+                                            13,
+                                            Colors.white,
+                                            isBold: true),
+                                      ),
+                                    ], width: 265),
+                                    ghb(150),
+                                    Container(
+                                      width: 265.w,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.vertical(
+                                              bottom: Radius.circular(12.w))),
+                                      child: Column(
                                         children: [
-                                          Positioned.fill(
-                                            child: Container(
+                                          getWidthText(
+                                              d["version_Content"] ?? "",
+                                              12,
+                                              AppColor.textBlack,
+                                              195,
+                                              50,
+                                              textHeight: 1.6),
+                                          ghb(40),
+                                          SizedBox(
                                               width: percentMaxWidth,
-                                              height: 6.w,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(3.w),
-                                                color: const Color(0xFFE0E0E0),
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                              left: 0,
-                                              top: 0,
-                                              height: 6.w,
-                                              width: percentMaxWidth,
-                                              child: Align(
-                                                alignment: Alignment.centerLeft,
-                                                child: Container(
-                                                    width: percentWidth,
-                                                    height: 6.w,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              3.w),
-                                                      color: AppDefault()
-                                                              .getThemeColor() ??
-                                                          AppColor.theme,
-                                                    )),
-                                              ))
+                                              height: 5.w,
+                                              child: Stack(
+                                                children: [
+                                                  Positioned.fill(
+                                                    child: Container(
+                                                      width: percentMaxWidth,
+                                                      height: 5.w,
+                                                      decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    2.5.w),
+                                                        color:
+                                                            AppColor.lineColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                      left: 0,
+                                                      top: 0,
+                                                      height: 5.w,
+                                                      width: percentMaxWidth,
+                                                      child: Align(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Container(
+                                                            width: percentWidth,
+                                                            height: 5.w,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          2.5.w),
+                                                              color: AppDefault()
+                                                                      .getThemeColor() ??
+                                                                  AppColor
+                                                                      .theme,
+                                                            )),
+                                                      ))
+                                                ],
+                                              )),
+                                          ghb(10),
+                                          getSimpleText(
+                                              "正在努力下载...${(downloadPercent * 100).floor()}%",
+                                              12,
+                                              AppColor.textGrey5),
+                                          ghb(27),
                                         ],
-                                      )),
-                                  ghb(30),
-                                ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
+                            // SizedBox(
+                            //   width: 250.w,
+                            //   height: 167.w,
+                            //   child: Stack(
+                            //     clipBehavior: Clip.none,
+                            //     children: [
+                            //       Positioned.fill(
+                            //         bottom: -1.w,
+                            //         child: Image.asset(
+                            //           assetsName("common/bg_newversion"),
+                            //           width: 250.w,
+                            //           height: 168.w,
+                            //           fit: BoxFit.fill,
+                            //         ),
+                            //       ),
+                            //       Positioned(
+                            //           left: 18.w,
+                            //           top: 84.w,
+                            //           child: getSimpleText(
+                            //               "V${d["newVersionNumber"] ?? ""}",
+                            //               13.2,
+                            //               Colors.white,
+                            //               isBold: true))
+                            //     ],
+                            //   ),
+                            // ),
+                            // Container(
+                            //   width: 250.w,
+                            //   decoration: BoxDecoration(
+                            //       color: Colors.white,
+                            //       borderRadius: BorderRadius.vertical(
+                            //           bottom: Radius.circular(5.w))),
+                            //   child: Column(
+                            //     mainAxisSize: MainAxisSize.min,
+                            //     children: [
+                            //       ghb(30),
+                            //       getSimpleText("正在为您升级，请耐心等待...", 12,
+                            //           AppColor.textBlack),
+                            //       ghb(18),
+                            //       SizedBox(
+                            //         width: 250.w,
+                            //         child: Row(
+                            //           children: [
+                            //             SizedBox(
+                            //               width:
+                            //                   ((250.w - percentMaxWidth) / 2 -
+                            //                           20.w -
+                            //                           1.w) +
+                            //                       percentWidth,
+                            //             ),
+                            //             SizedBox(
+                            //               width: 40.w,
+                            //               height: 25.w,
+                            //               child: Stack(
+                            //                 children: [
+                            //                   Positioned.fill(
+                            //                     child: Image.asset(
+                            //                       assetsName(
+                            //                           "common/icon_update_percent_pop"),
+                            //                       width: 40.w,
+                            //                       height: 25.w,
+                            //                       fit: BoxFit.fill,
+                            //                     ),
+                            //                   ),
+                            //                   Positioned.fill(
+                            //                     child: Align(
+                            //                       alignment:
+                            //                           Alignment.topCenter,
+                            //                       child: Padding(
+                            //                         padding: EdgeInsets.only(
+                            //                             top: 3.5.w),
+                            //                         child: getSimpleText(
+                            //                             "${(downloadPercent * 100).floor()}%",
+                            //                             12,
+                            //                             Colors.white),
+                            //                       ),
+                            //                     ),
+                            //                   )
+                            //                 ],
+                            //               ),
+                            //             )
+                            //           ],
+                            //         ),
+                            //       ),
+                            //       ghb(7),
+                            //       SizedBox(
+                            //           width: percentMaxWidth,
+                            //           height: 6.w,
+                            //           child: Stack(
+                            //             children: [
+                            //               Positioned.fill(
+                            //                 child: Container(
+                            //                   width: percentMaxWidth,
+                            //                   height: 6.w,
+                            //                   decoration: BoxDecoration(
+                            //                     borderRadius:
+                            //                         BorderRadius.circular(3.w),
+                            //                     color: const Color(0xFFE0E0E0),
+                            //                   ),
+                            //                 ),
+                            //               ),
+                            //               Positioned(
+                            //                   left: 0,
+                            //                   top: 0,
+                            //                   height: 6.w,
+                            //                   width: percentMaxWidth,
+                            //                   child: Align(
+                            //                     alignment: Alignment.centerLeft,
+                            //                     child: Container(
+                            //                         width: percentWidth,
+                            //                         height: 6.w,
+                            //                         decoration: BoxDecoration(
+                            //                           borderRadius:
+                            //                               BorderRadius.circular(
+                            //                                   3.w),
+                            //                           color: AppDefault()
+                            //                                   .getThemeColor() ??
+                            //                               AppColor.theme,
+                            //                         )),
+                            //                   ))
+                            //             ],
+                            //           )),
+                            //       ghb(30),
+                            //     ],
+                            //   ),
+                            // ),
                           ],
                         ),
                       )),
@@ -1259,128 +1366,222 @@ showAppUpdateAlert(Map data, {Function()? close}) {
     // if (Get.currentRoute.contains("appUpdateAlert")) {
     //   return;
     // }
+
     showGeneralDialog(
       barrierLabel: "",
       routeSettings: const RouteSettings(name: "appUpdateAlert"),
       context: Global.navigatorKey.currentContext!,
+      barrierDismissible: true,
       pageBuilder: (context, animation, secondaryAnimation) {
         return UnconstrainedBox(
           child: Material(
             color: Colors.transparent,
             child: SizedBox(
-              width: 250.w,
+              width: 265.w,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
-                    width: 250.w,
-                    height: 167.w,
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Positioned.fill(
-                          bottom: -1.w,
-                          child: Image.asset(
-                            assetsName("common/bg_newversion"),
-                            width: 250.w,
-                            height: 168.w,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        Positioned(
-                            left: 18.w,
-                            top: 84.w,
-                            child: getSimpleText(
-                                "V${d["newVersionNumber"] ?? ""}",
-                                13.2,
-                                Colors.white,
-                                isBold: true))
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 250.w,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.vertical(bottom: Radius.circular(8.w)),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ghb(14),
-                        getWidthText(d["version_Content"] ?? "", 12,
-                            AppColor.textBlack, 200, 50),
-                        ghb(20),
-                        CustomButton(
-                          onPressed: () {
-                            String urlStr = d["newVersionDownloadUrl"] ?? "";
-                            // urlStr = "https://www.baidu.com";
-                            // if (urlStr.isEmpty) {
-                            //   Navigator.pop(context);
-                            //   return;
-                            // }
-                            // String allUrl = "";
-                            // if (urlStr
-                            //     .contains(HttpConfig.baseUrl.split("//")[1])) {
-                            //   allUrl = urlStr;
-                            // } else {
-                            //   allUrl = urlStr.substring(0, 1) == "/"
-                            //       ? HttpConfig.baseUrl.substring(
-                            //               0, HttpConfig.baseUrl.length - 1) +
-                            //           urlStr
-                            //       : HttpConfig.baseUrl + urlStr;
-                            // }
-                            // updateApk(topUrl + urlStr);
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                            }
-                            showUpdateEvent(urlStr, d);
-                            // bool lanuch = await launchUrl(
-                            //     Uri.parse(topUrl + urlStr),
-                            //     mode: LaunchMode.externalApplication);
-                          },
-                          child: Container(
-                            width: 180.w,
-                            height: 30.w,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12.w),
+                    child: Container(
+                      width: 265.w,
+                      // height: 370.w,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fitWidth,
+                              alignment: Alignment.topCenter,
+                              image: AssetImage(
+                                  assetsName("common/bg_newversion")))),
+                      child: Column(
+                        children: [
+                          ghb(24),
+                          sbRow([
+                            Container(
+                              height: 20.w,
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(horizontal: 10.w),
+                              decoration: BoxDecoration(
+                                  color: const Color(0xFFFD4536),
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(8.w),
+                                      bottomRight: Radius.circular(8.w))),
+                              child: getSimpleText(
+                                  "V${d["newVersionNumber"] ?? ""}",
+                                  13,
+                                  Colors.white,
+                                  isBold: true),
+                            ),
+                          ], width: 265),
+                          ghb(150),
+                          Container(
+                            width: 265.w,
                             decoration: BoxDecoration(
-                                color: AppDefault().getThemeColor() ??
-                                    AppColor.theme,
-                                borderRadius: BorderRadius.circular(15.w)),
-                            child: Center(
-                              child: getSimpleText("立即升级", 12, Colors.white),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.vertical(
+                                    bottom: Radius.circular(12.w))),
+                            child: Column(
+                              children: [
+                                getWidthText(d["version_Content"] ?? "", 12,
+                                    AppColor.textBlack, 195, 50,
+                                    textHeight: 1.6),
+                                ghb(40),
+                                getSubmitBtn("立即体验", () {
+                                  String urlStr =
+                                      d["newVersionDownloadUrl"] ?? "";
+                                  if (context.mounted) {
+                                    Navigator.pop(context);
+                                  }
+                                  showUpdateEvent(urlStr, d);
+                                },
+                                    linearGradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFFFD573B),
+                                          Color(0xFFFF3A3A),
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter),
+                                    width: 180,
+                                    height: 45,
+                                    fontSize: 15),
+                                ghb(27),
+                              ],
                             ),
                           ),
-                        ),
-                        // !isDownload ? ghb(10) : ghb(0),
-                        !isDownload
-                            ? CustomButton(
-                                onPressed: () {
-                                  simpleRequest(
-                                    url: Urls.closeTodayUpdateVersion,
-                                    params: {
-                                      "userVersionNumber": AppDefault().version
-                                    },
-                                    success: (success, json) {},
-                                    after: () {
-                                      Navigator.pop(context);
-                                    },
-                                  );
-                                },
-                                child: SizedBox(
-                                  width: 250.w,
-                                  height: 35.w,
-                                  child: Center(
-                                    child: getSimpleText(
-                                        "暂不升级", 13, AppColor.textBlack5),
-                                  ),
-                                ),
-                              )
-                            : gwb(0),
-                        ghb(isDownload ? 23.5 : 5),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
+
+                  ghb(isDownload ? 0 : 31.5),
+                  !isDownload
+                      ? CustomButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            simpleRequest(
+                              url: Urls.closeTodayUpdateVersion,
+                              params: {
+                                "userVersionNumber": AppDefault().version
+                              },
+                              success: (success, json) {},
+                              after: () {},
+                            );
+                          },
+                          child: Image.asset(
+                              assetsName("common/btn_alert_close"),
+                              width: 30.w,
+                              height: 30.w,
+                              fit: BoxFit.fill),
+                        )
+                      : ghb(0)
+                  // SizedBox(
+                  //   width: 250.w,
+                  //   height: 167.w,
+                  //   child: Stack(
+                  //     clipBehavior: Clip.none,
+                  //     children: [
+                  //       Positioned.fill(
+                  //         bottom: -1.w,
+                  //         child: Image.asset(
+                  //           assetsName("common/bg_newversion"),
+                  //           width: 250.w,
+                  //           height: 168.w,
+                  //           fit: BoxFit.fill,
+                  //         ),
+                  //       ),
+                  //       Positioned(
+                  //           left: 18.w,
+                  //           top: 84.w,
+                  //           child: getSimpleText(
+                  //               "V${d["newVersionNumber"] ?? ""}",
+                  //               13.2,
+                  //               Colors.white,
+                  //               isBold: true))
+                  //     ],
+                  //   ),
+                  // ),
+                  // Container(
+                  //   width: 250.w,
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     borderRadius:
+                  //         BorderRadius.vertical(bottom: Radius.circular(8.w)),
+                  //   ),
+                  //   child: Column(
+                  //     mainAxisSize: MainAxisSize.min,
+                  //     children: [
+                  //       ghb(14),
+                  //       getWidthText(d["version_Content"] ?? "", 12,
+                  //           AppColor.textBlack, 200, 50),
+                  //       ghb(20),
+                  // CustomButton(
+                  //   onPressed: () {
+                  //     String urlStr = d["newVersionDownloadUrl"] ?? "";
+                  //     // urlStr = "https://www.baidu.com";
+                  //     // if (urlStr.isEmpty) {
+                  //     //   Navigator.pop(context);
+                  //     //   return;
+                  //     // }
+                  //     // String allUrl = "";
+                  //     // if (urlStr
+                  //     //     .contains(HttpConfig.baseUrl.split("//")[1])) {
+                  //     //   allUrl = urlStr;
+                  //     // } else {
+                  //     //   allUrl = urlStr.substring(0, 1) == "/"
+                  //     //       ? HttpConfig.baseUrl.substring(
+                  //     //               0, HttpConfig.baseUrl.length - 1) +
+                  //     //           urlStr
+                  //     //       : HttpConfig.baseUrl + urlStr;
+                  //     // }
+                  //     // updateApk(topUrl + urlStr);
+                  //     if (context.mounted) {
+                  //       Navigator.pop(context);
+                  //     }
+                  //     showUpdateEvent(urlStr, d);
+                  //     // bool lanuch = await launchUrl(
+                  //     //     Uri.parse(topUrl + urlStr),
+                  //     //     mode: LaunchMode.externalApplication);
+                  //   },
+                  //         child: Container(
+                  //           width: 180.w,
+                  //           height: 30.w,
+                  //           decoration: BoxDecoration(
+                  //               color: AppDefault().getThemeColor() ??
+                  //                   AppColor.theme,
+                  //               borderRadius: BorderRadius.circular(15.w)),
+                  //           child: Center(
+                  //             child: getSimpleText("立即升级", 12, Colors.white),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       // !isDownload ? ghb(10) : ghb(0),
+                  // !isDownload
+                  //     ? CustomButton(
+                  //         onPressed: () {
+                  //           simpleRequest(
+                  //             url: Urls.closeTodayUpdateVersion,
+                  //             params: {
+                  //               "userVersionNumber": AppDefault().version
+                  //             },
+                  //             success: (success, json) {},
+                  //             after: () {
+                  //               Navigator.pop(context);
+                  //             },
+                  //           );
+                  //         },
+                  //         child: SizedBox(
+                  //           width: 250.w,
+                  //           height: 35.w,
+                  //           child: Center(
+                  //             child: getSimpleText(
+                  //                 "暂不升级", 13, AppColor.textBlack5),
+                  //           ),
+                  //         ),
+                  //       )
+                  //     : gwb(0),
+                  // ghb(isDownload ? 23.5 : 5),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -1415,120 +1616,178 @@ showReminderAlert({
     barrierColor: Colors.black.withOpacity(.5),
     context: Global.navigatorKey.currentContext!,
     pageBuilder: (context, animation, secondaryAnimation) {
-      return Center(
-        child: SizedBox(
-          width: 300.w,
-          height: 360.w + (haveClose ? 56.5.w : 0),
-          child: Material(
-            color: Colors.transparent,
+      return UnconstrainedBox(
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: 285.w,
+            height: 360.w,
+            decoration: getDefaultWhiteDec(radius: 8),
             child: Column(
               children: [
+                gwb(285),
+                ghb(36.5),
+                Image.asset(assetsName("mine/authentication/bg_needauth_alert"),
+                    width: 105.w, height: 105.w, fit: BoxFit.fill),
                 SizedBox(
-                  width: 300.w,
-                  height: 360.w,
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                          child: Image.asset(
-                        assetsName("mine/authentication/bg_needauth_alert"),
-                        width: 300.w,
-                        height: 360.w,
-                        fit: BoxFit.fill,
-                      )),
-                      Positioned.fill(
-                          child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          getSimpleText(content, 25, AppColor.textBlack,
-                              isBold: true),
-                          ghb(12),
-                          getWidthText(
-                              subContent, 14, AppColor.textGrey, 237.w, 2,
-                              textAlign: TextAlign.center),
-                          ghb(15),
-                          CustomButton(
-                            onPressed: () {
-                              if (routeAction != null) {
-                                routeAction();
-                              } else {
-                                if (untilToRoot) {
-                                  popToUntil(page: page, binding: binding);
-                                } else {
-                                  Get.back();
-                                  Get.to(page, binding: binding);
-                                }
-                              }
-
-                              // Get.offUntil(
-                              //     GetPageRoute(
-                              //       page: () => isAuth
-                              //           ? const IdentityAuthentication()
-                              //           : const DebitCardManager(),
-                              //       binding: isAuth
-                              //           ? IdentityAuthenticationBinding()
-                              //           : DebitCardManagerBinding(),
-                              //     ), (route) {
-                              //   if (route is GetPageRoute) {
-                              //     if (route.binding is AppBinding) {
-                              //       return true;
-                              //     } else {
-                              //       return false;
-                              //     }
-                              //   } else {
-                              //     return false;
-                              //   }
-                              // });
-                            },
-                            child: Container(
-                              width: 240.w,
-                              height: 40.w,
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                      colors: [
-                                        AppDefault().getThemeColor(index: 0) ??
-                                            const Color(0xFF4282EB),
-                                        AppDefault().getThemeColor(index: 2) ??
-                                            const Color(0xFF5BA3F7),
-                                      ]),
-                                  borderRadius: BorderRadius.circular(20.w)),
-                              child: Center(
-                                child: getSimpleText(btnTitle, 16, Colors.white,
-                                    isBold: true),
-                              ),
-                            ),
-                          ),
-                          ghb(24.5)
-                        ],
-                      )),
-                    ],
-                  ),
-                ),
+                    height: 118.5.w,
+                    child: Column(
+                      children: [
+                        ghb(18),
+                        getWidthText("根据监管规定，为保障账户安全，请尽快完成实名认证", 18,
+                            AppColor.textBlack, 251, 2,
+                            isBold: true, textAlign: TextAlign.center),
+                        ghb(9),
+                        getSimpleText("完成实名认证，解锁更多特权", 12, AppColor.textGrey)
+                      ],
+                    )),
+                getSubmitBtn("马上认证", () {
+                  if (routeAction != null) {
+                    routeAction();
+                  } else {
+                    if (untilToRoot) {
+                      popToUntil(page: page, binding: binding);
+                    } else {
+                      Get.back();
+                      Get.to(page, binding: binding);
+                    }
+                  }
+                }, height: 45, width: 225, color: AppColor.theme, fontSize: 14),
                 haveClose
                     ? CustomButton(
-                        onPressed: closePress ??
-                            () {
-                              Navigator.pop(context);
-                            },
-                        child: Transform.rotate(
-                          angle: -math.pi / 1,
-                          child: Image.asset(
-                            assetsName(
-                              "common/btn_model_close",
-                            ),
-                            width: 37.w,
-                            height: 56.5.w,
-                            fit: BoxFit.fill,
+                        onPressed: () {
+                          Get.back();
+                        },
+                        child: SizedBox(
+                          width: 225.w,
+                          height: 45.w,
+                          child: Center(
+                            child:
+                                getSimpleText("以后再说", 14, AppColor.textGrey5),
                           ),
                         ),
                       )
-                    : ghb(0),
+                    : ghb(0)
               ],
             ),
           ),
         ),
       );
+
+      // Center(
+      //   child: SizedBox(
+      //     width: 300.w,
+      //     height: 360.w + (haveClose ? 56.5.w : 0),
+      //     child: Material(
+      //       color: Colors.transparent,
+      //       child: Column(
+      //         children: [
+      //           SizedBox(
+      //             width: 300.w,
+      //             height: 360.w,
+      //             child: Stack(
+      //               children: [
+      //                 Positioned.fill(
+      //                     child: Image.asset(
+      //                   assetsName("mine/authentication/bg_needauth_alert"),
+      //                   width: 300.w,
+      //                   height: 360.w,
+      //                   fit: BoxFit.fill,
+      //                 )),
+      //                 Positioned.fill(
+      //                     child: Column(
+      //                   mainAxisAlignment: MainAxisAlignment.end,
+      //                   children: [
+      //                     getSimpleText(content, 25, AppColor.textBlack,
+      //                         isBold: true),
+      //                     ghb(12),
+      //                     getWidthText(
+      //                         subContent, 14, AppColor.textGrey, 237.w, 2,
+      //                         textAlign: TextAlign.center),
+      //                     ghb(15),
+      //                     CustomButton(
+      //                       onPressed: () {
+      //                         if (routeAction != null) {
+      //                           routeAction();
+      //                         } else {
+      //                           if (untilToRoot) {
+      //                             popToUntil(page: page, binding: binding);
+      //                           } else {
+      //                             Get.back();
+      //                             Get.to(page, binding: binding);
+      //                           }
+      //                         }
+
+      //                         // Get.offUntil(
+      //                         //     GetPageRoute(
+      //                         //       page: () => isAuth
+      //                         //           ? const IdentityAuthentication()
+      //                         //           : const DebitCardManager(),
+      //                         //       binding: isAuth
+      //                         //           ? IdentityAuthenticationBinding()
+      //                         //           : DebitCardManagerBinding(),
+      //                         //     ), (route) {
+      //                         //   if (route is GetPageRoute) {
+      //                         //     if (route.binding is AppBinding) {
+      //                         //       return true;
+      //                         //     } else {
+      //                         //       return false;
+      //                         //     }
+      //                         //   } else {
+      //                         //     return false;
+      //                         //   }
+      //                         // });
+      //                       },
+      //                       child: Container(
+      //                         width: 240.w,
+      //                         height: 40.w,
+      //                         decoration: BoxDecoration(
+      //                             gradient: LinearGradient(
+      //                                 begin: Alignment.topLeft,
+      //                                 end: Alignment.bottomRight,
+      //                                 colors: [
+      //                                   AppDefault().getThemeColor(index: 0) ??
+      //                                       const Color(0xFF4282EB),
+      //                                   AppDefault().getThemeColor(index: 2) ??
+      //                                       const Color(0xFF5BA3F7),
+      //                                 ]),
+      //                             borderRadius: BorderRadius.circular(20.w)),
+      //                         child: Center(
+      //                           child: getSimpleText(btnTitle, 16, Colors.white,
+      //                               isBold: true),
+      //                         ),
+      //                       ),
+      //                     ),
+      //                     ghb(24.5)
+      //                   ],
+      //                 )),
+      //               ],
+      //             ),
+      //           ),
+      //           haveClose
+      //               ? CustomButton(
+      //                   onPressed: closePress ??
+      //                       () {
+      //                         Navigator.pop(context);
+      //                       },
+      //                   child: Transform.rotate(
+      //                     angle: -math.pi / 1,
+      //                     child: Image.asset(
+      //                       assetsName(
+      //                         "common/btn_model_close",
+      //                       ),
+      //                       width: 37.w,
+      //                       height: 56.5.w,
+      //                       fit: BoxFit.fill,
+      //                     ),
+      //                   ),
+      //                 )
+      //               : ghb(0),
+      //         ],
+      //       ),
+      //     ),
+      //   ),
+      // );
     },
   ).then((value) {
     if (close != null) {
@@ -1848,6 +2107,7 @@ saveImageToAlbum(Uint8List? imageBytes,
       File myFile =
           await File("${tmpDir.path}/img_${DateTime.now().millisecond}.jpg")
               .create();
+      myFile.writeAsBytesSync(imageBytes);
       File file =
           await FlutterNativeImage.compressImage(myFile.path, quality: 30);
       result = await gallery_saver.GallerySaver.saveImage(
@@ -1872,22 +2132,30 @@ saveImageToAlbum(Uint8List? imageBytes,
 
 Future<bool?> showAlert(
   BuildContext context,
-  String title, {
+  String content, {
+  String title = "友情提示",
   String confirmText = "确定",
   String cancelText = "我再想想",
+  String singleText = "知道了",
   TextStyle? titleStyle,
   TextStyle? confirmStyle,
   TextStyle? cancelStyle,
+  TextStyle? singlelStyle,
   Function()? confirmOnPressed,
   Function()? cancelOnPressed,
+  Function()? singleOnPressed,
   bool otherBtn = false,
   TextStyle? otherStyle,
   String otherText = "取消",
   double height = 163,
   Widget? contentWidget,
+  Color? singleBtnColor,
+  Color? cancelBtnColor,
+  Color? confirmBtnColor,
   Function()? otherOnPressed,
   bool barrierDismissible = true,
   bool orangeTheme = false,
+  bool singleButton = false,
 }) async {
   bool? show = await showDialog<bool>(
     context: context,
@@ -1907,13 +2175,13 @@ Future<bool?> showAlert(
                 children: [
                   centClm([
                     ghb(30),
-                    getSimpleText("友情提示", 16, AppColor.text,
+                    getSimpleText(title, 16, AppColor.textBlack,
                         isBold: true, textHeight: 1.0),
                     ghb(17),
                     getWidthText(
-                      title,
+                      content,
                       13,
-                      AppColor.text2,
+                      AppColor.textGrey5,
                       300 - 15 * 2,
                       2,
                       alignment: Alignment.center,
@@ -1923,45 +2191,67 @@ Future<bool?> showAlert(
                   ]),
                   centClm([
                     gline(300, 1),
-                    centRow(List.generate(2, (index) {
-                      return CustomButton(
-                        onPressed: () {
-                          if (index == 0) {
-                            if (cancelOnPressed != null) {
-                              cancelOnPressed();
-                            } else {
-                              Navigator.pop(context);
-                            }
-                          } else if (index == 1) {
-                            if (confirmOnPressed != null) {
-                              confirmOnPressed();
-                            } else {
-                              Navigator.pop(context);
-                            }
-                          }
-                        },
-                        child: Container(
-                          width: 300.w / 2 - 0.1.w,
-                          height: 50.w,
-                          color: index == 0
-                              ? Colors.white
-                              : orangeTheme
-                                  ? AppColor.themeOrange
-                                  : AppColor.theme,
-                          child: Center(
-                              child: Text(
-                            index == 0 ? cancelText : confirmText,
-                            style: index == 0
-                                ? (cancelStyle ??
-                                    TextStyle(
-                                        fontSize: 14.sp,
-                                        color: AppColor.assisText))
-                                : (confirmStyle ??
-                                    TextStyle(
-                                        fontSize: 14.sp, color: Colors.white)),
-                          )),
-                        ),
-                      );
+                    centRow(List.generate(singleButton ? 1 : 3, (index) {
+                      return index == 1
+                          ? gline(1, 50)
+                          : CustomButton(
+                              onPressed: () {
+                                if (index == 0) {
+                                  if (singleButton) {
+                                    if (singleOnPressed != null) {
+                                      singleOnPressed();
+                                    } else {
+                                      Navigator.pop(context);
+                                    }
+                                  } else {
+                                    if (cancelOnPressed != null) {
+                                      cancelOnPressed();
+                                    } else {
+                                      Navigator.pop(context);
+                                    }
+                                  }
+                                } else if (index == 1) {
+                                  if (confirmOnPressed != null) {
+                                    confirmOnPressed();
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                }
+                              },
+                              child: Container(
+                                width: 300.w / (singleButton ? 1 : 2) -
+                                    0.1.w -
+                                    (singleButton ? 0 : 1.w),
+                                height: 50.w,
+                                color: index == 0
+                                    ? singleButton
+                                        ? singleBtnColor ?? Colors.white
+                                        : cancelBtnColor ?? Colors.white
+                                    : orangeTheme
+                                        ? AppColor.themeOrange
+                                        : confirmBtnColor ?? AppColor.theme,
+                                child: Center(
+                                    child: Text(
+                                  index == 0
+                                      ? (singleButton ? singleText : cancelText)
+                                      : confirmText,
+                                  style: index == 0
+                                      ? singleButton
+                                          ? (singlelStyle ??
+                                              TextStyle(
+                                                  fontSize: 14.sp,
+                                                  color: AppColor.theme))
+                                          : (cancelStyle ??
+                                              TextStyle(
+                                                  fontSize: 14.sp,
+                                                  color: AppColor.textGrey5))
+                                      : (confirmStyle ??
+                                          TextStyle(
+                                              fontSize: 14.sp,
+                                              color: Colors.white)),
+                                )),
+                              ),
+                            );
                     }))
                   ])
                 ],
@@ -2180,6 +2470,14 @@ Widget sbhRow(
       ),
     ),
   );
+}
+
+// 起始机具号去除字母，取后5位数字
+String seqNumFormat(String no) {
+  String replacedStr = no.replaceAll(RegExp('[a-zA-Z]'), '');
+  return replacedStr.length <= 5
+      ? replacedStr
+      : replacedStr.substring(replacedStr.length - 5);
 }
 
 Column centClm(
@@ -2440,7 +2738,6 @@ Widget getRichText(
   int maxLines = 1,
   bool isBold2 = false,
   FontWeight? fw2,
-  int maxLines2 = 1,
   double? widht,
   double? h1 = 1.3,
   double? h2 = 1.3,
@@ -2768,6 +3065,24 @@ String stringPriceFormat(String price, {int savePoint = 2}) {
           (t2[1] as String).substring(savePoint < 2 ? 0 : 1, savePoint);
       pointStr += ".${(t2[1] as String).substring(savePoint, savePoint + 1)}";
       int pointInt = double.parse(pointStr).round();
+      if (pointInt >= 10) {
+        int inte = int.parse(t2[0]);
+        if (savePoint < 2) {
+          inte += 1;
+        } else {
+          int firstInt = int.parse(firstStr) + 1;
+          if ("$firstInt".length > firstStr.length) {
+            inte += 1;
+            String zeros = ".";
+            for (var i = 0; i < savePoint; i++) {
+              zeros += "0";
+            }
+            return "$inte$zeros";
+          } else {
+            return "$inte.${firstInt}0";
+          }
+        }
+      }
       return "${t2[0]}.$firstStr$pointInt";
     } else if ((t2[1] as String).length == savePoint) {
       return "${t2[0]}.${t2[1]}";

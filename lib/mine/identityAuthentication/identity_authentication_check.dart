@@ -151,13 +151,13 @@ class IdentityAuthenticationCheck
         child: Column(
           children: [
             gwb(375),
-            ghb(35),
+            ghb(30),
             Image.asset(
-              assetsName("common/bg_result_success"),
-              width: 143.w,
+              assetsName("common/bg_auth_success"),
+              width: 183.w,
               fit: BoxFit.fitWidth,
             ),
-            ghb(35),
+            ghb(25),
             ...List.generate(4, (index) {
               String t1 = "";
               String t2 = "";
@@ -199,9 +199,9 @@ class IdentityAuthenticationCheck
                         padding: EdgeInsets.only(right: 5.w),
                         child: getSimpleText(t2, 14, AppColor.text2),
                       ),
-              ], width: 375 - 15 * 2, height: 38);
+              ], width: 375 - 15 * 2, height: 45);
             }),
-            ghb(35),
+            ghb(25),
           ],
         ),
       )

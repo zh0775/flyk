@@ -1,24 +1,30 @@
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_empty_view.dart';
+import 'package:cxhighversion2/component/custom_list_empty_view.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_draw_detail.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:skeletons/skeletons.dart';
 
 class MyWalletDrawHistoryBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<MyWalletDrawHistoryController>(MyWalletDrawHistoryController());
+    Get.put<MyWalletDrawHistoryController>(
+        MyWalletDrawHistoryController(datas: Get.arguments));
   }
 }
 
 class MyWalletDrawHistoryController extends GetxController {
+  final dynamic datas;
+  MyWalletDrawHistoryController({this.datas});
+
   String historyDataListBuildId = "MyWalletDrawHistory_historyDataListBuildId_";
 
   PageController pageCtrl = PageController();
@@ -64,8 +70,6 @@ class MyWalletDrawHistoryController extends GetxController {
     }
   }
 
-  List<RefreshController> pullCtrls = [];
-
   bool pageIsAnimate = false;
 
   changePage() {
@@ -84,6 +88,10 @@ class MyWalletDrawHistoryController extends GetxController {
   final _isLoading = false.obs;
   bool get isLoading => _isLoading.value;
   set isLoading(v) => _isLoading.value = v;
+
+  final _isFirstLoading = true.obs;
+  bool get isFirstLoading => _isFirstLoading.value;
+  set isFirstLoading(v) => _isFirstLoading.value = v;
 
   final _historyDataList = Rx<List<List>>(<List>[]);
   List<List> get historyDataList => _historyDataList.value;
@@ -134,17 +142,20 @@ class MyWalletDrawHistoryController extends GetxController {
       isLoading = true;
     }
 
-    DateTime date =
-        DateTime(currentYear, currentMon + 1 > 12 ? 1 : currentMon + 1, 0);
-
     Map<String, dynamic> params = {
       "pageSize": pageSizes[myLoadIdx],
-      "startingTime": "$currentYear-$currentMon-1",
-      "end_Time": "$currentYear-$currentMon-${date.day}",
       "pageNo": pageNos[myLoadIdx]
     };
-    if (myLoadIdx != 0) {
-      params["a_No"] = accountList[myLoadIdx]["a_No"];
+    if (aNo != 0) {
+      params["a_No"] = aNo;
+    } else {
+      if (myLoadIdx != 0) {
+        params["a_No"] = accountList[myLoadIdx]["a_No"];
+      }
+      DateTime date =
+          DateTime(currentYear, currentMon + 1 > 12 ? 1 : currentMon + 1, 0);
+      params["startingTime"] = "$currentYear-$currentMon-1";
+      params["end_Time"] = "$currentYear-$currentMon-${date.day}";
     }
 
     simpleRequest(
@@ -161,9 +172,6 @@ class MyWalletDrawHistoryController extends GetxController {
                   ...historyDataList[myLoadIdx]
                 ]
               : historyDataList[myLoadIdx] = dataList;
-          isLoad
-              ? pullCtrls[myLoadIdx].loadComplete()
-              : pullCtrls[myLoadIdx].refreshCompleted();
           update(["$historyDataListBuildId$myLoadIdx"]);
 
           if (firstLoad && dataList.isNotEmpty) {
@@ -174,13 +182,10 @@ class MyWalletDrawHistoryController extends GetxController {
             upDateDateTimeStr();
           }
           firstLoad = false;
-        } else {
-          isLoad
-              ? pullCtrls[myLoadIdx].loadFailed()
-              : pullCtrls[myLoadIdx].refreshFailed();
         }
       },
       after: () {
+        isFirstLoading = false;
         isLoading = false;
       },
     );
@@ -220,50 +225,57 @@ class MyWalletDrawHistoryController extends GetxController {
         "$currentYear年${currentMon < 10 ? "0$currentMon" : currentMon}月";
   }
 
+  int aNo = 0;
+
   @override
   void onInit() {
-    for (var i = 0; i < 50; i++) {
-      yearList.add(DateTime.now().year - i);
-    }
-    DateTime now = DateTime.now();
-    currentYear = now.year;
-    currentMon = now.month;
-    upDateDateTimeStr();
-    List a = AppDefault().homeData["u_Account"];
-    accountList = [
-      {
-        "name": "全部",
+    aNo = (datas ?? {})["a_No"] ?? 0;
+    if (aNo == 0) {
+      for (var i = 0; i < 50; i++) {
+        yearList.add(DateTime.now().year - i);
       }
-    ];
-    for (var e in a) {
-      if (e["a_No"] <= 3) {
-        accountList.add(e);
+      DateTime now = DateTime.now();
+      currentYear = now.year;
+      currentMon = now.month;
+      upDateDateTimeStr();
+      List a = AppDefault().homeData["u_Account"];
+      accountList = [
+        {
+          "name": "全部",
+        }
+      ];
+      for (var e in a) {
+        if (e["a_No"] <= 3) {
+          accountList.add(e);
+        }
       }
-    }
-    pullCtrls = [];
-    historyDataList = <List>[];
-    pageNos = [];
-    pageSizes = [];
-    counts = [];
-    for (var e in accountList) {
-      pullCtrls.add(RefreshController());
+      historyDataList = <List>[];
+      pageNos = [];
+      pageSizes = [];
+      counts = [];
+      for (var e in accountList) {
+        historyDataList.add([]);
+        pageNos.add(1);
+        pageSizes.add(20);
+        counts.add(0);
+      }
+
+      resetTime();
+    } else {
       historyDataList.add([]);
       pageNos.add(1);
       pageSizes.add(20);
       counts.add(0);
     }
 
-    resetTime();
     loadHistory();
     super.onInit();
   }
 
   @override
-  void dispose() {
-    for (var e in pullCtrls) {
-      e.dispose();
-    }
-    super.dispose();
+  void onClose() {
+    pageCtrl.dispose();
+    super.onClose();
   }
 }
 
@@ -273,131 +285,136 @@ class MyWalletDrawHistory extends GetView<MyWalletDrawHistoryController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: getDefaultAppBar(
-        context, "提现记录",
-
-        //  action: [
-        //   CustomButton(
-        //     onPressed: () {
-        //       controller.showFilter = !controller.showFilter;
-        //     },
-        //     child: SizedBox(
-        //       height: kToolbarHeight,
-        //       width: 50.w,
-        //       child: Align(
-        //         alignment: Alignment.center,
-        //         child: Image.asset(
-        //           assetsName("mine/mywallet/btn_wallet_drawhistory_filter"),
-        //           height: 17.w,
-        //           fit: BoxFit.fitHeight,
-        //         ),
-        //       ),
-        //     ),
-        //   )
-        // ]
-      ),
-      body: Stack(
-        children: [
-          Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: 55.w,
-              child: Container(
-                color: Colors.white,
-                child: Stack(
-                  children: [
-                    Positioned(
-                        top: 20.w,
-                        left: 0,
-                        right: 0,
-                        height: 20.w,
-                        child: Row(
-                          children: List.generate(controller.accountList.length,
-                              (index) {
-                            return CustomButton(
-                              onPressed: () {
-                                controller.topIndex = index;
-                              },
-                              child: GetX<MyWalletDrawHistoryController>(
-                                  builder: (_) {
-                                return SizedBox(
-                                  width: 375.w / 3 - 0.1.w,
-                                  child: Center(
-                                    child: getSimpleText(
-                                      controller.accountList[index]["name"],
-                                      15,
-                                      controller.topIndex == index
-                                          ? AppColor.theme
-                                          : AppColor.text2,
-                                      isBold: controller.topIndex == index,
-                                    ),
-                                  ),
+        appBar: getDefaultAppBar(
+          context, "提现记录",
+          //  action: [
+          //   CustomButton(
+          //     onPressed: () {
+          //       controller.showFilter = !controller.showFilter;
+          //     },
+          //     child: SizedBox(
+          //       height: kToolbarHeight,
+          //       width: 50.w,
+          //       child: Align(
+          //         alignment: Alignment.center,
+          //         child: Image.asset(
+          //           assetsName("mine/mywallet/btn_wallet_drawhistory_filter"),
+          //           height: 17.w,
+          //           fit: BoxFit.fitHeight,
+          //         ),
+          //       ),
+          //     ),
+          //   )
+          // ]
+        ),
+        body: Stack(children: [
+          controller.aNo != 0
+              ? gemp()
+              : Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 55.w,
+                  child: Container(
+                    color: Colors.white,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                            top: 20.w,
+                            left: 0,
+                            right: 0,
+                            height: 20.w,
+                            child: Row(
+                              children: List.generate(
+                                  controller.accountList.length, (index) {
+                                return CustomButton(
+                                  onPressed: () {
+                                    controller.topIndex = index;
+                                  },
+                                  child: GetX<MyWalletDrawHistoryController>(
+                                      builder: (_) {
+                                    return SizedBox(
+                                      width: 375.w / 3 - 0.1.w,
+                                      child: Center(
+                                        child: getSimpleText(
+                                          controller.accountList[index]["name"],
+                                          15,
+                                          controller.topIndex == index
+                                              ? AppColor.theme
+                                              : AppColor.text2,
+                                          isBold: controller.topIndex == index,
+                                        ),
+                                      ),
+                                    );
+                                  }),
                                 );
                               }),
-                            );
-                          }),
-                        )),
-                    GetX<MyWalletDrawHistoryController>(
-                      builder: (_) {
-                        return AnimatedPositioned(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            top: 47.w,
-                            width: 15.w,
-                            left: controller.topIndex * (375.w / 3 - 0.1.w) +
-                                ((375.w / 3 - 0.1.w) - 15.w) / 2,
-                            height: 2.w,
-                            child: Container(
-                              color: AppColor.theme,
-                            ));
-                      },
-                    )
-                  ],
-                ),
-              )),
-          Positioned(
-              top: 55.w,
-              left: 0,
-              right: 0,
-              height: 46.w,
-              child: CustomButton(
-                onPressed: () {
-                  controller.showPick(
-                      controller.currentYear, controller.currentMon);
-                  showBottomDatePick(
-                      controller.currentYear, controller.currentMon);
-                },
-                child: sbhRow([
-                  centRow([
-                    GetX<MyWalletDrawHistoryController>(
-                      builder: (_) {
-                        return getSimpleText(
-                            controller.dateTimeStr, 15, AppColor.text,
-                            isBold: true);
-                      },
+                            )),
+                        GetX<MyWalletDrawHistoryController>(
+                          builder: (_) {
+                            return AnimatedPositioned(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                                top: 47.w,
+                                width: 15.w,
+                                left:
+                                    controller.topIndex * (375.w / 3 - 0.1.w) +
+                                        ((375.w / 3 - 0.1.w) - 15.w) / 2,
+                                height: 2.w,
+                                child: Container(
+                                  color: AppColor.theme,
+                                ));
+                          },
+                        )
+                      ],
                     ),
-                    gwb(3),
-                    Image.asset(
-                      assetsName("mine/wallet/icon_down_arrow_black"),
-                      width: 10.w,
-                      fit: BoxFit.fitWidth,
-                    )
-                  ])
-                ], width: 375 - 15 * 2, height: 46),
-              )),
+                  )),
+          controller.aNo != 0
+              ? gemp()
+              : Positioned(
+                  top: 55.w,
+                  left: 0,
+                  right: 0,
+                  height: 46.w,
+                  child: CustomButton(
+                    onPressed: () {
+                      controller.showPick(
+                          controller.currentYear, controller.currentMon);
+                      showBottomDatePick(
+                          controller.currentYear, controller.currentMon);
+                    },
+                    child: sbhRow([
+                      centRow([
+                        GetX<MyWalletDrawHistoryController>(
+                          builder: (_) {
+                            return getSimpleText(
+                                controller.dateTimeStr, 15, AppColor.text,
+                                isBold: true);
+                          },
+                        ),
+                        gwb(3),
+                        Image.asset(
+                          assetsName("mine/wallet/icon_down_arrow_black"),
+                          width: 10.w,
+                          fit: BoxFit.fitWidth,
+                        )
+                      ])
+                    ], width: 375 - 15 * 2, height: 46),
+                  )),
           Positioned.fill(
-            top: 55.w + 46.w,
-            child: PageView.builder(
-              controller: controller.pageCtrl,
-              itemCount: controller.historyDataList.length,
-              itemBuilder: (context, index) {
-                return list(index);
-              },
-              onPageChanged: (value) {
-                controller.topIndex = value;
-              },
-            ),
+            top: controller.aNo != 0 ? 0 : 55.w + 46.w,
+            child: controller.aNo != 0
+                ? list(0)
+                : PageView.builder(
+                    controller: controller.pageCtrl,
+                    itemCount: controller.historyDataList.length,
+                    itemBuilder: (context, index) {
+                      return list(index);
+                    },
+                    onPageChanged: (value) {
+                      controller.topIndex = value;
+                    },
+                  ),
           ),
           GetX<MyWalletDrawHistoryController>(
             initState: (_) {},
@@ -425,83 +442,81 @@ class MyWalletDrawHistory extends GetView<MyWalletDrawHistoryController> {
             },
           ),
           GetX<MyWalletDrawHistoryController>(
-            initState: (_) {},
-            builder: (_) {
-              double contentHeight = 100.w;
-              double buttonHeight = 50.w;
-              return AnimatedPositioned(
-                  top: controller.showFilter
-                      ? 0
-                      : -(contentHeight + buttonHeight),
-                  left: 0,
-                  right: 0,
-                  // height: controller.showFilter
-                  //     ? (contentHeight + buttonHeight)
-                  //     : 0,
-                  height: contentHeight + buttonHeight,
-                  duration: const Duration(milliseconds: 300),
-                  child: Container(
-                    width: 375.w,
+              initState: (_) {},
+              builder: (_) {
+                double contentHeight = 100.w;
+                double buttonHeight = 50.w;
+                return AnimatedPositioned(
+                    top: controller.showFilter
+                        ? 0
+                        : -(contentHeight + buttonHeight),
+                    left: 0,
+                    right: 0,
+                    // height: controller.showFilter
+                    //     ? (contentHeight + buttonHeight)
+                    //     : 0,
                     height: contentHeight + buttonHeight,
-                    color: Colors.white,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: 375.w,
-                            height: contentHeight,
-                            child: Center(
-                              child: centRow([
-                                timeFilter(0),
-                                gwb(30),
-                                timeFilter(1),
-                              ]),
-                            ),
-                          ),
-                          sbRow([
-                            CustomButton(
-                              onPressed: () {
-                                controller.resetTime();
-                              },
-                              child: Container(
-                                width: 375.w / 2 - 0.1.w,
-                                height: buttonHeight,
-                                color: const Color(0xFFE6EEFF),
-                                child: Center(
-                                  child: getSimpleText(
-                                      "重置",
-                                      16,
-                                      AppDefault().getThemeColor() ??
-                                          AppColor.theme),
-                                ),
+                    duration: const Duration(milliseconds: 300),
+                    child: Container(
+                      width: 375.w,
+                      height: contentHeight + buttonHeight,
+                      color: Colors.white,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: 375.w,
+                              height: contentHeight,
+                              child: Center(
+                                child: centRow([
+                                  timeFilter(0),
+                                  gwb(30),
+                                  timeFilter(1),
+                                ]),
                               ),
                             ),
-                            CustomButton(
-                              onPressed: () {
-                                controller.showFilter = false;
-                                controller.loadHistory();
-                              },
-                              child: Container(
-                                width: 375.w / 2 - 0.1.w,
-                                height: 50.w,
-                                color: AppDefault().getThemeColor() ??
-                                    AppColor.theme,
-                                child: Center(
-                                  child: getSimpleText("确认", 16, Colors.white),
+                            sbRow([
+                              CustomButton(
+                                onPressed: () {
+                                  controller.resetTime();
+                                },
+                                child: Container(
+                                  width: 375.w / 2 - 0.1.w,
+                                  height: buttonHeight,
+                                  color: const Color(0xFFE6EEFF),
+                                  child: Center(
+                                    child: getSimpleText(
+                                        "重置",
+                                        16,
+                                        AppDefault().getThemeColor() ??
+                                            AppColor.theme),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ], width: 375),
-                        ],
+                              CustomButton(
+                                onPressed: () {
+                                  controller.showFilter = false;
+                                  controller.loadHistory();
+                                },
+                                child: Container(
+                                  width: 375.w / 2 - 0.1.w,
+                                  height: 50.w,
+                                  color: AppDefault().getThemeColor() ??
+                                      AppColor.theme,
+                                  child: Center(
+                                    child:
+                                        getSimpleText("确认", 16, Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ], width: 375),
+                          ],
+                        ),
                       ),
-                    ),
-                  ));
-            },
-          ),
-        ],
-      ),
-    );
+                    ));
+              })
+        ]));
   }
 
   Widget list(int index) {
@@ -510,36 +525,51 @@ class MyWalletDrawHistory extends GetView<MyWalletDrawHistoryController> {
       init: controller,
       initState: (_) {},
       builder: (_) {
-        return SmartRefresher(
-          controller: controller.pullCtrls[index],
-          physics: const BouncingScrollPhysics(),
-          enablePullUp: controller.historyDataList[index].length <
-              controller.counts[index],
+        return EasyRefresh.builder(
+          onLoad: controller.historyDataList[index].length >=
+                  controller.counts[index]
+              ? null
+              : () => controller.loadHistory(isLoad: true, loadIdx: index),
           onRefresh: () => controller.loadHistory(loadIdx: index),
-          onLoading: () => controller.loadHistory(isLoad: true, loadIdx: index),
-          child: controller.historyDataList[index].isEmpty
-              ? GetX<MyWalletDrawHistoryController>(
-                  builder: (_) {
-                    return CustomEmptyView(
-                      isLoading: controller.isLoading,
-                    );
-                  },
-                )
-              : ListView.builder(
-                  itemCount: controller.historyDataList[index].length,
-                  itemBuilder: (context, listIdx) {
-                    return GestureDetector(
-                      onTap: () => push(const MyWalletDrawDetail(), context,
-                          binding: MyWalletDrawDetailBinding(),
-                          arguments: {
-                            "drawData": controller.historyDataList[index]
-                                [listIdx]
-                          }),
-                      child: historyCell(
-                          index, controller.historyDataList[index][listIdx]),
-                    );
-                  },
-                ),
+          childBuilder: (context, physics) {
+            return controller.historyDataList[index].isEmpty
+                ? GetX<MyWalletDrawHistoryController>(
+                    builder: (_) {
+                      return controller.isFirstLoading
+                          ? SizedBox(
+                              width: 375.w,
+                              height: ScreenUtil().screenHeight -
+                                  20.w -
+                                  kToolbarHeight -
+                                  (controller.aNo != 0 ? 0 : 111.w),
+                              child: SkeletonListView(
+                                padding: EdgeInsets.all(15.w),
+                              ),
+                            )
+                          : CustomListEmptyView(
+                              physics: physics,
+                              isLoading: controller.isLoading,
+                            );
+                    },
+                  )
+                : ListView.builder(
+                    padding: EdgeInsets.only(bottom: 20.w),
+                    physics: physics,
+                    itemCount: controller.historyDataList[index].length,
+                    itemBuilder: (context, listIdx) {
+                      return GestureDetector(
+                        onTap: () => push(const MyWalletDrawDetail(), context,
+                            binding: MyWalletDrawDetailBinding(),
+                            arguments: {
+                              "drawData": controller.historyDataList[index]
+                                  [listIdx]
+                            }),
+                        child: historyCell(
+                            index, controller.historyDataList[index][listIdx]),
+                      );
+                    },
+                  );
+          },
         );
       },
     );

@@ -1,21 +1,19 @@
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_dropdown_view.dart';
-import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
-import 'package:cxhighversion2/component/custom_network_image.dart';
+import 'package:cxhighversion2/component/custom_list_empty_view.dart';
 import 'package:cxhighversion2/earn/earn_particulars.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
-import 'package:cxhighversion2/util/tools.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:sticky_and_expandable_list/sticky_and_expandable_list.dart';
 
 class MyWalletDealListBinding implements Bindings {
@@ -30,10 +28,13 @@ class MyWalletDealListController extends GetxController {
   set isLoading(value) => _isLoading.value = value;
   bool get isLoading => _isLoading.value;
 
+  final _isFirstLoading = true.obs;
+  set isFirstLoading(value) => _isFirstLoading.value = value;
+  bool get isFirstLoading => _isFirstLoading.value;
+
   GlobalKey stackKey = GlobalKey();
   GlobalKey headKey = GlobalKey();
 
-  RefreshController pullCtrl = RefreshController();
   final scrollCtrl = ScrollController();
   final listController = ExpandableListController();
 
@@ -41,6 +42,13 @@ class MyWalletDealListController extends GetxController {
   TextEditingController endMoneyInputCtrl = TextEditingController();
 
   CustomDropDownController filterCtrl = CustomDropDownController();
+
+  // 品牌选择
+  final _brandIdx = 0.obs;
+  int get brandIdx => _brandIdx.value;
+  set brandIdx(v) => _brandIdx.value = v;
+
+  List brandList = [];
 
   List dealTypes = [
     {
@@ -121,10 +129,12 @@ class MyWalletDealListController extends GetxController {
     loadList();
   }
 
-  FixedExtentScrollController? yearPickCtrl;
-  FixedExtentScrollController? monthPickCtrl;
   // GlobalKey yearPickKey = GlobalKey();
   // GlobalKey monthPickKey = GlobalKey();
+
+  int pageNo = 1;
+  int pageSize = 20;
+  int count = 0;
 
   final _scrollYearIndex = 0.obs;
   int get scrollYearIndex => _scrollYearIndex.value;
@@ -132,11 +142,8 @@ class MyWalletDealListController extends GetxController {
   final _scrollMonthIndex = 0.obs;
   int get scrollMonthIndex => _scrollMonthIndex.value;
   set scrollMonthIndex(v) => _scrollMonthIndex.value = v;
-
-  int pageNo = 1;
-  int pageSize = 20;
-  int count = 0;
-
+  FixedExtentScrollController? yearPickCtrl;
+  FixedExtentScrollController? monthPickCtrl;
   showPick(int year, int month) {
     scrollYearIndex = yearList.indexOf(year);
     scrollMonthIndex = monthList.indexOf(month);
@@ -156,8 +163,12 @@ class MyWalletDealListController extends GetxController {
     //     duration: Duration(milliseconds: 300), curve: Curves.linear);
   }
 
-  cancelPick() {}
+  cancelPick() {
+    Get.back();
+  }
+
   confirmPick() {
+    Get.back();
     loadList(
         year: yearList[scrollYearIndex], month: monthList[scrollMonthIndex]);
   }
@@ -197,19 +208,18 @@ class MyWalletDealListController extends GetxController {
       params: params,
       success: (success, json) {
         if (success) {
-          Map data = json["data"];
-          count = data["count"];
+          Map data = json["data"] ?? {};
+          count = data["count"] ?? 0;
           listDataFormat(data, isLoad, year: year, month: month);
+          List tmpList = data["data"] ?? [];
           isLoad
-              ? walletDealList = [...walletDealList, ...data["data"]]
-              : walletDealList = data["data"];
-          isLoad ? pullCtrl.loadComplete() : pullCtrl.refreshCompleted();
-        } else {
-          isLoad ? pullCtrl.loadFailed() : pullCtrl.refreshFailed();
+              ? walletDealList = [...walletDealList, ...tmpList]
+              : walletDealList = tmpList;
         }
       },
       after: () {
         isLoading = false;
+        isFirstLoading = false;
       },
     );
   }
@@ -220,6 +230,9 @@ class MyWalletDealListController extends GetxController {
   listDataFormat(Map data, bool isLoad, {int? year, int? month}) {
     List financeInOutData = data["financeInOutData"] ?? [];
     List cellDatas = data["data"] ?? [];
+    if (!isLoad) {
+      walletDealSectionList = [];
+    }
     for (var i = 0; i < financeInOutData.length; i++) {
       var e = financeInOutData[i];
       List monthData = [];
@@ -254,22 +267,21 @@ class MyWalletDealListController extends GetxController {
       }
     }
     update();
-
-    if (year != null && month != null && walletDealSectionList.isNotEmpty) {
-      double jumpOffset = 0;
-      for (var i = 0; i < walletDealSectionList.length; i++) {
-        WalletDealSection s = walletDealSectionList[i];
-        if (s.month == month && s.year == year) {
-          break;
-        } else {
-          jumpOffset += 32.w;
-        }
-        for (var e in s.dealList) {
-          jumpOffset += (rowHeight + 10.w);
-        }
-      }
-      scrollCtrl.jumpTo(jumpOffset);
-    }
+    // if (year != null && month != null && walletDealSectionList.isNotEmpty) {
+    //   double jumpOffset = 0;
+    //   for (var i = 0; i < walletDealSectionList.length; i++) {
+    //     WalletDealSection s = walletDealSectionList[i];
+    //     if (s.month == month && s.year == year) {
+    //       break;
+    //     } else {
+    //       jumpOffset += 32.w;
+    //     }
+    //     for (var e in s.dealList) {
+    //       jumpOffset += (rowHeight + 10.w);
+    //     }
+    //   }
+    //   scrollCtrl.jumpTo(jumpOffset);
+    // }
   }
 
   double rowHeight = 75.w;
@@ -284,7 +296,7 @@ class MyWalletDealListController extends GetxController {
     isFirst = false;
     walletData = wData;
     aNo = walletData["a_No"] ?? 1;
-    isReal = (aNo != 4 && aNo != 5);
+    isReal = aNo <= 3;
     loadList();
   }
 
@@ -295,7 +307,17 @@ class MyWalletDealListController extends GetxController {
     for (var i = 0; i < 50; i++) {
       yearList.add(DateTime.now().year - i);
     }
-
+    Map publicHomeData = AppDefault().publicHomeData;
+    brandList = [
+      {"id": -1, "name": "不限"}
+    ];
+    if (publicHomeData["terminalBrand"] != null &&
+        publicHomeData["terminalBrand"].isNotEmpty) {
+      List terminalBrand = publicHomeData["terminalBrand"];
+      for (var e in terminalBrand) {
+        brandList.add({"id": e["enumValue"] ?? 0, "name": e["enumName"] ?? ""});
+      }
+    }
     super.onInit();
   }
 
@@ -309,7 +331,6 @@ class MyWalletDealListController extends GetxController {
     }
     scrollCtrl.dispose();
     listController.dispose();
-    pullCtrl.dispose();
     filterCtrl.dispose();
     startMoneyInputCtrl.dispose();
     endMoneyInputCtrl.dispose();
@@ -332,20 +353,7 @@ class MyWalletDealList extends GetView<MyWalletDealListController> {
   Widget build(BuildContext context) {
     controller.dataInit(walletData);
     return Scaffold(
-        appBar: getDefaultAppBar(context, walletData["name"] ?? "", action: [
-          CustomButton(
-            onPressed: () {
-              controller.showFilter();
-            },
-            child: SizedBox(
-              width: 70.w,
-              height: kToolbarHeight,
-              child: Center(
-                child: getSimpleText("筛选", 14, AppColor.text2),
-              ),
-            ),
-          )
-        ]),
+        appBar: getDefaultAppBar(context, "钱包明细"),
         body: Stack(
           key: controller.stackKey,
           children: [
@@ -380,45 +388,47 @@ class MyWalletDealList extends GetView<MyWalletDealListController> {
                 height: 0,
                 key: controller.headKey,
                 child: gemp()),
-            Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                height: 160.w,
-                child: Container(
-                  color: Colors.white,
-                  child: Column(
-                    children: [ghb(10.5), gwb(375), walletCell(walletData)],
-                  ),
-                )),
+            // Positioned(
+            //     top: 0,
+            //     left: 0,
+            //     right: 0,
+            //     height: 160.w,
+            //     child: Container(
+            //       color: Colors.white,
+            //       child: Column(
+            //         children: [ghb(10.5), gwb(375), walletCell(walletData)],
+            //       ),
+            //     )),
 
             Positioned(
-                top: 160.w,
-                // top: 0,
+                // top: 160.w,
+                top: 0,
                 left: 0,
                 right: 0,
                 bottom: 0,
                 child: GetBuilder<MyWalletDealListController>(
                   builder: (_) {
-                    return SmartRefresher(
-                        physics: const BouncingScrollPhysics(),
-                        onLoading: controller.onLoad,
-                        onRefresh: controller.onRefresh,
-                        enablePullUp:
-                            controller.count > controller.walletDealList.length,
-                        controller: controller.pullCtrl,
-                        child: controller.walletDealList == null ||
-                                controller.walletDealList.isEmpty
+                    return EasyRefresh.builder(
+                      onLoad:
+                          controller.walletDealList.length >= controller.count
+                              ? null
+                              : () => controller.walletDealList.length,
+                      onRefresh: () => controller.loadList(),
+                      childBuilder: (context, physics) {
+                        return controller.walletDealList.isEmpty
                             ? GetX<MyWalletDealListController>(
                                 builder: (_) {
-                                  return CustomEmptyView(
+                                  return CustomListEmptyView(
+                                    physics: physics,
                                     isLoading: controller.isLoading,
                                   );
                                 },
                               )
                             : ExpandableListView(
+                                physics: physics,
+                                padding: EdgeInsets.only(
+                                    bottom: 20.w + paddingSizeBottom(context)),
                                 controller: controller.scrollCtrl,
-                                physics: const BouncingScrollPhysics(),
                                 builder: SliverExpandableChildDelegate(
                                   controller: controller.listController,
                                   sectionList: controller.walletDealSectionList,
@@ -439,7 +449,9 @@ class MyWalletDealList extends GetView<MyWalletDealListController> {
                                         .dealList[itemIndex]);
                                   },
                                 ),
-                              ));
+                              );
+                      },
+                    );
                   },
                 )),
             CustomDropDownView(
@@ -679,81 +691,75 @@ class MyWalletDealList extends GetView<MyWalletDealListController> {
         "收入:${!controller.isReal ? "" : "￥"}${priceFormat(section.inAmout)}";
     String outMoney =
         "支出:${!controller.isReal ? "" : "￥"}${priceFormat(section.outAmout)}";
-    double inWidth = calculateTextSize(inMoney, 14, FontWeight.normal,
-            double.infinity, 1, Global.navigatorKey.currentContext!)
-        .width;
-    double outWidth = calculateTextSize(outMoney, 14, FontWeight.normal,
-            double.infinity, 1, Global.navigatorKey.currentContext!)
-        .width;
-    outWidth += 12.w;
-    return Center(
-      child: SizedBox(
-        width: 375.w,
-        height: 46.w,
-        child: Row(
-          children: [
-            CustomButton(
-              onPressed: () {
-                controller.showPick(section.year, section.month);
-                showBottomDatePick(section.year, section.month);
-              },
-              child: SizedBox(
-                height: 55.w,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: centRow([
-                    gwb(15),
-                    getSimpleText("${section.year}年${section.month}月", 15,
-                        AppColor.textBlack,
-                        isBold: true),
-                    gwb(3),
-                    Image.asset(
-                      assetsName("mine/wallet/icon_down_arrow_black"),
-                      width: 10.w,
-                      fit: BoxFit.fitWidth,
-                    )
-                  ]),
-                ),
+    // double inWidth = calculateTextSize(inMoney, 14, FontWeight.normal,
+    //         double.infinity, 1, Global.navigatorKey.currentContext!)
+    //     .width;
+    // double outWidth = calculateTextSize(outMoney, 14, FontWeight.normal,
+    //         double.infinity, 1, Global.navigatorKey.currentContext!)
+    //     .width;
+    // outWidth += 12.w;
+    return Container(
+      color: AppColor.pageBackgroundColor,
+      width: 375.w,
+      height: 42.w,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CustomButton(
+            onPressed: () {
+              controller.showPick(section.year, section.month);
+              showBottomDatePick(section.year, section.month);
+            },
+            child: SizedBox(
+              height: 42.w,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: centRow([
+                  gwb(15),
+                  getSimpleText("${section.year}年${section.month}月", 15,
+                      AppColor.textBlack,
+                      isBold: true),
+                  gwb(3),
+                  Image.asset(
+                    assetsName("mine/wallet/icon_down_arrow_black"),
+                    width: 10.w,
+                    fit: BoxFit.fitWidth,
+                  )
+                ]),
               ),
             ),
-            gwb(15),
-            // getWidthText(
-            //     "支出${!controller.isReal ? "" : "￥"}${priceFormat(section.outAmout)}",
-            //     13,
-            //     const Color(0xFF404040),
-            //     inWidth,
-            //     1),
+          ),
 
-            SizedBox(
-              width: outWidth,
-              child: getSimpleText(outMoney, 12, AppColor.text3),
-            ),
+          // getWidthText(
+          //     "支出${!controller.isReal ? "" : "￥"}${priceFormat(section.outAmout)}",
+          //     13,
+          //     const Color(0xFF404040),
+          //     inWidth,
+          //     1),
+          centRow([
+            getSimpleText(outMoney, 12, AppColor.textGrey5),
+            gwb(8),
+            getSimpleText(inMoney, 12, AppColor.textGrey5),
+            gwb(15)
+          ]),
 
-            SizedBox(
-              width: inWidth,
-              child: getSimpleText(
-                inMoney,
-                12,
-                AppColor.text3,
-              ),
-            ),
-            // getWidthText(
-            //     "收入${!controller.isReal ? "" : "￥"}${priceFormat(section.inAmout)}",
-            //     13,
-            //     const Color(0xFF404040),
-            //     outWidth,
-            //     1),
-          ],
-        ),
+          // getWidthText(
+          //     "收入${!controller.isReal ? "" : "￥"}${priceFormat(section.inAmout)}",
+          //     13,
+          //     const Color(0xFF404040),
+          //     outWidth,
+          //     1),
+        ],
       ),
     );
   }
 
   Widget rowView(Map data) {
-    String img = data["account"] != null
-        ? AppDefault().getAccountImg(data["account"])
-        : "";
-    String imgUrl = AppDefault().imageUrl + img;
+    // String img = data["account"] != null
+    //     ? AppDefault().getAccountImg(data["account"])
+    //     : "";
+    // String imgUrl = AppDefault().imageUrl + img;
+
     return CustomButton(
       onPressed: () {
         push(EarnParticulars(earnData: data), null,
@@ -761,80 +767,104 @@ class MyWalletDealList extends GetView<MyWalletDealListController> {
       },
       child: Container(
         // margin: EdgeInsets.only(top: 10.w),
+        alignment: Alignment.center,
         width: 375.w,
         color: Colors.white,
-        child: Center(
-            child: sbhRow([
-          centRow([
-            img.isNotEmpty
-                ? CustomNetworkImage(
-                    src: imgUrl,
-                    width: 32.w,
-                    height: 32.w,
-                    fit: BoxFit.fill,
-                  )
-                : SizedBox(
-                    width: 32.w,
-                  ),
-            gwb(7),
-            centClm([
-              sbRow([
-                getSimpleText(data["codeName"] ?? "", 15, AppColor.text2),
-                // getWidthText(
-                //   data["codeName"] ?? "", 15, AppColor.text2, 200.5, 1),
-                getSimpleText(
-                    "${(data["bType"] ?? 0) == 0 ? "-" : "+"}${priceFormat(data["amount"], savePoint: (data["aNo"] ?? 0) <= 3 ? 2 : 0)}",
-                    18,
-                    AppColor.text,
-                    isBold: true),
-              ], width: 345 - 32 - 7),
-              ghb(8),
-              getWidthText(data["addTime"] ?? "", 12, AppColor.text3, 200.5, 1)
-            ], crossAxisAlignment: CrossAxisAlignment.start)
-          ]),
-          // Column(
-          //   children: [
-          //     ghb(20),
-          //     getWidthText(
-          //         "${(data["bType"] ?? 0) == 0 ? "-" : "+"}${priceFormat(data["amount"])}",
-          //         18,
-          //         AppColor.text,
-          //         345 - 32 - 7 - 200.5 - 0.1,
-          //         1,
-          //         isBold: true,
-          //         alignment: Alignment.centerRight,
-          //         textHeight: 1.0),
-          //   ],
-          // )
-        ], width: 375 - 15 * 2, height: 75)),
 
-        //  Column(
-        //   children: [
-        //     sbRow([
-        //       getSimpleText(data["codeName"] ?? "", 16, AppColor.textBlack),
-        //       getSimpleText(
-        //           "${(data["bType"] ?? 0) == 0 ? "-" : "+"} ${!controller.isReal ? "" : "￥"}${priceFormat(data["amount"] ?? 0.0)}",
-        //           16,
-        //           (data["bType"] ?? 0) == 0
-        //               ? const Color(0xFF0059FF)
-        //               : const Color(0xFFFF0000)),
-        //     ], width: 345),
-        //     ghb(5),
-        //     sbRow([
-        //       getSimpleText(
-        //           controller.dateFormat2.format(
-        //               controller.dateFormat.parse(data["addTime"] ?? "")),
-        //           12,
-        //           const Color(0xFFB3B3B3)),
-        //       getSimpleText(
-        //           "余额${!controller.isReal ? "" : "￥"}${priceFormat(data["balance"] ?? "")}",
-        //           12,
-        //           const Color(0xFFB3B3B3)),
-        //     ], width: 345)
-        //   ],
-        // ),
+        child: sbhRow([
+          centClm([
+            getSimpleText(data["codeName"] ?? "", 15, AppColor.textBlack),
+            ghb(10),
+            getWidthText(
+                data["addTime"] ?? "", 12, AppColor.textGrey5, 200.5, 1)
+          ], crossAxisAlignment: CrossAxisAlignment.start),
+          centClm([
+            getSimpleText(
+                "${(data["bType"] ?? 0) == 0 ? "-" : "+"}${priceFormat(data["amount"], savePoint: (data["aNo"] ?? 0) <= 3 ? 2 : 0)}",
+                18,
+                (data["bType"] ?? 0) == 0
+                    ? AppColor.textBlack
+                    : const Color(0xFFF78A4A),
+                isBold: true),
+            ghb(7),
+            getSimpleText(
+                "余额 ${controller.isReal ? "￥" : ""}${priceFormat(data["balance"] ?? 0)}",
+                12,
+                AppColor.textGrey5)
+          ], crossAxisAlignment: CrossAxisAlignment.end),
+        ], width: 375 - 15 * 2, height: 75),
       ),
     );
+  }
+
+  // 品牌选择器
+  showBrandSelectModel() {
+    Get.bottomSheet(
+        Container(
+          width: 375.w,
+          height:
+              300.w + paddingSizeBottom(Global.navigatorKey.currentContext!),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(6.w))),
+          child: Column(
+            children: [
+              sbhRow([
+                CustomButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: SizedBox(
+                      width: 65.w,
+                      height: 58.w,
+                      child: Center(
+                          child: getSimpleText("取消", 14, AppColor.textGrey5))),
+                ),
+                CustomButton(
+                  onPressed: () {
+                    Get.back();
+                    controller.loadList();
+                  },
+                  child: SizedBox(
+                      width: 65.w,
+                      height: 58.w,
+                      child: Center(
+                          child: getSimpleText("确定", 14, AppColor.theme))),
+                )
+              ], width: 375, height: 58),
+              gline(375, 1),
+              SizedBox(
+                width: 375.w,
+                height: 300.w - 59.w,
+                child: CupertinoPicker.builder(
+                  scrollController: FixedExtentScrollController(
+                      initialItem: controller.brandIdx),
+                  childCount: controller.brandList.length,
+                  itemExtent: 45.w,
+                  onSelectedItemChanged: (value) {
+                    controller.brandIdx = value;
+                  },
+                  itemBuilder: (context, index) {
+                    return Center(
+                      child: GetX<MyWalletDealListController>(builder: (_) {
+                        return getSimpleText(
+                            controller.brandList[index]["name"],
+                            16,
+                            controller.brandIdx == index
+                                ? AppColor.textBlack
+                                : AppColor.textGrey5,
+                            isBold: controller.brandIdx == index);
+                      }),
+                    );
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+        isDismissible: true,
+        isScrollControlled: true,
+        enableDrag: true);
   }
 
   showBottomDatePick(int year, int month) {
@@ -849,18 +879,24 @@ class MyWalletDealList extends GetView<MyWalletDealListController> {
               CustomButton(
                 onPressed: () {
                   controller.cancelPick();
-                  Get.back();
                 },
-                child: getSimpleText("取消", 16, AppColor.textGrey),
+                child: SizedBox(
+                    width: 70.w,
+                    height: 48.w,
+                    child: Center(
+                        child: getSimpleText("取消", 16, AppColor.textGrey))),
               ),
               CustomButton(
                 onPressed: () {
                   controller.confirmPick();
-                  Get.back();
                 },
-                child: getSimpleText("确定", 16, AppColor.textBlack),
+                child: SizedBox(
+                    width: 70.w,
+                    height: 48.w,
+                    child: Center(
+                        child: getSimpleText("确定", 16, AppColor.textBlack))),
               ),
-            ], width: 375 - 16 * 2, height: 48),
+            ], width: 375, height: 48),
             gline(375, 0.5),
             SizedBox(
                 width: 375.w,
@@ -882,8 +918,8 @@ class MyWalletDealList extends GetView<MyWalletDealListController> {
           ],
         ),
       ),
-      isDismissible: false,
-      enableDrag: false,
+      isDismissible: true,
+      enableDrag: true,
       isScrollControlled: true,
     );
   }
@@ -1038,21 +1074,19 @@ class MyWalletDealList extends GetView<MyWalletDealListController> {
                       right: 0,
                       child: CustomButton(
                         onPressed: () {
-                          checkIdentityAlert(
-                            toNext: () {
-                              Get.offUntil(
-                                  GetPageRoute(
-                                      page: () => MyWalletDraw(
-                                            walletData: data,
-                                          ),
-                                      binding: MyWalletDrawBinding()),
-                                  (route) => route is GetPageRoute
-                                      ? route.binding is MyWalletBinding
-                                          ? true
-                                          : false
-                                      : false);
-                            },
-                          );
+                          checkIdentityAlert(toNext: () {
+                            Get.offUntil(
+                                GetPageRoute(
+                                    page: () => MyWalletDraw(
+                                          walletData: data,
+                                        ),
+                                    binding: MyWalletDrawBinding()),
+                                (route) => route is GetPageRoute
+                                    ? route.binding is MyWalletBinding
+                                        ? true
+                                        : false
+                                    : false);
+                          });
                         },
                         child: Container(
                           width: 75.w,

@@ -218,10 +218,10 @@ class StatisticsMachineEquitiesAddListController extends GetxController {
     };
 
     if (start != null && start.isNotEmpty) {
-      params["terminal_Start"] = start;
+      params["terminal_Start"] = seqNumFormat(start);
     }
     if (end != null && end.isNotEmpty) {
-      params["terminal_End"] = end;
+      params["terminal_End"] = seqNumFormat(end);
     }
 
     simpleRequest(

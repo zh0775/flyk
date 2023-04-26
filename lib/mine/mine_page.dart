@@ -5,14 +5,22 @@ import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart';
 import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase_order.dart'
     deferred as integral_repurchase_order;
+import 'package:cxhighversion2/integralstore/integral_store_order_list.dart';
 import 'package:cxhighversion2/machine/machine_order_list.dart'
     deferred as machine_order_list;
 import 'package:cxhighversion2/message_notify/message_notify_list.dart'
     deferred as message_notify_list;
+import 'package:cxhighversion2/mine/debitCard/debit_card_info.dart';
+import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_check.dart';
+import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_upload.dart';
 import 'package:cxhighversion2/mine/integral/integral_cash_order_list.dart'
     deferred as integral_cash_order_list;
+import 'package:cxhighversion2/mine/integral/my_integral.dart'
+    deferred as my_integral;
 import 'package:cxhighversion2/mine/mineStoreOrder/mine_store_order_list.dart'
     deferred as mine_store_order_list;
+import 'package:cxhighversion2/mine/mine_setting_list.dart';
+import 'package:cxhighversion2/mine/myWallet/my_wallet.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart'
     deferred as my_wallet_draw;
 import 'package:cxhighversion2/mine/personal_information.dart'
@@ -123,6 +131,10 @@ class MinePageController extends GetxController {
   bool isAuth = false;
 
   int level = 1;
+  // 豆账户余额
+  Map beanAccount = {};
+  // 积分账户余额
+  Map integraAccount = {};
 
   dataFormat() {
     imageUrl = AppDefault().imageUrl;
@@ -131,7 +143,7 @@ class MinePageController extends GetxController {
     cClient = false;
     // moneyNum = 0.0;
     // jfNum = 0.0;
-    // List accounts = homeData["u_Account"] ?? [];
+    List accounts = homeData["u_Account"] ?? [];
     // for (var e in accounts) {
     //   if (e["a_No"] >= 4) {
     //     jfNum += (e["amout"] ?? 0);
@@ -139,6 +151,14 @@ class MinePageController extends GetxController {
     //     moneyNum += (e["amout"] ?? 0);
     //   }
     // }
+    for (var e in accounts) {
+      if (e["a_No"] == 4) {
+        integraAccount = e;
+      } else if (e["a_No"] == 5) {
+        beanAccount = e;
+      }
+    }
+
     Map info = (publicHomeData["webSiteInfo"] ?? {})["app"] ?? {};
     // cClient = (AppDefault().homeData["u_Role"] ?? 0) == 0;
     aboutMeInfoContent = info["apP_Introduction"] ?? "";
@@ -267,32 +287,56 @@ class _MinePageState extends State<MinePage>
                       ghb(10),
                       //头像区域
                       toLoginButton(context),
-
                       ghb(22),
-                      sbRow(
-                          List.generate(
-                              3,
-                              (index) => centClm([
-                                    getSimpleText(
-                                        index == 0
-                                            ? "540"
-                                            : index == 1
-                                                ? "249"
-                                                : "2",
-                                        21,
-                                        AppColor.textBlack,
-                                        isBold: true),
-                                    ghb(5),
-                                    getSimpleText(
-                                        index == 0
-                                            ? "可用积分"
-                                            : index == 1
-                                                ? "激活豆"
-                                                : "银行卡",
-                                        12,
-                                        AppColor.textGrey5)
-                                  ])),
-                          width: 375 - 47 * 2),
+                      GetBuilder<MinePageController>(builder: (_) {
+                        return sbRow(
+                            List.generate(
+                                3,
+                                (index) => CustomButton(
+                                      onPressed: () async {
+                                        if (index == 0 || index == 1) {
+                                          await my_integral.loadLibrary();
+                                          push(my_integral.MyIntegral(), null,
+                                              binding: my_integral
+                                                  .MyIntegralBinding(),
+                                              arguments: {
+                                                "isBean": index == 1
+                                              });
+                                        }
+                                      },
+                                      child: centClm([
+                                        getSimpleText(
+                                            index == 0
+                                                ? priceFormat(
+                                                    controller.integraAccount[
+                                                            "amout"] ??
+                                                        0,
+                                                    savePoint: 0)
+                                                : index == 1
+                                                    ? priceFormat(
+                                                        controller.beanAccount[
+                                                                "amout"] ??
+                                                            0,
+                                                        savePoint: 0)
+                                                    : "2",
+                                            21,
+                                            AppColor.textBlack,
+                                            isBold: true),
+                                        ghb(5),
+                                        getSimpleText(
+                                            index == 0
+                                                ? "可用${controller.integraAccount["name"] ?? ""}"
+                                                : index == 1
+                                                    ? controller.beanAccount[
+                                                            "name"] ??
+                                                        ""
+                                                    : "银行卡",
+                                            12,
+                                            AppColor.textGrey5)
+                                      ]),
+                                    )),
+                            width: 375 - 47 * 2);
+                      }),
                       ghb(25),
                       // vip
                       vipCardView(),
@@ -531,32 +575,68 @@ class _MinePageState extends State<MinePage>
     switch (title) {
       case "机具兑换":
         imgSubStr = "jjdh";
-        onPressed = () {};
+        onPressed = () {
+          showAppUpdateAlert({
+            "isDownload": false,
+            "isShow": true,
+            "newVersionNumber": "测试版",
+            "newVersionDownloadUrl":
+                "http://image.gxkunyuan.cn/D0034/Android/1.0.02X0R6.apk",
+            "version_Content": "问题修改"
+          });
+        };
 
         break;
       case "积分订单":
         imgSubStr = "jfdd";
-        onPressed = () {};
+        onPressed = () {
+          push(const IntegralStoreOrderList(), context,
+              binding: IntegralStoreOrderListBinding());
+        };
 
         break;
       case "我的钱包":
         imgSubStr = "wdqb";
-        onPressed = () {};
+        onPressed = () {
+          push(const MyWallet(), context, binding: MyWalletBinding());
+        };
 
         break;
       case "我的银行卡":
         imgSubStr = "wdyhk";
-        onPressed = () {};
+        onPressed = () {
+          checkIdentityAlert(
+            toNext: () {
+              push(const DebitCardInfo(), null,
+                  binding: DebitCardInfoBinding());
+            },
+          );
+        };
 
         break;
       case "通知公告":
         imgSubStr = "tzgg";
-        onPressed = () {};
+        onPressed = () async {
+          await message_notify_list.loadLibrary();
+          push(message_notify_list.MessageNotifyList(), null,
+              binding: message_notify_list.MessageNotifyListBinding());
+        };
 
         break;
       case "实名认证":
         imgSubStr = "smrz";
-        onPressed = () {};
+        onPressed = () {
+          bool isAuth =
+              (controller.homeData["authentication"] ?? {})["isCertified"] ??
+                  false;
+          if (isAuth) {
+            push(const IdentityAuthenticationCheck(), context,
+                binding: IdentityAuthenticationCheckBinding());
+          } else {
+            push(const IdentityAuthenticationUpload(), context,
+                binding: IdentityAuthenticationUploadBinding());
+          }
+        };
 
         break;
       case "在线客服":
@@ -569,7 +649,10 @@ class _MinePageState extends State<MinePage>
         break;
       case "设置":
         imgSubStr = "sz";
-        onPressed = () {};
+        onPressed = () {
+          push(const MineSettingList(), context,
+              binding: MineSettingListBinding());
+        };
 
         break;
       default:

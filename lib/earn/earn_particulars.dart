@@ -98,7 +98,7 @@ class EarnParticulars extends GetView<EarnParticularsController> {
                           child: Column(
                             children: [
                               SizedBox(
-                                height: controller.img.isEmpty ? 107.w : 165.w,
+                                height: controller.img.isEmpty ? 127.w : 185.w,
                                 child: Column(
                                   children: [
                                     ghb(21),
@@ -113,15 +113,20 @@ class EarnParticulars extends GetView<EarnParticularsController> {
                                           ),
                                     ghb(12),
                                     getSimpleText(
-                                        "${controller.earnData["title_CN"] ?? ""}${controller.earnData["f_Description"] ?? ""}",
+                                        "${controller.earnData["title_CN"] ?? ""}",
                                         12,
-                                        AppColor.text2),
+                                        AppColor.textBlack),
                                     ghb(12),
                                     getSimpleText(
-                                        "${(controller.earnData["bType"] ?? 0) == 0 ? "-" : "+"}${priceFormat(controller.earnData["amount"] ?? 0)}",
+                                        "${(controller.earnData["b_Type"] ?? 0) == 0 ? "-" : "+"}${priceFormat(controller.earnData["amount"] ?? 0)}",
                                         24,
-                                        AppColor.text,
+                                        AppColor.textBlack,
                                         isBold: true),
+                                    ghb(12),
+                                    getSimpleText(
+                                        "所属账户：${controller.earnData["a_Name"] ?? ""}",
+                                        12,
+                                        AppColor.textBlack),
                                   ],
                                 ),
                               ),
@@ -225,7 +230,8 @@ class EarnParticulars extends GetView<EarnParticularsController> {
                 .add(cellInfo("分润级别", controller.earnData["levelName"] ?? ""));
             break;
           case 1004:
-            widgets.add(cellInfo("订单号", controller.earnData["order_NO"] ?? ""));
+            widgets
+                .add(cellInfo("订单号", controller.earnData["shopOrderNo"] ?? ""));
             widgets.add(cellInfo("订单总额",
                 priceFormat(controller.earnData["shopOrderTotalPrice"] ?? "")));
             break;
@@ -271,7 +277,7 @@ class EarnParticulars extends GetView<EarnParticularsController> {
             break;
           case 1010:
             widgets
-                .add(cellInfo("积分类型", controller.earnData["className"] ?? ""));
+                .add(cellInfo("云券类型", controller.earnData["className"] ?? ""));
             widgets
                 .add(cellInfo("名称", controller.earnData["integralName"] ?? ""));
             break;

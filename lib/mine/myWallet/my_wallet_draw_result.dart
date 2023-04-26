@@ -24,16 +24,26 @@ class MyWalletDrawResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: getDefaultAppBar(
-        context,
-        "提现结果",
-        backPressed: () {
-          popToUntil(
-            page: const MyWallet(),
-            binding: MyWalletBinding(),
-          );
-        },
-      ),
+      appBar: getDefaultAppBar(context, "提现结果", backPressed: () {
+        popToUntil(
+          page: const MyWallet(),
+          binding: MyWalletBinding(),
+        );
+      }, action: [
+        CustomButton(
+          onPressed: () {
+            popToUntil(
+              page: const MyWallet(),
+              binding: MyWalletBinding(),
+            );
+          },
+          child: SizedBox(
+            width: 61.w,
+            height: kToolbarHeight,
+            child: Center(child: getSimpleText("完成", 14, AppColor.textBlack)),
+          ),
+        )
+      ]),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -123,29 +133,29 @@ class MyWalletDrawResult extends StatelessWidget {
                 ],
               ),
             ),
-            ghb(31),
-            CustomButton(
-              onPressed: () {
-                popToUntil(
-                  page: const MyWallet(),
-                  binding: MyWalletBinding(),
-                );
-              },
-              child: Container(
-                width: 345.w,
-                height: 45.w,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    border: Border.all(
-                      width: 0.5.w,
-                      color: AppColor.theme,
-                    ),
-                    borderRadius: BorderRadius.circular(45.w / 2)),
-                child: getSimpleText(
-                    success ? "查看详情" : "返回钱包", 15, AppColor.theme),
-              ),
-            )
+            // ghb(31),
+            // CustomButton(
+            //   onPressed: () {
+            //     popToUntil(
+            //       page: const MyWallet(),
+            //       binding: MyWalletBinding(),
+            //     );
+            //   },
+            //   child: Container(
+            //     width: 345.w,
+            //     height: 45.w,
+            //     alignment: Alignment.center,
+            //     decoration: BoxDecoration(
+            //         color: Colors.transparent,
+            //         border: Border.all(
+            //           width: 0.5.w,
+            //           color: AppColor.theme,
+            //         ),
+            //         borderRadius: BorderRadius.circular(45.w / 2)),
+            //     child: getSimpleText(
+            //         success ? "查看详情" : "返回钱包", 15, AppColor.theme),
+            //   ),
+            // )
           ],
         ),
       ),

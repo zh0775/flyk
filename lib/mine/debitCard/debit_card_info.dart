@@ -22,18 +22,9 @@ class DebitCardInfoController extends GetxController {
   set isLoading(v) => _isLoading.value = v;
 
   List cardColors = [
-    {
-      "l": "0xFFFE7E79",
-      "r": "0xFFFA605A",
-    },
-    {
-      "l": "0xFF6395FB",
-      "r": "0xFF3C79F7",
-    },
-    {
-      "l": "0xFF51DBBF",
-      "r": "0xFF3DCBA7",
-    },
+    {"l": "0xFFFE7E79", "r": "0xFFFA605A"},
+    {"l": "0xFF6395FB", "r": "0xFF3C79F7"},
+    {"l": "0xFF51DBBF", "r": "0xFF3DCBA7"}
   ];
 
   List cardList = [];
@@ -72,10 +63,8 @@ class DebitCardInfoController extends GetxController {
             Map data = json["data"] ?? {};
             count = data["count"] ?? 0;
             List bList = data["data"] ?? [];
-
             cardList = isLoad ? [...cardList, ...bList] : bList;
             update();
-
             // isLoad ? pullCtrl.finishLoad() : pullCtrl.finishRefresh();
             // isLoad ? pullCtrl.loadComplete() : pullCtrl.refreshCompleted();
           }
@@ -227,7 +216,6 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
       lColor = Color(colorInt).withOpacity(0.7);
       rColor = Color(colorInt);
     }
-
     return Slidable(
       key: ValueKey(index),
       endActionPane: ActionPane(

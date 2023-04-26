@@ -4,6 +4,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/home/home.dart';
+import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_check.dart';
 import 'package:cxhighversion2/service/http.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
@@ -317,12 +318,54 @@ class IdentityAuthenticationUpload
       child: Scaffold(
         backgroundColor: AppColor.pageBackgroundColor,
         appBar: getDefaultAppBar(context, "实名认证"),
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: controller.isUpload
-              ? uploadInfoView(context)
-              : inputInfoView(context),
-        ),
+        body: controller.isUpload
+            ? SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: uploadInfoView(context))
+            : Stack(
+                children: [
+                  Positioned.fill(
+                      bottom: 45.w + 38.w + paddingSizeBottom(context),
+                      child: inputInfoView(context)),
+                  Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: 45.w + 38.w + paddingSizeBottom(context),
+                      child: centClm([
+                        GetX<IdentityAuthenticationUploadController>(
+                          builder: (_) {
+                            return getSubmitBtn("确认提交", () {
+                              takeBackKeyboard(context);
+                              controller.authInputConfirm();
+                              // Get.to(
+                              //     IdentityAuthenticationUploadComplete(
+                              //       headImgUrl: controller.headPhotoUrl,
+                              //       emblemImgUrl: controller.emblemPhotoUrl,
+                              //       cardData: controller.cardData,
+                              //       emblemData: controller.emblemData,
+                              //     ),
+                              //     binding:
+                              //         IdentityAuthenticationUploadCompleteBinding());
+                            },
+                                enable: controller.submitEnable ||
+                                    !controller.isGetPhoto,
+                                height: 45,
+                                color: AppColor.theme,
+                                fontSize: 15);
+                          },
+                        ),
+                        SizedBox(
+                          width: 375.w,
+                          height: 38,
+                          child: Center(
+                            child: getSimpleText(
+                                "您的隐私信息仅用于验证保障您的账号安全", 12, AppColor.textGrey5),
+                          ),
+                        )
+                      ]))
+                ],
+              ),
       ),
     );
   }
@@ -330,61 +373,60 @@ class IdentityAuthenticationUpload
   Widget inputInfoView(BuildContext context) {
     return Column(
       children: [
-        sbhRow([
-          getSimpleText("* 请填写本人有效期内的身份证信息，以确保信息无误。", 12, AppColor.text3),
-        ], width: 375 - 15 * 2, height: 34),
+        gwb(375),
         Container(
-          color: Colors.white,
+          width: 345.w,
+          margin: EdgeInsets.only(top: 17.w),
+          decoration: getDefaultWhiteDec(radius: 6),
           child: centClm([
-            gwb(375),
-            Container(
-              width: 375.w,
+            SizedBox(
+              width: 345.w,
               height: 55.w,
-              color: Colors.white,
               child: Center(
                   child: Row(
                 children: [
                   gwb(15),
-                  getWidthText("姓名", 15, AppColor.text3, 90, 1),
+                  getWidthText("姓名", 14, AppColor.textGrey5, 90, 1),
                   CustomInput(
-                    width: 345.w - 90.w,
+                    width: 345.w - 90.w - 30.w,
                     heigth: 55.w,
-                    placeholder: "请输入姓名",
+                    placeholder: "请输入您的真实姓名",
                     textEditCtrl: controller.nameInputCtrl,
+                    textAlign: TextAlign.end,
                     style: TextStyle(
-                      color: AppColor.text,
-                      fontSize: 15.w,
+                      color: AppColor.textBlack,
+                      fontSize: 14.w,
                     ),
                     placeholderStyle: TextStyle(
                       color: AppColor.assisText,
-                      fontSize: 15.w,
+                      fontSize: 14.w,
                     ),
                   ),
                 ],
               )),
             ),
-            gline(345, 1),
-            Container(
-              width: 375.w,
+            gline(330, 0.5),
+            SizedBox(
+              width: 345.w,
               height: 55.w,
-              color: Colors.white,
               child: Center(
                   child: Row(
                 children: [
                   gwb(15),
-                  getWidthText("身份证号", 15, AppColor.text3, 90, 1),
+                  getWidthText("身份证号", 14, AppColor.textGrey5, 90, 1),
                   CustomInput(
-                    width: 345.w - 90.w,
+                    width: 345.w - 90.w - 30.w,
                     heigth: 55.w,
-                    placeholder: "请输入身份证号",
+                    placeholder: "请输入您的身份证号",
                     textEditCtrl: controller.noInputCtrl,
+                    textAlign: TextAlign.end,
                     style: TextStyle(
-                      color: AppColor.text,
-                      fontSize: 15.w,
+                      color: AppColor.textBlack,
+                      fontSize: 14.w,
                     ),
                     placeholderStyle: TextStyle(
                       color: AppColor.assisText,
-                      fontSize: 15.w,
+                      fontSize: 14.w,
                     ),
                   ),
                 ],
@@ -392,27 +434,17 @@ class IdentityAuthenticationUpload
             ),
           ]),
         ),
-        ghb(50),
-        GetX<IdentityAuthenticationUploadController>(
-          builder: (_) {
-            return getSubmitBtn("确认提交", () {
-              controller.authInputConfirm();
-              // Get.to(
-              //     IdentityAuthenticationUploadComplete(
-              //       headImgUrl: controller.headPhotoUrl,
-              //       emblemImgUrl: controller.emblemPhotoUrl,
-              //       cardData: controller.cardData,
-              //       emblemData: controller.emblemData,
-              //     ),
-              //     binding:
-              //         IdentityAuthenticationUploadCompleteBinding());
-            },
-                enable: controller.submitEnable || !controller.isGetPhoto,
-                height: 45,
-                color: AppColor.theme,
-                fontSize: 15);
-          },
-        ),
+        ghb(15),
+        getRichText(
+            "* ",
+            "请确认填写信息与本人身份信息一致，否则不会通过审核。实名认证成功后，身份信息与此账号唯一绑定，不可更换他人。",
+            12,
+            const Color(0xFFFF3F3A),
+            12,
+            AppColor.textGrey5,
+            widht: 345,
+            maxLines: 3,
+            h2: 1.5),
       ],
     );
   }
@@ -420,6 +452,7 @@ class IdentityAuthenticationUpload
   Widget uploadInfoView(BuildContext context) {
     return Column(
       children: [
+        gwb(375),
         ghb(15),
         sbRow([
           getSimpleText(
@@ -655,9 +688,10 @@ class AuthCompletePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: getDefaultAppBar(
         context,
-        "实名认证",
+        "认证结果",
         backPressed: () {
           popToUntil();
         },
@@ -666,24 +700,30 @@ class AuthCompletePage extends StatelessWidget {
         child: Container(
           width: 375.w,
           decoration: BoxDecoration(
-              color: Colors.white,
               border: Border(
                   top: BorderSide(
                       width: 1.w, color: AppColor.pageBackgroundColor))),
           child: Column(
             children: [
-              ghb(35),
+              ghb(30.5),
               gwb(375),
               Image.asset(
-                assetsName("statistics/machine/bg_wait_sh"),
-                width: 142.5.w,
+                assetsName("common/bg_auth_success"),
+                width: 183.w,
                 fit: BoxFit.fitWidth,
               ),
               ghb(35),
-              getSimpleText("信息已提交，正在审核中...", 18, AppColor.text, isBold: true),
-              ghb(12),
-              getSimpleText("我们将在3个工作日内完成审核，请耐心等待。", 12, AppColor.text3),
-              ghb(50)
+              getSimpleText("认证成功", 18, AppColor.text, isBold: true),
+              ghb(15),
+              getSimpleText("恭喜您，成功通过实名认证。", 12, AppColor.text3),
+              ghb(30),
+              getSubmitBtn(
+                  "查看认证信息",
+                  () => popToUntil(
+                      page: const IdentityAuthenticationCheck(),
+                      binding: IdentityAuthenticationCheckBinding()),
+                  height: 45,
+                  color: AppColor.theme)
             ],
           ),
         ),

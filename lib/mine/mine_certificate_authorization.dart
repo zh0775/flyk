@@ -11,6 +11,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:universal_html/html.dart';
@@ -83,13 +84,28 @@ class MineCertificateAuthorization
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar:
-          getDefaultAppBar(context, "授权证书", blueBackground: true, white: true),
+      appBar: getDefaultAppBar(context, "授权证书",
+          action: kIsWeb
+              ? null
+              : [
+                  CustomButton(
+                    onPressed: () {
+                      saveImageAction(2);
+                    },
+                    child: SizedBox(
+                      width: 95.w,
+                      height: kToolbarHeight,
+                      child: Center(
+                        child: getSimpleText("保存到本地", 14, AppColor.textBlack),
+                      ),
+                    ),
+                  )
+                ]),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            gline(375, 0.5),
             ghb(37.5),
-            gwb(375),
             SizedBox(
               width: 313,
               height: 440,
@@ -142,52 +158,52 @@ class MineCertificateAuthorization
               //   shrinkWrap: true,
               // )
             ),
-            ghb(32),
-            kIsWeb
-                ? ghb(0)
-                : CustomButton(
-                    onPressed: () {
-                      saveImageAction(2);
-                    },
-                    child: Container(
-                      width: 279.w,
-                      height: 48.w,
-                      decoration: BoxDecoration(
-                          color: const Color(0xFFF0F5FE),
-                          borderRadius: BorderRadius.circular(24.w)),
-                      child: Center(
-                        child: centRow([
-                          Image.asset(
-                            assetsName("common/icon_save"),
-                            width: 14.w,
-                            fit: BoxFit.fitWidth,
-                          ),
-                          gwb(13),
-                          getSimpleText("保存证书", 16, AppColor.textBlack)
-                        ]),
-                      ),
-                    ),
-                  ),
-            // sbRow([
-            //   Container(
-            //     color: const Color(0xFF434343),
-            //     width: 18.5.w,
-            //     height: 1.w,
-            //   ),
-            //   getSimpleText("分享图片到", 14, AppColor.textBlack),
-            //   Container(
-            //     color: const Color(0xFF434343),
-            //     width: 18.5.w,
-            //     height: 1.w,
-            //   ),
-            // ], width: 150),
-            ghb(38),
-            // sbRow([
-            //   shareButotn(0),
-            //   shareButotn(1),
-            //   // shareButotn(2),
-            // ], width: 251),
-            ghb(79.5),
+            // ghb(32),
+            // kIsWeb
+            //     ? ghb(0)
+            //     : CustomButton(
+            //         onPressed: () {
+            //           saveImageAction(2);
+            //         },
+            //         child: Container(
+            //           width: 279.w,
+            //           height: 48.w,
+            //           decoration: BoxDecoration(
+            //               color: const Color(0xFFF0F5FE),
+            //               borderRadius: BorderRadius.circular(24.w)),
+            //           child: Center(
+            //             child: centRow([
+            //               Image.asset(
+            //                 assetsName("common/icon_save"),
+            //                 width: 14.w,
+            //                 fit: BoxFit.fitWidth,
+            //               ),
+            //               gwb(13),
+            //               getSimpleText("保存证书", 16, AppColor.textBlack)
+            //             ]),
+            //           ),
+            //         ),
+            //       ),
+            // // sbRow([
+            // //   Container(
+            // //     color: const Color(0xFF434343),
+            // //     width: 18.5.w,
+            // //     height: 1.w,
+            // //   ),
+            // //   getSimpleText("分享图片到", 14, AppColor.textBlack),
+            // //   Container(
+            // //     color: const Color(0xFF434343),
+            // //     width: 18.5.w,
+            // //     height: 1.w,
+            // //   ),
+            // // ], width: 150),
+            // ghb(38),
+            // // sbRow([
+            // //   shareButotn(0),
+            // //   shareButotn(1),
+            // //   // shareButotn(2),
+            // // ], width: 251),
+            // ghb(79.5),
           ],
         ),
       ),
@@ -210,7 +226,6 @@ class MineCertificateAuthorization
       AppWechatManager().shareTimelineWithFile(byte);
       // await Wechat.instance
       //     .shareImage(scene: WechatScene.TIMELINE, imageData: byte);
-
     } else if (idx == 2) {
       if (!kIsWeb) {
         saveAssetsImg(byte);
