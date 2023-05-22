@@ -25,6 +25,8 @@ import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart'
     deferred as my_wallet_draw;
 import 'package:cxhighversion2/mine/personal_information.dart'
     deferred as personal_information;
+import 'package:cxhighversion2/mine/vip/vip_levelup.dart';
+import 'package:cxhighversion2/product/product.dart';
 import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
@@ -576,14 +578,17 @@ class _MinePageState extends State<MinePage>
       case "机具兑换":
         imgSubStr = "jjdh";
         onPressed = () {
-          showAppUpdateAlert({
-            "isDownload": false,
-            "isShow": true,
-            "newVersionNumber": "测试版",
-            "newVersionDownloadUrl":
-                "http://image.gxkunyuan.cn/D0034/Android/1.0.02X0R6.apk",
-            "version_Content": "问题修改"
-          });
+          push(const Product(), context,
+              binding: ProductBinding(), arguments: {"levelType": 3});
+
+          // showAppUpdateAlert({
+          //   "isDownload": false,
+          //   "isShow": true,
+          //   "newVersionNumber": "测试版",
+          //   "newVersionDownloadUrl":
+          //       "http://image.gxkunyuan.cn/D0034/Android/1.0.02X0R6.apk",
+          //   "version_Content": "问题修改"
+          // });
         };
 
         break;
@@ -1046,7 +1051,10 @@ class _MinePageState extends State<MinePage>
                         ghb(10),
                         controller.isLogin
                             ? CustomButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  push(const VipLevelup(), context,
+                                      binding: VipLevelupBinding());
+                                },
                                 child: Container(
                                   height: 20.w,
                                   decoration: BoxDecoration(

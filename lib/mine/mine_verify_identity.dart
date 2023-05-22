@@ -47,7 +47,7 @@ class MineVerifyIdentityController extends GetxController {
   late BuildContext context;
 
   TextEditingController pwdCtrl = TextEditingController();
-  TextEditingController pwdConfirmCtrl = TextEditingController();
+  // TextEditingController pwdConfirmCtrl = TextEditingController();
 
   TextEditingController changePwdCtrl = TextEditingController();
   TextEditingController changePwdConfirmCtrl = TextEditingController();
@@ -125,15 +125,15 @@ class MineVerifyIdentityController extends GetxController {
       return;
     }
 
-    if (pwdConfirmCtrl.text.isEmpty) {
-      ShowToast.normal("请输入确认的6位支付密码");
-      return;
-    }
+    // if (pwdConfirmCtrl.text.isEmpty) {
+    //   ShowToast.normal("请输入确认的6位支付密码");
+    //   return;
+    // }
 
-    if (pwdConfirmCtrl.text != pwdCtrl.text) {
-      ShowToast.normal("两次密码不一致，请重新输入");
-      return;
-    }
+    // if (pwdConfirmCtrl.text != pwdCtrl.text) {
+    //   ShowToast.normal("两次密码不一致，请重新输入");
+    //   return;
+    // }
 
     nextBtnEnable = false;
 
@@ -248,19 +248,19 @@ class MineVerifyIdentityController extends GetxController {
 
   changePayPwdAction() {
     String pwd = pwdCtrl.text;
-    String pwd2 = pwdConfirmCtrl.text;
+    // String pwd2 = pwdConfirmCtrl.text;
     // String pwd2 = pwdSource["pwd2"] ?? "";
     String sms = pwdSource["sms"] ?? "";
     if (pwd.isEmpty) {
       ShowToast.normal("请输入新支付密码");
       return;
     }
-    if (pwd2.isEmpty) {
+    if (!showConfirmPayPwd) {
       ShowToast.normal("请输入确认支付密码");
       return;
     }
 
-    if (pwd != pwd2) {
+    if (showConfirmPayPwd && pwd != firstPayPwd) {
       ShowToast.normal("两次支付密码不一致，请重新输入");
       return;
     }
@@ -402,7 +402,7 @@ class MineVerifyIdentityController extends GetxController {
             myTitle = "修改支付密码";
             // errorController = StreamController<ErrorAnimationType>();
             pwdCtrl.addListener(payPwdListener);
-            pwdConfirmCtrl.addListener(confirmPwdListener);
+            // pwdConfirmCtrl.addListener(confirmPwdListener);
             break;
           default:
             myTitle = "";
@@ -414,17 +414,34 @@ class MineVerifyIdentityController extends GetxController {
   }
 
   payPwdListener() {
-    if (pwdCtrl.text.length >= 6) {
-      showConfirmPayPwd = true;
-      payPwdError = "请再输入一次";
+    if (!showConfirmPayPwd) {
+      if (pwdCtrl.text.length >= 6) {
+        showConfirmPayPwd = true;
+        payPwdError = "请再输入一次";
+        firstPayPwd = pwdCtrl.text;
+        pwdCtrl.clear();
+      }
+    } else {
+      if (pwdCtrl.text.length >= 6) {
+        if (firstPayPwd != pwdCtrl.text) {
+          payPwdError = "两次输入不一致，请重新输入";
+
+          showConfirmPayPwd = false;
+          pwdCtrl.clear();
+        } else {
+          payPwdError = "";
+        }
+      }
     }
   }
 
-  confirmPwdListener() {
-    if (pwdConfirmCtrl.text.length >= 6) {
-      payPwdError = pwdConfirmCtrl.text != pwdCtrl.text ? "两次输入不一致" : "";
-    }
-  }
+  String firstPayPwd = "";
+
+  // confirmPwdListener() {
+  //   if (pwdConfirmCtrl.text.length >= 6) {
+  //     payPwdError = pwdConfirmCtrl.text != pwdCtrl.text ? "两次输入不一致" : "";
+  //   }
+  // }
 
   @override
   void onInit() {
@@ -446,7 +463,7 @@ class MineVerifyIdentityController extends GetxController {
     payPwdCtrl.dispose();
 
     pwdCtrl.removeListener(payPwdListener);
-    pwdConfirmCtrl.removeListener(confirmPwdListener);
+    // pwdConfirmCtrl.removeListener(confirmPwdListener);
     // pwdConfirmCtrl.dispose();
     pwdInputCtrl.dispose();
     pwdInputCtrl2.dispose();
@@ -555,33 +572,46 @@ class MineVerifyIdentity extends GetView<MineVerifyIdentityController> {
                         //     AppColor.textBlack, 335, 2),
 
                         ghb(75),
-                        GetX<MineVerifyIdentityController>(
-                          builder: (_) {
-                            return !controller.showConfirmPayPwd
-                                ? CustomPinTextfield(
-                                    key: controller.inputkey1,
-                                    controller: controller.pwdCtrl,
-                                    insideColor: Colors.white,
-                                    singleHeight: 45.w,
-                                    singleWidth: 45.w,
-                                    width: 375 - 28 * 2,
-                                    onChanged: (v) {
-                                      // debugPrint(v);
-                                      // if (v.length >= 6) {}
-                                    },
-                                  )
-                                : CustomPinTextfield(
-                                    key: controller.inputkey2,
-                                    insideColor: Colors.white,
-                                    controller: controller.pwdConfirmCtrl,
-                                    singleHeight: 45.w,
-                                    singleWidth: 45.w,
-                                    width: 375 - 25 * 2,
-                                    onChanged: (v) {
-                                      // debugPrint(v);
-                                      // if (v.length >= 6) {}
-                                    },
-                                  );
+                        // GetX<MineVerifyIdentityController>(
+                        //   builder: (_) {
+                        //     return !controller.showConfirmPayPwd
+                        //         ? CustomPinTextfield(
+                        //             key: controller.inputkey1,
+                        //             controller: controller.pwdCtrl,
+                        //             insideColor: Colors.white,
+                        //             singleHeight: 45.w,
+                        //             singleWidth: 45.w,
+                        //             width: 375 - 28 * 2,
+                        //             onChanged: (v) {
+                        //               // debugPrint(v);
+                        //               // if (v.length >= 6) {}
+                        //             },
+                        //           )
+                        //         : CustomPinTextfield(
+                        //             key: controller.inputkey2,
+                        //             insideColor: Colors.white,
+                        //             controller: controller.pwdConfirmCtrl,
+                        //             singleHeight: 45.w,
+                        //             singleWidth: 45.w,
+                        //             width: 375 - 25 * 2,
+                        //             onChanged: (v) {
+                        //               // debugPrint(v);
+                        //               // if (v.length >= 6) {}
+                        //             },
+                        //           );
+
+                        //   },
+                        // ),
+                        CustomPinTextfield(
+                          // key: controller.inputkey2,
+                          insideColor: Colors.white,
+                          controller: controller.pwdCtrl,
+                          singleHeight: 45.w,
+                          singleWidth: 45.w,
+                          width: 375 - 25 * 2,
+                          onChanged: (v) {
+                            // debugPrint(v);
+                            // if (v.length >= 6) {}
                           },
                         ),
                         ghb(25),
