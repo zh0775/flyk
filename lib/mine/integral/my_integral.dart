@@ -10,6 +10,7 @@ import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/notify_default.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -295,18 +296,25 @@ class MyIntegral extends GetView<MyIntegralController> {
                                         children: [
                                           myTitle("机具兑换"),
                                           controller.isMachineFirstLoading
-                                              ? sbRow(
-                                                  List.generate(
-                                                      3,
-                                                      (index) => SkeletonAvatar(
-                                                            style:
-                                                                SkeletonAvatarStyle(
+                                              ? kIsWeb
+                                                  ? CustomEmptyView(
+                                                      topSpace: 20,
+                                                      centerSpace: 10,
+                                                      bottomSpace: 20,
+                                                      isLoading: controller
+                                                          .isMachineFirstLoading)
+                                                  : sbRow(
+                                                      List.generate(
+                                                          3,
+                                                          (index) =>
+                                                              SkeletonAvatar(
+                                                                style: SkeletonAvatarStyle(
                                                                     width: 90.w,
                                                                     height:
                                                                         146.5
                                                                             .w),
-                                                          )),
-                                                  width: 315)
+                                                              )),
+                                                      width: 315)
                                               : Row(
                                                   children: List.generate(
                                                       controller.machineList
@@ -476,7 +484,7 @@ class MyIntegral extends GetView<MyIntegralController> {
                           GetX<MyIntegralController>(
                             builder: (_) {
                               return controller.integralHistoryList.isEmpty
-                                  ? controller.isFirstLoading
+                                  ? controller.isFirstLoading && !kIsWeb
                                       ? SizedBox(
                                           width: 345.w,
                                           height: 61.w * 4,

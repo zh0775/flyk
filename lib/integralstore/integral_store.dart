@@ -574,58 +574,59 @@ class IntegralStore extends GetView<IntegralStoreController> {
               top: 110.w,
               child: GetBuilder<IntegralStoreController>(
                 builder: (_) {
-                  return EasyRefresh(
-                    // controller: controller.pullCtrl,
-                    onLoad: controller.dataList.length >= controller.count
-                        ? null
-                        : () => controller.loadData(isLoad: true),
-                    // onLoading: () => controller.loadData(isLoad: true),
-                    onRefresh: () => controller.loadData(),
-                    // enablePullUp: controller.count > controller.dataList.length,
-                    child: controller.dataList.isEmpty
-                        ? controller.isFirstLoading
-                            ? Padding(
-                                padding: EdgeInsets.only(top: 15.w, left: 15.w),
-                                child: SizedBox(
-                                  width: 345.w,
-                                  child: Wrap(
-                                    spacing: 10.w,
-                                    runSpacing: 10.w,
-                                    children: List.generate(
-                                        4,
-                                        (index) => SkeletonAvatar(
-                                                style: SkeletonAvatarStyle(
-                                              width: (375 - 15 * 2 - 10).w / 2 -
-                                                  0.1.w,
-                                              height: 270.w,
-                                            ))),
-                                  ),
-                                ),
-                              )
-                            : GetX<IntegralStoreController>(
-                                builder: (_) {
-                                  return CustomListEmptyView(
-                                    isLoading: controller.isLoading,
-                                  );
-                                },
-                              )
-                        : GetX<IntegralStoreController>(
-                            builder: (_) {
-                              return ListView.builder(
-                                padding: EdgeInsets.only(bottom: 20.w),
-                                itemCount: controller.isList
-                                    ? controller.dataList.length
-                                    : (controller.dataList.length / 2).ceil(),
-                                itemBuilder: (context, index) {
-                                  return controller.isList
-                                      ? cellList(
-                                          index, controller.dataList[index])
-                                      : cell(index);
-                                },
-                              );
-                            },
-                          ),
-                  );
+                  return EasyRefresh.builder(
+                      // controller: controller.pullCtrl,
+                      onLoad: controller.dataList.length >= controller.count
+                          ? null
+                          : () => controller.loadData(isLoad: true),
+                      // onLoading: () => controller.loadData(isLoad: true),
+                      onRefresh: () => controller.loadData(),
+                      // enablePullUp: controller.count > controller.dataList.length,
+                      childBuilder: (context, physics) {
+                        return controller.dataList.isEmpty
+                            ? GetX<IntegralStoreController>(
+                                builder: (controller) {
+                                return controller.isFirstLoading && !kIsWeb
+                                    ? Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 15.w, left: 15.w),
+                                        child: SizedBox(
+                                            width: 345.w,
+                                            child: Wrap(
+                                                spacing: 10.w,
+                                                runSpacing: 10.w,
+                                                children: List.generate(
+                                                    4,
+                                                    (index) => SkeletonAvatar(
+                                                            style:
+                                                                SkeletonAvatarStyle(
+                                                          width:
+                                                              (375 - 15 * 2 - 10)
+                                                                          .w /
+                                                                      2 -
+                                                                  0.1.w,
+                                                          height: 270.w,
+                                                        ))))))
+                                    : CustomListEmptyView(
+                                        physics: physics,
+                                        isLoading: controller.isLoading);
+                              })
+                            : GetX<IntegralStoreController>(builder: (_) {
+                                return ListView.builder(
+                                    physics: physics,
+                                    padding: EdgeInsets.only(bottom: 20.w),
+                                    itemCount: controller.isList
+                                        ? controller.dataList.length
+                                        : (controller.dataList.length / 2)
+                                            .ceil(),
+                                    itemBuilder: (context, index) {
+                                      return controller.isList
+                                          ? cellList(
+                                              index, controller.dataList[index])
+                                          : cell(index);
+                                    });
+                              });
+                      });
                 },
               )),
           GetX<IntegralStoreController>(

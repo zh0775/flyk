@@ -640,7 +640,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                       listIndex: listIndex,
                       listLevelType: levelIdx),
               child: controller.dataLists[listIndex].isEmpty
-                  ? controller.isFirstLoading
+                  ? controller.isFirstLoading && !kIsWeb
                       ? SkeletonListView(
                           item: Column(
                             children: [

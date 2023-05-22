@@ -30,7 +30,6 @@ import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:skeletons/skeletons.dart';
 
 // import 'third/pageviewj-0.0.3/view_page.dart';
 
@@ -196,52 +195,49 @@ class _MainAppState extends State<MainApp> {
                       debugShowCheckedModeBanner: false,
                     )
                   : pullRefresh(
-                      child: skeletonTheme(
-                        child: GetMaterialApp(
-                          darkTheme: getThemeData(),
-                          theme: getThemeData(),
-                          navigatorKey: Global.navigatorKey,
-                          initialRoute: AppDefault.firstLaunchApp
-                              ? Routes.main
-                              : Routes.splash,
-                          debugShowCheckedModeBanner: false,
-                          defaultTransition: Transition.rightToLeft,
-                          getPages: [
-                            GetPage(
-                              name: Routes.main,
-                              page: () => const MainPage(),
-                              binding: MainPageBinding(),
-                            ),
-                            GetPage(
-                              name: Routes.splash,
-                              page: () => const AppLaunchSplash(),
-                              binding: AppLaunchSplashBinding(),
-                            ),
-                          ],
-                          initialBinding: AppBinding(),
-                          useInheritedMediaQuery: false,
-                          enableLog: true,
-
-                          title: AppDefault.projectName,
-                          // home: MainPage(),
-                          localizationsDelegates: const [
-                            RefreshLocalizations.delegate,
-                            GlobalMaterialLocalizations.delegate,
-                            GlobalCupertinoLocalizations.delegate,
-                            GlobalWidgetsLocalizations.delegate
-                          ],
-                          supportedLocales: const [Locale("en"), Locale("zh")],
-
-                          builder: (getCtx, materialAppChild) {
-                            return MediaQuery(
-                                data: MediaQuery.of(getCtx).copyWith(
-                                    textScaleFactor: 1.0, boldText: false),
-                                child: materialAppChild!);
-                          },
-                          navigatorObservers: [GLObserver()],
+                      child: GetMaterialApp(
+                      darkTheme: getThemeData(),
+                      theme: getThemeData(),
+                      navigatorKey: Global.navigatorKey,
+                      initialRoute: AppDefault.firstLaunchApp
+                          ? Routes.main
+                          : Routes.splash,
+                      debugShowCheckedModeBanner: false,
+                      defaultTransition: Transition.rightToLeft,
+                      getPages: [
+                        GetPage(
+                          name: Routes.main,
+                          page: () => const MainPage(),
+                          binding: MainPageBinding(),
                         ),
-                      ),
-                    );
+                        GetPage(
+                          name: Routes.splash,
+                          page: () => const AppLaunchSplash(),
+                          binding: AppLaunchSplashBinding(),
+                        ),
+                      ],
+                      initialBinding: AppBinding(),
+                      useInheritedMediaQuery: false,
+                      enableLog: true,
+
+                      title: AppDefault.projectName,
+                      // home: MainPage(),
+                      localizationsDelegates: const [
+                        RefreshLocalizations.delegate,
+                        GlobalMaterialLocalizations.delegate,
+                        GlobalCupertinoLocalizations.delegate,
+                        GlobalWidgetsLocalizations.delegate
+                      ],
+                      supportedLocales: const [Locale("en"), Locale("zh")],
+
+                      builder: (getCtx, materialAppChild) {
+                        return MediaQuery(
+                            data: MediaQuery.of(getCtx).copyWith(
+                                textScaleFactor: 1.0, boldText: false),
+                            child: materialAppChild!);
+                      },
+                      navigatorObservers: [GLObserver()],
+                    ));
         },
       ),
     );
@@ -266,45 +262,6 @@ class _MainAppState extends State<MainApp> {
       enableLoadingWhenFailed: true, //在加载失败的状态下,用户仍然可以通过手势上拉来触发加载更多
       hideFooterWhenNotFull: false, // Viewport不满一屏时,禁用上拉加载更多功能
       enableBallisticLoad: true, // 可以通过惯性滑动触发加载更多
-      child: child,
-    );
-  }
-
-  Widget skeletonTheme({required Widget child}) {
-    // return child;
-    return SkeletonTheme(
-      // themeMode: ThemeMode.light,
-      shimmerGradient: const LinearGradient(
-        colors: [
-          Color(0xFFD8E3E7),
-          Color(0xFFC8D5DA),
-          Color(0xFFD8E3E7),
-        ],
-        stops: [
-          0.1,
-          0.5,
-          0.9,
-        ],
-      ),
-      darkShimmerGradient: const LinearGradient(
-        colors: [
-          Color(0xFF222222),
-          Color(0xFF242424),
-          Color(0xFF2B2B2B),
-          Color(0xFF242424),
-          Color(0xFF222222),
-        ],
-        stops: [
-          0.0,
-          0.2,
-          0.5,
-          0.8,
-          1,
-        ],
-        begin: Alignment(-2.4, -0.2),
-        end: Alignment(2.4, 0.2),
-        tileMode: TileMode.clamp,
-      ),
       child: child,
     );
   }

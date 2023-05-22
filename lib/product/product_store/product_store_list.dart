@@ -11,6 +11,7 @@ import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/tools.dart';
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -529,52 +530,46 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                           onRefresh: () => controller.loadData(),
                           childBuilder: (context, physics) {
                             return GetX<ProductStoreListController>(
-                              builder: (_) {
-                                return controller.isFirstLoading
-                                    ? Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 15.w, left: 15.w),
-                                        child: SizedBox(
-                                          width: 345.w,
-                                          child: Wrap(
-                                            spacing: 10.w,
-                                            runSpacing: 10.w,
-                                            children: List.generate(
-                                                4,
-                                                (index) => SkeletonAvatar(
-                                                        style:
-                                                            SkeletonAvatarStyle(
+                                builder: (_) {
+                              return controller.isFirstLoading && !kIsWeb
+                                  ? Padding(
+                                      padding: EdgeInsets.only(
+                                          top: 15.w, left: 15.w),
+                                      child: SizedBox(
+                                        width: 345.w,
+                                        child: Wrap(
+                                          spacing: 10.w,
+                                          runSpacing: 10.w,
+                                          children: List.generate(
+                                              4,
+                                              (index) => SkeletonAvatar(
+                                                  style: SkeletonAvatarStyle(
                                                       width: (375 - 15 * 2 - 10)
                                                                   .w /
                                                               2 -
                                                           0.1.w,
-                                                      height: 255.w,
-                                                    ))),
-                                          ),
+                                                      height: 255.w))),
                                         ),
-                                      )
-                                    : controller.dataList.isEmpty
-                                        ? CustomListEmptyView(
-                                            physics: physics,
-                                            isLoading: controller.isLoading,
-                                          )
-                                        : ListView.builder(
-                                            physics: physics,
-                                            padding:
-                                                EdgeInsets.only(bottom: 20.w),
-                                            itemCount: controller.isList
-                                                ? controller.dataList.length
-                                                : (controller.dataList.length /
-                                                        2)
-                                                    .ceil(),
-                                            itemBuilder: (context, index) {
-                                              return controller.isList
-                                                  ? listCell(index)
-                                                  : wrapCell(index);
-                                            },
-                                          );
-                              },
-                            );
+                                      ),
+                                    )
+                                  : controller.dataList.isEmpty
+                                      ? CustomListEmptyView(
+                                          physics: physics,
+                                          isLoading: controller.isLoading)
+                                      : ListView.builder(
+                                          physics: physics,
+                                          padding:
+                                              EdgeInsets.only(bottom: 20.w),
+                                          itemCount: controller.isList
+                                              ? controller.dataList.length
+                                              : (controller.dataList.length / 2)
+                                                  .ceil(),
+                                          itemBuilder: (context, index) {
+                                            return controller.isList
+                                                ? listCell(index)
+                                                : wrapCell(index);
+                                          });
+                            });
                           });
                     }));
               },

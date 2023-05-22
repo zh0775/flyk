@@ -4,11 +4,14 @@ import 'package:cxhighversion2/business/pointsMall/shopping_product_detail.dart'
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
+import 'package:cxhighversion2/component/custom_list_empty_view.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/user_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -536,65 +539,58 @@ class ShoppingProductList extends GetView<ShoppingProductListController> {
           ),
           Positioned.fill(
               top: 110.w,
-              child: GetBuilder<ShoppingProductListController>(
-                builder: (_) {
-                  return EasyRefresh(
+              child: GetBuilder<ShoppingProductListController>(builder: (_) {
+                return EasyRefresh.builder(
                     onLoad: controller.dataList.length >= controller.count
                         ? null
                         : () => controller.loadData(isLoad: true),
                     // onLoading: () => controller.loadData(isLoad: true),
                     onRefresh: () => controller.loadData(),
                     // enablePullUp: controller.count > controller.dataList.length,
-                    child: controller.dataList.isEmpty
-                        ? controller.isFirstLoading
-                            ? Padding(
-                                padding: EdgeInsets.only(top: 15.w, left: 15.w),
-                                child: SizedBox(
-                                  width: 345.w,
-                                  child: Wrap(
-                                    spacing: 10.w,
-                                    runSpacing: 10.w,
-                                    children: List.generate(
-                                        4,
-                                        (index) => SkeletonAvatar(
-                                                style: SkeletonAvatarStyle(
-                                              width: (375 - 15 * 2 - 10).w / 2 -
-                                                  0.1.w,
-                                              height: 270.w,
-                                            ))),
-                                  ),
-                                ),
-                              )
-                            : GetX<ShoppingProductListController>(
-                                builder: (_) {
-                                  return SingleChildScrollView(
-                                    child: Center(
-                                      child: CustomEmptyView(
-                                        isLoading: controller.isLoading,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              )
-                        : GetX<ShoppingProductListController>(
-                            builder: (_) {
+                    childBuilder: (context, physics) {
+                      return controller.dataList.isEmpty
+                          ? GetX<ShoppingProductListController>(
+                              builder: (controller) {
+                                return controller.isFirstLoading && !kIsWeb
+                                    ? Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 15.w, left: 15.w),
+                                        child: SizedBox(
+                                            width: 345.w,
+                                            child: Wrap(
+                                                spacing: 10.w,
+                                                runSpacing: 10.w,
+                                                children: List.generate(
+                                                    4,
+                                                    (index) => SkeletonAvatar(
+                                                        style: SkeletonAvatarStyle(
+                                                            width:
+                                                                (375 - 15 * 2 - 10)
+                                                                            .w /
+                                                                        2 -
+                                                                    0.1.w,
+                                                            height: 270.w))))))
+                                    : CustomListEmptyView(
+                                        physics: physics,
+                                        isLoading: controller.isLoading);
+                              },
+                            )
+                          : GetX<ShoppingProductListController>(builder: (_) {
                               return ListView.builder(
-                                padding: EdgeInsets.only(bottom: 20.w),
-                                itemCount: controller.isList
-                                    ? controller.dataList.length
-                                    : (controller.dataList.length / 2).ceil(),
-                                itemBuilder: (context, index) {
-                                  return controller.isList
-                                      ? cellList(
-                                          index, controller.dataList[index])
-                                      : cell(index);
-                                },
-                              );
-                            },
-                          ),
-                  );
-                },
-              )),
+                                  physics: physics,
+                                  padding: EdgeInsets.only(bottom: 20.w),
+                                  itemCount: controller.isList
+                                      ? controller.dataList.length
+                                      : (controller.dataList.length / 2).ceil(),
+                                  itemBuilder: (context, index) {
+                                    return controller.isList
+                                        ? cellList(
+                                            index, controller.dataList[index])
+                                        : cell(index);
+                                  });
+                            });
+                    });
+              })),
           GetX<ShoppingProductListController>(
             builder: (_) {
               return !controller.haveFocus && !controller.haveCleanAlert

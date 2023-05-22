@@ -4,6 +4,7 @@ import 'package:cxhighversion2/message_notify/message_notify_detail.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -82,58 +83,54 @@ class MessageNotifyList extends GetView<MessageNotifyListController> {
       appBar: getDefaultAppBar(context, "公告"),
       body: GetBuilder<MessageNotifyListController>(
         builder: (_) {
-          return EasyRefresh(
-            onLoad: controller.dataList.length >= controller.count
-                ? null
-                : () => controller.loadData(isLoad: true),
-            onRefresh: () => controller.loadData(),
-            child: GetX<MessageNotifyListController>(builder: (_) {
-              return Skeleton(
-                  isLoading: controller.isFirstLoading,
-                  skeleton: SkeletonListView(
-                    item: Column(
-                      children: [
-                        ghb(15),
-                        Row(
-                          children: [
-                            // SkeletonAvatar(
-                            //     style: SkeletonAvatarStyle(
-                            //   height: 60.w,
-                            //   width: 60.w,
-                            // )),
-                            // gwb(10),
-                            Expanded(
-                              child: SkeletonParagraph(
-                                style: SkeletonParagraphStyle(
-                                    lines: 5,
-                                    spacing: 10.w,
-                                    lineStyle: SkeletonLineStyle(
-                                      randomLength: true,
-                                      height: 12.w,
-                                      borderRadius: BorderRadius.circular(8),
-                                      // minLength: 150.w,
-                                      // maxLength: 160.w,
-                                    )),
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  child: controller.dataList.isEmpty
-                      ? CustomListEmptyView(
-                          isLoading: controller.isLoading,
-                        )
-                      : ListView.builder(
-                          padding: EdgeInsets.only(bottom: 20.w),
-                          itemCount: controller.dataList.length,
-                          itemBuilder: (context, index) {
-                            return cell(index, controller.dataList[index]);
-                          },
-                        ));
-            }),
-          );
+          return EasyRefresh.builder(
+              onLoad: controller.dataList.length >= controller.count
+                  ? null
+                  : () => controller.loadData(isLoad: true),
+              onRefresh: () => controller.loadData(),
+              childBuilder: (context, physics) {
+                return controller.dataList.isEmpty
+                    ? GetX<MessageNotifyListController>(
+                        builder: (controller) {
+                          return controller.isFirstLoading && !kIsWeb
+                              ? SkeletonListView(
+                                  item: Column(children: [
+                                  ghb(15),
+                                  Row(
+                                    children: [
+                                      // SkeletonAvatar(
+                                      //     style: SkeletonAvatarStyle(
+                                      //   height: 60.w,
+                                      //   width: 60.w,
+                                      // )),
+                                      // gwb(10),
+                                      Expanded(
+                                          child: SkeletonParagraph(
+                                              style: SkeletonParagraphStyle(
+                                                  lines: 5,
+                                                  spacing: 10.w,
+                                                  lineStyle: SkeletonLineStyle(
+                                                      randomLength: true,
+                                                      height: 12.w,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8)))))
+                                    ],
+                                  )
+                                ]))
+                              : CustomListEmptyView(
+                                  physics: physics,
+                                  isLoading: controller.isLoading);
+                        },
+                      )
+                    : ListView.builder(
+                        physics: physics,
+                        padding: EdgeInsets.only(bottom: 20.w),
+                        itemCount: controller.dataList.length,
+                        itemBuilder: (context, index) {
+                          return cell(index, controller.dataList[index]);
+                        });
+              });
         },
       ),
     );

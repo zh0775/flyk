@@ -1,5 +1,4 @@
 import 'package:cxhighversion2/component/custom_button.dart';
-import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/component/custom_list_empty_view.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_draw_detail.dart';
@@ -7,6 +6,7 @@ import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -535,7 +535,7 @@ class MyWalletDrawHistory extends GetView<MyWalletDrawHistoryController> {
             return controller.historyDataList[index].isEmpty
                 ? GetX<MyWalletDrawHistoryController>(
                     builder: (_) {
-                      return controller.isFirstLoading
+                      return controller.isFirstLoading && !kIsWeb
                           ? SizedBox(
                               width: 375.w,
                               height: ScreenUtil().screenHeight -

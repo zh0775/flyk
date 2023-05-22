@@ -1020,15 +1020,13 @@ class _MinePageState extends State<MinePage>
                                 children: [
                                   WidgetSpan(
                                       child: Padding(
-                                    padding: EdgeInsets.only(left: 5.w),
-                                    child: Image.asset(
-                                      assetsName(
-                                          "mine/vip/level${controller.level}"),
-                                      width: 31.5.w,
-                                      height: 20.w,
-                                      fit: BoxFit.fitWidth,
-                                    ),
-                                  )),
+                                          padding: EdgeInsets.only(left: 5.w),
+                                          child: Image.asset(
+                                              assetsName(
+                                                  "mine/vip/level${controller.level}"),
+                                              width: 31.5.w,
+                                              height: 20.w,
+                                              fit: BoxFit.fitWidth))),
                                   WidgetSpan(
                                       child: !controller.isAuth
                                           ? gwb(0)

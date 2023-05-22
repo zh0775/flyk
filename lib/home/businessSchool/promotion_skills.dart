@@ -7,6 +7,7 @@ import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -72,7 +73,7 @@ class PromotionSkills extends GetView<PromotionSkillsController> {
     return Scaffold(
         appBar: getDefaultAppBar(context, "推广技巧"),
         body: GetBuilder<PromotionSkillsController>(builder: (_) {
-          return EasyRefresh(
+          return EasyRefresh.builder(
               // controller: controller.pullCtrls[listIdx],
               // onLoading: () => controller.onLoad(listIdx),
               onRefresh: () => controller.loadData(),
@@ -81,53 +82,44 @@ class PromotionSkills extends GetView<PromotionSkillsController> {
                   : () => controller.loadData(isLoad: true),
               // enablePullUp: controller.counts[listIdx] >
               // controller.dataLists[listIdx].length,
-              child: GetX<PromotionSkillsController>(
-                builder: (_) {
-                  return Skeleton(
-                      isLoading: controller.isFirstLoadding,
-                      skeleton: SkeletonListView(
-                        item: SkeletonItem(
-                            child: Column(
-                          children: [
-                            ghb(15),
-                            Column(
-                              children: [
-                                SkeletonAvatar(
-                                  style: SkeletonAvatarStyle(
-                                    width: 345.w,
-                                    height: 171.w,
+              childBuilder: (context, physics) {
+                return controller.dataList.isEmpty
+                    ? GetX<PromotionSkillsController>(builder: (controller) {
+                        return controller.isFirstLoadding && !kIsWeb
+                            ? SkeletonListView(
+                                item: SkeletonItem(
+                                    child: Column(children: [
+                                ghb(15),
+                                Column(children: [
+                                  SkeletonAvatar(
+                                    style: SkeletonAvatarStyle(
+                                      width: 345.w,
+                                      height: 171.w,
+                                    ),
                                   ),
-                                ),
-                                SkeletonParagraph(
-                                  style: SkeletonParagraphStyle(
-                                      lines: 2,
-                                      // spacing: 10.w,
-                                      lineStyle: SkeletonLineStyle(
-                                        randomLength: true,
-                                        height: 20.w,
-                                        borderRadius: BorderRadius.circular(8),
-                                        // minLength: 150.w,
-                                        // maxLength: 160.w,
-                                      )),
-                                )
-                              ],
-                            )
-                          ],
-                        )),
-                      ),
-                      child: controller.dataList.isEmpty
-                          ? CustomListEmptyView(
-                              isLoading: controller.isLoading,
-                            )
-                          : ListView.builder(
-                              itemCount: controller.dataList.length,
-                              padding: EdgeInsets.only(bottom: 20.w),
-                              itemBuilder: (context, index) {
-                                return cell2(index, controller.dataList[index]);
-                              },
-                            ));
-                },
-              ));
+                                  SkeletonParagraph(
+                                      style: SkeletonParagraphStyle(
+                                          lines: 2,
+                                          // spacing: 10.w,
+                                          lineStyle: SkeletonLineStyle(
+                                              randomLength: true,
+                                              height: 20.w,
+                                              borderRadius:
+                                                  BorderRadius.circular(8))))
+                                ])
+                              ])))
+                            : CustomListEmptyView(
+                                physics: physics,
+                                isLoading: controller.isLoading);
+                      })
+                    : ListView.builder(
+                        physics: physics,
+                        itemCount: controller.dataList.length,
+                        padding: EdgeInsets.only(bottom: 20.w),
+                        itemBuilder: (context, index) {
+                          return cell2(index, controller.dataList[index]);
+                        });
+              });
         }));
   }
 

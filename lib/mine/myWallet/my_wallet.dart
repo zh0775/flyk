@@ -435,21 +435,18 @@ class MyWallet extends GetView<MyWalletController> {
                               if (data["a_No"] == 4) {
                                 push(
                                     MyWalletConvert(
-                                      walletNo: data["a_No"] ?? 0,
-                                    ),
+                                        walletNo: data["a_No"] ?? 0),
                                     null,
                                     binding: MyWalletConvertBinding());
                               } else {
-                                checkIdentityAlert(
-                                  toNext: () {
-                                    push(
-                                        MyWalletDraw(
-                                          walletData: data,
-                                        ),
-                                        null,
-                                        binding: MyWalletDrawBinding());
-                                  },
-                                );
+                                checkIdentityAlert(toNext: () {
+                                  push(
+                                      MyWalletDraw(
+                                        walletData: data,
+                                      ),
+                                      null,
+                                      binding: MyWalletDrawBinding());
+                                });
                               }
                             },
                             child: Container(

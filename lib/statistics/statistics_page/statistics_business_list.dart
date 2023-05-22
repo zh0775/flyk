@@ -1,11 +1,13 @@
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_dropdown_view.dart';
+import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/component/custom_list_empty_view.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -281,7 +283,8 @@ class StatisticsBusinessList extends StatelessWidget {
                               return controller.dataList.isEmpty
                                   ? GetX<StatisticsBusinessListController>(
                                       builder: (controller) {
-                                        return controller.isFirstLoading
+                                        return controller.isFirstLoading &&
+                                                !kIsWeb
                                             ? SkeletonListView(
                                                 padding: EdgeInsets.all(15.w),
                                               )
@@ -455,21 +458,30 @@ class StatisticsBusinessList extends StatelessWidget {
                         height: 25.w + cellCount * 23.w,
                         child: (data["isLoading"] ?? false)
                             ? Center(
-                                child: SkeletonParagraph(
-                                  style: SkeletonParagraphStyle(
-                                      padding: EdgeInsets.only(
-                                          top: 15.w, left: 15.w, right: 15.w),
-                                      lines: cellCount,
-                                      spacing: 13.w,
-                                      lineStyle: SkeletonLineStyle(
-                                        // randomLength: true,
-                                        // width: 265.w,
-                                        height: 10.w,
-                                        borderRadius: BorderRadius.circular(8),
-                                        // minLength: 150.w,
-                                        // maxLength: 160.w,
-                                      )),
-                                ),
+                                child: kIsWeb
+                                    ? CustomEmptyView(
+                                        isLoading: (data["isLoading"] ?? false),
+                                        topSpace: 20,
+                                        bottomSpace: 20,
+                                        centerSpace: 10)
+                                    : SkeletonParagraph(
+                                        style: SkeletonParagraphStyle(
+                                            padding: EdgeInsets.only(
+                                                top: 15.w,
+                                                left: 15.w,
+                                                right: 15.w),
+                                            lines: cellCount,
+                                            spacing: 13.w,
+                                            lineStyle: SkeletonLineStyle(
+                                              // randomLength: true,
+                                              // width: 265.w,
+                                              height: 10.w,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              // minLength: 150.w,
+                                              // maxLength: 160.w,
+                                            )),
+                                      ),
                               )
                             : Column(
                                 mainAxisAlignment: MainAxisAlignment.center,

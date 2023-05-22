@@ -4,6 +4,7 @@ import 'package:cxhighversion2/business/pointsMall/shopping_product_detail.dart'
 import 'package:cxhighversion2/business/pointsMall/shopping_product_list.dart';
 import 'package:cxhighversion2/component/app_banner.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
+import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
@@ -397,13 +398,28 @@ class PointsMallPage extends GetView<PointsMallPageController> {
               runSpacing: 10.w,
               children: controller.productList.isEmpty &&
                       controller.isFirstLoading
-                  ? List.generate(
-                      4,
-                      (index) => SkeletonAvatar(
-                              style: SkeletonAvatarStyle(
-                            width: (375 - 15 * 2 - 10).w / 2 - 0.1.w,
-                            height: 270.w,
-                          )))
+                  ? kIsWeb
+                      ? [
+                          SizedBox(
+                              width: 345.w - 0.1,
+                              child: Align(
+                                  alignment: Alignment.topCenter,
+                                  child: GetX<PointsMallPageController>(
+                                      builder: (controller) {
+                                    return CustomEmptyView(
+                                        topSpace: 20,
+                                        centerSpace: 10,
+                                        bottomSpace: 20,
+                                        isLoading: controller.isFirstLoading);
+                                  })))
+                        ]
+                      : List.generate(
+                          4,
+                          (index) => SkeletonAvatar(
+                                  style: SkeletonAvatarStyle(
+                                width: (375 - 15 * 2 - 10).w / 2 - 0.1.w,
+                                height: 270.w,
+                              )))
                   : List.generate(controller.productList.length, (index) {
                       Map data = controller.productList[index];
                       return CustomButton(

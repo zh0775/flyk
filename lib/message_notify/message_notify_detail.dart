@@ -1,4 +1,5 @@
 import 'package:cxhighversion2/util/app_default.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -56,7 +57,7 @@ class MessageNotifyDetail extends GetView<MessageNotifyDetailController> {
                   children: [
                     gline(375, 0.5),
                     ghb(18),
-                    controller.isFirstLoading
+                    controller.isFirstLoading && !kIsWeb
                         ? SkeletonParagraph(
                             style: SkeletonParagraphStyle(
                                 lines: 1,
@@ -73,7 +74,7 @@ class MessageNotifyDetail extends GetView<MessageNotifyDetailController> {
                             AppColor.textBlack, 345, 2,
                             isBold: true),
                     ghb(18),
-                    controller.isFirstLoading
+                    controller.isFirstLoading && !kIsWeb
                         ? SkeletonParagraph(
                             style: SkeletonParagraphStyle(
                                 lines: 1,
@@ -96,7 +97,7 @@ class MessageNotifyDetail extends GetView<MessageNotifyDetailController> {
                     ghb(20),
                     gline(345, 0.5),
                     ghb(15),
-                    controller.isFirstLoading
+                    controller.isFirstLoading && !kIsWeb
                         ? SkeletonParagraph(
                             style: SkeletonParagraphStyle(
                                 lines: 6,

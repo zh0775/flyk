@@ -6,6 +6,7 @@ import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -350,7 +351,7 @@ class MyIntegralHistory extends GetView<MyIntegralHistoryController> {
             return controller.dataLists[listIdx].isEmpty
                     ? GetX<MyIntegralHistoryController>(
                         builder: (_) {
-                          return controller.isFirstLoading
+                          return controller.isFirstLoading && !kIsWeb
                               ? SkeletonListView(
                                   padding: EdgeInsets.all(15.w),
                                 )

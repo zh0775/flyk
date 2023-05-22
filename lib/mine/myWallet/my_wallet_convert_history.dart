@@ -4,6 +4,7 @@ import 'package:cxhighversion2/earn/earn_particulars.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -98,7 +99,7 @@ class MyWalletConvertHistory extends GetView<MyWalletConvertHistoryController> {
             childBuilder: (context, physics) {
               return controller.dataList.isEmpty
                   ? GetX<MyWalletConvertHistoryController>(builder: (_) {
-                      return controller.isFirstLoading
+                      return controller.isFirstLoading && !kIsWeb
                           ? SkeletonListView(padding: EdgeInsets.all(15.w))
                           : CustomListEmptyView(
                               isLoading: controller.isLoading);

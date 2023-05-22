@@ -8,6 +8,7 @@ import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -270,173 +271,160 @@ class _MachinePayPageState extends State<MachinePayPage>
     bool isKeyboardShowing = MediaQuery.of(context).viewInsets.vertical > 0;
     controller.isShowOrHideKeyborder(isKeyboardShowing);
     return GestureDetector(
-      onTap: () => takeBackKeyboard(context),
-      child: Scaffold(
-        appBar: getDefaultAppBar(context, "选择采购设备"),
-        body: Stack(
-          children: [
-            Positioned(
-                width: 375.w,
-                bottom: 0,
-                height: 55.w + paddingSizeBottom(context),
-                child: Container(
-                  padding: EdgeInsets.only(bottom: paddingSizeBottom(context)),
-                  decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                    BoxShadow(color: const Color(0x0D000000), blurRadius: 5.w)
-                  ]),
-                  child: Center(
-                    child: sbRow([
-                      CustomButton(onPressed: () {
-                        controller.allSelectAction();
-                      }, child: GetX<MachinePayPageController>(
-                        builder: (_) {
-                          return centRow([
-                            ghb(55),
-                            Image.asset(
-                              assetsName(
-                                  "machine/checkbox_${controller.allSelected ? "selected" : "normal"}"),
-                              width: 16.w,
-                              fit: BoxFit.fitWidth,
+        onTap: () => takeBackKeyboard(context),
+        child: Scaffold(
+            appBar: getDefaultAppBar(context, "选择采购设备"),
+            body: Stack(children: [
+              Positioned(
+                  width: 375.w,
+                  bottom: 0,
+                  height: 55.w + paddingSizeBottom(context),
+                  child: Container(
+                    padding:
+                        EdgeInsets.only(bottom: paddingSizeBottom(context)),
+                    decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                      BoxShadow(color: const Color(0x0D000000), blurRadius: 5.w)
+                    ]),
+                    child: Center(
+                      child: sbRow([
+                        CustomButton(onPressed: () {
+                          controller.allSelectAction();
+                        }, child: GetX<MachinePayPageController>(
+                          builder: (_) {
+                            return centRow([
+                              ghb(55),
+                              Image.asset(
+                                assetsName(
+                                    "machine/checkbox_${controller.allSelected ? "selected" : "normal"}"),
+                                width: 16.w,
+                                fit: BoxFit.fitWidth,
+                              ),
+                              gwb(12),
+                              getSimpleText(
+                                  controller.allSelected ? "反选" : "全选",
+                                  14,
+                                  AppColor.text),
+                            ]);
+                          },
+                        )),
+                        CustomButton(
+                          onPressed: () {
+                            takeBackKeyboard(context);
+                            controller.payAction();
+                          },
+                          child: Container(
+                            width: 90.w,
+                            height: 30.w,
+                            decoration: BoxDecoration(
+                              color: AppColor.theme,
+                              borderRadius: BorderRadius.circular(15.w),
                             ),
-                            gwb(12),
-                            getSimpleText(controller.allSelected ? "反选" : "全选",
-                                14, AppColor.text),
-                          ]);
-                        },
-                      )),
+                            child: Center(
+                              child: getSimpleText("确认采购", 14, Colors.white,
+                                  textHeight: 1.3),
+                            ),
+                          ),
+                        )
+                      ], width: 375 - 15 * 2),
+                    ),
+                  )),
+              Positioned(
+                  left: 15.w,
+                  right: 15.w,
+                  top: 15.w,
+                  height: 60.w,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4.w)),
+                    child: Center(
+                        child: sbRow([
+                      getSimpleText("采购类型", 14, AppColor.text, textHeight: 1.3),
                       CustomButton(
                         onPressed: () {
-                          takeBackKeyboard(context);
-                          controller.payAction();
+                          showTypeSelectModel();
                         },
-                        child: Container(
-                          width: 90.w,
-                          height: 30.w,
-                          decoration: BoxDecoration(
-                            color: AppColor.theme,
-                            borderRadius: BorderRadius.circular(15.w),
+                        child: centRow([
+                          ghb(60.w),
+                          GetX<MachinePayPageController>(
+                            builder: (_) {
+                              return getSimpleText(
+                                  controller
+                                          .payTypeList[controller.payTypeIndex]
+                                      ["name"],
+                                  14,
+                                  AppColor.text,
+                                  textHeight: 1.3);
+                            },
                           ),
-                          child: Center(
-                            child: getSimpleText("确认采购", 14, Colors.white,
-                                textHeight: 1.3),
-                          ),
-                        ),
+                          gwb(5),
+                          Image.asset(
+                            assetsName("statistics/icon_arrow_right_gray"),
+                            width: 12.w,
+                            fit: BoxFit.fitWidth,
+                          )
+                        ]),
                       )
-                    ], width: 375 - 15 * 2),
-                  ),
-                )),
-            Positioned(
-                left: 15.w,
-                right: 15.w,
-                top: 15.w,
-                height: 60.w,
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(4.w)),
-                  child: Center(
-                      child: sbRow([
-                    getSimpleText("采购类型", 14, AppColor.text, textHeight: 1.3),
-                    CustomButton(
-                      onPressed: () {
-                        showTypeSelectModel();
-                      },
-                      child: centRow([
-                        ghb(60.w),
-                        GetX<MachinePayPageController>(
-                          builder: (_) {
-                            return getSimpleText(
-                                controller.payTypeList[controller.payTypeIndex]
-                                    ["name"],
-                                14,
-                                AppColor.text,
-                                textHeight: 1.3);
-                          },
-                        ),
-                        gwb(5),
-                        Image.asset(
-                          assetsName("statistics/icon_arrow_right_gray"),
-                          width: 12.w,
-                          fit: BoxFit.fitWidth,
-                        )
-                      ]),
-                    )
-                  ], width: 345 - 17 * 2)),
-                )),
-            Positioned.fill(
-                top: 75.w + 15.w,
-                bottom: 55.w + paddingSizeBottom(context),
-                child: GetBuilder<MachinePayPageController>(
-                  builder: (_) {
+                    ], width: 345 - 17 * 2)),
+                  )),
+              Positioned.fill(
+                  top: 75.w + 15.w,
+                  bottom: 55.w + paddingSizeBottom(context),
+                  child: GetBuilder<MachinePayPageController>(builder: (_) {
                     return EasyRefresh.builder(
-                      onLoad: controller.dataList.length >= controller.count
-                          ? null
-                          : () => controller.loadData(isLoad: true),
-                      // controller: controller.pullCtrl,
-                      // onLoading: controller.onLoad,
-                      onRefresh: () => controller.loadData(),
-                      // enablePullUp:
-                      //     controller.count > controller.dataList.length,
-                      childBuilder: (context, physics) {
-                        return GetX<MachinePayPageController>(builder: (_) {
-                          return Skeleton(
-                            skeleton: SkeletonListView(
-                              item: SkeletonItem(
-                                  child: Column(
-                                children: [
-                                  ghb(15),
-                                  Row(
-                                    children: [
-                                      SkeletonAvatar(
-                                        style: SkeletonAvatarStyle(
-                                            height: 90.w, width: 90.w),
-                                      ),
-                                      gwb(11.5),
-                                      Expanded(
-                                        child: SkeletonParagraph(
-                                          style: SkeletonParagraphStyle(
-                                              lines: 3,
-                                              spacing: 10.w,
-                                              lineStyle: SkeletonLineStyle(
-                                                randomLength: true,
-                                                height: 15.w,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                // minLength: 150.w,
-                                                // maxLength: 160.w,
-                                              )),
-                                        ),
-                                      )
-                                    ],
-                                  )
-                                ],
-                              )),
-                            ),
-                            isLoading: controller.isFirstLoadding,
-                            child: controller.dataList.isEmpty
-                                ? CustomListEmptyView(
-                                    physics: physics,
-                                    isLoading: controller.isLoadding,
-                                  )
-                                : ListView.builder(
-                                    padding: EdgeInsets.only(bottom: 20.w),
-                                    physics: physics,
-                                    itemCount: controller.dataList.length,
-                                    itemBuilder: (context, index) {
-                                      return cell(
-                                          controller.dataList[index], index);
-                                    },
-                                  ),
-                          );
+                        onLoad: controller.dataList.length >= controller.count
+                            ? null
+                            : () => controller.loadData(isLoad: true),
+                        // controller: controller.pullCtrl,
+                        // onLoading: controller.onLoad,
+                        onRefresh: () => controller.loadData(),
+                        // enablePullUp:
+                        //     controller.count > controller.dataList.length,
+                        childBuilder: (context, physics) {
+                          return controller.dataList.isEmpty
+                              ? GetX<MachinePayPageController>(builder: (_) {
+                                  return controller.isFirstLoadding && !kIsWeb
+                                      ? SkeletonListView(
+                                          item: SkeletonItem(
+                                              child: Column(children: [
+                                          ghb(15),
+                                          Row(children: [
+                                            SkeletonAvatar(
+                                                style: SkeletonAvatarStyle(
+                                                    height: 90.w, width: 90.w)),
+                                            gwb(11.5),
+                                            Expanded(
+                                              child: SkeletonParagraph(
+                                                  style: SkeletonParagraphStyle(
+                                                      lines: 3,
+                                                      spacing: 10.w,
+                                                      lineStyle:
+                                                          SkeletonLineStyle(
+                                                              randomLength:
+                                                                  true,
+                                                              height: 15.w,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8)))),
+                                            )
+                                          ])
+                                        ])))
+                                      : CustomListEmptyView(
+                                          physics: physics,
+                                          isLoading: controller.isLoadding);
+                                })
+                              : ListView.builder(
+                                  padding: EdgeInsets.only(bottom: 20.w),
+                                  physics: physics,
+                                  itemCount: controller.dataList.length,
+                                  itemBuilder: (context, index) {
+                                    return cell(
+                                        controller.dataList[index], index);
+                                  });
                         });
-                      },
-                    );
-                  },
-                ))
-          ],
-        ),
-      ),
-    );
+                  }))
+            ])));
   }
 
   Widget cell(Map data, int index) {
