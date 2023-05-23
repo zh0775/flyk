@@ -1,30 +1,23 @@
-import 'package:cxhighversion2/business/mallOrder/mall_order_page.dart'
-    deferred as mall_order_page;
+import 'package:cxhighversion2/business/mallOrder/mall_order_page.dart' deferred as mall_order_page;
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
+import 'package:cxhighversion2/entrepreneurship_support/support.dart';
+import 'package:cxhighversion2/extension_reward/extension_reward.dart';
 import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart';
-import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase_order.dart'
-    deferred as integral_repurchase_order;
+import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase_order.dart' deferred as integral_repurchase_order;
 import 'package:cxhighversion2/integralstore/integral_store_order_list.dart';
-import 'package:cxhighversion2/machine/machine_order_list.dart'
-    deferred as machine_order_list;
-import 'package:cxhighversion2/message_notify/message_notify_list.dart'
-    deferred as message_notify_list;
+import 'package:cxhighversion2/machine/machine_order_list.dart' deferred as machine_order_list;
+import 'package:cxhighversion2/message_notify/message_notify_list.dart' deferred as message_notify_list;
 import 'package:cxhighversion2/mine/debitCard/debit_card_info.dart';
 import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_check.dart';
 import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_upload.dart';
-import 'package:cxhighversion2/mine/integral/integral_cash_order_list.dart'
-    deferred as integral_cash_order_list;
-import 'package:cxhighversion2/mine/integral/my_integral.dart'
-    deferred as my_integral;
-import 'package:cxhighversion2/mine/mineStoreOrder/mine_store_order_list.dart'
-    deferred as mine_store_order_list;
+import 'package:cxhighversion2/mine/integral/integral_cash_order_list.dart' deferred as integral_cash_order_list;
+import 'package:cxhighversion2/mine/integral/my_integral.dart' deferred as my_integral;
+import 'package:cxhighversion2/mine/mineStoreOrder/mine_store_order_list.dart' deferred as mine_store_order_list;
 import 'package:cxhighversion2/mine/mine_setting_list.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet.dart';
-import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart'
-    deferred as my_wallet_draw;
-import 'package:cxhighversion2/mine/personal_information.dart'
-    deferred as personal_information;
+import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart' deferred as my_wallet_draw;
+import 'package:cxhighversion2/mine/personal_information.dart' deferred as personal_information;
 import 'package:cxhighversion2/mine/vip/vip_levelup.dart';
 import 'package:cxhighversion2/product/product.dart';
 import 'package:cxhighversion2/service/http_config.dart';
@@ -36,6 +29,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
+import 'package:cxhighversion2/member/open_member_ship.dart';
 
 class MineBinding extends Bindings {
   @override
@@ -195,8 +190,7 @@ class MinePage extends StatefulWidget {
   State<MinePage> createState() => _MinePageState();
 }
 
-class _MinePageState extends State<MinePage>
-    with AutomaticKeepAliveClientMixin {
+class _MinePageState extends State<MinePage> with AutomaticKeepAliveClientMixin {
   final controller = Get.find<MinePageController>();
 
   @override
@@ -208,11 +202,7 @@ class _MinePageState extends State<MinePage>
         appBar: getDefaultAppBar(context, "我的",
             centerTitle: false,
             flexibleSpace: Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage(assetsName("mine/bg_top")),
-                      fit: BoxFit.fitWidth,
-                      alignment: Alignment.topCenter)),
+              decoration: BoxDecoration(image: DecorationImage(image: AssetImage(assetsName("mine/bg_top")), fit: BoxFit.fitWidth, alignment: Alignment.topCenter)),
             ),
             needBack: false,
             color: Colors.transparent,
@@ -220,8 +210,7 @@ class _MinePageState extends State<MinePage>
               CustomButton(
                 onPressed: () async {
                   await message_notify_list.loadLibrary();
-                  push(message_notify_list.MessageNotifyList(), null,
-                      binding: message_notify_list.MessageNotifyListBinding());
+                  push(message_notify_list.MessageNotifyList(), null, binding: message_notify_list.MessageNotifyListBinding());
                   controller.haveNewMessage = false;
                 },
                 child: Container(
@@ -247,10 +236,7 @@ class _MinePageState extends State<MinePage>
                                   width: 5.w,
                                   height: 5.w,
                                   child: Container(
-                                    decoration: BoxDecoration(
-                                        color: AppColor.red,
-                                        borderRadius:
-                                            BorderRadius.circular(2.5.w)),
+                                    decoration: BoxDecoration(color: AppColor.red, borderRadius: BorderRadius.circular(2.5.w)),
                                   ));
                         },
                       )
@@ -272,8 +258,7 @@ class _MinePageState extends State<MinePage>
                       Image.asset(
                         assetsName("mine/bg_top"),
                         width: 375.w,
-                        height: 235.5.w -
-                            (Scaffold.of(context).appBarMaxHeight ?? 0),
+                        height: 235.5.w - (Scaffold.of(context).appBarMaxHeight ?? 0),
                         alignment: Alignment.bottomCenter,
                         fit: BoxFit.fitWidth,
                       ),
@@ -298,28 +283,15 @@ class _MinePageState extends State<MinePage>
                                       onPressed: () async {
                                         if (index == 0 || index == 1) {
                                           await my_integral.loadLibrary();
-                                          push(my_integral.MyIntegral(), null,
-                                              binding: my_integral
-                                                  .MyIntegralBinding(),
-                                              arguments: {
-                                                "isBean": index == 1
-                                              });
+                                          push(my_integral.MyIntegral(), null, binding: my_integral.MyIntegralBinding(), arguments: {"isBean": index == 1});
                                         }
                                       },
                                       child: centClm([
                                         getSimpleText(
                                             index == 0
-                                                ? priceFormat(
-                                                    controller.integraAccount[
-                                                            "amout"] ??
-                                                        0,
-                                                    savePoint: 0)
+                                                ? priceFormat(controller.integraAccount["amout"] ?? 0, savePoint: 0)
                                                 : index == 1
-                                                    ? priceFormat(
-                                                        controller.beanAccount[
-                                                                "amout"] ??
-                                                            0,
-                                                        savePoint: 0)
+                                                    ? priceFormat(controller.beanAccount["amout"] ?? 0, savePoint: 0)
                                                     : "2",
                                             21,
                                             AppColor.textBlack,
@@ -329,9 +301,7 @@ class _MinePageState extends State<MinePage>
                                             index == 0
                                                 ? "可用${controller.integraAccount["name"] ?? ""}"
                                                 : index == 1
-                                                    ? controller.beanAccount[
-                                                            "name"] ??
-                                                        ""
+                                                    ? controller.beanAccount["name"] ?? ""
                                                     : "银行卡",
                                             12,
                                             AppColor.textGrey5)
@@ -364,10 +334,7 @@ class _MinePageState extends State<MinePage>
                               child: Column(
                                 children: [
                                   ghb(15),
-                                  sbRow([
-                                    getSimpleText("常用功能", 16, AppColor.text,
-                                        isBold: true)
-                                  ], width: 345 - 15.5 * 2),
+                                  sbRow([getSimpleText("常用功能", 16, AppColor.text, isBold: true)], width: 345 - 15.5 * 2),
                                   ghb(25),
                                   SizedBox(
                                     width: viewWidth,
@@ -527,44 +494,47 @@ class _MinePageState extends State<MinePage>
   Widget vipCardView() {
     return GetBuilder<MinePageController>(
       builder: (controller) {
-        return SizedBox(
-          width: 345.w,
-          height: 63.5.w,
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: 345.w,
-                  height: 10.w,
-                  color: Colors.white,
+        return GestureDetector(
+          onTap: () {
+            push(const OpenMemberShipPage(), context, binding: OpenMemberShipBinding());
+          },
+          child: SizedBox(
+            width: 345.w,
+            height: 63.5.w,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: 345.w,
+                    height: 10.w,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              Positioned.fill(
-                  child: Image.asset(assetsName("mine/bg_vip_card"),
-                      width: 345.w, height: 63.5.w, fit: BoxFit.fill)),
-              Positioned.fill(
-                  // bottom: 0.5.w,
-                  child: Center(
-                child: sbRow([
-                  centClm([
+                Positioned.fill(child: Image.asset(assetsName("mine/bg_vip_card"), width: 345.w, height: 63.5.w, fit: BoxFit.fill)),
+                Positioned.fill(
+                    // bottom: 0.5.w,
+                    child: Center(
+                  child: sbRow([
+                    centClm([
+                      Image.asset(
+                        assetsName("mine/text_svip"),
+                        width: 120.5.w,
+                        height: 16.5.w,
+                        fit: BoxFit.fill,
+                      ),
+                      ghb(5),
+                      getSimpleText("会员有效期：2023-08-11 到期", 10, Colors.white)
+                    ], crossAxisAlignment: CrossAxisAlignment.start),
                     Image.asset(
-                      assetsName("mine/text_svip"),
-                      width: 120.5.w,
-                      height: 16.5.w,
-                      fit: BoxFit.fill,
-                    ),
-                    ghb(5),
-                    getSimpleText("会员有效期：2023-08-11 到期", 10, Colors.white)
-                  ], crossAxisAlignment: CrossAxisAlignment.start),
-                  Image.asset(
-                    assetsName("mine/arrow_vip_card"),
-                    width: 5.w,
-                    fit: BoxFit.fitWidth,
-                  )
-                ], width: 345 - 20 * 2),
-              ))
-            ],
+                      assetsName("mine/arrow_vip_card"),
+                      width: 5.w,
+                      fit: BoxFit.fitWidth,
+                    )
+                  ], width: 345 - 20 * 2),
+                ))
+              ],
+            ),
           ),
         );
       },
@@ -578,9 +548,7 @@ class _MinePageState extends State<MinePage>
       case "机具兑换":
         imgSubStr = "jjdh";
         onPressed = () {
-          push(const Product(), context,
-              binding: ProductBinding(), arguments: {"levelType": 3});
-
+          push(const Product(), context, binding: ProductBinding(), arguments: {"levelType": 3});
           // showAppUpdateAlert({
           //   "isDownload": false,
           //   "isShow": true,
@@ -595,15 +563,14 @@ class _MinePageState extends State<MinePage>
       case "积分订单":
         imgSubStr = "jfdd";
         onPressed = () {
-          push(const IntegralStoreOrderList(), context,
-              binding: IntegralStoreOrderListBinding());
+          push(const SupportPage(), null, binding: SupportBinding());
         };
 
         break;
       case "我的钱包":
         imgSubStr = "wdqb";
         onPressed = () {
-          push(const MyWallet(), context, binding: MyWalletBinding());
+          push(const ExtensionRewardPage(), null, binding: ExtensionRewardBinding());
         };
 
         break;
@@ -612,8 +579,7 @@ class _MinePageState extends State<MinePage>
         onPressed = () {
           checkIdentityAlert(
             toNext: () {
-              push(const DebitCardInfo(), null,
-                  binding: DebitCardInfoBinding());
+              push(const DebitCardInfo(), null, binding: DebitCardInfoBinding());
             },
           );
         };
@@ -623,23 +589,18 @@ class _MinePageState extends State<MinePage>
         imgSubStr = "tzgg";
         onPressed = () async {
           await message_notify_list.loadLibrary();
-          push(message_notify_list.MessageNotifyList(), null,
-              binding: message_notify_list.MessageNotifyListBinding());
+          push(message_notify_list.MessageNotifyList(), null, binding: message_notify_list.MessageNotifyListBinding());
         };
 
         break;
       case "实名认证":
         imgSubStr = "smrz";
         onPressed = () {
-          bool isAuth =
-              (controller.homeData["authentication"] ?? {})["isCertified"] ??
-                  false;
+          bool isAuth = (controller.homeData["authentication"] ?? {})["isCertified"] ?? false;
           if (isAuth) {
-            push(const IdentityAuthenticationCheck(), context,
-                binding: IdentityAuthenticationCheckBinding());
+            push(const IdentityAuthenticationCheck(), context, binding: IdentityAuthenticationCheckBinding());
           } else {
-            push(const IdentityAuthenticationUpload(), context,
-                binding: IdentityAuthenticationUploadBinding());
+            push(const IdentityAuthenticationUpload(), context, binding: IdentityAuthenticationUploadBinding());
           }
         };
 
@@ -647,16 +608,14 @@ class _MinePageState extends State<MinePage>
       case "在线客服":
         imgSubStr = "zxkf";
         onPressed = () {
-          push(const ContactCustomerService(), context,
-              binding: ContactCustomerServiceBinding());
+          push(const ContactCustomerService(), context, binding: ContactCustomerServiceBinding());
         };
 
         break;
       case "设置":
         imgSubStr = "sz";
         onPressed = () {
-          push(const MineSettingList(), context,
-              binding: MineSettingListBinding());
+          push(const MineSettingList(), context, binding: MineSettingListBinding());
         };
 
         break;
@@ -696,8 +655,7 @@ class _MinePageState extends State<MinePage>
           child: centRow([
             centRow([
               Image.asset(
-                assetsName(
-                    "mine/${title == "我的钱包" ? "icon_qbye" : "icon_jfye"}"),
+                assetsName("mine/${title == "我的钱包" ? "icon_qbye" : "icon_jfye"}"),
                 height: 26.w,
                 fit: BoxFit.fitHeight,
               ),
@@ -718,10 +676,7 @@ class _MinePageState extends State<MinePage>
         // String levelStr = controller.homeData["uLevel"] ?? "";
         return Container(
           width: 345.w,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius:
-                  BorderRadius.vertical(bottom: Radius.circular(8.w))),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(bottom: Radius.circular(8.w))),
           child: Column(
             children: [
               ghb(15),
@@ -729,13 +684,7 @@ class _MinePageState extends State<MinePage>
                 getSimpleText("采购订单", 16, AppColor.text, isBold: true),
                 CustomButton(
                   onPressed: () {},
-                  child: centRow([
-                    getSimpleText("全部订单", 12, AppColor.textGrey5),
-                    gwb(5),
-                    ghb(20),
-                    Image.asset(assetsName("mine/arror_order_view"),
-                        width: 5.w, fit: BoxFit.fitWidth)
-                  ]),
+                  child: centRow([getSimpleText("全部订单", 12, AppColor.textGrey5), gwb(5), ghb(20), Image.asset(assetsName("mine/arror_order_view"), width: 5.w, fit: BoxFit.fitWidth)]),
                 )
               ], width: 345 - 15.5 * 2),
               ghb(15),
@@ -780,27 +729,16 @@ class _MinePageState extends State<MinePage>
                       // } else if (index == 3) {}
                       if (index == 0) {
                         await mall_order_page.loadLibrary();
-                        push(mall_order_page.MallOrderPage(), null,
-                            binding: mall_order_page.MallOrderPageBinding(),
-                            arguments: {"index": 0});
+                        push(mall_order_page.MallOrderPage(), null, binding: mall_order_page.MallOrderPageBinding(), arguments: {"index": 0});
                       } else if (index == 1) {
                         await integral_cash_order_list.loadLibrary();
-                        push(integral_cash_order_list.IntegralCashOrderList(),
-                            null,
-                            binding: integral_cash_order_list
-                                .IntegralCashOrderListBinding());
+                        push(integral_cash_order_list.IntegralCashOrderList(), null, binding: integral_cash_order_list.IntegralCashOrderListBinding());
                       } else if (index == 2) {
                         await integral_repurchase_order.loadLibrary();
-                        push(
-                            integral_repurchase_order.IntegralRepurchaseOrder(),
-                            null,
-                            binding: integral_repurchase_order
-                                .IntegralRepurchaseOrderBinding());
+                        push(integral_repurchase_order.IntegralRepurchaseOrder(), null, binding: integral_repurchase_order.IntegralRepurchaseOrderBinding());
                       } else if (index == 3) {
                         await machine_order_list.loadLibrary();
-                        push(machine_order_list.MachineOrderList(), null,
-                            binding:
-                                machine_order_list.MachineOrderListBinding());
+                        push(machine_order_list.MachineOrderList(), null, binding: machine_order_list.MachineOrderListBinding());
                       } else {
                         await mine_store_order_list.loadLibrary();
                         push(
@@ -808,8 +746,7 @@ class _MinePageState extends State<MinePage>
                               index: index,
                             ),
                             null,
-                            binding: mine_store_order_list
-                                .MineStoreOrderListBinding());
+                            binding: mine_store_order_list.MineStoreOrderListBinding());
                       }
                     },
                     child: SizedBox(
@@ -849,18 +786,15 @@ class _MinePageState extends State<MinePage>
         }
         e["haveDraw"] = walletDrawInfo.isNotEmpty;
         if (walletDrawInfo.isNotEmpty) {
-          e["minCharge"] =
-              "${walletDrawInfo["draw_Account_SingleAmountMin"] ?? 0}";
+          e["minCharge"] = "${walletDrawInfo["draw_Account_SingleAmountMin"] ?? 0}";
           e["charge"] = "${walletDrawInfo["draw_Account_ServiceCharges"] ?? 0}";
           e["fee"] = "${walletDrawInfo["draw_Account_SingleFee"] ?? 0}";
         }
         return e;
       }).toList();
     } else if (HttpConfig.baseUrl.contains("woliankeji")) {
-      List drawWallets =
-          ((drawInfo["System_AllowDrawAccount"] ?? "") as String).split(",");
-      List drawCharges =
-          ((drawInfo["System_TiHandlingCharge"] ?? "") as String).split(",");
+      List drawWallets = ((drawInfo["System_AllowDrawAccount"] ?? "") as String).split(",");
+      List drawCharges = ((drawInfo["System_TiHandlingCharge"] ?? "") as String).split(",");
       List drawFees = ((drawInfo["System_DrawFee"] ?? "") as String).split(",");
 
       tmpWallet = ((controller.homeData["u_Account"] ?? []) as List).map((e) {
@@ -899,33 +833,19 @@ class _MinePageState extends State<MinePage>
           return;
         }
         await my_wallet_draw.loadLibrary();
-        push(my_wallet_draw.MyWalletDraw(walletData: walletData), null,
-            binding: my_wallet_draw.MyWalletDrawBinding());
+        push(my_wallet_draw.MyWalletDraw(walletData: walletData), null, binding: my_wallet_draw.MyWalletDrawBinding());
       },
       child: Container(
         width: 345.w,
         height: 80.w,
-        decoration: BoxDecoration(
-            color: AppDefault().getThemeColor() ?? AppColor.theme,
-            borderRadius: BorderRadius.circular(12.w),
-            image: DecorationImage(
-                image: AssetImage(assetsName("mine/bg_reward_cell")),
-                fit: BoxFit.fill),
-            boxShadow: [
-              BoxShadow(
-                  color: const Color(0x322368F2),
-                  offset: Offset(0, 8.5.w),
-                  blurRadius: 5.5.w)
-            ]),
+        decoration: BoxDecoration(color: AppDefault().getThemeColor() ?? AppColor.theme, borderRadius: BorderRadius.circular(12.w), image: DecorationImage(image: AssetImage(assetsName("mine/bg_reward_cell")), fit: BoxFit.fill), boxShadow: [BoxShadow(color: const Color(0x322368F2), offset: Offset(0, 8.5.w), blurRadius: 5.5.w)]),
         child: Column(
           children: [
             ghb(20),
             Row(
               children: [
                 gwb(25),
-                getRichText("￥", priceFormat(walletData["amout"] ?? 0), 12,
-                    Colors.white, 24, Colors.white,
-                    fw2: AppDefault.fontBold),
+                getRichText("￥", priceFormat(walletData["amout"] ?? 0), 12, Colors.white, 24, Colors.white, fw2: AppDefault.fontBold),
               ],
             )
           ],
@@ -948,12 +868,7 @@ class _MinePageState extends State<MinePage>
         builder: (_) {
           double maxNameWidth = 345 - (71 + 16 + 3 + 5 + 50) - 0.1;
 
-          String name = controller.isLogin
-              ? (controller.homeData["nickName"] != null &&
-                      controller.homeData["nickName"].isNotEmpty
-                  ? controller.homeData["nickName"]
-                  : "请设置昵称")
-              : "点击登录";
+          String name = controller.isLogin ? (controller.homeData["nickName"] != null && controller.homeData["nickName"].isNotEmpty ? controller.homeData["nickName"] : "请设置昵称") : "点击登录";
           double nameWidth = maxNameWidth.w;
 
           return SizedBox(
@@ -969,19 +884,12 @@ class _MinePageState extends State<MinePage>
                           child: controller.isLogin
                               ? CustomButton(
                                   onPressed: () {
-                                    if (controller.homeData["userAvatar"] !=
-                                            null &&
-                                        controller.homeData["userAvatar"]
-                                            .isNotEmpty) {
-                                      toCheckImg(
-                                          image:
-                                              "${controller.imageUrl}${controller.homeData["userAvatar"]}",
-                                          needSave: true);
+                                    if (controller.homeData["userAvatar"] != null && controller.homeData["userAvatar"].isNotEmpty) {
+                                      toCheckImg(image: "${controller.imageUrl}${controller.homeData["userAvatar"]}", needSave: true);
                                     }
                                   },
                                   child: CustomNetworkImage(
-                                    src:
-                                        "${controller.imageUrl}${controller.homeData["userAvatar"]}",
+                                    src: "${controller.imageUrl}${controller.homeData["userAvatar"]}",
                                     width: 71.w,
                                     height: 71.w,
                                     fit: BoxFit.cover,
@@ -1004,43 +912,30 @@ class _MinePageState extends State<MinePage>
                         SizedBox(
                           width: (375 - 21 - 71 - 7.5 - 1 - 55.5).w,
                           child: Text.rich(
-                            TextSpan(
-                                text: name,
-                                style: TextStyle(
-                                    fontSize: 18.sp,
-                                    color: (controller.homeData["nickName"] !=
-                                                    null &&
-                                                controller.homeData["nickName"]
-                                                    .isNotEmpty) ||
-                                            !controller.isLogin
-                                        ? AppColor.text
-                                        : AppColor.textGrey,
-                                    fontWeight: AppDefault.fontBold,
-                                    height: 1.1),
-                                children: [
-                                  WidgetSpan(
-                                      child: Padding(
-                                          padding: EdgeInsets.only(left: 5.w),
+                            TextSpan(text: name, style: TextStyle(fontSize: 18.sp, color: (controller.homeData["nickName"] != null && controller.homeData["nickName"].isNotEmpty) || !controller.isLogin ? AppColor.text : AppColor.textGrey, fontWeight: AppDefault.fontBold, height: 1.1), children: [
+                              WidgetSpan(
+                                  child: Padding(
+                                padding: EdgeInsets.only(left: 5.w),
+                                child: Image.asset(
+                                  assetsName("mine/vip/level${controller.level}"),
+                                  width: 31.5.w,
+                                  height: 20.w,
+                                  fit: BoxFit.fitWidth,
+                                ),
+                              )),
+                              WidgetSpan(
+                                  child: !controller.isAuth
+                                      ? gwb(0)
+                                      : Padding(
+                                          padding: EdgeInsets.only(left: 4.w),
                                           child: Image.asset(
-                                              assetsName(
-                                                  "mine/vip/level${controller.level}"),
-                                              width: 31.5.w,
-                                              height: 20.w,
-                                              fit: BoxFit.fitWidth))),
-                                  WidgetSpan(
-                                      child: !controller.isAuth
-                                          ? gwb(0)
-                                          : Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 4.w),
-                                              child: Image.asset(
-                                                assetsName("mine/icon_isauth"),
-                                                width: 54.5.w,
-                                                height: 20.w,
-                                                fit: BoxFit.fitWidth,
-                                              ),
-                                            )),
-                                ]),
+                                            assetsName("mine/icon_isauth"),
+                                            width: 54.5.w,
+                                            height: 20.w,
+                                            fit: BoxFit.fitWidth,
+                                          ),
+                                        )),
+                            ]),
                             maxLines: 10,
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.ellipsis,
@@ -1050,26 +945,17 @@ class _MinePageState extends State<MinePage>
                         controller.isLogin
                             ? CustomButton(
                                 onPressed: () {
-                                  push(const VipLevelup(), context,
-                                      binding: VipLevelupBinding());
+                                  push(const VipLevelup(), context, binding: VipLevelupBinding());
                                 },
                                 child: Container(
                                   height: 20.w,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(10.w)),
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 5.5.w),
+                                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10.w)),
+                                  padding: EdgeInsets.symmetric(horizontal: 5.5.w),
                                   alignment: Alignment.center,
                                   child: centRow([
-                                    Image.asset(
-                                        assetsName("mine/icon_user_growth"),
-                                        width: 15.w,
-                                        fit: BoxFit.fitWidth),
+                                    Image.asset(assetsName("mine/icon_user_growth"), width: 15.w, fit: BoxFit.fitWidth),
                                     // gwb(1),
-                                    getSimpleText(
-                                        "成长值 45962", 10, AppColor.textBlack),
+                                    getSimpleText("成长值 45962", 10, AppColor.textBlack),
                                     gwb(4),
                                     Image.asset(
                                       assetsName("mine/icon_user_growth_arrow"),
@@ -1080,12 +966,7 @@ class _MinePageState extends State<MinePage>
                                   ]),
                                 ),
                               )
-                            : getSimpleText(
-                                controller.isLogin
-                                    ? "手机号：${controller.homeData["u_Mobile"] ?? ""}"
-                                    : "登录同步数据，使用更安心",
-                                12,
-                                AppColor.text2),
+                            : getSimpleText(controller.isLogin ? "手机号：${controller.homeData["u_Mobile"] ?? ""}" : "登录同步数据，使用更安心", 12, AppColor.text2),
                       ], crossAxisAlignment: CrossAxisAlignment.start)
                     ]);
                   },
@@ -1096,20 +977,13 @@ class _MinePageState extends State<MinePage>
                     push(
                       personal_information.PersonalInformation(),
                       null,
-                      binding:
-                          personal_information.PersonalInformationBinding(),
+                      binding: personal_information.PersonalInformationBinding(),
                     );
                   },
                   child: Container(
                     alignment: Alignment.centerLeft,
                     width: 55.5.w,
-                    child: centRow([
-                      ghb(40),
-                      Image.asset(assetsName("mine/btn_userinfo_edit"),
-                          width: 15.w, fit: BoxFit.fitWidth),
-                      gwb(1),
-                      getSimpleText("编辑", 12, AppColor.textBlack)
-                    ]),
+                    child: centRow([ghb(40), Image.asset(assetsName("mine/btn_userinfo_edit"), width: 15.w, fit: BoxFit.fitWidth), gwb(1), getSimpleText("编辑", 12, AppColor.textBlack)]),
                   ),
                 )
               ], width: 375),
@@ -1120,8 +994,7 @@ class _MinePageState extends State<MinePage>
     );
   }
 
-  Widget orderButtons(String title, String assets,
-      {Function()? onPressed, int type = 0}) {
+  Widget orderButtons(String title, String assets, {Function()? onPressed, int type = 0}) {
     return CustomButton(
       onPressed: onPressed,
       child: SizedBox(

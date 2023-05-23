@@ -42,12 +42,7 @@ class Http {
       RequestOptions options,
       RequestInterceptorHandler handler,
     ) async {
-      if (options.path != Urls.sendCode &&
-          options.path != Urls.registStep1 &&
-          options.path != Urls.registStep2 &&
-          options.path != Urls.registLastStep &&
-          options.path != Urls.findPwd &&
-          options.path != Urls.login) {
+      if (options.path != Urls.sendCode && options.path != Urls.registStep1 && options.path != Urls.registStep2 && options.path != Urls.registLastStep && options.path != Urls.findPwd && options.path != Urls.login) {
         final appDefault = AppDefault();
         if (appDefault.loginStatus) {
           if (appDefault.token.isNotEmpty) {
@@ -83,18 +78,15 @@ class Http {
           // if (token != null && token.isNotEmpty) {
           //   ShowToast.normal("身份验证失败，请重新登录");
           // }
-          setUserDataFormat(false, {}, {}, {}).then((value) => toLogin(
-              isErrorStatus: statusCode != null, errorCode: statusCode ?? -1));
+          setUserDataFormat(false, {}, {}, {}).then((value) => toLogin(isErrorStatus: statusCode != null, errorCode: statusCode ?? -1));
         } else if (e.response?.data["value"] == "202") {
           //token已经过期
           // ShowToast.normal("身份信息已经过期，请重新登录");
-          setUserDataFormat(false, {}, {}, {}).then((value) => toLogin(
-              isErrorStatus: statusCode != null, errorCode: statusCode ?? -1));
+          setUserDataFormat(false, {}, {}, {}).then((value) => toLogin(isErrorStatus: statusCode != null, errorCode: statusCode ?? -1));
         } else if (e.response?.data["value"] == "203") {
           //您的账号已在其他设备登录
           // ShowToast.normal("您的账号已在其他设备登录");
-          setUserDataFormat(false, {}, {}, {}).then((value) => toLogin(
-              isErrorStatus: statusCode != null, errorCode: statusCode ?? -1));
+          setUserDataFormat(false, {}, {}, {}).then((value) => toLogin(isErrorStatus: statusCode != null, errorCode: statusCode ?? -1));
         } else if (e.response?.data["value"] == "403") {
           // showAppUpdateAlert(e.response?.data);
           if (e.response != null && e.response?.data["data"] != null) {
@@ -132,8 +124,7 @@ class Http {
     }
   }
 
-  Future<void> doGet(String url, var params,
-      {Success? success, Fail? fail, After? after}) async {
+  Future<void> doGet(String url, var params, {Success? success, Fail? fail, After? after}) async {
     try {
       await dio.get(url, queryParameters: params).then((response) {
         if (response.statusCode == 200) {
@@ -150,8 +141,7 @@ class Http {
           }
         } else {
           if (fail != null) {
-            fail(response.statusMessage!, response.statusCode!,
-                response.data ?? {});
+            fail(response.statusMessage!, response.statusCode!, response.data ?? {});
           }
           // if (data["messg"]) {
 
@@ -164,15 +154,13 @@ class Http {
     } on DioError catch (e) {
       if (fail != null) {
         if (e.response != null && e.response?.data != null) {
-          fail(e.response?.data["messages"],
-              int.parse(e.response?.data["value"]), e.response?.data);
+          fail(e.response?.data["messages"], int.parse(e.response?.data["value"]), e.response?.data);
         }
       }
     }
   }
 
-  Future<void> getImage(String url, var params,
-      {Success? success, Fail? fail, After? after}) async {
+  Future<void> getImage(String url, var params, {Success? success, Fail? fail, After? after}) async {
     try {
       await dio.get(url, queryParameters: params).then((response) {
         if (response.statusCode == 200) {
@@ -182,8 +170,7 @@ class Http {
           }
         } else {
           if (fail != null) {
-            fail(response.statusMessage!, response.statusCode!,
-                response.data ?? {});
+            fail(response.statusMessage!, response.statusCode!, response.data ?? {});
           }
         }
         if (after != null) {
@@ -193,15 +180,13 @@ class Http {
     } on DioError catch (e) {
       if (fail != null) {
         if (e.response != null && e.response?.data != null) {
-          fail(e.response!.statusMessage!, e.response!.statusCode!,
-              e.response!.data ?? {});
+          fail(e.response!.statusMessage!, e.response!.statusCode!, e.response!.data ?? {});
         }
       }
     }
   }
 
-  Future<void> doDelete(String url, dynamic data,
-      {Success? success, Fail? fail, After? after}) async {
+  Future<void> doDelete(String url, dynamic data, {Success? success, Fail? fail, After? after}) async {
     try {
       await dio.delete(url).then((response) {
         if (response.statusCode == 200) {
@@ -227,8 +212,7 @@ class Http {
           }
         } else {
           if (fail != null) {
-            fail(response.statusMessage!, response.statusCode!,
-                response.data ?? {});
+            fail(response.statusMessage!, response.statusCode!, response.data ?? {});
           }
         }
         if (after != null) {
@@ -238,24 +222,15 @@ class Http {
     } on DioError catch (e) {
       if (fail != null) {
         if (e.response != null && e.response?.data != null) {
-          fail(e.response?.data["messages"],
-              int.parse(e.response?.data["value"]), e.response?.data);
+          fail(e.response?.data["messages"], int.parse(e.response?.data["value"]), e.response?.data);
         }
       }
     }
   }
 
-  Future<void> doPost(String url, Map<String, dynamic> params,
-      {Success? success,
-      Fail? fail,
-      After? after,
-      CancelToken? cancelToken,
-      dynamic otherData}) async {
+  Future<void> doPost(String url, Map<String, dynamic> params, {Success? success, Fail? fail, After? after, CancelToken? cancelToken, dynamic otherData}) async {
     try {
-      await dio
-          .post(url,
-              data: json.encode(otherData ?? params), cancelToken: cancelToken)
-          .then((response) {
+      await dio.post(url, data: json.encode(otherData ?? params), cancelToken: cancelToken).then((response) {
         if (response.statusCode == 200) {
           Map<String, dynamic> data = response.data;
           if (data["success"] != null && data["success"]) {
@@ -270,8 +245,7 @@ class Http {
           }
         } else {
           if (fail != null) {
-            fail(response.statusMessage!, response.statusCode!,
-                response.data ?? {});
+            fail(response.statusMessage!, response.statusCode!, response.data ?? {});
           }
         }
         if (after != null) {
@@ -283,12 +257,8 @@ class Http {
         after();
       }
       if (fail != null) {
-        if (e.response != null &&
-            e.response!.data != null &&
-            e.response!.data is Map &&
-            e.response!.data["messages"] != null) {
-          fail(e.response?.data["messages"], e.response?.statusCode ?? 500,
-              e.response?.data);
+        if (e.response != null && e.response!.data != null && e.response!.data is Map && e.response!.data["messages"] != null) {
+          fail(e.response?.data["messages"], e.response?.statusCode ?? 500, e.response?.data);
         } else {
           fail(e.message, -1, e.message);
           if (e.type == DioErrorType.connectTimeout) {
@@ -309,12 +279,7 @@ class Http {
     }
   }
 
-  Future<void> custom(String url, Map<String, dynamic> params,
-      {Success? success,
-      Fail? fail,
-      After? after,
-      int? timeOut,
-      method}) async {
+  Future<void> custom(String url, Map<String, dynamic> params, {Success? success, Fail? fail, After? after, int? timeOut, method}) async {
     try {
       await dio.get(url).then((response) {
         if (response.statusCode == 200) {
@@ -323,8 +288,7 @@ class Http {
           }
         } else {
           if (fail != null) {
-            fail(response.statusMessage!, response.statusCode!,
-                response.data ?? {});
+            fail(response.statusMessage!, response.statusCode!, response.data ?? {});
           }
         }
         if (after != null) {
@@ -336,23 +300,16 @@ class Http {
 
       if (fail != null) {
         if (e.response != null && e.response?.data != null) {
-          fail(e.response!.statusMessage ?? '', e.response!.statusCode ?? 0,
-              e.response?.data);
+          fail(e.response!.statusMessage ?? '', e.response!.statusCode ?? 0, e.response?.data);
         }
       }
     }
   }
 
-  Future<File?> downloadAPK(String url,
-      {Success? success,
-      Fail? fail,
-      After? after,
-      CancelToken? cancelToken,
-      ProgressCallback? onReceiveProgress}) async {
+  Future<File?> downloadAPK(String url, {Success? success, Fail? fail, After? after, CancelToken? cancelToken, ProgressCallback? onReceiveProgress}) async {
     Directory storageDir = await getTemporaryDirectory();
     String storagePath = storageDir.path;
-    File file = File(
-        '$storagePath/${AppDefault().appName}v${AppDefault().version}.apk');
+    File file = File('$storagePath/${AppDefault().appName}v${AppDefault().version}.apk');
     if (!file.existsSync()) {
       file.createSync();
     }
@@ -375,8 +332,7 @@ class Http {
         return file;
       } else {
         if (fail != null) {
-          fail(response.statusMessage ?? "", response.statusCode ?? 500,
-              response);
+          fail(response.statusMessage ?? "", response.statusCode ?? 500, response);
         }
         return null;
       }
@@ -391,16 +347,9 @@ class Http {
     }
   }
 
-  Future<void> downImg(String url, Map<String, dynamic> params,
-      {Success? success,
-      Fail? fail,
-      After? after,
-      int? timeOut,
-      method}) async {
+  Future<void> downImg(String url, Map<String, dynamic> params, {Success? success, Fail? fail, After? after, int? timeOut, method}) async {
     try {
-      await dio
-          .get(url, options: Options(responseType: ResponseType.bytes))
-          .then((response) {
+      await dio.get(url, options: Options(responseType: ResponseType.bytes)).then((response) {
         if (response.statusCode == 200) {
           dynamic data = response.data;
           if (success != null) {
@@ -408,8 +357,7 @@ class Http {
           }
         } else {
           if (fail != null) {
-            fail(response.statusMessage!, response.statusCode!,
-                response.data ?? {});
+            fail(response.statusMessage!, response.statusCode!, response.data ?? {});
           }
         }
         if (after != null) {
@@ -419,18 +367,13 @@ class Http {
     } on DioError catch (e) {
       if (fail != null) {
         if (e.response != null && e.response?.data != null) {
-          fail(e.response!.statusMessage ?? '', e.response!.statusCode ?? 0,
-              e.response?.data);
+          fail(e.response!.statusMessage ?? '', e.response!.statusCode ?? 0, e.response?.data);
         }
       }
     }
   }
 
-  Future<void> uploadImages(List images,
-      {Function(bool success, List jsons)? resList,
-      Success? success,
-      Fail? fail,
-      After? after}) async {
+  Future<void> uploadImages(List images, {Function(bool success, List jsons)? resList, Success? success, Fail? fail, After? after}) async {
     List<Future> imagesFuture = [];
     if (images.length == 1) {
       var asset = images[0];
@@ -461,9 +404,7 @@ class Http {
       MultipartFile multipartFile = MultipartFile.fromBytes(
         imageData,
         // filename: asset.name,
-        filename: asset is XFile
-            ? asset.name
-            : "image_${DateTime.now().millisecond}.jpg",
+        filename: asset is XFile ? asset.name : "image_${DateTime.now().millisecond}.jpg",
         // contentType: MediaType.parse('application/octet-stream'),
       );
       FormData formData = FormData.fromMap({"uploadFile": multipartFile});
@@ -518,12 +459,7 @@ class Http {
       } on DioError catch (e) {
         if (fail != null) {
           if (e.response != null && e.response?.data != null) {
-            fail(
-                e.response?.data["msg"],
-                e.response != null && e.response!.statusCode != null
-                    ? e.response!.statusCode!
-                    : 400,
-                e.response?.data);
+            fail(e.response?.data["msg"], e.response != null && e.response!.statusCode != null ? e.response!.statusCode! : 400, e.response?.data);
           }
         }
       }
@@ -544,9 +480,7 @@ class Http {
 
         MultipartFile multipartFile = MultipartFile.fromBytes(
           imageData,
-          filename: asset is XFile
-              ? asset.name
-              : "image_${DateTime.now().millisecond}.jpg",
+          filename: asset is XFile ? asset.name : "image_${DateTime.now().millisecond}.jpg",
           // contentType: MediaType.parse('application/octet-stream'),
         );
         FormData formData = FormData.fromMap({"uploadFile": multipartFile});
@@ -605,8 +539,7 @@ class Http {
       RequestInterceptorHandler handler,
     ) {
       if (AppDefault.isDebug) {
-        print(
-            "\n================================= 请求数据 =================================");
+        print("\n================================= 请求数据 =================================");
         print("method = ${options.method.toString()}");
         print("url = ${options.uri.toString()}");
         print("headers = ${options.headers}");
@@ -617,20 +550,17 @@ class Http {
       return handler.next(options);
     }, onResponse: (Response response, ResponseInterceptorHandler handler) {
       if (AppDefault.isDebug) {
-        print(
-            "\n================================= 响应数据开始 =================================");
+        print("\n================================= 响应数据开始 =================================");
         print("code = ${response.statusCode}");
         print("data = ${response.data}");
         print("data = ${response.realUri}");
-        print(
-            "================================= 响应数据结束 =================================\n");
+        print("================================= 响应数据结束 =================================\n");
       }
 
       return handler.next(response);
     }, onError: (DioError e, ErrorInterceptorHandler handler) {
       if (AppDefault.isDebug) {
-        print(
-            "\n=================================错误响应数据 =================================");
+        print("\n=================================错误响应数据 =================================");
         print("type = ${e.type}");
         print("message = ${e.message}");
 

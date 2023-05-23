@@ -140,9 +140,7 @@ class MallCartPage extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            push(const ShoppingProductList(), null,
-                binding: ShoppingProductListBinding(),
-                arguments: {"isSearch": true});
+            push(const ShoppingProductList(), null, binding: ShoppingProductListBinding(), arguments: {"isSearch": true});
           },
         ),
         ghb(9.5.w),
@@ -169,20 +167,13 @@ class MallCartPage extends StatelessWidget {
                   }, child: GetX<MallCartPageController>(
                     builder: (controller) {
                       return Container(
-                        decoration: BoxDecoration(
-                            color: Color(controller.currentIndex == index
-                                ? 0xFFFFFFFF
-                                : 0xFFF5F5F7)),
+                        decoration: BoxDecoration(color: Color(controller.currentIndex == index ? 0xFFFFFFFF : 0xFFF5F5F7)),
                         alignment: Alignment.center,
                         width: 90.w,
                         height: 50.w,
                         child: Text(
                           data['title'] ?? '',
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Color(controller.currentIndex == index
-                                  ? 0xFFFF6231
-                                  : 0xFF333333)),
+                          style: TextStyle(fontSize: 15, color: Color(controller.currentIndex == index ? 0xFFFF6231 : 0xFF333333)),
                         ),
                       );
                     },
@@ -221,9 +212,7 @@ class MallCartPage extends StatelessWidget {
                     init: MallCartPageController(),
                     initState: (_) {},
                     builder: (controller) {
-                      List childList = controller
-                              .mallTypeList[controller.currentIndex]['child'] ??
-                          [];
+                      List childList = controller.mallTypeList[controller.currentIndex]['child'] ?? [];
                       return SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
                         child: Column(
@@ -234,31 +223,24 @@ class MallCartPage extends StatelessWidget {
                               child: Wrap(
                                 runSpacing: 10.w,
                                 spacing: (250.w - (70.w * 3)) / 2 - 0.1.w,
-                                children:
-                                    List.generate(childList.length, (index) {
+                                children: List.generate(childList.length, (index) {
                                   Map data = childList[index];
                                   return CustomButton(
                                     onPressed: () {
-                                      push(const ShoppingProductList(), null,
-                                          binding: ShoppingProductListBinding(),
-                                          arguments: {
-                                            "categoryId1": controller
-                                                    .mallTypeList[
-                                                controller.currentIndex]["id"],
-                                            "categoryId2": data["id"],
-                                          });
+                                      push(const ShoppingProductList(), null, binding: ShoppingProductListBinding(), arguments: {
+                                        "categoryId1": controller.mallTypeList[controller.currentIndex]["id"],
+                                        "categoryId2": data["id"],
+                                      });
                                     },
                                     child: centClm([
                                       CustomNetworkImage(
-                                        src: AppDefault().imageUrl +
-                                            (data["icon"] ?? ""),
+                                        src: AppDefault().imageUrl + (data["icon"] ?? ""),
                                         width: 70.w,
                                         height: 70.w,
                                         fit: BoxFit.fill,
                                       ),
                                       ghb(3),
-                                      getSimpleText(data["title"] ?? "", 12,
-                                          AppColor.text),
+                                      getSimpleText(data["title"] ?? "", 12, AppColor.text),
                                     ]),
                                   );
                                 }),

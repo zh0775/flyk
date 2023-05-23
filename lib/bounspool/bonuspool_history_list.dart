@@ -43,11 +43,7 @@ class BonuspoolHistoryListController extends GetxController {
     }
     isPageAnimate = true;
     int idx = toIdx ?? topIndex;
-    pageCtrl
-        .animateToPage(idx,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut)
-        .then((value) {
+    pageCtrl.animateToPage(idx, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut).then((value) {
       isPageAnimate = false;
     });
   }
@@ -99,17 +95,12 @@ class BonuspoolHistoryListController extends GetxController {
           counts[myLoadIdx] = data["count"] ?? 0;
           List tmpDatas = data["data"] ?? [];
           // tmpDatas = [{}, {}];
-          dataLists[myLoadIdx] =
-              isLoad ? [...dataLists[myLoadIdx], ...tmpDatas] : tmpDatas;
+          dataLists[myLoadIdx] = isLoad ? [...dataLists[myLoadIdx], ...tmpDatas] : tmpDatas;
 
-          isLoad
-              ? pullCtrls[myLoadIdx].loadComplete()
-              : pullCtrls[myLoadIdx].refreshCompleted();
+          isLoad ? pullCtrls[myLoadIdx].loadComplete() : pullCtrls[myLoadIdx].refreshCompleted();
           update(["$loadListBuildId$myLoadIdx"]);
         } else {
-          isLoad
-              ? pullCtrls[myLoadIdx].loadFailed()
-              : pullCtrls[myLoadIdx].refreshFailed();
+          isLoad ? pullCtrls[myLoadIdx].loadFailed() : pullCtrls[myLoadIdx].refreshFailed();
         }
       },
       after: () {
@@ -238,8 +229,7 @@ class BonuspoolHistoryList extends GetView<BonuspoolHistoryListController> {
           controller: controller.pullCtrls[listIdx],
           onLoading: () => controller.loadData(isLoad: true, loadIdx: listIdx),
           onRefresh: () => controller.loadData(loadIdx: listIdx),
-          enablePullUp:
-              controller.counts[listIdx] > controller.dataLists[listIdx].length,
+          enablePullUp: controller.counts[listIdx] > controller.dataLists[listIdx].length,
           child: controller.dataLists[listIdx].isEmpty
               ? GetX<BonuspoolHistoryListController>(
                   builder: (_) {
@@ -282,8 +272,7 @@ class BonuspoolHistoryList extends GetView<BonuspoolHistoryListController> {
           ], crossAxisAlignment: CrossAxisAlignment.start)
         ]),
         centClm([
-          getSimpleText(priceFormat(data["vcoM_Num"] ?? 0), 18, AppColor.text,
-              isBold: true),
+          getSimpleText(priceFormat(data["vcoM_Num"] ?? 0), 18, AppColor.text, isBold: true),
           ghb(6),
           getSimpleText("已到账", 12, AppColor.text3),
         ], crossAxisAlignment: CrossAxisAlignment.end)

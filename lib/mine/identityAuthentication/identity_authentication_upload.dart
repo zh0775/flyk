@@ -21,8 +21,7 @@ import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 class IdentityAuthenticationUploadBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<IdentityAuthenticationUploadController>(
-        IdentityAuthenticationUploadController());
+    Get.put<IdentityAuthenticationUploadController>(IdentityAuthenticationUploadController());
   }
 }
 
@@ -103,9 +102,7 @@ class IdentityAuthenticationUploadController extends GetxController {
       return;
     }
     if (!headPhotoPass) {
-      ShowToast.normal(headErrorMsg.isNotEmpty
-          ? headErrorMsg
-          : "您的身份证头像面还未认证成功，请等待上传结果或重新验证");
+      ShowToast.normal(headErrorMsg.isNotEmpty ? headErrorMsg : "您的身份证头像面还未认证成功，请等待上传结果或重新验证");
       return;
     }
 
@@ -114,9 +111,7 @@ class IdentityAuthenticationUploadController extends GetxController {
       return;
     }
     if (!emblemPhotoPass) {
-      ShowToast.normal(emblemErrorMsg.isNotEmpty
-          ? emblemErrorMsg
-          : "您的身份证国徽面还未认证成功，请等待上传结果或重新验证");
+      ShowToast.normal(emblemErrorMsg.isNotEmpty ? emblemErrorMsg : "您的身份证国徽面还未认证成功，请等待上传结果或重新验证");
       return;
     }
     if (headPhoto == null) {
@@ -180,18 +175,13 @@ class IdentityAuthenticationUploadController extends GetxController {
     }
   }
 
-  Future<void> pickAction(
-      {required bool isHead, required bool isGallery}) async {
+  Future<void> pickAction({required bool isHead, required bool isGallery}) async {
     isGetPhoto = true;
     XFile? image;
     if (!kIsWeb && isGallery) {
       List<AssetEntity>? images = await AssetPicker.pickAssets(
         Global.navigatorKey.currentContext!,
-        pickerConfig: AssetPickerConfig(
-            maxAssets: 1,
-            specialPickerType: SpecialPickerType.noPreview,
-            textDelegate: const AssetPickerTextDelegate(),
-            requestType: RequestType.image),
+        pickerConfig: AssetPickerConfig(maxAssets: 1, specialPickerType: SpecialPickerType.noPreview, textDelegate: const AssetPickerTextDelegate(), requestType: RequestType.image),
       );
       if (images != null && images.isNotEmpty) {
         AssetEntity entity = images.first;
@@ -200,8 +190,7 @@ class IdentityAuthenticationUploadController extends GetxController {
         if (file != null) {
           // if (result != null) {
           // image = XFile.fromData(result);
-          File result =
-              await FlutterNativeImage.compressImage(file.path, quality: 30);
+          File result = await FlutterNativeImage.compressImage(file.path, quality: 30);
           image = XFile(result.path);
           // }
         }
@@ -262,9 +251,7 @@ class IdentityAuthenticationUploadController extends GetxController {
     // verifiedAction("${imgUrl}2022/8/202208181144396JP00.jpg", isHead);
     uploadImgRequest(isHead ? headPhoto! : emblemPhoto!, (success, json) {
       if (success) {
-        isHead
-            ? (headPhotoUrl = json["data"]["src"])
-            : (emblemPhotoUrl = json["data"]["src"]);
+        isHead ? (headPhotoUrl = json["data"]["src"]) : (emblemPhotoUrl = json["data"]["src"]);
         verifiedAction(json["data"]["src"], isHead);
       }
     });
@@ -287,9 +274,7 @@ class IdentityAuthenticationUploadController extends GetxController {
             emblemErrorMsg = "";
           }
         } else {
-          isHead
-              ? headErrorMsg = json["messages"] ?? ""
-              : emblemErrorMsg = json["messages"];
+          isHead ? headErrorMsg = json["messages"] ?? "" : emblemErrorMsg = json["messages"];
         }
       },
       after: () {},
@@ -307,8 +292,7 @@ class IdentityAuthenticationUploadController extends GetxController {
   }
 }
 
-class IdentityAuthenticationUpload
-    extends GetView<IdentityAuthenticationUploadController> {
+class IdentityAuthenticationUpload extends GetView<IdentityAuthenticationUploadController> {
   const IdentityAuthenticationUpload({Key? key}) : super(key: key);
 
   @override
@@ -318,54 +302,10 @@ class IdentityAuthenticationUpload
       child: Scaffold(
         backgroundColor: AppColor.pageBackgroundColor,
         appBar: getDefaultAppBar(context, "实名认证"),
-        body: controller.isUpload
-            ? SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: uploadInfoView(context))
-            : Stack(
-                children: [
-                  Positioned.fill(
-                      bottom: 45.w + 38.w + paddingSizeBottom(context),
-                      child: inputInfoView(context)),
-                  Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      height: 45.w + 38.w + paddingSizeBottom(context),
-                      child: centClm([
-                        GetX<IdentityAuthenticationUploadController>(
-                          builder: (_) {
-                            return getSubmitBtn("确认提交", () {
-                              takeBackKeyboard(context);
-                              controller.authInputConfirm();
-                              // Get.to(
-                              //     IdentityAuthenticationUploadComplete(
-                              //       headImgUrl: controller.headPhotoUrl,
-                              //       emblemImgUrl: controller.emblemPhotoUrl,
-                              //       cardData: controller.cardData,
-                              //       emblemData: controller.emblemData,
-                              //     ),
-                              //     binding:
-                              //         IdentityAuthenticationUploadCompleteBinding());
-                            },
-                                enable: controller.submitEnable ||
-                                    !controller.isGetPhoto,
-                                height: 45,
-                                color: AppColor.theme,
-                                fontSize: 15);
-                          },
-                        ),
-                        SizedBox(
-                          width: 375.w,
-                          height: 38,
-                          child: Center(
-                            child: getSimpleText(
-                                "您的隐私信息仅用于验证保障您的账号安全", 12, AppColor.textGrey5),
-                          ),
-                        )
-                      ]))
-                ],
-              ),
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: controller.isUpload ? uploadInfoView(context) : inputInfoView(context),
+        ),
       ),
     );
   }
@@ -434,17 +374,23 @@ class IdentityAuthenticationUpload
             ),
           ]),
         ),
-        ghb(15),
-        getRichText(
-            "* ",
-            "请确认填写信息与本人身份信息一致，否则不会通过审核。实名认证成功后，身份信息与此账号唯一绑定，不可更换他人。",
-            12,
-            const Color(0xFFFF3F3A),
-            12,
-            AppColor.textGrey5,
-            widht: 345,
-            maxLines: 3,
-            h2: 1.5),
+        ghb(50),
+        GetX<IdentityAuthenticationUploadController>(
+          builder: (_) {
+            return getSubmitBtn("确认提交", () {
+              controller.authInputConfirm();
+              // Get.to(
+              //     IdentityAuthenticationUploadComplete(
+              //       headImgUrl: controller.headPhotoUrl,
+              //       emblemImgUrl: controller.emblemPhotoUrl,
+              //       cardData: controller.cardData,
+              //       emblemData: controller.emblemData,
+              //     ),
+              //     binding:
+              //         IdentityAuthenticationUploadCompleteBinding());
+            }, enable: controller.submitEnable || !controller.isGetPhoto, height: 45, color: AppColor.theme, fontSize: 15);
+          },
+        ),
       ],
     );
   }
@@ -491,11 +437,7 @@ class IdentityAuthenticationUpload
               //     ),
               //     binding:
               //         IdentityAuthenticationUploadCompleteBinding());
-            },
-                enable: controller.submitEnable || !controller.isGetPhoto,
-                height: 45,
-                color: AppColor.theme,
-                fontSize: 15);
+            }, enable: controller.submitEnable || !controller.isGetPhoto, height: 45, color: AppColor.theme, fontSize: 15);
           },
         ),
         ghb(10),
@@ -530,11 +472,7 @@ class IdentityAuthenticationUpload
           child: Container(
             width: 266.w,
             height: 161.w,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage(assetsName(
-                        "mine/wallet/bg_idcard_${type == 0 ? "head" : "gh"}")))),
+            decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill, image: AssetImage(assetsName("mine/wallet/bg_idcard_${type == 0 ? "head" : "gh"}")))),
             child: Stack(
               children: [
                 Align(
@@ -624,8 +562,7 @@ class IdentityAuthenticationUpload
                     height: 24.w,
                     child: Center(
                       child: Image.asset(
-                        assetsName(
-                            "mine/authentication/icon_tips_${index == 0 ? "right" : "wrong"}"),
+                        assetsName("mine/authentication/icon_tips_${index == 0 ? "right" : "wrong"}"),
                         width: 24.w,
                         height: 24.w,
                         fit: BoxFit.fill,
@@ -699,10 +636,7 @@ class AuthCompletePage extends StatelessWidget {
       body: UnconstrainedBox(
         child: Container(
           width: 375.w,
-          decoration: BoxDecoration(
-              border: Border(
-                  top: BorderSide(
-                      width: 1.w, color: AppColor.pageBackgroundColor))),
+          decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(width: 1.w, color: AppColor.pageBackgroundColor))),
           child: Column(
             children: [
               ghb(30.5),
@@ -717,13 +651,7 @@ class AuthCompletePage extends StatelessWidget {
               ghb(15),
               getSimpleText("恭喜您，成功通过实名认证。", 12, AppColor.text3),
               ghb(30),
-              getSubmitBtn(
-                  "查看认证信息",
-                  () => popToUntil(
-                      page: const IdentityAuthenticationCheck(),
-                      binding: IdentityAuthenticationCheckBinding()),
-                  height: 45,
-                  color: AppColor.theme)
+              getSubmitBtn("查看认证信息", () => popToUntil(page: const IdentityAuthenticationCheck(), binding: IdentityAuthenticationCheckBinding()), height: 45, color: AppColor.theme)
             ],
           ),
         ),

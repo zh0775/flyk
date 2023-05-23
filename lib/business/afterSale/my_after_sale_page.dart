@@ -181,38 +181,38 @@ class MyAfterSalePage extends GetView<MyAfterSalePageController> {
             .entries
             .map(
               (item) => CustomButton(
-            onPressed: () {
-              controller.topIndex = item.key;
-            },
-            child: Center(
-              child: GetX<MyAfterSalePageController>(
-                init: controller,
-                initState: (_) {},
-                builder: (_) {
-                  return SizedBox(
-                    width: (375 / 4).w,
-                    height: 55.w,
-                    child: centClm([
-                      getSimpleText(
-                        item.value,
-                        15,
-                        controller.topIndex != item.key ? const Color(0xFFBCC0C9) : const Color(0xFFFF6231),
-                      ),
-                      ghb(controller.topIndex == item.key ? 3 : 0),
-                      controller.topIndex != item.key
-                          ? ghb(0)
-                          : Container(
-                        width: 30.w,
-                        height: 2.w,
-                        decoration: BoxDecoration(color: const Color(0xFFFF6231), borderRadius: BorderRadius.circular(2.w)),
-                      )
-                    ]),
-                  );
+                onPressed: () {
+                  controller.topIndex = item.key;
                 },
+                child: Center(
+                  child: GetX<MyAfterSalePageController>(
+                    init: controller,
+                    initState: (_) {},
+                    builder: (_) {
+                      return SizedBox(
+                        width: (375 / 4).w,
+                        height: 55.w,
+                        child: centClm([
+                          getSimpleText(
+                            item.value,
+                            15,
+                            controller.topIndex != item.key ? const Color(0xFFBCC0C9) : const Color(0xFFFF6231),
+                          ),
+                          ghb(controller.topIndex == item.key ? 3 : 0),
+                          controller.topIndex != item.key
+                              ? ghb(0)
+                              : Container(
+                                  width: 30.w,
+                                  height: 2.w,
+                                  decoration: BoxDecoration(color: const Color(0xFFFF6231), borderRadius: BorderRadius.circular(2.w)),
+                                )
+                        ]),
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
-          ),
-        )
+            )
             .toList(),
       ),
     );
@@ -262,21 +262,21 @@ class MyAfterSalePage extends GetView<MyAfterSalePageController> {
       enablePullUp: datas.length < count ? true : false,
       child: datas.isEmpty
           ? GetX<MyAfterSalePageController>(
-        init: controller,
-        builder: (_) {
-          return CustomEmptyView(
-            isLoading: controller.isLoading,
-          );
-        },
-      )
+              init: controller,
+              builder: (_) {
+                return CustomEmptyView(
+                  isLoading: controller.isLoading,
+                );
+              },
+            )
           : ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.only(bottom: 15.w + paddingSizeBottom(Global.navigatorKey.currentContext!)),
-        itemCount: datas.isEmpty ? 0 : datas.length,
-        itemBuilder: (context, index) {
-          return mallOrderItem(datas[index], index, context, listIndex);
-        },
-      ),
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.only(bottom: 15.w + paddingSizeBottom(Global.navigatorKey.currentContext!)),
+              itemCount: datas.isEmpty ? 0 : datas.length,
+              itemBuilder: (context, index) {
+                return mallOrderItem(datas[index], index, context, listIndex);
+              },
+            ),
     );
   }
 
@@ -345,11 +345,11 @@ class MyAfterSalePage extends GetView<MyAfterSalePageController> {
   }
 
   Widget borderButton(
-      String buttonTitle,
-      Color color,
-      int id,
-      String type,
-      ) {
+    String buttonTitle,
+    Color color,
+    int id,
+    String type,
+  ) {
     return GestureDetector(
       onTap: () {
         print("button对应的事件");
