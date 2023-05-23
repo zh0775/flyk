@@ -79,7 +79,9 @@ dependencies:
   # flutter_html: ^3.0.0-alpha.6
   flutter_widget_from_html: ^0.9.0+2
   webview_flutter: ^3.0.4
+  #骨架屏
   skeletons: ^0.0.3
+  shimmer: ^3.0.0
   fl_chart: ^0.55.2
   syncfusion_flutter_charts: ^21.1.39
   flutter_inappwebview: ^5.7.1

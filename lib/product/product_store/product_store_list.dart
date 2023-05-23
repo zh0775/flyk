@@ -15,8 +15,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:skeletons/skeletons.dart';
+// import 'package:skeletons/skeletons.dart';
 import 'dart:convert' as convert;
+
+import 'package:shimmer/shimmer.dart';
 
 class ProductStoreListBinding implements Bindings {
   @override
@@ -531,25 +533,40 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                           childBuilder: (context, physics) {
                             return GetX<ProductStoreListController>(
                                 builder: (_) {
-                              return controller.isFirstLoading && !kIsWeb
-                                  ? Padding(
-                                      padding: EdgeInsets.only(
-                                          top: 15.w, left: 15.w),
-                                      child: SizedBox(
-                                        width: 345.w,
-                                        child: Wrap(
-                                          spacing: 10.w,
-                                          runSpacing: 10.w,
-                                          children: List.generate(
-                                              4,
-                                              (index) => SkeletonAvatar(
-                                                  style: SkeletonAvatarStyle(
-                                                      width: (375 - 15 * 2 - 10)
-                                                                  .w /
-                                                              2 -
-                                                          0.1.w,
-                                                      height: 255.w))),
-                                        ),
+                              return controller.isFirstLoading
+                                  ? Shimmer.fromColors(
+                                      baseColor: Colors.grey.shade300,
+                                      highlightColor: Colors.grey.shade100,
+                                      enabled: true,
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 15.w, left: 15.w),
+                                            child: SizedBox(
+                                              width: 345.w,
+                                              child: Wrap(
+                                                spacing: 10.w,
+                                                runSpacing: 10.w,
+                                                children: List.generate(
+                                                    4,
+                                                    (index) => Container(
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        6.w)),
+                                                        width:
+                                                            (375 - 15 * 2 - 10)
+                                                                        .w /
+                                                                    2 -
+                                                                0.1.w,
+                                                        height: 255.w)),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     )
                                   : controller.dataList.isEmpty
