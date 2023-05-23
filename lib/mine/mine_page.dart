@@ -16,25 +16,10 @@ import 'package:cxhighversion2/mine/integral/my_integral.dart' deferred as my_in
 import 'package:cxhighversion2/mine/mineStoreOrder/mine_store_order_list.dart' deferred as mine_store_order_list;
 import 'package:cxhighversion2/mine/mine_setting_list.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet.dart';
-<<<<<<< HEAD
-import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart'
-    deferred as my_wallet_draw;
-import 'package:cxhighversion2/mine/personal_information.dart'
-    deferred as personal_information;
-import 'package:cxhighversion2/mine/vip/vip_levelup.dart';
-import 'package:cxhighversion2/product/product.dart';
-=======
 import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart' deferred as my_wallet_draw;
 import 'package:cxhighversion2/mine/personal_information.dart' deferred as personal_information;
-// import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase_order.dart' deferred as integral_repurchase_order;
-// import 'package:cxhighversion2/machine/machine_order_list.dart' deferred as machine_order_list;
-// import 'package:cxhighversion2/message_notify/message_notify_list.dart' deferred as message_notify_list;
-// import 'package:cxhighversion2/mine/integral/integral_cash_order_list.dart' deferred as integral_cash_order_list;
-// import 'package:cxhighversion2/mine/mineStoreOrder/mine_store_order_list.dart' deferred as mine_store_order_list;
-// import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart' deferred as my_wallet_draw;
-// import 'package:cxhighversion2/mine/personal_information.dart' deferred as personal_information;
-import 'package:cxhighversion2/ranking/ranking_list.dart';
->>>>>>> e62fd1f (添加部分页面)
+import 'package:cxhighversion2/mine/vip/vip_levelup.dart';
+import 'package:cxhighversion2/product/product.dart';
 import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
@@ -563,10 +548,7 @@ class _MinePageState extends State<MinePage> with AutomaticKeepAliveClientMixin 
       case "机具兑换":
         imgSubStr = "jjdh";
         onPressed = () {
-<<<<<<< HEAD
-          push(const Product(), context,
-              binding: ProductBinding(), arguments: {"levelType": 3});
-
+          push(const Product(), context, binding: ProductBinding(), arguments: {"levelType": 3});
           // showAppUpdateAlert({
           //   "isDownload": false,
           //   "isShow": true,
@@ -575,9 +557,6 @@ class _MinePageState extends State<MinePage> with AutomaticKeepAliveClientMixin 
           //       "http://image.gxkunyuan.cn/D0034/Android/1.0.02X0R6.apk",
           //   "version_Content": "问题修改"
           // });
-=======
-          push(const RankListPage(), null, binding: RankListBinding());
->>>>>>> e62fd1f (添加部分页面)
         };
 
         break;
@@ -933,45 +912,6 @@ class _MinePageState extends State<MinePage> with AutomaticKeepAliveClientMixin 
                         SizedBox(
                           width: (375 - 21 - 71 - 7.5 - 1 - 55.5).w,
                           child: Text.rich(
-<<<<<<< HEAD
-                            TextSpan(
-                                text: name,
-                                style: TextStyle(
-                                    fontSize: 18.sp,
-                                    color: (controller.homeData["nickName"] !=
-                                                    null &&
-                                                controller.homeData["nickName"]
-                                                    .isNotEmpty) ||
-                                            !controller.isLogin
-                                        ? AppColor.text
-                                        : AppColor.textGrey,
-                                    fontWeight: AppDefault.fontBold,
-                                    height: 1.1),
-                                children: [
-                                  WidgetSpan(
-                                      child: Padding(
-                                          padding: EdgeInsets.only(left: 5.w),
-                                          child: Image.asset(
-                                              assetsName(
-                                                  "mine/vip/level${controller.level}"),
-                                              width: 31.5.w,
-                                              height: 20.w,
-                                              fit: BoxFit.fitWidth))),
-                                  WidgetSpan(
-                                      child: !controller.isAuth
-                                          ? gwb(0)
-                                          : Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 4.w),
-                                              child: Image.asset(
-                                                assetsName("mine/icon_isauth"),
-                                                width: 54.5.w,
-                                                height: 20.w,
-                                                fit: BoxFit.fitWidth,
-                                              ),
-                                            )),
-                                ]),
-=======
                             TextSpan(text: name, style: TextStyle(fontSize: 18.sp, color: (controller.homeData["nickName"] != null && controller.homeData["nickName"].isNotEmpty) || !controller.isLogin ? AppColor.text : AppColor.textGrey, fontWeight: AppDefault.fontBold, height: 1.1), children: [
                               WidgetSpan(
                                   child: Padding(
@@ -996,7 +936,6 @@ class _MinePageState extends State<MinePage> with AutomaticKeepAliveClientMixin 
                                           ),
                                         )),
                             ]),
->>>>>>> e62fd1f (添加部分页面)
                             maxLines: 10,
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.ellipsis,
@@ -1006,8 +945,7 @@ class _MinePageState extends State<MinePage> with AutomaticKeepAliveClientMixin 
                         controller.isLogin
                             ? CustomButton(
                                 onPressed: () {
-                                  push(const VipLevelup(), context,
-                                      binding: VipLevelupBinding());
+                                  push(const VipLevelup(), context, binding: VipLevelupBinding());
                                 },
                                 child: Container(
                                   height: 20.w,
