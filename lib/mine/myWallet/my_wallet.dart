@@ -134,8 +134,7 @@ class MyWalletController extends GetxController {
         }
         e["haveDraw"] = walletDrawInfo.isNotEmpty;
         if (walletDrawInfo.isNotEmpty) {
-          e["minCharge"] =
-              "${walletDrawInfo["draw_Account_SingleAmountMin"] ?? 0}";
+          e["minCharge"] = "${walletDrawInfo["draw_Account_SingleAmountMin"] ?? 0}";
           e["charge"] = "${walletDrawInfo["draw_Account_ServiceCharges"] ?? 0}";
           e["fee"] = "${walletDrawInfo["draw_Account_SingleFee"] ?? 0}";
         }
@@ -161,8 +160,7 @@ class MyWalletController extends GetxController {
       if (cClient) {
         List tmpWallet2 = [];
         for (var e in tmpWallet) {
-          if (e["a_No"] == AppDefault.awardWallet ||
-              e["a_No"] == AppDefault.jfWallet) {
+          if (e["a_No"] == AppDefault.awardWallet || e["a_No"] == AppDefault.jfWallet) {
             tmpWallet2.add(e);
           }
         }
@@ -197,7 +195,7 @@ class MyWallet extends GetView<MyWalletController> {
         appBar: getDefaultAppBar(context, "我的钱包"),
         body: EasyRefresh(
             onRefresh: () => controller.onRefresh(),
-            noMoreLoad: true,
+            // noMoreLoad: true,
             child: GetBuilder<MyWalletController>(builder: (_) {
               return ListView.builder(
                 itemCount: controller.walletList.length,
@@ -369,9 +367,7 @@ class MyWallet extends GetView<MyWalletController> {
           sbhRow([
             Padding(
               padding: EdgeInsets.only(left: 15.w),
-              child: getSimpleText(
-                  "${data["name"] ?? ""}钱包", 16, AppColor.textBlack,
-                  isBold: true),
+              child: getSimpleText("${data["name"] ?? ""}钱包", 16, AppColor.textBlack, isBold: true),
             ),
             CustomButton(
               onPressed: () {
@@ -383,11 +379,7 @@ class MyWallet extends GetView<MyWalletController> {
                     null,
                     binding: MyWalletDealListBinding());
               },
-              child: SizedBox(
-                  width: 60.w,
-                  height: 45.w,
-                  child: Center(
-                      child: getSimpleText("明细", 14, AppColor.textBlack))),
+              child: SizedBox(width: 60.w, height: 45.w, child: Center(child: getSimpleText("明细", 14, AppColor.textBlack))),
             )
           ], width: 375, height: 45),
           Container(
@@ -419,13 +411,7 @@ class MyWallet extends GetView<MyWalletController> {
                           // )
                         ]),
                         ghb(10),
-                        getSimpleText(
-                            priceFormat(data["amout"] ?? 0,
-                                tenThousand: tenThousand),
-                            30,
-                            Colors.white,
-                            fw: FontWeight.w700,
-                            textHeight: 1),
+                        getSimpleText(priceFormat(data["amout"] ?? 0, tenThousand: tenThousand), 30, Colors.white, fw: FontWeight.w700, textHeight: 1),
                       ], crossAxisAlignment: CrossAxisAlignment.start),
                       Visibility(
                           // visible: draw || data["a_No"] == 4,
@@ -433,11 +419,7 @@ class MyWallet extends GetView<MyWalletController> {
                           child: CustomButton(
                             onPressed: () {
                               if (data["a_No"] == 4) {
-                                push(
-                                    MyWalletConvert(
-                                        walletNo: data["a_No"] ?? 0),
-                                    null,
-                                    binding: MyWalletConvertBinding());
+                                push(MyWalletConvert(walletNo: data["a_No"] ?? 0), null, binding: MyWalletConvertBinding());
                               } else {
                                 checkIdentityAlert(toNext: () {
                                   push(
@@ -453,47 +435,26 @@ class MyWallet extends GetView<MyWalletController> {
                               width: 90.w,
                               height: 30.w,
                               margin: EdgeInsets.only(right: 3.w),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15.w),
-                                  color: Colors.white),
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.w), color: Colors.white),
                               child: Center(
-                                child: getSimpleText(
-                                    data["a_No"] == 4 ? "去兑换" : "去提现",
-                                    15,
-                                    lColor),
+                                child: getSimpleText(data["a_No"] == 4 ? "去兑换" : "去提现", 15, lColor),
                               ),
                             ),
                           )),
-                    ],
-                        width: 345 - 21 * 2,
-                        crossAxisAlignment: CrossAxisAlignment.end),
+                    ], width: 345 - 21 * 2, crossAxisAlignment: CrossAxisAlignment.end),
                   ),
                   sbRow([
                     centRow([
                       gwb(21),
                       centClm([
-                        getWidthText(
-                            priceFormat(data["amout2"] ?? 0,
-                                tenThousand: inTenThousand),
-                            14,
-                            Colors.white.withOpacity(0.7),
-                            116,
-                            1),
+                        getWidthText(priceFormat(data["amout2"] ?? 0, tenThousand: inTenThousand), 14, Colors.white.withOpacity(0.7), 116, 1),
                         ghb(3),
-                        getWidthText("总收入$inUnit", 12,
-                            Colors.white.withOpacity(0.7), 116, 1),
+                        getWidthText("总收入$inUnit", 12, Colors.white.withOpacity(0.7), 116, 1),
                       ], crossAxisAlignment: CrossAxisAlignment.start),
                       centClm([
-                        getWidthText(
-                            priceFormat(data["amout3"] ?? 0,
-                                tenThousand: outTenThousand),
-                            14,
-                            Colors.white.withOpacity(0.7),
-                            116,
-                            1),
+                        getWidthText(priceFormat(data["amout3"] ?? 0, tenThousand: outTenThousand), 14, Colors.white.withOpacity(0.7), 116, 1),
                         ghb(3),
-                        getWidthText("总支出$outUnit", 12,
-                            Colors.white.withOpacity(0.7), 116, 1),
+                        getWidthText("总支出$outUnit", 12, Colors.white.withOpacity(0.7), 116, 1),
                       ], crossAxisAlignment: CrossAxisAlignment.start)
                     ]),
                     Image.asset(

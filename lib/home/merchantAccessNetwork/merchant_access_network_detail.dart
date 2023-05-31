@@ -43,9 +43,7 @@ class MerchantAccessNetworkDetail extends StatelessWidget {
                     ghb(5),
                     sbRow([
                       centRow([
-                        getSimpleText("${productInfo["title"] ?? ""}产品下载地址", 14,
-                            const Color(0xFF5C6166),
-                            fw: AppDefault.fontBold),
+                        getSimpleText("${productInfo["title"] ?? ""}产品下载地址", 14, const Color(0xFF5C6166), fw: AppDefault.fontBold),
                         gwb(12),
                         Image.asset(
                           assetsName("home/merchantaccessnetwork/icon_link"),
@@ -57,20 +55,12 @@ class MerchantAccessNetworkDetail extends StatelessWidget {
                     ghb(6),
                     CustomButton(
                       onPressed: () async {
-                        bool lanuch = await launchUrl(
-                            Uri.parse(productInfo["url"] ?? ""),
-                            mode: LaunchMode.externalApplication);
+                        bool lanuch = await launchUrl(Uri.parse(productInfo["url"] ?? ""), mode: LaunchMode.externalApplication);
                       },
-                      child: getWidthText(productInfo["url"] ?? "", 14,
-                          const Color(0xFF2368F2), 343 - 14 * 2, 2),
+                      child: getWidthText(productInfo["url"] ?? "", 14, const Color(0xFF2368F2), 343 - 14 * 2, 2),
                     ),
                     ghb(6),
-                    getWidthText(
-                        "xxx软件提示你进入链接下载软件，帮你商户入网，你只要按照软件提示提供准确信息即可认证入网，方便快捷...",
-                        12,
-                        const Color(0xFF5C6166),
-                        343 - 14 * 2,
-                        1000),
+                    getWidthText("xxx软件提示你进入链接下载软件，帮你商户入网，你只要按照软件提示提供准确信息即可认证入网，方便快捷...", 12, const Color(0xFF5C6166), 343 - 14 * 2, 1000),
                   ],
                 )),
             ghb(10),
@@ -78,9 +68,7 @@ class MerchantAccessNetworkDetail extends StatelessWidget {
                 "icon_rwts",
                 Column(
                   children: [
-                    SizedBox(
-                        width: (343 - 8.5 * 2).w,
-                        child: HtmlWidget(productInfo["content"] ?? "")),
+                    SizedBox(width: (343 - 8.5 * 2).w, child: HtmlWidget(productInfo["content"] ?? "")),
                   ],
                 )),
             SizedBox(
@@ -111,8 +99,7 @@ class MerchantAccessNetworkDetail extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(8.w)),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(8.w)),
                     ),
                   )),
               Positioned(
@@ -208,8 +195,7 @@ class MerchantAccessNetworkDetail extends StatelessWidget {
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(10.w),
                   child: CustomNetworkImage(
-                    src:
-                        AppDefault().imageUrl + (productInfo["coverImg"] ?? ""),
+                    src: AppDefault().imageUrl + (productInfo["coverImg"] ?? ""),
                     width: 317.w,
                     height: 336.w,
                   ))),
@@ -223,20 +209,16 @@ class MerchantAccessNetworkDetail extends StatelessWidget {
                     ClipRRect(
                         borderRadius: BorderRadius.circular(6.w),
                         child: CustomNetworkImage(
-                          src: AppDefault().imageUrl +
-                              (productInfo["m_Image"] ?? ""),
+                          src: AppDefault().imageUrl + (productInfo["m_Image"] ?? ""),
                           width: 42.w,
                           height: 42.w,
                           fit: BoxFit.cover,
                         )),
                     gwb(12),
                     centClm([
-                      getSimpleText(
-                          productInfo["title"] ?? "", 14, Colors.white,
-                          fw: AppDefault.fontBold),
+                      getSimpleText(productInfo["title"] ?? "", 14, Colors.white, fw: AppDefault.fontBold),
                       ghb(3),
-                      getWidthText(
-                          productInfo["meta"] ?? "", 14, Colors.white, 180, 3),
+                      getWidthText(productInfo["meta"] ?? "", 14, Colors.white, 180, 3),
                     ], crossAxisAlignment: CrossAxisAlignment.start),
                   ]),
                   QrImage(

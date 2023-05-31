@@ -570,7 +570,8 @@ class _MinePageState extends State<MinePage> with AutomaticKeepAliveClientMixin 
       case "我的钱包":
         imgSubStr = "wdqb";
         onPressed = () {
-          push(const ExtensionRewardPage(), null, binding: ExtensionRewardBinding());
+          push(const MyWallet(), null, binding: MyWalletBinding());
+          // push(const ExtensionRewardPage(), null, binding: ExtensionRewardBinding());
         };
 
         break;

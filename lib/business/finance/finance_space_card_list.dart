@@ -13,8 +13,7 @@ import 'package:get/get.dart';
 class FinanceSpaceCardListBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<FinanceSpaceCardListController>(
-        FinanceSpaceCardListController(datas: Get.arguments));
+    Get.put<FinanceSpaceCardListController>(FinanceSpaceCardListController(datas: Get.arguments));
   }
 }
 
@@ -36,9 +35,7 @@ class FinanceSpaceCardListController extends GetxController {
       isLoading = true;
     }
     simpleRequest(
-      url: type == 0
-          ? Urls.userCreditCardBankList
-          : Urls.userCreditCardLoansList,
+      url: type == 0 ? Urls.userCreditCardBankList : Urls.userCreditCardLoansList,
       params: {
         "pageNo": pageNo,
         "pageSize": pageSize,
@@ -75,27 +72,21 @@ class FinanceSpaceCardList extends GetView<FinanceSpaceCardListController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          getDefaultAppBar(context, controller.type == 0 ? "热门信用卡" : "热门贷款"),
+      appBar: getDefaultAppBar(context, controller.type == 0 ? "热门信用卡" : "热门贷款"),
       body: GetBuilder<FinanceSpaceCardListController>(
         builder: (_) {
           return EasyRefresh(
-              onLoad: controller.count <= controller.dataList.length
-                  ? null
-                  : () => controller.loadData(isLoad: true),
+              onLoad: controller.count <= controller.dataList.length ? null : () => controller.loadData(isLoad: true),
               onRefresh: () => controller.loadData(),
-              noMoreLoad: controller.count >= controller.dataList.length,
+              // noMoreLoad: controller.count >= controller.dataList.length,
               child: ListView.builder(
                 padding: EdgeInsets.only(bottom: 20.w),
-                itemCount: controller.dataList.isEmpty
-                    ? 2
-                    : controller.dataList.length + 1,
+                itemCount: controller.dataList.isEmpty ? 2 : controller.dataList.length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return Center(
                       child: sbhRow([
-                        getSimpleText(
-                            "*本页面相关信息仅供参考，不构成任务投资建议", 12, AppColor.text3),
+                        getSimpleText("*本页面相关信息仅供参考，不构成任务投资建议", 12, AppColor.text3),
                       ], width: 375 - 15 * 2, height: 36),
                     );
                   } else {
@@ -108,10 +99,7 @@ class FinanceSpaceCardList extends GetView<FinanceSpaceCardListController> {
                         },
                       );
                     } else {
-                      return controller.type == 0
-                          ? cell(index - 1, controller.dataList[index - 1])
-                          : loansCell(
-                              index - 1, controller.dataList[index - 1]);
+                      return controller.type == 0 ? cell(index - 1, controller.dataList[index - 1]) : loansCell(index - 1, controller.dataList[index - 1]);
                     }
                   }
                 },
@@ -124,12 +112,7 @@ class FinanceSpaceCardList extends GetView<FinanceSpaceCardListController> {
   Widget loansCell(int index, Map data) {
     return Center(
         child: Container(
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(
-              top: Radius.circular(index == 0 ? 8.w : 0),
-              bottom: Radius.circular(
-                  index >= controller.dataList.length - 1 ? 8.w : 0))),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(index == 0 ? 8.w : 0), bottom: Radius.circular(index >= controller.dataList.length - 1 ? 8.w : 0))),
       width: 345.w,
       child: SizedBox(
         width: (345 - 15 * 2).w,
@@ -139,8 +122,7 @@ class FinanceSpaceCardList extends GetView<FinanceSpaceCardListController> {
             sbhRow([
               centRow([
                 centClm([
-                  getWidthText(data["title"] ?? "", 15, AppColor.text, 120, 1,
-                      isBold: true),
+                  getWidthText(data["title"] ?? "", 15, AppColor.text, 120, 1, isBold: true),
                   ghb(8),
                   getWidthText(
                     priceFormat(data["price"] ?? 0, savePoint: 0),
@@ -162,29 +144,22 @@ class FinanceSpaceCardList extends GetView<FinanceSpaceCardListController> {
               centClm([
                 CustomButton(
                   onPressed: () {
-                    push(const FinanceSpaceCardApply(), null,
-                        binding: FinanceSpaceCardApplyBinding(),
-                        arguments: {
-                          "data": data,
-                          "type": controller.type,
-                        });
+                    push(const FinanceSpaceCardApply(), null, binding: FinanceSpaceCardApplyBinding(), arguments: {
+                      "data": data,
+                      "type": controller.type,
+                    });
                   },
                   child: Container(
                     width: 60.w,
                     height: 30.w,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15.w),
-                        border:
-                            Border.all(width: 0.5.w, color: AppColor.theme)),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15.w), border: Border.all(width: 0.5.w, color: AppColor.theme)),
                     child: Center(
                       child: getSimpleText("申请", 12, AppColor.theme),
                     ),
                   ),
                 ),
                 ghb(12),
-                getRichText("${data["buyNum"] ?? 0}", "人申请", 10, AppColor.red,
-                    10, AppColor.text3)
+                getRichText("${data["buyNum"] ?? 0}", "人申请", 10, AppColor.red, 10, AppColor.text3)
               ]),
             ], width: 345 - 15 * 2, height: 100),
           ],
@@ -198,12 +173,7 @@ class FinanceSpaceCardList extends GetView<FinanceSpaceCardListController> {
       child: Container(
         width: 345.w,
         height: 159.w,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(
-                top: Radius.circular(index == 0 ? 8.w : 0),
-                bottom: Radius.circular(
-                    index >= controller.dataList.length - 1 ? 8.w : 0))),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(index == 0 ? 8.w : 0), bottom: Radius.circular(index >= controller.dataList.length - 1 ? 8.w : 0))),
         child: Column(
           children: [
             index != 0 ? gline(315, 1) : ghb(0),
@@ -217,9 +187,7 @@ class FinanceSpaceCardList extends GetView<FinanceSpaceCardListController> {
                 ),
                 gwb(11),
                 centClm([
-                  getWidthText(data["title"] ?? "", 15, AppColor.text,
-                      315 - 11 - 126 - 1, 2,
-                      isBold: true),
+                  getWidthText(data["title"] ?? "", 15, AppColor.text, 315 - 11 - 126 - 1, 2, isBold: true),
                   ghb(5),
                   getWidthText(
                     data["projectName"] ?? "",
@@ -233,11 +201,8 @@ class FinanceSpaceCardList extends GetView<FinanceSpaceCardListController> {
                     height: 18.w,
                     alignment: Alignment.center,
                     padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    decoration: BoxDecoration(
-                        color: AppColor.theme.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(2.w)),
-                    child: getSimpleText(
-                        "奖励￥${data["price"]}", 10, AppColor.theme),
+                    decoration: BoxDecoration(color: AppColor.theme.withOpacity(0.1), borderRadius: BorderRadius.circular(2.w)),
+                    child: getSimpleText("奖励￥${data["price"]}", 10, AppColor.theme),
                   )
                 ], crossAxisAlignment: CrossAxisAlignment.start)
               ])
@@ -250,33 +215,21 @@ class FinanceSpaceCardList extends GetView<FinanceSpaceCardListController> {
                     : CustomButton(
                         onPressed: () {
                           if (index == 0) {
-                            push(const FinanceSpaceCardPop(), null,
-                                binding: FinanceSpaceCardPopBinding(),
-                                arguments: {
-                                  "data": data,
-                                });
+                            push(const FinanceSpaceCardPop(), null, binding: FinanceSpaceCardPopBinding(), arguments: {
+                              "data": data,
+                            });
                           } else {
-                            push(const FinanceSpaceCardApply(), null,
-                                binding: FinanceSpaceCardApplyBinding(),
-                                arguments: {
-                                  "data": data,
-                                });
+                            push(const FinanceSpaceCardApply(), null, binding: FinanceSpaceCardApplyBinding(), arguments: {
+                              "data": data,
+                            });
                           }
                         },
                         child: Container(
                           width: 80.w,
                           height: 30.w,
                           alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.w),
-                              color: index == 0 ? AppColor.theme : Colors.white,
-                              border: Border.all(
-                                  color: index == 0
-                                      ? Colors.transparent
-                                      : AppColor.theme,
-                                  width: index == 0 ? 0 : 1.w)),
-                          child: getSimpleText(index == 0 ? "我要推广" : "申请办卡", 12,
-                              index == 0 ? Colors.white : AppColor.theme),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.w), color: index == 0 ? AppColor.theme : Colors.white, border: Border.all(color: index == 0 ? Colors.transparent : AppColor.theme, width: index == 0 ? 0 : 1.w)),
+                          child: getSimpleText(index == 0 ? "我要推广" : "申请办卡", 12, index == 0 ? Colors.white : AppColor.theme),
                         ),
                       );
               }))

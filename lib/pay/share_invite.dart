@@ -88,9 +88,7 @@ class ShareInviteController extends GetxController {
     // loadRegistUrl();
     homeData = AppDefault().homeData;
     publicHomeData = AppDefault().publicHomeData;
-    shareUrl = (((publicHomeData["webSiteInfo"] ?? {})["app"] ??
-            {})["apP_ExternalReg_Url"] ??
-        "");
+    shareUrl = (((publicHomeData["webSiteInfo"] ?? {})["app"] ?? {})["apP_ExternalReg_Url"] ?? "");
     if (shareUrl.isNotEmpty) {
       String t = shareUrl.substring(shareUrl.length - 1, shareUrl.length);
       if (t == "/") {
@@ -120,10 +118,7 @@ class ShareInviteController extends GetxController {
     if (!isFirst) return;
     isFirst = false;
     double appbarHeight = (Scaffold.of(ctx).appBarMaxHeight ?? 0);
-    boxHeight = ScreenUtil().screenHeight -
-        appbarHeight -
-        paddingSizeBottom(ctx) -
-        paddingSizeTop(ctx);
+    boxHeight = ScreenUtil().screenHeight - appbarHeight - paddingSizeBottom(ctx) - paddingSizeTop(ctx);
     ScreenUtil util = ScreenUtil();
     imageHeight = (300.w / util.screenWidth) / pageScale * 540.w;
     double tmpHeight = (300.w / util.screenWidth) * 540.w;
@@ -167,8 +162,7 @@ class ShareInvite extends GetView<ShareInviteController> {
                           // scale: controller.pageScale,
                           scale: 0.65,
                           itemBuilder: (context, index) {
-                            print(
-                                "${controller.imageWidth / controller.imageHeight}");
+                            print("${controller.imageWidth / controller.imageHeight}");
                             return sharePage(index);
                           },
                           onIndexChanged: (value) {
@@ -181,19 +175,11 @@ class ShareInvite extends GetView<ShareInviteController> {
                           controller.dataList.length,
                           (index) => GetX<ShareInviteController>(builder: (_) {
                                 return AnimatedContainer(
-                                  margin: EdgeInsets.only(
-                                      left: index != 0 ? 5.w : 0),
+                                  margin: EdgeInsets.only(left: index != 0 ? 5.w : 0),
                                   duration: const Duration(milliseconds: 300),
-                                  width: controller.pageIndex == index
-                                      ? 15.w
-                                      : 5.w,
+                                  width: controller.pageIndex == index ? 15.w : 5.w,
                                   height: 5.w,
-                                  decoration: BoxDecoration(
-                                      color: controller.pageIndex == index
-                                          ? AppColor.theme
-                                          : AppColor.theme.withOpacity(0.1),
-                                      borderRadius:
-                                          BorderRadius.circular(2.5.w)),
+                                  decoration: BoxDecoration(color: controller.pageIndex == index ? AppColor.theme : AppColor.theme.withOpacity(0.1), borderRadius: BorderRadius.circular(2.5.w)),
                                 );
                               })))
                     ],
@@ -219,8 +205,7 @@ class ShareInvite extends GetView<ShareInviteController> {
                   child: centRow(List.generate(
                       controller.btns.length,
                       (index) => Padding(
-                            padding:
-                                EdgeInsets.only(left: index == 0 ? 0 : 36.w),
+                            padding: EdgeInsets.only(left: index == 0 ? 0 : 36.w),
                             child: shareButotn(index, context),
                           ))),
                 ),
@@ -279,10 +264,7 @@ class ShareInvite extends GetView<ShareInviteController> {
                       height: 75.w,
                       // color: Colors.amber,
                       child: QrImage(
-                        data: controller.shareUrl != null &&
-                                controller.shareUrl.isNotEmpty
-                            ? "${controller.shareUrl}?id=${controller.homeData["u_Number"] ?? ""}"
-                            : "",
+                        data: controller.shareUrl != null && controller.shareUrl.isNotEmpty ? "${controller.shareUrl}?id=${controller.homeData["u_Number"] ?? ""}" : "",
                         // size: !kIsWeb ? 66.w : 56.w,
                         size: 72.w,
                         padding: EdgeInsets.zero,
@@ -302,9 +284,7 @@ class ShareInvite extends GetView<ShareInviteController> {
           Positioned(
             left: 23.w,
             bottom: 20.5.w,
-            child: getSimpleText("邀请码：${controller.homeData["u_Number"] ?? ""}",
-                15, Colors.white,
-                textHeight: 1.0),
+            child: getSimpleText("邀请码：${controller.homeData["u_Number"] ?? ""}", 15, Colors.white, textHeight: 1.0),
           )
         ],
       ),
@@ -344,10 +324,7 @@ class ShareInvite extends GetView<ShareInviteController> {
         // }
         // Uint8List imageBytes = byteData.buffer.asUint8List();
 
-        Uint8List imageBytes = await ScreenshotController().captureFromWidget(
-            sharePage(controller.pageIndex, shot: true),
-            delay: const Duration(milliseconds: 100),
-            context: context);
+        Uint8List imageBytes = await ScreenshotController().captureFromWidget(sharePage(controller.pageIndex, shot: true), delay: const Duration(milliseconds: 100), context: context);
 
         if (btnData["name"] == "微信好友") {
           AppWechatManager().sharePriendWithFile(imageBytes);
@@ -356,8 +333,7 @@ class ShareInvite extends GetView<ShareInviteController> {
         } else if (btnData["name"] == "保存图片") {
           saveAssetsImg(imageBytes);
         } else if (btnData["name"] == "复制链接") {
-          copyClipboard(
-              "${controller.shareUrl}?id=${controller.homeData["u_Number"] ?? ""}");
+          copyClipboard("${controller.shareUrl}?id=${controller.homeData["u_Number"] ?? ""}");
         }
       },
       child: centClm([
@@ -365,9 +341,7 @@ class ShareInvite extends GetView<ShareInviteController> {
           width: 52.5.w,
           height: 52.5.w,
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(52.5.w / 2)),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(52.5.w / 2)),
           child: Image.asset(
             assetsName(btnData["img"] ?? ""),
             // width: 30.5.w,
@@ -392,8 +366,7 @@ class ShareInvite extends GetView<ShareInviteController> {
     if (kIsWeb) {
       if (imageBytes != null) {
         final base64data = base64Encode(imageBytes.toList());
-        final a =
-            html.AnchorElement(href: 'data:image/jpeg;base64,$base64data');
+        final a = html.AnchorElement(href: 'data:image/jpeg;base64,$base64data');
         a.download = "${DateTime.now().millisecondsSinceEpoch}";
         a.click();
         a.remove();
@@ -429,31 +402,15 @@ class ShareInvite extends GetView<ShareInviteController> {
     );
   }
 
-  Future<Uint8List> captureFromWidget(Widget widget,
-      {Duration delay = const Duration(seconds: 1),
-      double? pixelRatio,
-      BuildContext? context,
-      Size? targetSize,
-      BorderRadiusGeometry? borderRadius}) async {
-    ui.Image image = await widgetToUiImage(widget,
-        delay: delay,
-        pixelRatio: pixelRatio,
-        context: context,
-        targetSize: targetSize,
-        borderRadius: borderRadius);
-    final ByteData? byteData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
+  Future<Uint8List> captureFromWidget(Widget widget, {Duration delay = const Duration(seconds: 1), double? pixelRatio, BuildContext? context, Size? targetSize, BorderRadiusGeometry? borderRadius}) async {
+    ui.Image image = await widgetToUiImage(widget, delay: delay, pixelRatio: pixelRatio, context: context, targetSize: targetSize, borderRadius: borderRadius);
+    final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     image.dispose();
 
     return byteData!.buffer.asUint8List();
   }
 
-  Future<ui.Image> widgetToUiImage(Widget widget,
-      {Duration delay = const Duration(seconds: 1),
-      double? pixelRatio,
-      BuildContext? context,
-      Size? targetSize,
-      BorderRadiusGeometry? borderRadius}) async {
+  Future<ui.Image> widgetToUiImage(Widget widget, {Duration delay = const Duration(seconds: 1), double? pixelRatio, BuildContext? context, Size? targetSize, BorderRadiusGeometry? borderRadius}) async {
     int retryCounter = 3;
     bool isDirty = false;
 
@@ -478,18 +435,14 @@ class ShareInvite extends GetView<ShareInviteController> {
 
     final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
 
-    Size logicalSize = targetSize ??
-        ui.window.physicalSize / ui.window.devicePixelRatio; // Adapted
+    Size logicalSize = targetSize ?? ui.window.physicalSize / ui.window.devicePixelRatio; // Adapted
     Size imageSize = targetSize ?? ui.window.physicalSize; // Adapted
 
-    assert(logicalSize.aspectRatio.toStringAsPrecision(5) ==
-        imageSize.aspectRatio
-            .toStringAsPrecision(5)); // Adapted (toPrecision was not available)
+    assert(logicalSize.aspectRatio.toStringAsPrecision(5) == imageSize.aspectRatio.toStringAsPrecision(5)); // Adapted (toPrecision was not available)
 
     final RenderView renderView = RenderView(
       window: ui.window,
-      child: RenderPositionedBox(
-          alignment: Alignment.center, child: repaintBoundary),
+      child: RenderPositionedBox(alignment: Alignment.center, child: repaintBoundary),
       configuration: ViewConfiguration(
         size: logicalSize,
         devicePixelRatio: pixelRatio ?? 1.0,
@@ -509,16 +462,15 @@ class ShareInvite extends GetView<ShareInviteController> {
     pipelineOwner.rootNode = renderView;
     renderView.prepareInitialFrame();
 
-    final RenderObjectToWidgetElement<RenderBox> rootElement =
-        RenderObjectToWidgetAdapter<RenderBox>(
-            container: repaintBoundary,
-            child: ClipRRect(
-              borderRadius: borderRadius,
-              child: Directionality(
-                textDirection: TextDirection.ltr,
-                child: child,
-              ),
-            )).attachToRenderTree(
+    final RenderObjectToWidgetElement<RenderBox> rootElement = RenderObjectToWidgetAdapter<RenderBox>(
+        container: repaintBoundary,
+        child: ClipRRect(
+          borderRadius: borderRadius,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: child,
+          ),
+        )).attachToRenderTree(
       buildOwner,
     );
     ////
@@ -544,8 +496,7 @@ class ShareInvite extends GetView<ShareInviteController> {
       ///
       isDirty = false;
 
-      image = await repaintBoundary.toImage(
-          pixelRatio: pixelRatio ?? (imageSize.width / logicalSize.width));
+      image = await repaintBoundary.toImage(pixelRatio: pixelRatio ?? (imageSize.width / logicalSize.width));
 
       ///
       ///This delay sholud increas with Widget tree Size

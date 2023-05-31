@@ -145,7 +145,7 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
                     // controller: controller.pullCtrl,
                     onLoad: () => controller.loadData(isLoad: true),
                     onRefresh: () => controller.loadData(),
-                    noMoreLoad: controller.count <= controller.cardList.length,
+                    // noMoreLoad: controller.count <= controller.cardList.length,
                     child: ListView.builder(
                       itemCount: controller.cardList.length,
                       itemBuilder: (context, index) {
@@ -178,9 +178,7 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
                             width: 345.w,
                             height: 45.w,
                             alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                color: AppColor.theme,
-                                borderRadius: BorderRadius.circular(45.w / 2)),
+                            decoration: BoxDecoration(color: AppColor.theme, borderRadius: BorderRadius.circular(45.w / 2)),
                             child: centRow([
                               Image.asset(
                                 assetsName("mine/wallet/icon_white_add"),
@@ -202,44 +200,37 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
   }
 
   Widget cardCell(int index, Map data) {
-    dynamic colorData =
-        controller.cardColors[index % controller.cardColors.length];
+    dynamic colorData = controller.cardColors[index % controller.cardColors.length];
     Color lColor = AppColor.theme.withOpacity(0.5);
     Color rColor = AppColor.theme;
     if (colorData is Map && colorData.isNotEmpty) {
       lColor = Color(int.parse(colorData["l"]));
       rColor = Color(int.parse(colorData["r"]));
-    } else if (colorData is String &&
-        colorData.isNotEmpty &&
-        int.tryParse(colorData) != null) {
+    } else if (colorData is String && colorData.isNotEmpty && int.tryParse(colorData) != null) {
       int colorInt = int.parse(colorData);
       lColor = Color(colorInt).withOpacity(0.7);
       rColor = Color(colorInt);
     }
     return Slidable(
       key: ValueKey(index),
-      endActionPane: ActionPane(
-          extentRatio: 0.12,
-          motion: const ScrollMotion(),
-          children: [
-            CustomSlidableAction(
-              flex: 1,
-              padding: EdgeInsets.zero,
-              backgroundColor: Colors.transparent,
-              foregroundColor: Colors.transparent,
-              onPressed: (context) {
-                controller.deleteCard(data["id"] ?? -1);
-              },
-              child: Container(
-                // margin: EdgeInsets.only(right: 10.w),
-                width: 45.w,
-                height: 135.w,
-                color: const Color(0xFFFB5252),
-                child: Center(
-                    child: getWidthText("解除绑定", 15, Colors.white, 12, 4)),
-              ),
-            )
-          ]),
+      endActionPane: ActionPane(extentRatio: 0.12, motion: const ScrollMotion(), children: [
+        CustomSlidableAction(
+          flex: 1,
+          padding: EdgeInsets.zero,
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.transparent,
+          onPressed: (context) {
+            controller.deleteCard(data["id"] ?? -1);
+          },
+          child: Container(
+            // margin: EdgeInsets.only(right: 10.w),
+            width: 45.w,
+            height: 135.w,
+            color: const Color(0xFFFB5252),
+            child: Center(child: getWidthText("解除绑定", 15, Colors.white, 12, 4)),
+          ),
+        )
+      ]),
       child: Align(
         child: Container(
           margin: EdgeInsets.only(top: index == 0 ? 0 : 15.w),
@@ -259,8 +250,7 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
                 ghb(16),
                 gwb(345),
                 sbhRow([
-                  getSimpleText(data["bankName"] ?? "", 18, Colors.white,
-                      isBold: true),
+                  getSimpleText(data["bankName"] ?? "", 18, Colors.white, isBold: true),
                   Image.asset(
                     assetsName("mine/wallet/icon_card_ic"),
                     width: 31.w,
@@ -269,17 +259,7 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
                 ], width: 345 - 16.5 * 2)
               ]),
               centClm([
-                sbRow([
-                  getSimpleText(
-                      data["bankAccountNumber"] != null &&
-                              data["bankAccountNumber"].length > 4
-                          ? "****  ****  ****  ${(data["bankAccountNumber"] as String).substring(data["bankAccountNumber"].length - 4, data["bankAccountNumber"].length)}"
-                          : "",
-                      24,
-                      Colors.white,
-                      isBold: true,
-                      letterSpacing: 1.5.w)
-                ], width: 345 - 25 * 2),
+                sbRow([getSimpleText(data["bankAccountNumber"] != null && data["bankAccountNumber"].length > 4 ? "****  ****  ****  ${(data["bankAccountNumber"] as String).substring(data["bankAccountNumber"].length - 4, data["bankAccountNumber"].length)}" : "", 24, Colors.white, isBold: true, letterSpacing: 1.5.w)], width: 345 - 25 * 2),
                 ghb(25)
               ])
             ],

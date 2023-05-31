@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # android
-version: 1.0.14+0
+version: 1.0.0+2
 # ios
 # version: 1.0.0+2
 
@@ -103,6 +103,7 @@ dependencies:
   #   path: /Users/zhanghan/Documents/workspace/flutterPlugin/store_plugin/
   universal_platform: ^1.0.0+1
   universal_html: ^2.0.8
+  csslib: 0.17.0
   decimal: ^2.3.2
   amap_flutter_location: ^3.0.0
   hive: ^2.2.3

@@ -1,5 +1,7 @@
 // 会员购买记录页面
+import 'package:cxhighversion2/component/custom_list_empty_view.dart';
 import 'package:cxhighversion2/service/http.dart';
+import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,10 @@ class PurchaseHistoryBinding implements Bindings {
 class PurchaseHistoryController extends GetxController {
   int currentPage = 1;
   int total = 0;
+
+  final _isLoadding = false.obs;
+  bool get isLoadding => _isLoadding.value;
+  set isLoadding(v) => _isLoadding.value = v;
 
   List purchaseHistoryList = [
     // {"id": 1, "vipTitle": "付利优客超级会员(1个月)", "payTime": "2022-10-08 12:35:09", "payStatus": 0, "orderNo": "2022164262457895", "money": "98.00"},
@@ -39,21 +45,55 @@ class PurchaseHistoryController extends GetxController {
 
   // 获取接口数据
   getPurchaseHistoryData() {
-    Http().doPost(
-      'https://mock.apifox.cn/m1/2153127-0-default/api/member/purchase_history_list',
-      {"pageSize": currentPage, "pageNum": 10},
-      success: (json) {
-        if (json['success']) {
-          Map data = json['data'] ?? {};
-          total = data['total'];
-          if (purchaseHistoryList.length <= total) {
-            List newData = data['rows'] ?? [];
-            purchaseHistoryList = [...purchaseHistoryList, ...newData];
+    // Http().doPost(
+    //   'https://mock.apifox.cn/m1/2153127-0-default/api/member/purchase_history_list',
+    //   {"pageSize": currentPage, "pageNum": 10},
+    //   success: (json) {
+    //     if (json['success']) {
+    //       Map data = json['data'] ?? {};
+    //       total = data['total'];
+    //       if (purchaseHistoryList.length <= total) {
+    //         List newData = data['rows'] ?? [];
+    //         purchaseHistoryList = [...purchaseHistoryList, ...newData];
+    //       }
+    //       update();
+    //     }
+    //   },
+    // );
+
+    Map postData = {
+      "orderNo": "",
+      "order_Type": 4,
+      "orderState": "-1",
+      "tbId": "",
+      "order_Type2": "-1",
+      "paymentMethod": 2,
+      "pageSize": 10,
+      "pageNo": currentPage,
+    };
+
+    if (purchaseHistoryList.isEmpty) {
+      isLoadding = true;
+    }
+
+    simpleRequest(
+        url: Urls.userLevelGiftOrderList,
+        params: {},
+        otherData: postData,
+        success: (success, json) {
+          if (json['success']) {
+            Map data = json['data'] ?? {};
+            total = data['count'];
+            if (purchaseHistoryList.length <= total) {
+              List newData = data['data'] ?? [];
+              purchaseHistoryList = [...purchaseHistoryList, ...newData];
+            }
+            update();
           }
-          update();
-        }
-      },
-    );
+        },
+        after: () {
+          isLoadding = false;
+        });
   }
 
   @override
@@ -87,16 +127,18 @@ class PurchaseHistoryPage extends GetView<PurchaseHistoryController> {
                   controller.getPurchaseHistoryData();
                 },
                 childBuilder: (context, physics) {
-                  return SingleChildScrollView(
-                    physics: physics,
-                    padding: EdgeInsets.fromLTRB(15.w, 15.w, 15.w, 0),
-                    child: Column(
-                      children: List.generate(controller.purchaseHistoryList.length, (index) {
-                        Map vipPaymentItem = controller.purchaseHistoryList[index];
-                        return vipPaymentHistory(vipPaymentItem);
-                      }),
-                    ),
-                  );
+                  return controller.purchaseHistoryList.isNotEmpty
+                      ? SingleChildScrollView(
+                          physics: physics,
+                          padding: EdgeInsets.fromLTRB(15.w, 15.w, 15.w, 0),
+                          child: Column(
+                            children: List.generate(controller.purchaseHistoryList.length, (index) {
+                              Map vipPaymentItem = controller.purchaseHistoryList[index];
+                              return vipPaymentHistory(vipPaymentItem);
+                            }),
+                          ),
+                        )
+                      : CustomListEmptyView(physics: physics, isLoading: controller.isLoadding);
                 });
           },
         ));
@@ -121,16 +163,17 @@ class PurchaseHistoryPage extends GetView<PurchaseHistoryController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  getSimpleText("${item['vipTitle']}", 14, const Color(0xFF333333), isBold: true),
-                  getSimpleText("${item['money']}", 18, const Color(0xFF333333), isBold: true),
+                  getSimpleText("开通超级vip-${item['commodity'][0]['shopModel'] ?? ''} ", 14, const Color(0xFF333333), isBold: true),
+                  getSimpleText("${item['commodity'][0]['nowPrice'].toInt() ?? 0} ", 18, const Color(0xFF333333), isBold: true),
                 ],
               ),
               ghb(12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  getSimpleText("${item['payTime']}", 12, const Color(0xFF999999)),
-                  getSimpleText(controller.getPayStatus(item['payStatus']), 12, const Color(0xFF999999)),
+                  getSimpleText("${item['addTime']}", 12, const Color(0xFF999999)),
+                  // getSimpleText(controller.getPayStatus(item['orderState']), 12, const Color(0xFF999999)),
+                  getSimpleText("${item['orderStateStr']}", 12, const Color(0xFF999999)),
                 ],
               ),
             ],

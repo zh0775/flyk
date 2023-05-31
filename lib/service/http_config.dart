@@ -1,7 +1,7 @@
 class HttpConfig {
-  static const baseUrl = "http://plus.app.yjrzf.com/";
+  // static const baseUrl = "http://plus.app.yjrzf.com/";
   // static const baseUrl = "http://yh.web.hongxyc.com/";
-  // static const baseUrl = "http://192.168.1.200:1034/";
+  static const baseUrl = "http://192.168.1.200:1039/";
 
   static const lotteryUrl = "http://h5.hwkeji888.com/#/";
   // static const webRegist = "http://download.tianyunpos.com/";
