@@ -1173,7 +1173,9 @@ class ProductStorePayResult extends StatelessWidget {
                 Get.offUntil(
                     GetPageRoute(
                         page: () => orderData.isEmpty
-                            ? const ProductStoreOrderList()
+                            ? ProductStoreOrderList(
+                                levelType: levelType,
+                              )
                             : const ProductStoreOrderDetail(
                                 data: {},
                               ),

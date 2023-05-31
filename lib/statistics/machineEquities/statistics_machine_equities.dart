@@ -1,18 +1,21 @@
+import 'dart:async';
+
 import 'package:cxhighversion2/component/custom_button.dart';
-import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
+import 'package:cxhighversion2/component/custom_list_empty_view.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/service/urls.dart';
-import 'package:cxhighversion2/statistics/machineEquities/statistics_machine_equities_add.dart';
 import 'package:cxhighversion2/statistics/machineEquities/statistics_machine_equities_change.dart';
-import 'package:cxhighversion2/statistics/machineEquities/statistics_machine_equities_history.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/notify_default.dart';
+import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:skeletons/skeletons.dart';
 
 class StatisticsMachineEquitiesBinding implements Bindings {
   @override
@@ -26,11 +29,44 @@ class StatisticsMachineEquitiesController extends GetxController {
   final dynamic datas;
   StatisticsMachineEquitiesController({this.datas});
 
-  final pullCtrl = RefreshController();
+  // final pullCtrl = RefreshController();
   final searchInputCtrl = TextEditingController();
-
   int modelPPIndex = 0;
   int modelPPPageIndex = 0;
+
+  loadOpenOrClose(Map data) {
+    // debounce(
+    //     target: () {
+    //       simpleRequest(
+    //         url: Urls.userTerminalAssociateUpdateState(data["id"]),
+    //         params: {},
+    //         success: (success, json) {
+    //           if (success) {
+    //             loadData();
+    //           }
+    //         },
+    //         after: () {},
+    //       );
+    //     },
+    //     timeout: 1000);
+  }
+
+  final Map<String, Timer> _funcDebounce = {};
+  // 防抖
+  void debounce({
+    int timeout = 500,
+    Function? target,
+  }) {
+    String key = hashCode.toString();
+    Timer? timer = _funcDebounce[key];
+    timer?.cancel();
+    timer = Timer(Duration(milliseconds: timeout), () {
+      Timer? t = _funcDebounce.remove(key);
+      t?.cancel();
+      target?.call();
+    });
+    _funcDebounce[key] = timer;
+  }
 
   List hjppList = [
     {
@@ -64,10 +100,13 @@ class StatisticsMachineEquitiesController extends GetxController {
   bool get isLoading => _isLoading.value;
   set isLoading(v) => _isLoading.value = v;
 
+  final _isFirstLoading = true.obs;
+  bool get isFirstLoading => _isFirstLoading.value;
+  set isFirstLoading(v) => _isFirstLoading.value = v;
+
   int pageNo = 1;
   int pageSize = 20;
   int count = 0;
-
   List dataList = [];
 
   onLoad() {
@@ -102,54 +141,44 @@ class StatisticsMachineEquitiesController extends GetxController {
         if (success) {
           Map data = json["data"] ?? {};
           count = data["count"] ?? 0;
+          equityTolNum = count;
+
           List mData = data["data"] ?? [];
           dataList = isLoad ? [...dataList, ...mData] : mData;
-          isLoad ? pullCtrl.loadComplete() : pullCtrl.refreshCompleted();
+          isUsed = 0;
+          isUnused = 0;
+          for (var e in dataList) {
+            if ((e["flag"] ?? 0) == 0) {
+              isUnused += 1;
+            } else {
+              isUsed += 1;
+            }
+          }
+          // isLoad ? pullCtrl.loadComplete() : pullCtrl.refreshCompleted();
           update();
         } else {
-          isLoad ? pullCtrl.loadFailed() : pullCtrl.refreshFailed();
+          // isLoad ? pullCtrl.loadFailed() : pullCtrl.refreshFailed();
         }
       },
       after: () {
         isLoading = false;
+        isFirstLoading = false;
       },
     );
-
-    // Future.delayed(const Duration(milliseconds: 500), () {
-    //   count = 100;
-    //   List tmpDatas = [];
-    //   for (var i = 0; i < pageSize; i++) {
-    //     tmpDatas.add({
-    //       "id": dataList.length + i,
-    //       "name": i % 2 == 0 ? "盛电宝K300" : "渝钱宝电签",
-    //       "img": "D0031/2023/1/202301311856422204X.png",
-    //       "no": "T550006698$i",
-    //       "tNo": "T550006698$i",
-    //       "useDay": 20 + i,
-    //       "bName": "欢乐人",
-    //       "bPhone": "13598901253",
-    //       "bXh": i % 2 == 0 ? "盛电宝K300123" : "渝钱宝电签123",
-    //       "aTime": "2020-01-23 13:26:09",
-    //       "isChange": i % 5 == 0,
-    //       "open": !isLoad && i == 0
-    //     });
-    //   }
-    //   dataList = isLoad ? [...dataList, ...tmpDatas] : tmpDatas;
-    //   mainData = {"allCount": 6, "use": 5, "unUse": 1};
-    //   mainData["machines"] = dataList;
-
-    //   update();
-    //   isLoad ? pullCtrl.loadComplete() : pullCtrl.refreshCompleted();
-    //   isLoading = false;
-    // });
   }
 
   Map equityInfo = {};
   List machineTypes = [];
 
+  int isUsed = 0;
+  int isUnused = 0;
+  int equityTolNum = 0;
   @override
   void onInit() {
     equityInfo = AppDefault().homeData["equityInfo"] ?? {};
+    isUsed = equityInfo["equityInfo"] ?? 0;
+    isUnused = equityInfo["isUnused"] ?? 0;
+    equityTolNum = equityInfo["equityTolNum"] ?? 0;
     Map publicHomeData = AppDefault().publicHomeData;
     if (publicHomeData.isNotEmpty &&
         publicHomeData["terminalConfig"].isNotEmpty &&
@@ -191,22 +220,7 @@ class StatisticsMachineEquities
     return GestureDetector(
       onTap: () => takeBackKeyboard(context),
       child: Scaffold(
-        appBar: getDefaultAppBar(context, "权益设备", action: [
-          CustomButton(
-            onPressed: () {
-              push(const StatisticsMachineEquitiesHistory(), context,
-                  binding: StatisticsMachineEquitiesHistoryBinding());
-            },
-            child: SizedBox(
-              width: 70.w,
-              height: kToolbarHeight,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: getSimpleText("换机记录", 15, AppColor.text2),
-              ),
-            ),
-          )
-        ]),
+        appBar: getDefaultAppBar(context, "权益设备"),
         body: Stack(children: [
           Positioned(
               left: 0,
@@ -265,116 +279,85 @@ class StatisticsMachineEquities
                   ],
                 ),
               )),
-          Positioned(
-              top: 55.w,
-              left: 0,
-              right: 0,
-              height: 150.w,
-              child: Container(
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    sbhRow([
-                      centRow([
-                        Container(
-                          width: 3.w,
-                          height: 15.w,
-                          decoration: BoxDecoration(
-                              color: AppColor.theme,
-                              borderRadius: BorderRadius.circular(1.25.w)),
-                        ),
-                        gwb(9),
-                        getSimpleText("权益设备", 15, AppColor.text),
-                      ]),
-                      CustomButton(
-                        onPressed: () {
-                          push(const StatisticsMachineEquitiesAdd(), context,
-                              binding: StatisticsMachineEquitiesAddBinding(),
-                              arguments: {
-                                "machineData": controller.equityInfo
-                              });
-                        },
-                        child: SizedBox(
-                          height: 55.w,
-                          child: centRow([
-                            Image.asset(
-                              assetsName("statistics/machine/btn_navi_add"),
-                              width: 24.w,
-                              fit: BoxFit.fitWidth,
-                            ),
-                            gwb(1.5),
-                            getSimpleText("添加", 14, AppColor.text2),
-                          ]),
-                        ),
-                      )
-                    ], width: 375 - 15 * 2, height: 55),
-                    ghb(13),
-                    GetBuilder<StatisticsMachineEquitiesController>(
-                      builder: (_) {
-                        return centRow(
-                          List.generate(3, (index) {
-                            return centRow([
-                              SizedBox(
-                                width: 117.w,
-                                child: centClm([
-                                  getSimpleText(
-                                      index == 0
-                                          ? "总名额"
-                                          : index == 1
-                                              ? "已使用"
-                                              : "未使用",
-                                      12,
-                                      AppColor.text2),
-                                  ghb(7),
-                                  SizedBox(
-                                    height: 40.w,
-                                    child: Center(
-                                      child: getSimpleText(
-                                          "${index == 0 ? controller.equityInfo["equityTolNum"] ?? 0 : index == 1 ? controller.equityInfo["isUsed"] ?? 0 : controller.equityInfo["isUnused"] ?? 0}",
-                                          24,
-                                          AppColor.text2,
-                                          isBold: true),
-                                    ),
-                                  )
-                                ]),
-                              ),
-                              index < 2
-                                  ? gline(
-                                      1,
-                                      40,
-                                    )
-                                  : gwb(0)
-                            ], crossAxisAlignment: CrossAxisAlignment.end);
-                          }),
-                        );
-                      },
-                    )
-                  ],
-                ),
-              )),
           Positioned.fill(
-              top: 205.w,
+              top: 55.w,
               child: GetBuilder<StatisticsMachineEquitiesController>(
                 builder: (_) {
-                  return SmartRefresher(
-                    controller: controller.pullCtrl,
-                    onLoading: controller.onLoad,
+                  return EasyRefresh.builder(
+                    onLoad: controller.dataList.length >= controller.count
+                        ? null
+                        : controller.onLoad,
                     onRefresh: controller.onRefresh,
-                    enablePullUp: controller.count > controller.dataList.length,
-                    child: controller.dataList.isEmpty
-                        ? GetX<StatisticsMachineEquitiesController>(
-                            builder: (_) {
-                              return CustomEmptyView(
-                                isLoading: controller.isLoading,
-                              );
-                            },
-                          )
-                        : ListView.builder(
-                            padding: EdgeInsets.only(bottom: 20.w),
-                            itemCount: controller.dataList.length,
-                            itemBuilder: (context, index) =>
-                                cell(index, controller.dataList[index]),
-                          ),
+                    childBuilder: (context, physics) {
+                      return controller.dataList.isEmpty
+                          ? GetX<StatisticsMachineEquitiesController>(
+                              builder: (_) {
+                                return controller.isFirstLoading && !kIsWeb
+                                    ? SkeletonListView(
+                                        item: SkeletonItem(
+                                            child: Column(
+                                          children: [
+                                            ghb(15),
+                                            SkeletonParagraph(
+                                              style: SkeletonParagraphStyle(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 15.w,
+                                                      horizontal: 15.w),
+                                                  lines: 1,
+                                                  spacing: 10.w,
+                                                  lineStyle: SkeletonLineStyle(
+                                                    // randomLength: true,
+                                                    height: 15.w,
+                                                    width: 315.w,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    // minLength: 150.w,
+                                                    // maxLength: 160.w,
+                                                  )),
+                                            ),
+                                            SkeletonAvatar(
+                                              style: SkeletonAvatarStyle(
+                                                shape: BoxShape.rectangle,
+                                                width: 315.w,
+                                                height: 80.w,
+                                              ),
+                                            ),
+                                            SkeletonParagraph(
+                                              style: SkeletonParagraphStyle(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 15.w,
+                                                      horizontal: 15.w),
+                                                  lines: 1,
+                                                  spacing: 10.w,
+                                                  lineStyle: SkeletonLineStyle(
+                                                    // randomLength: true,
+                                                    height: 15.w,
+                                                    width: 315.w,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    // minLength: 150.w,
+                                                    // maxLength: 160.w,
+                                                  )),
+                                            ),
+                                          ],
+                                        )),
+                                      )
+                                    : CustomListEmptyView(
+                                        physics: physics,
+                                        isLoading: controller.isLoading,
+                                      );
+                              },
+                            )
+                          : ListView.builder(
+                              physics: physics,
+                              padding: EdgeInsets.only(bottom: 20.w),
+                              itemCount: controller.dataList.length,
+                              itemBuilder: (context, index) =>
+                                  cell(index, controller.dataList[index]),
+                            );
+                    },
                   );
                 },
               ))
@@ -432,22 +415,7 @@ class StatisticsMachineEquities
                       getSimpleText(
                           "设备编号：${data["termNo"] ?? ""}", 12, AppColor.text3)
                     ], crossAxisAlignment: CrossAxisAlignment.start)
-                  ]),
-                  CustomButton(
-                    onPressed: () {
-                      showPPSelect(data);
-                    },
-                    child: Container(
-                      width: 60.w,
-                      height: 24.w,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4.w),
-                          border:
-                              Border.all(width: 0.5.w, color: AppColor.theme)),
-                      child: Center(
-                          child: getSimpleText("更换设备", 12, AppColor.theme)),
-                    ),
-                  )
+                  ])
                 ],
                     width: 345 - 15 * 2,
                     crossAxisAlignment: CrossAxisAlignment.start),

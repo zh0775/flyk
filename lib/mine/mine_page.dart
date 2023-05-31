@@ -3,13 +3,12 @@ import 'package:cxhighversion2/business/mallOrder/mall_order_page.dart'
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/entrepreneurship_support/support.dart';
-import 'package:cxhighversion2/extension_reward/extension_reward.dart';
 import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart';
 import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase_order.dart'
     deferred as integral_repurchase_order;
-import 'package:cxhighversion2/integralstore/integral_store_order_list.dart';
 import 'package:cxhighversion2/machine/machine_order_list.dart'
     deferred as machine_order_list;
+import 'package:cxhighversion2/member/open_member_ship.dart';
 import 'package:cxhighversion2/message_notify/message_notify_list.dart'
     deferred as message_notify_list;
 import 'package:cxhighversion2/mine/debitCard/debit_card_info.dart';
@@ -27,9 +26,8 @@ import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart'
     deferred as my_wallet_draw;
 import 'package:cxhighversion2/mine/personal_information.dart'
     deferred as personal_information;
-import 'package:cxhighversion2/mine/vip/vip_levelup.dart';
-import 'package:cxhighversion2/product/product.dart';
 import 'package:cxhighversion2/product/product_store/product_store_list.dart';
+import 'package:cxhighversion2/product/product_store/product_store_order_list.dart';
 import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
@@ -39,8 +37,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
-import 'package:cxhighversion2/member/open_member_ship.dart';
 
 class MineBinding extends Bindings {
   @override
@@ -298,7 +294,7 @@ class _MinePageState extends State<MinePage>
                       GetBuilder<MinePageController>(builder: (_) {
                         return sbRow(
                             List.generate(
-                                3,
+                                2,
                                 (index) => CustomButton(
                                       onPressed: () async {
                                         if (index == 0 || index == 1) {
@@ -342,7 +338,7 @@ class _MinePageState extends State<MinePage>
                                             AppColor.textGrey5)
                                       ]),
                                     )),
-                            width: 375 - 47 * 2);
+                            width: 375 - 75 * 2);
                       }),
                       ghb(25),
                       // vip
@@ -739,7 +735,14 @@ class _MinePageState extends State<MinePage>
               sbRow([
                 getSimpleText("采购订单", 16, AppColor.text, isBold: true),
                 CustomButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    push(
+                        const ProductStoreOrderList(
+                          levelType: 2,
+                        ),
+                        null,
+                        binding: ProductStoreOrderListBinding());
+                  },
                   child: centRow([
                     getSimpleText("全部订单", 12, AppColor.textGrey5),
                     gwb(5),
@@ -784,44 +787,48 @@ class _MinePageState extends State<MinePage>
 
                   return CustomButton(
                     onPressed: () async {
+                      push(
+                          ProductStoreOrderList(levelType: 2, index: index + 1),
+                          null,
+                          binding: ProductStoreOrderListBinding());
                       // if (index == 0) {
 
                       // } else if (index == 1) {
                       // } else if (index == 2) {
                       // } else if (index == 3) {}
-                      if (index == 0) {
-                        await mall_order_page.loadLibrary();
-                        push(mall_order_page.MallOrderPage(), null,
-                            binding: mall_order_page.MallOrderPageBinding(),
-                            arguments: {"index": 0});
-                      } else if (index == 1) {
-                        await integral_cash_order_list.loadLibrary();
-                        push(integral_cash_order_list.IntegralCashOrderList(),
-                            null,
-                            binding: integral_cash_order_list
-                                .IntegralCashOrderListBinding());
-                      } else if (index == 2) {
-                        await integral_repurchase_order.loadLibrary();
-                        push(
-                            integral_repurchase_order.IntegralRepurchaseOrder(),
-                            null,
-                            binding: integral_repurchase_order
-                                .IntegralRepurchaseOrderBinding());
-                      } else if (index == 3) {
-                        await machine_order_list.loadLibrary();
-                        push(machine_order_list.MachineOrderList(), null,
-                            binding:
-                                machine_order_list.MachineOrderListBinding());
-                      } else {
-                        await mine_store_order_list.loadLibrary();
-                        push(
-                            mine_store_order_list.MineStoreOrderList(
-                              index: index,
-                            ),
-                            null,
-                            binding: mine_store_order_list
-                                .MineStoreOrderListBinding());
-                      }
+                      // if (index == 0) {
+                      //   await mall_order_page.loadLibrary();
+                      //   push(mall_order_page.MallOrderPage(), null,
+                      //       binding: mall_order_page.MallOrderPageBinding(),
+                      //       arguments: {"index": 0});
+                      // } else if (index == 1) {
+                      //   await integral_cash_order_list.loadLibrary();
+                      //   push(integral_cash_order_list.IntegralCashOrderList(),
+                      //       null,
+                      //       binding: integral_cash_order_list
+                      //           .IntegralCashOrderListBinding());
+                      // } else if (index == 2) {
+                      //   await integral_repurchase_order.loadLibrary();
+                      //   push(
+                      //       integral_repurchase_order.IntegralRepurchaseOrder(),
+                      //       null,
+                      //       binding: integral_repurchase_order
+                      //           .IntegralRepurchaseOrderBinding());
+                      // } else if (index == 3) {
+                      //   await machine_order_list.loadLibrary();
+                      //   push(machine_order_list.MachineOrderList(), null,
+                      //       binding:
+                      //           machine_order_list.MachineOrderListBinding());
+                      // } else {
+                      //   await mine_store_order_list.loadLibrary();
+                      //   push(
+                      //       mine_store_order_list.MineStoreOrderList(
+                      //         index: index,
+                      //       ),
+                      //       null,
+                      //       binding: mine_store_order_list
+                      //           .MineStoreOrderListBinding());
+                      // }
                     },
                     child: SizedBox(
                       width: (345 / 4 - 0.1).w,
@@ -1060,45 +1067,46 @@ class _MinePageState extends State<MinePage>
                           ),
                         ),
                         ghb(10),
-                        controller.isLogin
-                            ? CustomButton(
-                                onPressed: () {
-                                  push(const VipLevelup(), context,
-                                      binding: VipLevelupBinding());
-                                },
-                                child: Container(
-                                  height: 20.w,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius:
-                                          BorderRadius.circular(10.w)),
-                                  padding:
-                                      EdgeInsets.symmetric(horizontal: 5.5.w),
-                                  alignment: Alignment.center,
-                                  child: centRow([
-                                    Image.asset(
-                                        assetsName("mine/icon_user_growth"),
-                                        width: 15.w,
-                                        fit: BoxFit.fitWidth),
-                                    // gwb(1),
-                                    getSimpleText(
-                                        "成长值 45962", 10, AppColor.textBlack),
-                                    gwb(4),
-                                    Image.asset(
-                                      assetsName("mine/icon_user_growth_arrow"),
-                                      width: 4.w,
-                                      fit: BoxFit.fitWidth,
-                                    ),
-                                    gwb(4)
-                                  ]),
-                                ),
-                              )
-                            : getSimpleText(
-                                controller.isLogin
-                                    ? "手机号：${controller.homeData["u_Mobile"] ?? ""}"
-                                    : "登录同步数据，使用更安心",
-                                12,
-                                AppColor.text2),
+                        // controller.isLogin
+                        //     ? CustomButton(
+                        //         onPressed: () {
+                        //           push(const VipLevelup(), context,
+                        //               binding: VipLevelupBinding());
+                        //         },
+                        //         child: Container(
+                        //           height: 20.w,
+                        //           decoration: BoxDecoration(
+                        //               color: Colors.white,
+                        //               borderRadius:
+                        //                   BorderRadius.circular(10.w)),
+                        //           padding:
+                        //               EdgeInsets.symmetric(horizontal: 5.5.w),
+                        //           alignment: Alignment.center,
+                        //           child: centRow([
+                        //             Image.asset(
+                        //                 assetsName("mine/icon_user_growth"),
+                        //                 width: 15.w,
+                        //                 fit: BoxFit.fitWidth),
+                        //             // gwb(1),
+                        //             getSimpleText(
+                        //                 "成长值 45962", 10, AppColor.textBlack),
+                        //             gwb(4),
+                        //             Image.asset(
+                        //               assetsName("mine/icon_user_growth_arrow"),
+                        //               width: 4.w,
+                        //               fit: BoxFit.fitWidth,
+                        //             ),
+                        //             gwb(4)
+                        //           ]),
+                        //         ),
+                        //       )
+                        //     :
+                        getSimpleText(
+                            controller.isLogin
+                                ? "手机号：${controller.homeData["u_Mobile"] ?? ""}"
+                                : "登录同步数据，使用更安心",
+                            12,
+                            AppColor.text2),
                       ], crossAxisAlignment: CrossAxisAlignment.start)
                     ]);
                   },

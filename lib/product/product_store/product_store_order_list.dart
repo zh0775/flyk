@@ -110,7 +110,7 @@ class ProductStoreOrderListController extends GetxController {
   List pageSizes = [];
   List dataLists = [];
   List normalDataLists = [[], [], [], [], []];
-  List integralDataLists = [[], [], [], []];
+  List integralDataLists = [[], [], [], [], []];
 
   changeLevelType() {
     if (naviIndex == 0) {
@@ -120,9 +120,9 @@ class ProductStoreOrderListController extends GetxController {
       dataLists = normalDataLists;
       statusList = normalStatusList;
     } else {
-      pageNos = [1, 1, 1, 1];
-      counts = [0, 0, 0, 0];
-      pageSizes = [20, 20, 20, 20];
+      pageNos = [1, 1, 1, 1, 1];
+      counts = [0, 0, 0, 0, 1];
+      pageSizes = [20, 20, 20, 20, 20];
       dataLists = integralDataLists;
       statusList = integralStatusList;
     }
@@ -382,7 +382,11 @@ class ProductStoreOrderListController extends GetxController {
     int myLevelIdx = listLevelType ?? naviIndex;
     isLoad ? pageNos[myLoadIdx]++ : pageNos[myLoadIdx] = 1;
     Map<String, dynamic> params = {
-      "order_Type": myLevelIdx == 0 ? 2 : 1,
+      "order_Type": isBuyAndVip
+          ? myLevelIdx == 0
+              ? 2
+              : 1
+          : levelType,
     };
     params["orderState"] = statusList[myLoadIdx]["id"];
     params["pageSize"] = pageSizes[myLoadIdx];
@@ -441,11 +445,16 @@ class ProductStoreOrderListController extends GetxController {
     );
   }
 
-  dataInit(int index, int levelType) {
+  bool isBuyAndVip = false;
+  int levelType = 1;
+
+  dataInit(int index, int level, bool buyAndVip) {
     if (!isFirst) {
       return;
     }
-    _naviIndex.value = AppDefault().checkDay ? levelType : 1;
+    isBuyAndVip = buyAndVip;
+    levelType = level;
+    _naviIndex.value = 0;
     _topIndex.value = naviIndex == 1 && index > 0
         ? index -= 1
         : index < 0
@@ -487,51 +496,62 @@ class ProductStoreOrderListController extends GetxController {
 class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
   final int index;
   final int levelType;
-  const ProductStoreOrderList({Key? key, this.index = 0, this.levelType = 0})
+  final bool isBuyAndVip;
+  const ProductStoreOrderList(
+      {Key? key, this.index = 0, this.levelType = 0, this.isBuyAndVip = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    controller.dataInit(index, levelType);
+    controller.dataInit(index, levelType, isBuyAndVip);
     return Scaffold(
-      appBar: getDefaultAppBar(context, "",
-          flexibleSpace: !AppDefault().checkDay
+      appBar: getDefaultAppBar(
+          context,
+          levelType == 1
+              ? "礼包订单"
+              : levelType == 2
+                  ? "采购商城订单"
+                  : "机具兑换订单",
+          flexibleSpace: !isBuyAndVip
               ? null
-              : Align(
-                  alignment: Alignment.bottomCenter,
-                  child: sbhRow(
-                      List.generate(
-                          2,
-                          (index) => CustomButton(
-                                onPressed: () {
-                                  controller.naviIndex = index;
-                                },
-                                child: GetX<ProductStoreOrderListController>(
-                                    builder: (_) {
-                                  return SizedBox(
-                                    height: kToolbarHeight,
-                                    child: Center(
-                                      child: getSimpleText(
-                                          index == 0 ? "采购订单" : "礼包订单",
-                                          18,
-                                          controller.naviIndex == index
-                                              ? AppColor.textBlack
-                                              : AppColor.textGrey,
-                                          isBold:
-                                              controller.naviIndex == index),
-                                    ),
-                                  );
-                                }),
-                              )),
-                      width: 170,
-                      height: kToolbarHeight / 1.w),
+              : !AppDefault().checkDay
+                  ? null
+                  : Align(
+                      alignment: Alignment.bottomCenter,
+                      child: sbhRow(
+                          List.generate(
+                              2,
+                              (index) => CustomButton(
+                                    onPressed: () {
+                                      controller.naviIndex = index;
+                                    },
+                                    child:
+                                        GetX<ProductStoreOrderListController>(
+                                            builder: (_) {
+                                      return SizedBox(
+                                        height: kToolbarHeight,
+                                        child: Center(
+                                          child: getSimpleText(
+                                              index == 0 ? "订购订单" : "兑换订单",
+                                              18,
+                                              controller.naviIndex == index
+                                                  ? AppColor.textBlack
+                                                  : AppColor.textGrey,
+                                              isBold: controller.naviIndex ==
+                                                  index),
+                                        ),
+                                      );
+                                    }),
+                                  )),
+                          width: 170,
+                          height: kToolbarHeight / 1.w),
 
-                  // Container(
-                  //   width: 200.w,
-                  //   height: kToolbarHeight,
-                  //   color: Colors.amber,
-                  // ),
-                )),
+                      // Container(
+                      //   width: 200.w,
+                      //   height: kToolbarHeight,
+                      //   color: Colors.amber,
+                      // ),
+                    )),
       body: Stack(
         children: [
           Positioned(

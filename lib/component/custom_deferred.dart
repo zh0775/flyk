@@ -7,6 +7,8 @@ import 'package:cxhighversion2/business/pointsMall/shopping_product_list.dart'
     deferred as shopping_product_list;
 import 'package:cxhighversion2/component/custom_webview.dart'
     deferred as customwebview;
+import 'package:cxhighversion2/entrepreneurship_support/support.dart'
+    deferred as support;
 import 'package:cxhighversion2/extension_reward/extension_reward.dart'
     deferred as extension_reward;
 import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart'
@@ -33,16 +35,22 @@ import 'package:cxhighversion2/home/mybusiness/mybusiness.dart'
 import 'package:cxhighversion2/home/news/news_detail.dart'
     deferred as news_detail;
 import 'package:cxhighversion2/home/news/news_list.dart' deferred as news_list;
+import 'package:cxhighversion2/integralstore/integral_store.dart'
+    deferred as integral_store;
 // import 'package:cxhighversion2/home/store/vip_store.dart' deferred as vip_store;
 import 'package:cxhighversion2/machine/machine_pay_page.dart'
     deferred as machine_pay_page;
 import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication.dart'
     deferred as identity_authentication;
+import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_check.dart'
+    deferred as identity_authentication_check;
 import 'package:cxhighversion2/mine/mine_help_center.dart'
     deferred as mine_help_center;
 import 'package:cxhighversion2/mine/myWallet/my_wallet.dart'
     deferred as my_wallet;
 import 'package:cxhighversion2/pay/share_invite.dart' deferred as share_invite;
+import 'package:cxhighversion2/statistics/machineEquities/statistics_machine_equities.dart'
+    deferred as statistics_machine_equities;
 import 'package:cxhighversion2/statistics/machineEquities/statistics_machine_equities_add.dart'
     deferred as statistics_machine_equities_add;
 // import 'package:cxhighversion2/product/product.dart' deferred as product;
@@ -345,16 +353,18 @@ class CustomDeferred {
 
   /// 实名认证
   toIdentityAuthentication({dynamic arg}) async {
+    // identity_authentication_check.IdentityAuthenticationCheck();
     var completer = Completer();
-    identity_authentication.loadLibrary().then((_) {
+    identity_authentication_check.loadLibrary().then((_) {
       completer.complete(true);
     }).catchError((e) {
       completer.complete(false);
     });
     var loaded = await completer.future;
     if (loaded) {
-      Get.to(identity_authentication.IdentityAuthentication(),
-          binding: identity_authentication.IdentityAuthenticationBinding());
+      Get.to(identity_authentication_check.IdentityAuthenticationCheck(),
+          binding: identity_authentication_check
+              .IdentityAuthenticationCheckBinding());
     } else {
       toIdentityAuthentication(arg: arg);
     }
@@ -548,6 +558,57 @@ class CustomDeferred {
               .StatisticsMachineEquitiesAddBinding());
     } else {
       toStatisticsMachineEquitiesAdd(arg: arg);
+    }
+  }
+
+  /// 权益设备
+  toStatisticsMachineEquities({dynamic arg}) async {
+    var completer = Completer();
+    statistics_machine_equities.loadLibrary().then((_) {
+      completer.complete(true);
+    }).catchError((e) {
+      completer.complete(false);
+    });
+    var loaded = await completer.future;
+    if (loaded) {
+      Get.to(statistics_machine_equities.StatisticsMachineEquities(),
+          binding:
+              statistics_machine_equities.StatisticsMachineEquitiesBinding());
+    } else {
+      toStatisticsMachineEquities(arg: arg);
+    }
+  }
+
+  /// 创业支持
+  toSupportPage({dynamic arg}) async {
+    var completer = Completer();
+    support.loadLibrary().then((_) {
+      completer.complete(true);
+    }).catchError((e) {
+      completer.complete(false);
+    });
+    var loaded = await completer.future;
+    if (loaded) {
+      Get.to(support.SupportPage(), binding: support.SupportBinding());
+    } else {
+      toSupportPage(arg: arg);
+    }
+  }
+
+  /// 积分商城
+  toIntegralStore({dynamic arg}) async {
+    var completer = Completer();
+    integral_store.loadLibrary().then((_) {
+      completer.complete(true);
+    }).catchError((e) {
+      completer.complete(false);
+    });
+    var loaded = await completer.future;
+    if (loaded) {
+      Get.to(integral_store.IntegralStore(),
+          binding: integral_store.IntegralStoreBinding());
+    } else {
+      toIntegralStore(arg: arg);
     }
   }
 }

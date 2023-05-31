@@ -299,153 +299,167 @@ class ProductStoreList extends GetView<ProductStoreListController> {
     return GestureDetector(
       onTap: () => takeBackKeyboard(context),
       child: Scaffold(
-        appBar: getDefaultAppBar(context, controller.title, action: [
-          CustomButton(
-            onPressed: () {
-              push(const ProductStoreOrderList(), null,
-                  binding: ProductStoreOrderListBinding(),
-                  arguments: {"levelType": controller.levelType});
-            },
-            child: SizedBox(
-              width: 56.w,
-              height: kToolbarHeight,
-              child: centClm([
-                Image.asset(assetsName("product_store/btn_to_order"),
-                    width: 15.w, height: 15.w, fit: BoxFit.fill),
-                getSimpleText("订单", 10, AppColor.textBlack)
-              ]),
-            ),
-          )
-        ]),
+        appBar: getDefaultAppBar(context, controller.title,
+            action: controller.levelType == 2
+                ? [
+                    CustomButton(
+                      onPressed: () {
+                        push(
+                            const ProductStoreOrderList(
+                              isBuyAndVip: true,
+                            ),
+                            null,
+                            binding: ProductStoreOrderListBinding());
+                      },
+                      child: SizedBox(
+                        width: 56.w,
+                        height: kToolbarHeight,
+                        child: centClm([
+                          Image.asset(assetsName("product_store/btn_to_order"),
+                              width: 15.w, height: 15.w, fit: BoxFit.fill),
+                          getSimpleText("订单", 10, AppColor.textBlack)
+                        ]),
+                      ),
+                    )
+                  ]
+                : null),
         body: Stack(
           // key: controller.stackKey,
           children: [
-            dropView(),
-            Positioned(
-                // key: controller.headKey,
-                top: 0,
-                left: 0,
-                right: 0,
-                height: 105.w,
-                child: Container(
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      ghb(10),
-                      Row(children: [
-                        gwb(15),
-                        //搜索框
-                        GetX<ProductStoreListController>(builder: (_) {
-                          return Container(
-                            width: 300.w,
-                            height: 40.w,
-                            decoration: BoxDecoration(
-                                color: AppColor.pageBackgroundColor,
-                                borderRadius: BorderRadius.circular(20.w)),
-                            child: Row(
-                              children: [
-                                gwb(15),
-                                CustomInput(
-                                  textEditCtrl: controller.searchInputCtrl,
-                                  width: (300 -
-                                          15 -
-                                          36 -
-                                          1 -
-                                          0.1 -
-                                          (controller.needCleanInput ? 40 : 0))
-                                      .w,
-                                  heigth: 40.w,
-                                  placeholder: "请输入想要搜索的产品名称",
-                                  placeholderStyle: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: AppColor.assisText),
-                                  style: TextStyle(
-                                      fontSize: 12.sp, color: AppColor.text),
-                                  onSubmitted: (p0) {
-                                    takeBackKeyboard(context);
-                                    controller.loadData();
-                                  },
-                                ),
-                                controller.needCleanInput
-                                    ? CustomButton(
-                                        onPressed: () {
-                                          controller.searchInputCtrl.clear();
-                                        },
-                                        child: SizedBox(
-                                          width: 40.w,
-                                          height: 40.w,
-                                          child: Center(
-                                            child: Image.asset(
-                                              assetsName(
-                                                  "statistics/machine/icon_phone_delete"),
-                                              width: 15.w,
-                                              height: 15.w,
-                                              fit: BoxFit.fill,
+            controller.levelType == 1 ? gemp() : dropView(),
+            controller.levelType == 1
+                ? gemp()
+                : Positioned(
+                    // key: controller.headKey,
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: 105.w,
+                    child: Container(
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          ghb(10),
+                          Row(children: [
+                            gwb(15),
+                            //搜索框
+                            GetX<ProductStoreListController>(builder: (_) {
+                              return Container(
+                                width: 300.w,
+                                height: 40.w,
+                                decoration: BoxDecoration(
+                                    color: AppColor.pageBackgroundColor,
+                                    borderRadius: BorderRadius.circular(20.w)),
+                                child: Row(
+                                  children: [
+                                    gwb(15),
+                                    CustomInput(
+                                      textEditCtrl: controller.searchInputCtrl,
+                                      width: (300 -
+                                              15 -
+                                              36 -
+                                              1 -
+                                              0.1 -
+                                              (controller.needCleanInput
+                                                  ? 40
+                                                  : 0))
+                                          .w,
+                                      heigth: 40.w,
+                                      placeholder: "请输入想要搜索的产品名称",
+                                      placeholderStyle: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: AppColor.assisText),
+                                      style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: AppColor.text),
+                                      onSubmitted: (p0) {
+                                        takeBackKeyboard(context);
+                                        controller.loadData();
+                                      },
+                                    ),
+                                    controller.needCleanInput
+                                        ? CustomButton(
+                                            onPressed: () {
+                                              controller.searchInputCtrl
+                                                  .clear();
+                                            },
+                                            child: SizedBox(
+                                              width: 40.w,
+                                              height: 40.w,
+                                              child: Center(
+                                                child: Image.asset(
+                                                  assetsName(
+                                                      "statistics/machine/icon_phone_delete"),
+                                                  width: 15.w,
+                                                  height: 15.w,
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ),
                                             ),
+                                          )
+                                        : gwb(0),
+                                    // 搜索按钮
+                                    CustomButton(
+                                      onPressed: () {
+                                        takeBackKeyboard(context);
+                                        controller.loadData();
+                                      },
+                                      child: SizedBox(
+                                        width: 36.w,
+                                        height: 40.w,
+                                        child: Align(
+                                          alignment: const Alignment(-0.9, 0),
+                                          child: Image.asset(
+                                            assetsName("machine/icon_search"),
+                                            width: 18.w,
+                                            fit: BoxFit.fitWidth,
                                           ),
                                         ),
-                                      )
-                                    : gwb(0),
-                                // 搜索按钮
-                                CustomButton(
-                                  onPressed: () {
-                                    takeBackKeyboard(context);
-                                    controller.loadData();
-                                  },
-                                  child: SizedBox(
-                                    width: 36.w,
-                                    height: 40.w,
-                                    child: Align(
-                                      alignment: const Alignment(-0.9, 0),
-                                      child: Image.asset(
-                                        assetsName("machine/icon_search"),
-                                        width: 18.w,
-                                        fit: BoxFit.fitWidth,
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
+                              );
+                            }),
+                            // gwb(15),
+                            // 切换列表按钮
+                            CustomButton(
+                              onPressed: () {
+                                controller.isList = !controller.isList;
+                              },
+                              child: SizedBox(
+                                width: 60.w,
+                                height: 40.w,
+                                child: Align(
+                                    alignment: const Alignment(0.2, 0),
+                                    child: GetX<ProductStoreListController>(
+                                        builder: (_) {
+                                      return Image.asset(
+                                          assetsName(
+                                              "product_store/btn_cell_${controller.isList ? "wrap" : "list"}"),
+                                          width: 18.w,
+                                          fit: BoxFit.fitWidth);
+                                    })),
+                              ),
                             ),
-                          );
-                        }),
-                        // gwb(15),
-                        // 切换列表按钮
-                        CustomButton(
-                          onPressed: () {
-                            controller.isList = !controller.isList;
-                          },
-                          child: SizedBox(
-                            width: 60.w,
-                            height: 40.w,
-                            child: Align(
-                                alignment: const Alignment(0.2, 0),
-                                child: GetX<ProductStoreListController>(
-                                    builder: (_) {
-                                  return Image.asset(
-                                      assetsName(
-                                          "product_store/btn_cell_${controller.isList ? "wrap" : "list"}"),
-                                      width: 18.w,
-                                      fit: BoxFit.fitWidth);
-                                })),
-                          ),
-                        ),
-                      ]),
+                          ]),
 
-                      /// 品牌筛选 采购商城
-                      controller.levelType == 2
-                          ? brandSelectView()
-                          : exchangeTopView()
-                    ],
-                  ),
-                )),
+                          /// 品牌筛选 采购商城
+                          controller.levelType == 2
+                              ? brandSelectView()
+                              : exchangeTopView()
+                        ],
+                      ),
+                    )),
             GetX<ProductStoreListController>(
               builder: (_) {
                 return AnimatedPositioned(
-                    top: 106.w +
-                        (controller.isShowFilter
-                            ? controller.typesViewHeight + 5.w
-                            : 0),
+                    top: controller.levelType == 1
+                        ? 0
+                        : 106.w +
+                            (controller.isShowFilter
+                                ? controller.typesViewHeight + 5.w
+                                : 0),
                     left: 0,
                     right: 0,
                     bottom: 0,
