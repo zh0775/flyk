@@ -2231,7 +2231,7 @@ Future<bool?> showAlert(
                                       Navigator.pop(context);
                                     }
                                   }
-                                } else if (index == 1) {
+                                } else if (index == 1 || index == 2) {
                                   if (confirmOnPressed != null) {
                                     confirmOnPressed();
                                   } else {
