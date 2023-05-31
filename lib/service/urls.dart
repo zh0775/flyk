@@ -614,4 +614,26 @@ class Urls {
   static String orderProlongConfirm(dynamic id) => "/api/Order/User_OrderProlongConfirm/$id";
   // 普通订单-生成订单
   static const userGenerateOrders = "/api/Product/User_GenerateOrders";
+
+  /// 统计-交易统计
+  static const userTranList = "/api/Statistics/User_TranList";
+
+  /// 统计-交易统计
+  static const userTermiList = "/api/Statistics/User_TermiList";
+
+  /// 统计-服务商统计
+  static const userPeopleList = "/api/Statistics/User_PeopleList";
+
+  /// 修改商户信息
+  static const userMerchantEdit = "/api/Merchant/UserMerchantEdit";
+
+  /// 我的日收益-日明细
+  static const userBounsByDayList = "/api/Finance/User_BounsByDayList";
+
+  /// 商户交易3
+  static const userMerchantOrder3List = "/api/Merchant/UserMerchantOrder3List";
+
+  //权益设备 换机记录
+  static const userTerminalAssociateLogs =
+      "/api/Terminal/User_TerminalAssociateLogs";
 }

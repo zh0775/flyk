@@ -7,9 +7,7 @@ class HttpConfig {
   // static const webRegist = "http://download.tianyunpos.com/";
   static const webBaseUrl = "";
   static const jpushEnvironment = 'dev';
-
   // static const privacyUrls = "http://app.tianyunpos.com/hzyys.html";
-
   static const connectTimeout = 30000;
   static const receiveTimeout = 30000;
 }

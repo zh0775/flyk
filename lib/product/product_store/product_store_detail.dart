@@ -372,183 +372,188 @@ class ProductStoreDetail extends GetView<ProductStoreDetailController> {
               onPressed: () {
                 takeBackKeyboard(Global.navigatorKey.currentContext!);
               },
-              child: Container(
-                width: 375.w,
-                height: 270.w +
-                    paddingSizeBottom(Global.navigatorKey.currentContext!),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(16.w))),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      width: 375.w,
-                      height: 143.w,
-                      child: Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: CustomButton(
-                              onPressed: () {
-                                Get.back();
-                              },
-                              child: SizedBox(
-                                width: 46.w,
-                                height: 46.w,
-                                child: Center(
-                                  child: Image.asset(
-                                      assetsName(
-                                          "product_store/btn_bottom_model_close"),
-                                      width: 12.w,
-                                      height: 12.w,
-                                      fit: BoxFit.fill),
+              child: UnconstrainedBox(
+                child: Container(
+                  width: 375.w,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius:
+                          BorderRadius.vertical(top: Radius.circular(16.w))),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 375.w,
+                        height: 143.w,
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: CustomButton(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                child: SizedBox(
+                                  width: 46.w,
+                                  height: 46.w,
+                                  child: Center(
+                                    child: Image.asset(
+                                        assetsName(
+                                            "product_store/btn_bottom_model_close"),
+                                        width: 12.w,
+                                        height: 12.w,
+                                        fit: BoxFit.fill),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Positioned.fill(
-                              child: Column(
-                            children: [
-                              ghb(18.5),
-                              sbRow([
-                                centRow([
-                                  CustomNetworkImage(
-                                      src: AppDefault().imageUrl +
-                                          (controller
-                                                  .orderData["levelGiftImg"] ??
-                                              ""),
-                                      width: 105.w,
-                                      height: 105.w,
-                                      fit: BoxFit.fill),
-                                  gwb(15),
-                                  sbClm([
-                                    getWidthText(
-                                        controller.orderData["levelName"] ?? "",
-                                        16,
-                                        AppColor.textBlack,
-                                        345 - 105 - 15 - 32,
-                                        2,
-                                        isBold: true),
-                                    getRichText(
-                                        isReal ? "￥" : "",
-                                        "${priceFormat(controller.orderData["nowPrice"] ?? 0)}${isReal ? "" : isBean ? beanName : "积分"}",
-                                        14,
-                                        const Color(0xFFFE4B3B),
-                                        24,
-                                        const Color(0xFFFE4B3B),
-                                        isBold2: true),
-                                  ],
-                                      height: 105,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start)
-                                ])
-                              ], width: 345)
-                            ],
-                          ))
-                        ],
+                            Positioned.fill(
+                                child: Column(
+                              children: [
+                                ghb(18.5),
+                                sbRow([
+                                  centRow([
+                                    CustomNetworkImage(
+                                        src: AppDefault().imageUrl +
+                                            (controller.orderData[
+                                                    "levelGiftImg"] ??
+                                                ""),
+                                        width: 105.w,
+                                        height: 105.w,
+                                        fit: BoxFit.fill),
+                                    gwb(15),
+                                    sbClm([
+                                      getWidthText(
+                                          controller.orderData["levelName"] ??
+                                              "",
+                                          16,
+                                          AppColor.textBlack,
+                                          345 - 105 - 15 - 32,
+                                          2,
+                                          isBold: true),
+                                      getRichText(
+                                          isReal ? "￥" : "",
+                                          "${priceFormat(controller.orderData["nowPrice"] ?? 0)}${isReal ? "" : isBean ? beanName : "积分"}",
+                                          14,
+                                          const Color(0xFFFE4B3B),
+                                          24,
+                                          const Color(0xFFFE4B3B),
+                                          isBold2: true),
+                                    ],
+                                        height: 105,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start)
+                                  ])
+                                ], width: 345)
+                              ],
+                            ))
+                          ],
+                        ),
                       ),
-                    ),
-                    ghb(19.5),
-                    gline(345, 0.5),
-                    ghb(15.5),
-                    sbRow([
-                      getSimpleText("数量", 14, AppColor.textBlack),
-                      Container(
-                        width: 91.w,
-                        height: 25.w,
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFF5F5F7),
-                            border: Border.all(
-                                width: 0.5.w, color: AppColor.lineColor),
-                            borderRadius: BorderRadius.circular(25.w / 2)),
-                        child: centRow(List.generate(
-                            3,
-                            (index) => index == 1
-                                ? Container(
-                                    width: 40.w,
-                                    height: 21.w,
-                                    color: Colors.white,
-                                    child: CustomInput(
+                      ghb(19.5),
+                      gline(345, 0.5),
+                      ghb(15.5),
+                      sbRow([
+                        getSimpleText("数量", 14, AppColor.textBlack),
+                        Container(
+                          width: 91.w,
+                          height: 25.w,
+                          decoration: BoxDecoration(
+                              color: const Color(0xFFF5F5F7),
+                              border: Border.all(
+                                  width: 0.5.w, color: AppColor.lineColor),
+                              borderRadius: BorderRadius.circular(25.w / 2)),
+                          child: centRow(List.generate(
+                              3,
+                              (index) => index == 1
+                                  ? Container(
                                       width: 40.w,
-                                      heigth: 21.w,
-                                      placeholder: "数量",
-                                      placeholderStyle: TextStyle(
-                                          fontSize: 15.sp,
-                                          color: AppColor.textGrey5),
-                                      style: TextStyle(
-                                          fontSize: 15.sp,
-                                          color: AppColor.textBlack),
-                                      textAlignVertical:
-                                          TextAlignVertical.center,
-                                      textAlign: TextAlign.center,
-                                      focusNode: controller.numNode,
-                                      keyboardType: TextInputType.number,
-                                      textEditCtrl: controller.numInputCtrl,
-                                    ))
-                                : CustomButton(
-                                    onPressed: () {
-                                      if (index == 0) {
-                                        if (controller.num <= 1) {
-                                          ShowToast.normal("最少购买一件");
-                                          return;
+                                      height: 21.w,
+                                      color: Colors.white,
+                                      child: CustomInput(
+                                        width: 40.w,
+                                        heigth: 21.w,
+                                        placeholder: "数量",
+                                        placeholderStyle: TextStyle(
+                                            fontSize: 15.sp,
+                                            color: AppColor.textGrey5),
+                                        style: TextStyle(
+                                            fontSize: 15.sp,
+                                            color: AppColor.textBlack),
+                                        textAlignVertical:
+                                            TextAlignVertical.center,
+                                        textAlign: TextAlign.center,
+                                        focusNode: controller.numNode,
+                                        keyboardType: TextInputType.number,
+                                        textEditCtrl: controller.numInputCtrl,
+                                      ))
+                                  : CustomButton(
+                                      onPressed: () {
+                                        if (index == 0) {
+                                          if (controller.num <= 1) {
+                                            ShowToast.normal("最少购买一件");
+                                            return;
+                                          }
+                                          controller.num -= 1;
+                                        } else {
+                                          controller.num += 1;
                                         }
-                                        controller.num -= 1;
-                                      } else {
-                                        controller.num += 1;
-                                      }
-                                    },
-                                    child: GetX<ProductStoreDetailController>(
-                                        builder: (_) {
-                                      int myNum = controller.num;
-                                      return SizedBox(
-                                        width: 25.w - 0.1.w,
-                                        height: 21.w,
-                                        child: Center(
-                                          child: getSimpleText(
-                                              index == 0 ? "⏤" : "+",
-                                              index == 0 ? 9 : 12,
-                                              index == 0 && myNum <= 1
-                                                  ? AppColor.textGrey5
-                                                  : AppColor.textBlack),
-                                        ),
-                                      );
-                                    }),
-                                  ))),
-                      )
-                    ], width: 315),
-                    ghb(24.5),
-                    CustomButton(
-                      onPressed: () {
-                        takeBackKeyboard(Global.navigatorKey.currentContext!);
-                        Get.back();
-                        Future.delayed(const Duration(milliseconds: 250), () {
-                          push(const ProductStoreConfirm(), null,
-                              binding: ProductStoreConfirmBinding(),
-                              arguments: {
-                                "data": controller.orderData,
-                                "levelType": controller.levelType,
-                                "num": controller.num,
-                              });
-                        });
-                      },
-                      child: Container(
-                        width: 345.w,
-                        height: 45.w,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.w),
-                            gradient: const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Color(0xFFFD573B),
-                                  Color(0xFFFF3A3A)
-                                ])),
-                        child: getSimpleText("确定", 16, Colors.white),
+                                      },
+                                      child: GetX<ProductStoreDetailController>(
+                                          builder: (_) {
+                                        int myNum = controller.num;
+                                        return SizedBox(
+                                          width: 25.w - 0.1.w,
+                                          height: 21.w,
+                                          child: Center(
+                                            child: getSimpleText(
+                                                index == 0 ? "⏤" : "+",
+                                                index == 0 ? 9 : 12,
+                                                index == 0 && myNum <= 1
+                                                    ? AppColor.textGrey5
+                                                    : AppColor.textBlack),
+                                          ),
+                                        );
+                                      }),
+                                    ))),
+                        )
+                      ], width: 315),
+                      ghb(24.5),
+                      CustomButton(
+                        onPressed: () {
+                          takeBackKeyboard(Global.navigatorKey.currentContext!);
+                          Get.back();
+                          Future.delayed(const Duration(milliseconds: 250), () {
+                            push(const ProductStoreConfirm(), null,
+                                binding: ProductStoreConfirmBinding(),
+                                arguments: {
+                                  "data": controller.orderData,
+                                  "levelType": controller.levelType,
+                                  "num": controller.num,
+                                });
+                          });
+                        },
+                        child: Container(
+                          width: 345.w,
+                          height: 45.w,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20.w),
+                              gradient: const LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Color(0xFFFD573B),
+                                    Color(0xFFFF3A3A)
+                                  ])),
+                          child: getSimpleText("确定", 16, Colors.white),
+                        ),
                       ),
-                    ),
-                  ],
+                      ghb(10),
+                      SizedBox(
+                          height: paddingSizeBottom(
+                              Global.navigatorKey.currentContext!))
+                    ],
+                  ),
                 ),
               ),
             ),

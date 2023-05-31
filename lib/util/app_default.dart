@@ -174,6 +174,9 @@ class AppColor {
   static Color assisText = const Color(0xFFcccccc);
   static Color red = const Color(0xFFF93635);
 
+  static Color gradient1 = const Color(0xFFFD573B);
+  static Color gradient2 = const Color(0xFFFF3A3A);
+
   static MaterialColor mTheme = MaterialColor(
     theme.value,
     <int, Color>{
@@ -254,6 +257,19 @@ Widget gline(double width, double height, {Color? color}) {
   );
 }
 
+void callSMS(dynamic phone, String text) {
+  if (phone == null || phone is! String || phone.isEmpty) {
+    return;
+  }
+  launchUrl(Uri(
+    scheme: 'sms',
+    path: phone,
+    queryParameters: <String, String>{
+      'body': Uri.encodeComponent(text),
+    },
+  ));
+}
+
 void callPhone(String phone) {
   if (phone != null) {
     if (AppDefault.isDebug) {
@@ -282,13 +298,27 @@ String hidePhoneNum(String? phone) {
 
 void push(dynamic widget, BuildContext? context, {String setName = "", Bindings? binding, dynamic arguments}) {
   if (binding != null) {
-    Get.to(widget, binding: binding, arguments: arguments);
+    Get.to(widget,
+        binding: binding,
+        arguments: arguments,
+        routeName: setName.isEmpty ? widget.runtimeType.toString() : setName);
   } else {
+<<<<<<< HEAD
     Navigator.of(context ?? Global.navigatorKey.currentContext!).push(CupertinoPageRoute(
         settings: RouteSettings(name: setName),
         builder: (_) {
           return widget;
         }));
+=======
+    Navigator.of(context ?? Global.navigatorKey.currentContext!).push(
+        CupertinoPageRoute(
+            settings: RouteSettings(
+                name:
+                    setName.isEmpty ? widget.runtimeType.toString() : setName),
+            builder: (_) {
+              return widget;
+            }));
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
   }
 }
 
@@ -2767,7 +2797,7 @@ Widget getSubmitBtn(
       opacity: enable ? 1.0 : 0.5,
       child: Container(
         width: width != null ? width.w : 345.w,
-        height: height != null ? height.w : 50.w,
+        height: height != null ? height.w : 45.w,
         decoration: BoxDecoration(
           gradient: color != null
               ? null

@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # android
-version: 1.0.0+2
+version: 1.0.0+0
 # ios
 # version: 1.0.0+2
 
@@ -42,13 +42,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   dio: ^4.0.6
   intl: ^0.17.0
-  url_launcher: ^6.1.5
+  url_launcher: ^6.1.11
   get: ^4.6.5
   shared_preferences: ^2.0.15
   flutter_screenutil: ^5.6.0
   blur: ^3.1.0
   image_picker: ^0.8.6
-  fluttertoast: ^8.1.2
+  oktoast: ^3.3.1
   platform_device_id: ^1.0.1
   pull_to_refresh: ^2.0.0
   permission_handler: ^10.0.0
@@ -94,8 +94,9 @@ dependencies:
   screenshot: ^1.2.3
   card_swiper: ^2.0.4
   path_provider: ^2.0.11
-  ota_update: ^4.0.2
-  wechat_assets_picker: ^8.4.0
+  ota_update: ^4.0.3
+  wechat_assets_picker: ^8.4.3
+  
   flutter_native_image: ^0.0.6+1
   # reorderables: ^0.4.4
   # webview_flutter_plus: ^0.3.0+2
@@ -112,7 +113,11 @@ dependencies:
   cached_network_image: ^3.2.3
   easy_refresh: ^3.3.1
   crop_your_image: ^0.7.4
+
+  # 3.7.6
   month_picker_dialog: ^1.2.0
+  # month_picker_dialog: ^2.0.2
+
   flutter_lazy_indexed_stack: ^0.0.5
 
 dev_dependencies:
@@ -144,7 +149,6 @@ flutter:
     - assets/images/splash/
     - assets/images/login/
     - assets/images/rank/
-    - assets/images/bonuspool/
     - assets/images/home/
     - assets/images/machine/
     - assets/images/mine/
@@ -180,6 +184,7 @@ flutter:
     - assets/images/message_notify/
     - assets/images/income/
     - assets/images/statistics_page/
+    - assets/images/statistics_page/business/
     - assets/images/product_store/
     - assets/images/integral_store/
     - assets/images/member/

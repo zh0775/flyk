@@ -1,16 +1,17 @@
 import 'dart:convert' as convert;
 
-import 'package:cxhighversion2/bounspool/bonuspool.dart';
 import 'package:cxhighversion2/component/app_banner.dart';
 import 'package:cxhighversion2/component/app_bottom_tips.dart';
 // import 'package:cxhighversion2/component/app_lottery_webview.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
+import 'package:cxhighversion2/component/custom_deferred.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/component/custom_webview.dart' deferred as customwebview;
 import 'package:cxhighversion2/entrepreneurship_support/support.dart' deferred as support;
 import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart' deferred as business_school_detail;
 import 'package:cxhighversion2/home/businessSchool/promotion_skills.dart' deferred as promotion_skills;
 import 'package:cxhighversion2/home/component/custom_message.dart';
+<<<<<<< HEAD
 import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart' deferred as contact_customer_service;
 import 'package:cxhighversion2/home/fodderlib/fodder_lib.dart' deferred as fodder_lib;
 import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase.dart' deferred as integral_repurchase;
@@ -18,17 +19,48 @@ import 'package:cxhighversion2/home/machine_manage.dart' deferred as machine_man
 import 'package:cxhighversion2/home/machinetransfer/machine_transfer.dart' deferred as machine_transfer;
 import 'package:cxhighversion2/home/machinetransfer/machine_transfer_userlist.dart' deferred as machine_transfer_userlist;
 import 'package:cxhighversion2/home/merchantAccessNetwork/merchant_access_network.dart' deferred as merchant_access_network;
+=======
+import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart'
+    deferred as contact_customer_service;
+import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase.dart'
+    deferred as integral_repurchase;
+import 'package:cxhighversion2/home/machine_manage.dart'
+    deferred as machine_manage;
+import 'package:cxhighversion2/home/machinetransfer/machine_transfer.dart'
+    deferred as machine_transfer;
+import 'package:cxhighversion2/home/machinetransfer/machine_transfer_userlist.dart'
+    deferred as machine_transfer_userlist;
+import 'package:cxhighversion2/home/merchantAccessNetwork/merchant_access_network.dart'
+    deferred as merchant_access_network;
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
 import 'package:cxhighversion2/home/myTeam/my_team.dart' deferred as my_team;
 import 'package:cxhighversion2/home/mybusiness/mybusiness.dart' deferred as mybusiness;
 import 'package:cxhighversion2/home/news/news_detail.dart' deferred as news_detail;
 import 'package:cxhighversion2/home/news/news_list.dart' deferred as news_list;
 import 'package:cxhighversion2/home/store/vip_store.dart' deferred as vip_store;
+<<<<<<< HEAD
 import 'package:cxhighversion2/home/terminal_binding.dart' deferred as terminal_binding;
 import 'package:cxhighversion2/machine/machine_pay_page.dart' deferred as machine_pay_page;
 import 'package:cxhighversion2/machine/machine_register.dart' deferred as machine_register;
 import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication.dart' deferred as identity_authentication;
 import 'package:cxhighversion2/mine/mine_help_center.dart' deferred as mine_help_center;
 import 'package:cxhighversion2/mine/myWallet/my_wallet.dart' deferred as my_wallet;
+=======
+import 'package:cxhighversion2/home/terminal_binding.dart'
+    deferred as terminal_binding;
+import 'package:cxhighversion2/integralstore/integral_store.dart'
+    deferred as integral_store;
+import 'package:cxhighversion2/machine/machine_pay_page.dart'
+    deferred as machine_pay_page;
+import 'package:cxhighversion2/machine/machine_register.dart'
+    deferred as machine_register;
+import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication.dart'
+    deferred as identity_authentication;
+import 'package:cxhighversion2/mine/mine_help_center.dart'
+    deferred as mine_help_center;
+import 'package:cxhighversion2/mine/myWallet/my_wallet.dart'
+    deferred as my_wallet;
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
 import 'package:cxhighversion2/pay/share_invite.dart' deferred as share_invite;
 import 'package:cxhighversion2/product/product.dart' deferred as product;
 import 'package:cxhighversion2/product/product_purchase_list.dart' deferred as product_purchase_list;
@@ -89,47 +121,15 @@ class HomeController extends FullLifeCycleController {
   }
 
   List btnDatas = [];
-  //导航方式 1.立体旋转 2.底部按钮
-  final _pageStyle = 0.obs;
-  int get pageStyle => _pageStyle.value;
-  set pageStyle(v) {
-    if (_pageStyle.value != v) {
-      _pageStyle.value = v;
-      bus.emit(NOTIFY_CHANGE_PAGE_STYLE, {"value": pageStyle});
-    }
-  }
-
-  String drawBoundStr = "";
 
   // 机具数据切换
   final _machineDataIdx = 0.obs;
   int get machineDataIdx => _machineDataIdx.value;
   set machineDataIdx(v) => _machineDataIdx.value = v;
 
-  // 奖金池金额
-  final _bonusPoolMoney = 0.0.obs;
-  double get bonusPoolMoney => _bonusPoolMoney.value;
-  set bonusPoolMoney(v) => _bonusPoolMoney.value = v;
-
-  //是否有个人数据模块
-  final _havePersionData = false.obs;
-  bool get havePersionData => _havePersionData.value;
-  set havePersionData(v) => _havePersionData.value = v;
-  //是否有团队数据模块
-  final _haveTeamData = false.obs;
-  bool get haveTeamData => _haveTeamData.value;
-  set haveTeamData(v) => _haveTeamData.value = v;
-  //是否有积分商城模块
-  final _haveIntegral = false.obs;
-  bool get haveIntegral => _haveIntegral.value;
-  set haveIntegral(v) => _haveIntegral.value = v;
-  //积分商城数据
-  final _integralData = Rx<List>([]);
-  set integralData(v) => _integralData.value = v;
-  List get integralData => _integralData.value;
-
   bool haveNews = false;
 
+<<<<<<< HEAD
   //请求积分商城
   loadIntegral() {
     simpleRequest(
@@ -215,6 +215,8 @@ class HomeController extends FullLifeCycleController {
     );
   }
 
+=======
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
   //是否实名
   bool isAuth = false;
   //是否绑卡
@@ -452,25 +454,7 @@ class HomeController extends FullLifeCycleController {
     if (!AppDefault().loginStatus) {
       return;
     }
-    /*
-    //标板2.0没有自定义首页
-    if (homeData.isNotEmpty) {
-      modules = homeData["homeModule"] ?? [];
-      haveAddModule = false;
-      for (var e in modules) {
-        if (e["module_Flag"] == 0) {
-          haveAddModule = true;
-          break;
-        }
-      }
-      loadModulesData();
-    }
-     */
 
-    // cClient = (homeData["u_Role"] ?? 0) == 0;
-    // cClient = true;
-    // if ((homeData["u_Role"] ?? 0) == 0) {
-    // }
     haveNews = homeData["news"] != null && homeData["news"].isNotEmpty;
     myMessages = homeData["news"] ?? [];
 
@@ -479,9 +463,7 @@ class HomeController extends FullLifeCycleController {
       tmpBanners = tmpBanners.where((e) {
         String type = e["u_Type"] ?? "";
         List types = type.split(",");
-        if (cClient && types.contains("2")) {
-          return true;
-        } else if (!cClient && types.contains("1")) {
+        if (types.contains("1")) {
           return true;
         } else {
           return false;
@@ -505,14 +487,7 @@ class HomeController extends FullLifeCycleController {
           }
         }
       }
-      // int myLevel = homeData["uL_Level"] ?? 1;
-      // if (myLevel <= 1) {
-      //   middleIcons = middleIcons
-      //       .where((e) =>
-      //           (e["apP_Title"] ?? "") != "邀请好友" &&
-      //           (e["apP_Title"] ?? "") != "分享邀请")
-      //       .toList();
-      // }
+
       List tmpBtnDatas = middleIcons.map((e) {
         return Map<String, dynamic>.from({"img": "$imageUrl${e["apP_Pic"]}", "name": e["apP_Title"] ?? "", "id": e["id"], "path": e["apP_Url"]});
       }).toList();
@@ -529,63 +504,17 @@ class HomeController extends FullLifeCycleController {
       subTitle = ((publicHomeData["webSiteInfo"] ?? {})["app"])["apP_SubTitle"] ?? "";
       subTitle = "欢迎您！";
     }
+<<<<<<< HEAD
     if (!cClient && AppDefault().safeAlert && isHomeData && (AppDefault().firstAlertFromLogin || homeFirst)) {
+=======
+    if (AppDefault().safeAlert &&
+        isHomeData &&
+        (AppDefault().firstAlertFromLogin || homeFirst)) {
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
       showHomeAlert();
     }
     update();
-    // if (cClient) {
-    //   // if (!homeFirst) {
-    //   //   loadWebView();
-    //   // }
-    //   // loadWebView();
-    //   update(["lotteryWebView_buildId"]);
-    // }
   }
-
-  final _cClient = false.obs;
-  bool get cClient => _cClient.value;
-  set cClient(v) => _cClient.value = v;
-
-  double webViewHeight = 447;
-  // WebViewController? _myWebCtrl;
-  // LotteryChannel? lotteryChannel;
-  // set myWebCtrl(v) {
-  //   _myWebCtrl = v;
-  //   loadWebView();
-  //   lotteryChannel ??= LotteryChannel(webViewCtrl: myWebCtrl);
-  // }
-
-  // WebViewController? get myWebCtrl => _myWebCtrl;
-
-  // loadWebView() {
-  //   if (AppDefault().token.isEmpty || homeData.isEmpty) {
-  //     return;
-  //   }
-  //   String params = "";
-  //   if (homeData["lotteryConfig"] != null &&
-  //       homeData["lotteryConfig"] is List &&
-  //       homeData["lotteryConfig"].isNotEmpty) {
-  //     Map lData = homeData["lotteryConfig"][0];
-  //     params += "&prizeList=${convert.jsonEncode(lData["prizeList"] ?? [])}";
-  //     params += "&costAmount=${lData["costAmount"] ?? 0}";
-  //     params += "&lotteryDesc=${lData["lotteryDesc"] ?? ""}";
-  //     params += "&no=${lData["no"] ?? ""}";
-  //   } else {
-  //     return;
-  //   }
-  //   if ((homeData["u_Account"] ?? []).isNotEmpty) {
-  //     for (var e in (homeData["u_Account"] ?? [])) {
-  //       if (e["a_No"] == 4) {
-  //         params += "&amout=${e["amout"] ?? 0}";
-  //       }
-  //     }
-  //   }
-
-  //   String lotteryUrl =
-  //       "${HttpConfig.lotteryUrl}?token=${AppDefault().token}&baseUrl=${HttpConfig.baseUrl}$params&imageUrl=${AppDefault().imageUrl}";
-  //   // lotteryUrl = Uri.encodeFull(lotteryUrl);
-  //   myWebCtrl?.loadUrl(lotteryUrl);
-  // }
 
   applyRequest() {
     simpleRequest(
@@ -650,66 +579,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     return AnnotatedRegion(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
-          // appBar: getDefaultAppBar(context, "",
-          //     color: Colors.transparent,
-          //     leading: gemp(),
-          //     flexibleSpace: SizedBox(
-          //       width: 375.w,
-          //       // height: kToolbarHeight,
-          //       child: Center(
-          //         child: Padding(
-          //           padding: EdgeInsets.only(top: paddingSizeTop(context)),
-          //           child: sbRow([
-          //             centRow([
-          //               Image.asset(
-          //                 assetsName("home/top_logo"),
-          //                 width: 61.5.w,
-          //                 fit: BoxFit.fitWidth,
-          //               ),
-          //               gwb(10),
-          //               GetBuilder<HomeController>(
-          //                 builder: (_) {
-          //                   return ctrl.subTitle.isEmpty
-          //                       ? gwb(0)
-          //                       : gline(1, 14.5, color: AppColor.text2);
-          //                 },
-          //               ),
-          //               gwb(10),
-          //               GetBuilder<HomeController>(
-          //                 builder: (_) {
-          //                   return getSimpleText(
-          //                       ctrl.subTitle, 14, AppColor.text2,
-          //                       textHeight: 1.1);
-          //                 },
-          //               )
-          //             ]),
-          //             CustomButton(
-          //               onPressed: () {
-          //                 contact_customer_service.loadLibrary().then((value) =>
-          //                     push(
-          //                         contact_customer_service
-          //                             .ContactCustomerService(),
-          //                         context,
-          //                         binding: contact_customer_service
-          //                             .ContactCustomerServiceBinding()));
-          //               },
-          //               child: SizedBox(
-          //                 width: 50.w,
-          //                 height: kToolbarHeight,
-          //                 child: Align(
-          //                   alignment: Alignment.centerRight,
-          //                   child: Image.asset(
-          //                     assetsName("home/btn_kf"),
-          //                     width: 24.w,
-          //                     fit: BoxFit.fitWidth,
-          //                   ),
-          //                 ),
-          //               ),
-          //             )
-          //           ], width: 345),
-          //         ),
-          //       ),
-          //     )),
           body: EasyRefresh.builder(
         onRefresh: () => ctrl.homeOnRefresh(),
         childBuilder: (context, physics) {
@@ -725,43 +594,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         AppDefault().scaleWidth = 1.w;
                         return topContent();
                       }),
-
-                  //公告
-                  // GetBuilder<HomeController>(
-                  //   builder: (_) {
-                  //     return messageView();
-                  //   },
-                  // ),
-                  // 本月数据
-                  // GetBuilder<HomeController>(
-                  //   builder: (_) {
-                  //     return thisMonData();
-                  //   },
-                  // ),
-                  // GetBuilder<HomeController>(
-                  //   builder: (_) {
-                  //     return ghb(ctrl.haveNews ? 30 : 10);
-                  //   },
-                  // ),
-
-                  //奖金池
-                  // bonusPool(),
-                  // ghb(15.5),
-                  // yjView(),
-                  // ghb(15.5),
-                  //新手专区
-                  // newUserView(),
-                  // ghb(15.5),
-                  //商学院
-                  // businessView(),
-                  // 商户数据
                   machineDataView(),
                 ]),
-                // ;
-                //   },
-                // ),
                 ghb(14),
-                // ghb(kIsWeb ? 30 : 66),
                 GetBuilder<HomeController>(
                   builder: (_) {
                     return AppBottomTips(
@@ -887,8 +722,23 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                       await machine_transfer.loadLibrary();
                                       push(machine_transfer.MachineTransfer(isLock: false), null, binding: machine_transfer.MachineTransferBinding());
                                     } else if (index == 3) {
+<<<<<<< HEAD
                                       await product_store_list.loadLibrary();
                                       push(product_store_list.ProductStoreList(), null, binding: product_store_list.ProductStoreListBinding(), arguments: {"levelType": 2, "title": "采购商城"});
+=======
+                                      CustomDeferred()
+                                          .toStatisticsMachineEquitiesAdd();
+                                      // await product_store_list.loadLibrary();
+                                      // push(
+                                      //     product_store_list.ProductStoreList(),
+                                      //     null,
+                                      //     binding: product_store_list
+                                      //         .ProductStoreListBinding(),
+                                      //     arguments: {
+                                      //       "levelType": 2,
+                                      //       "title": "采购商城"
+                                      //     });
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
                                     }
                                   },
                                   child: SizedBox(
@@ -1049,6 +899,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     );
   }
 
+<<<<<<< HEAD
   Widget bonusPool() {
     return centClm([
       Container(
@@ -1490,6 +1341,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     );
   }
 
+=======
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
   Widget dataView(String t1, String t2, {int type = 1}) {
     return centClm([
       getSimpleText(t1, type == 0 ? 30 : 12, Colors.white, fw: type == 0 ? FontWeight.w500 : FontWeight.w400),
@@ -1539,8 +1392,14 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             push(mybusiness.MyBusiness(), null, binding: mybusiness.MyBusinessBinding());
           } else if (e["path"] == "/home/integralstore") {
             // 积分商城
+<<<<<<< HEAD
             await points_mall_page.loadLibrary();
             push(points_mall_page.PointsMallPage(), null, binding: points_mall_page.PointsMallPageBinding());
+=======
+            await integral_store.loadLibrary();
+            push(integral_store.IntegralStore(), null,
+                binding: integral_store.IntegralStoreBinding());
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
           } else if (e["path"] == "/home/machinetransfer") {
             // 机具划拨
             await machine_transfer.loadLibrary();
@@ -1557,6 +1416,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           } else if (e["path"] == "/home/businessschool") {
             // 商学院
             await business_school_list_page.loadLibrary();
+<<<<<<< HEAD
             push(business_school_list_page.BusinessSchoolListPage(), null, binding: business_school_list_page.BusinessSchoolListPageBinding(), arguments: {"index": 0});
             // 联系客服
             // push(const ContactCustomerService(), context,
@@ -1569,6 +1429,12 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             //设备采购
             // push(const MachinePayPage(), context,
             //     binding: MachinePayPageBinding());
+=======
+            push(business_school_list_page.BusinessSchoolListPage(), null,
+                binding:
+                    business_school_list_page.BusinessSchoolListPageBinding(),
+                arguments: {"index": 0});
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
           } else if (path == "/home/usermanage") {
             // 用户管理
             await statistics_user_manage.loadLibrary();
@@ -1619,7 +1485,16 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 }
               }
             }
+<<<<<<< HEAD
             push(product_store_list.ProductStoreList(), null, binding: product_store_list.ProductStoreListBinding(), arguments: {"levelType": type, "title": e["name"] ?? ""});
+=======
+            push(product_store_list.ProductStoreList(), null,
+                binding: product_store_list.ProductStoreListBinding(),
+                arguments: {"levelType": type, "title": e["name"] ?? ""});
+          } else if (path == "/home/equitiesadd") {
+            // 权益添加
+            CustomDeferred().toStatisticsMachineEquitiesAdd();
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
           }
         },
         child: SizedBox(
@@ -1644,28 +1519,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     return buttons;
   }
 
-  // changeIosLogo(String icon) async {
-  //   try {
-  //     if (await DynamicIconFlutter.supportsAlternateIcons) {
-  //       await DynamicIconFlutter.setAlternateIconName(
-  //           icon == "MainActivity" ? "main" : icon);
-  //       print("App icon change successful");
-  //       return;
-  //     }
-  //   } on PlatformException catch (e) {
-  //     if (await DynamicIconFlutter.supportsAlternateIcons) {
-  //       await DynamicIconFlutter.setAlternateIconName(null);
-  //       print("Change app icon back to default");
-  //       return;
-  //     } else {
-  //       print("Failed to change app icon");
-  //     }
-  //   }
-  // }
-
   Widget machineDataView() {
     return GetBuilder<HomeController>(
       builder: (_) {
+        Map tNo = ctrl.homeData["homeTeamTanNo"] ?? {};
         return Container(
           width: 345.w,
           margin: EdgeInsets.only(top: 15.w),
@@ -1682,7 +1539,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       fit: BoxFit.fitWidth,
                     ),
                     gwb(6),
-                    getSimpleText("机具数据", 16, AppColor.textBlack, isBold: true),
+                    getSimpleText(ctrl.machineDataIdx == 0 ? "机具数据" : "商户数据",
+                        16, AppColor.textBlack,
+                        isBold: true),
                   ]),
                   DropdownButtonHideUnderline(
                       child: DropdownButton2(
@@ -1747,15 +1606,31 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                 getSimpleText(
                                     index == 0
                                         ? ctrl.machineDataIdx == 0
-                                            ? "1"
-                                            : "4"
+
+                                            /// 累计总激活
+                                            ? tNo["teamTotalActTerminal"] ?? "0"
+
+                                            /// 累计总达标
+                                            : tNo["teamTotalActivTerminal"] ??
+                                                "0"
                                         : index == 1
                                             ? ctrl.machineDataIdx == 0
-                                                ? "2"
-                                                : "5"
+
+                                                /// 团队当月激活
+                                                ? tNo["teamThisMActTerminal"] ??
+                                                    "0"
+
+                                                /// 团队当月达标
+                                                : tNo["teamThisMActivTerminal"] ??
+                                                    "0"
                                             : ctrl.machineDataIdx == 0
-                                                ? "3"
-                                                : "6",
+
+                                                /// 团队当日激活
+                                                ? tNo["teamThisDActTerminal"] ??
+                                                    "0"
+                                                ////团队当日达标
+                                                : tNo["teamThisDActivTerminal"] ??
+                                                    "0",
                                     18,
                                     AppColor.textBlack,
                                     isBold: true,

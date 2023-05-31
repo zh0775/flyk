@@ -1,33 +1,35 @@
-import 'package:flutter/material.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
-import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
+import 'package:cxhighversion2/component/custom_list_empty_view.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/home/machinetransfer/machine_transfer.dart';
-import 'package:cxhighversion2/home/terminalBack/terminal_back_history.dart';
 import 'package:cxhighversion2/home/terminalBack/terminal_back_select.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:skeletons/skeletons.dart';
 import 'package:sticky_and_expandable_list/sticky_and_expandable_list.dart';
 
 class MachineTransferUserListBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<MachineTransferUserListController>(
-        () => MachineTransferUserListController());
+        () => MachineTransferUserListController(datas: Get.arguments));
   }
 }
 
 class MachineTransferUserListController extends GetxController {
+  final dynamic datas;
+  MachineTransferUserListController({this.datas});
   final _isLoading = false.obs;
   set isLoading(value) => _isLoading.value = value;
   bool get isLoading => _isLoading.value;
   final searchTextCtrl = TextEditingController();
   final scrollCtrl = ScrollController();
   final listController = ExpandableListController();
-
   // Map userMap = {};
   List<UserSection> userSectionList = [];
   List startWords = [];
@@ -37,42 +39,40 @@ class MachineTransferUserListController extends GetxController {
 
   GlobalKey scrollContentKey = GlobalKey();
 
-  userListFormat(List datas) {
+  userListFormat(List users) {
     // userMap = {};
     userSectionList = [];
     startWords = [];
     keys = [];
-    if (datas.isNotEmpty || (datas != null && datas.length == 0)) {
+    if (users.isNotEmpty || (users != null && users.length == 0)) {
       String word = "";
-      for (var i = 0; i < datas.length; i++) {
+      for (var i = 0; i < users.length; i++) {
         if (i == 0) {
           userSectionList.add(UserSection(nameUserList: []));
           // userSectionList.add([]);
-          word = datas[i]["py"];
+          word = users[i]["py"];
           startWords.add(word);
           keys.add(GlobalKey());
           // userMap[word] = [];
-          // (userMap[word] as List).add(datas[i]);
+          // (userMap[word] as List).add(users[i]);
         } else {
-          if (datas[i]["py"] == datas[i - 1]["py"]) {
-            // (userMap[word] as List).add(datas[i]);
+          if (users[i]["py"] == users[i - 1]["py"]) {
+            // (userMap[word] as List).add(users[i]);
           } else {
-            word = datas[i]["py"];
+            word = users[i]["py"];
             startWords.add(word);
             keys.add(GlobalKey());
             // userMap[word] = [];
-            // (userMap[word] as List).add(datas[i]);
+            // (userMap[word] as List).add(users[i]);
             userSectionList.add(UserSection(nameUserList: []));
             // userSectionList.add([]);
           }
         }
-        userSectionList.last.getItems().add(datas[i]);
-        // (userSectionList.last as List).add(datas[i]);
-
+        userSectionList.last.getItems().add(users[i]);
+        // (userSectionList.last as List).add(users[i]);
       }
       update();
     }
-
     // _getImgTest(url) async {//url为头像链接地址，
     // try {
     //   var request = await httpClient.getUrl(Uri.parse(url));
@@ -101,6 +101,12 @@ class MachineTransferUserListController extends GetxController {
     if (str != null && str.isNotEmpty) {
       params["userInfo"] = str;
     }
+    if (teamYlocation != null) {
+      params["teamYlocation"] = teamYlocation;
+    }
+    if (levelType != null) {
+      params["levelType"] = levelType;
+    }
     simpleRequest(
       url: Urls.userFindTeam,
       params: params,
@@ -116,8 +122,13 @@ class MachineTransferUserListController extends GetxController {
     );
   }
 
+  int? teamYlocation;
+  int? levelType;
+
   @override
   void onInit() {
+    teamYlocation = (datas ?? {})["teamYlocation"];
+    levelType = (datas ?? {})["levelType"];
     loadUser();
     imageUrl = AppDefault().imageUrl;
     super.onInit();
@@ -135,7 +146,9 @@ class MachineTransferUserListController extends GetxController {
 class MachineTransferUserList
     extends GetView<MachineTransferUserListController> {
   final bool isTerminalBack;
-  const MachineTransferUserList({Key? key, this.isTerminalBack = false})
+  final dynamic fromCtrl;
+  const MachineTransferUserList(
+      {Key? key, this.isTerminalBack = false, this.fromCtrl})
       : super(key: key);
 
   @override
@@ -143,7 +156,6 @@ class MachineTransferUserList
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: Scaffold(
-          backgroundColor: AppColor.pageBackgroundColor,
           appBar: getDefaultAppBar(
               context, "选择${isTerminalBack ? "回拨" : "划拨"}对象",
               action: [
@@ -169,48 +181,66 @@ class MachineTransferUserList
                   top: 0,
                   left: 0,
                   right: 0,
-                  height: 80.w,
+                  height: 70.w,
                   child: Center(
                     child: Container(
                       width: 345.w,
-                      height: 50.w,
+                      height: 40.w,
                       decoration: getDefaultWhiteDec(),
                       child: Center(
                         child: sbRow([
+                          CustomButton(
+                            onPressed: () {},
+                            child: SizedBox(
+                              width: 36.w,
+                              height: 40.w,
+                              child: Center(
+                                  child: Image.asset(
+                                assetsName("machine/icon_search"),
+                                width: 18.w,
+                                fit: BoxFit.fitWidth,
+                              )),
+                            ),
+                          ),
                           CustomInput(
-                            width: 247.w,
-                            heigth: 50.w,
+                            width: 345.w - 36.w,
+                            heigth: 40.w,
                             textEditCtrl: controller.searchTextCtrl,
-                            placeholder: "请输入姓名或者手机号查询",
+                            placeholder: "请输入姓名或者手机号的全称进行查询",
                             placeholderStyle: TextStyle(
-                                fontSize: 15.sp,
+                                fontSize: 12.sp,
                                 color: const Color(0xFFCCCCCC)),
                             style: TextStyle(
-                                fontSize: 15.sp, color: AppColor.textBlack),
-                          ),
-                          CustomButton(
-                            onPressed: () {
-                              FocusScope.of(context).requestFocus(FocusNode());
+                                fontSize: 12.sp, color: AppColor.textBlack),
+                            onEditingComplete: (str) {
+                              takeBackKeyboard(context);
                               controller.loadUser(
                                   str: controller.searchTextCtrl.text);
                             },
-                            child: Container(
-                              width: 64.w,
-                              height: 30.w,
-                              decoration: BoxDecoration(
-                                  color: AppColor.textBlack,
-                                  borderRadius: BorderRadius.circular(5.w)),
-                              child: Center(
-                                child: getSimpleText("搜索", 15, Colors.white),
-                              ),
-                            ),
-                          )
-                        ], width: 345 - 15 * 2),
+                          ),
+                          // CustomButton(
+                          //   onPressed: () {
+                          //     FocusScope.of(context).requestFocus(FocusNode());
+                          //     controller.loadUser(
+                          //         str: controller.searchTextCtrl.text);
+                          //   },
+                          //   child: Container(
+                          //     width: 64.w,
+                          //     height: 30.w,
+                          //     decoration: BoxDecoration(
+                          //         color: AppColor.textBlack,
+                          //         borderRadius: BorderRadius.circular(5.w)),
+                          //     child: Center(
+                          //       child: getSimpleText("搜索", 15, Colors.white),
+                          //     ),
+                          //   ),
+                          // )
+                        ], width: 345),
                       ),
                     ),
                   )),
               Positioned(
-                  top: 80.w,
+                  top: 70.w,
                   left: 0,
                   right: 0,
                   bottom: 0,
@@ -219,16 +249,16 @@ class MachineTransferUserList
                     initState: (_) {},
                     builder: (_) {
                       return controller.userSectionList.isEmpty
-                          ? SingleChildScrollView(
-                              child: GetX<MachineTransferUserListController>(
-                                builder: (controller) {
-                                  return CustomEmptyView(
-                                    isLoading: controller.isLoading,
-                                  );
-                                },
-                              ),
+                          ? GetX<MachineTransferUserListController>(
+                              builder: (controller) {
+                                return controller.isLoading && !kIsWeb
+                                    ? SkeletonListView()
+                                    : CustomListEmptyView(
+                                        isLoading: controller.isLoading,
+                                      );
+                              },
                             )
-                          : Container(
+                          : SizedBox(
                               child: ExpandableListView(
                                   controller: controller.scrollCtrl,
                                   physics: const BouncingScrollPhysics(),
@@ -237,11 +267,11 @@ class MachineTransferUserList
                                     sectionList: controller.userSectionList,
                                     headerBuilder:
                                         (context, sectionIndex, index) {
-                                      return Container(
+                                      return SizedBox(
                                         key: controller.keys[sectionIndex],
                                         width: 375.w,
                                         height: 25.w,
-                                        color: const Color(0xFFF7FAFF),
+                                        // color: const Color(0xFFF7FAFF),
                                         child: Center(
                                           child: sbRow([
                                             getSimpleText(
@@ -265,7 +295,11 @@ class MachineTransferUserList
                                           var userData = controller
                                               .userSectionList[sectionIndex]
                                               .getItems()[itemIndex];
-                                          if (isTerminalBack) {
+                                          if (fromCtrl != null &&
+                                              fromCtrl is GetxController) {
+                                            fromCtrl!.selectUser(userData);
+                                            Get.back();
+                                          } else if (isTerminalBack) {
                                             Get.to(
                                                 TerminalBackSelect(
                                                   userData: userData,

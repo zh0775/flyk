@@ -202,11 +202,26 @@ class ProductStoreConfirmController extends GetxController {
     if (payTypeList.isEmpty) {
       return;
     }
+<<<<<<< HEAD
     Map<String, dynamic> params = {"delivery_Method": deliveryType + 1, "levelConfigId": productData["levelGiftId"], "num": currentCount, "contactID": address["id"] ?? 0, "pay_MethodType": int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"), "pay_Method": int.parse("${payTypeList[currentPayTypeIndex]["value"]}")};
+=======
+    // Map<String, dynamic> params = {
+    //   "delivery_Method": deliveryType + 1,
+    //   "levelConfigId": productData["levelGiftId"],
+    //   "num": currentCount,
+    //   "contactID": address["id"] ?? 0,
+    //   "pay_MethodType":
+    //       int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"),
+    //   "pay_Method": int.parse("${payTypeList[currentPayTypeIndex]["value"]}")
+    // };
+    List orderContent = [
+      {"id": productData["levelGiftId"], "num": currentCount}
+    ];
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
 
     simpleRequest(
       url: Urls.previewOrder,
-      params: params,
+      params: {"orderContent": orderContent},
       success: (success, json) {
         if (success) {
           previewOrderData = json["data"];
@@ -239,11 +254,20 @@ class ProductStoreConfirmController extends GetxController {
       "levelConfigId": productData["levelGiftId"],
       "num": currentCount,
       "contactID": address["id"],
+<<<<<<< HEAD
       "pay_MethodType": int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"),
+=======
+      "purchase_Type": 1,
+      "pay_MethodType":
+          int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"),
+>>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
       "pay_Method": int.parse("${payTypeList[currentPayTypeIndex]["value"]}"),
       "version_Origin": AppDefault().versionOriginForPay(),
       // "u_3nd_Pad": payPwd,
       "user_Remarks": remarkInputCtrl.text,
+      "orderContent": [
+        {"id": productData["levelGiftId"], "num": currentCount}
+      ]
     };
     if (payPwd.isNotEmpty) {
       params["u_3nd_Pad"] = payPwd;

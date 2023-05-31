@@ -4,6 +4,8 @@ import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/component/custom_list_empty_view.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/service/urls.dart';
+import 'package:cxhighversion2/statistics/statistics_page/statistics_facilitator_detail.dart';
+import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -27,6 +29,20 @@ class StatisticsFacilitatorListController extends GetxController {
   set needCleanInput(v) => _needCleanInput.value = v;
 
   final searchInputCtrl = TextEditingController();
+
+  List teamTypes = [
+    {"id": 0, "name": "全部伙伴"},
+    {"id": 1, "name": "直营伙伴"},
+    {"id": 2, "name": "团队伙伴"},
+  ];
+  final _teamTypesIdx = 0.obs;
+  int get teamTypesIdx => _teamTypesIdx.value;
+  set teamTypesIdx(v) {
+    if (_teamTypesIdx.value != v) {
+      _teamTypesIdx.value = v;
+      loadData();
+    }
+  }
 
   List filterTypeList = [
     {"id": 0, "name": "默认排序"},
@@ -53,11 +69,27 @@ class StatisticsFacilitatorListController extends GetxController {
     Map<String, dynamic> params = {
       "pageSize": pageSize,
       "pageNo": pageNo,
-      "tmStatus": 0
+      "relationship_Bind": teamTypes[teamTypesIdx]["id"]
     };
+    switch (filterTypeIdx) {
+      case 0:
+        break;
+      case 1:
+        params["actDayOrder"] = 1;
+        break;
+      case 2:
+        params["actMonthOrder"] = 1;
+        break;
+      case 3:
+        params["txtAmtOrder"] = 1;
+        break;
+      case 4:
+        params["levelOrder"] = 1;
+        break;
+    }
 
     if (searchInputCtrl.text.isNotEmpty) {
-      params["tmName"] = searchInputCtrl.text;
+      params["userInfo"] = searchInputCtrl.text;
     }
 
     if (dataList.isEmpty) {
@@ -65,14 +97,20 @@ class StatisticsFacilitatorListController extends GetxController {
     }
 
     simpleRequest(
-        url: Urls.userMerchantDetail,
+        url: Urls.userTerminalDataList,
         params: params,
         success: (success, json) {
           if (success) {
             Map data = json["data"] ?? {};
             count = data["count"];
             List tmpList = data["data"] ?? [];
+
+            /// 测试
+            if (tmpList.isEmpty) {
+              tmpList = [{}, {}];
+            }
             dataList = isLoad ? [...dataList, ...tmpList] : tmpList;
+
             update();
           }
         },
@@ -95,14 +133,20 @@ class StatisticsFacilitatorListController extends GetxController {
     needCleanInput = searchInputCtrl.text.isNotEmpty;
   }
 
+  setFacilitatorIdxNotify(arg) {
+    filterTypeIdx = arg;
+  }
+
   @override
   void onInit() {
+    bus.on("setFacilitatorIdx", setFacilitatorIdxNotify);
     searchInputCtrl.addListener(searchInputListener);
     super.onInit();
   }
 
   @override
   void onClose() {
+    bus.off("setFacilitatorIdx", setFacilitatorIdxNotify);
     searchInputCtrl.removeListener(searchInputListener);
     searchInputCtrl.dispose();
     super.onClose();
@@ -121,168 +165,160 @@ class StatisticsFacilitatorList extends StatelessWidget {
             left: 0,
             right: 0,
             height: 55.w,
-            child: Column(
-              children: [
-                ghb(15),
-                GetX<StatisticsFacilitatorListController>(
+            child: Column(children: [
+              ghb(15),
+              GetX<StatisticsFacilitatorListController>(
                   init: StatisticsFacilitatorListController(),
                   builder: (controller) {
-                    return centRow(
-                      [
-                        Container(
+                    return centRow([
+                      DropdownButtonHideUnderline(
+                          child: DropdownButton2(
+                              dropdownElevation: 0,
+                              buttonElevation: 0,
+                              offset: Offset(0, -5.w),
+                              customButton: Container(
+                                width: 90.w,
+                                height: 40.w,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(4.w),
+                                    color: Colors.white),
+                                alignment: Alignment.center,
+                                child: centRow([
+                                  GetX<StatisticsFacilitatorListController>(
+                                      builder: (_) {
+                                    return getSimpleText(
+                                        controller.teamTypes[controller
+                                                .teamTypesIdx]["name"] ??
+                                            "",
+                                        12,
+                                        AppColor.textBlack);
+                                  }),
+                                  gwb(12),
+                                  Image.asset(
+                                    assetsName("income/btn_down_arrow"),
+                                    width: 6.w,
+                                    fit: BoxFit.fitWidth,
+                                  )
+                                ]),
+                              ),
+                              items: List.generate(
+                                  controller.teamTypes.length,
+                                  (index) => DropdownMenuItem<int>(
+                                      value: index,
+                                      child: centClm([
+                                        SizedBox(
+                                          height: 30.w,
+                                          width: 90.w,
+                                          child: Align(
+                                            alignment: const Alignment(-1, 0),
+                                            child: GetX<
+                                                    StatisticsFacilitatorListController>(
+                                                builder: (_) {
+                                              return Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 11.w),
+                                                child: getSimpleText(
+                                                    "${controller.teamTypes[index]["name"] ?? ""}",
+                                                    12,
+                                                    controller.teamTypesIdx ==
+                                                            index
+                                                        ? AppColor.textRed
+                                                        : AppColor.textBlack),
+                                              );
+                                            }),
+                                          ),
+                                        ),
+                                      ]))),
+                              // value: ctrl.machineDataIdx,
+                              value: controller.teamTypesIdx,
+                              buttonWidth: 90.w,
+                              buttonHeight: 60.w,
+                              itemHeight: 30.w,
+                              onChanged: (value) {
+                                controller.teamTypesIdx = value;
+                              },
+                              itemPadding: EdgeInsets.zero,
+                              dropdownPadding: EdgeInsets.zero,
+                              // dropdownWidth: 90.w,
+                              dropdownDecoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(4.w),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: const Color(0x1A040000),
+                                        // offset: Offset(0, 5.w),
+                                        blurRadius: 5.w)
+                                  ]))),
+                      gwb(10),
+                      Container(
                           width: 245.w,
                           height: 40.w,
                           decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4.w)),
-                          child: Row(
-                            children: [
-                              gwb(3),
-                              CustomButton(
-                                onPressed: () {
-                                  takeBackKeyboard(context);
-                                  controller.loadData();
-                                },
-                                child: SizedBox(
-                                  width: 36.w,
-                                  height: 40.w,
-                                  child: Center(
-                                    child: Image.asset(
-                                      assetsName("machine/icon_search"),
-                                      width: 18.w,
-                                      fit: BoxFit.fitWidth,
-                                    ),
+                          child: Row(children: [
+                            gwb(3),
+                            CustomButton(
+                              onPressed: () {
+                                takeBackKeyboard(context);
+                                controller.loadData();
+                              },
+                              child: SizedBox(
+                                width: 36.w,
+                                height: 40.w,
+                                child: Center(
+                                  child: Image.asset(
+                                    assetsName("machine/icon_search"),
+                                    width: 18.w,
+                                    fit: BoxFit.fitWidth,
                                   ),
                                 ),
                               ),
-                              CustomInput(
-                                textEditCtrl: controller.searchInputCtrl,
-                                width: (245 -
-                                        3 -
-                                        36 -
-                                        1 -
-                                        0.1 -
-                                        (controller.needCleanInput ? 40 : 0))
-                                    .w,
-                                heigth: 40.w,
-                                placeholder: "请输入想要搜索的名称或手机号",
-                                placeholderStyle: TextStyle(
-                                    fontSize: 12.sp, color: AppColor.assisText),
-                                style: TextStyle(
-                                    fontSize: 12.sp, color: AppColor.text),
-                                onSubmitted: (p0) {
-                                  takeBackKeyboard(context);
-                                  controller.loadData();
-                                },
-                              ),
-                              controller.needCleanInput
-                                  ? CustomButton(
-                                      onPressed: () {
-                                        controller.searchInputCtrl.clear();
-                                      },
-                                      child: SizedBox(
-                                        width: 40.w,
-                                        height: 40.w,
-                                        child: Center(
-                                          child: Image.asset(
-                                            assetsName(
-                                                "statistics/machine/icon_phone_delete"),
-                                            width: 20.w,
-                                            height: 20.w,
-                                            fit: BoxFit.fill,
-                                          ),
+                            ),
+                            CustomInput(
+                              textEditCtrl: controller.searchInputCtrl,
+                              width: (245 -
+                                      3 -
+                                      36 -
+                                      1 -
+                                      0.1 -
+                                      (controller.needCleanInput ? 40 : 0))
+                                  .w,
+                              heigth: 40.w,
+                              placeholder: "请输入想要搜索的名称或手机号",
+                              placeholderStyle: TextStyle(
+                                  fontSize: 12.sp, color: AppColor.assisText),
+                              style: TextStyle(
+                                  fontSize: 12.sp, color: AppColor.text),
+                              onSubmitted: (p0) {
+                                takeBackKeyboard(context);
+                                controller.loadData();
+                              },
+                            ),
+                            controller.needCleanInput
+                                ? CustomButton(
+                                    onPressed: () {
+                                      controller.searchInputCtrl.clear();
+                                    },
+                                    child: SizedBox(
+                                      width: 40.w,
+                                      height: 40.w,
+                                      child: Center(
+                                        child: Image.asset(
+                                          assetsName(
+                                              "statistics/machine/icon_phone_delete"),
+                                          width: 20.w,
+                                          height: 20.w,
+                                          fit: BoxFit.fill,
                                         ),
                                       ),
-                                    )
-                                  : gwb(0),
-                            ],
-                          ),
-                        ),
-                        gwb(10),
-                        DropdownButtonHideUnderline(
-                            child: DropdownButton2(
-                                dropdownElevation: 0,
-                                buttonElevation: 0,
-                                offset: Offset(0, -5.w),
-                                customButton: Container(
-                                  width: 90.w,
-                                  height: 40.w,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(4.w),
-                                      color: Colors.white),
-                                  alignment: Alignment.center,
-                                  child: centRow([
-                                    GetX<StatisticsFacilitatorListController>(
-                                        builder: (_) {
-                                      return getSimpleText(
-                                          controller.filterTypeList[controller
-                                                  .filterTypeIdx]["name"] ??
-                                              "",
-                                          12,
-                                          AppColor.textBlack);
-                                    }),
-                                    gwb(12),
-                                    Image.asset(
-                                      assetsName("income/btn_down_arrow"),
-                                      width: 6.w,
-                                      fit: BoxFit.fitWidth,
-                                    )
-                                  ]),
-                                ),
-                                items: List.generate(
-                                    controller.filterTypeList.length,
-                                    (index) => DropdownMenuItem<int>(
-                                        value: index,
-                                        child: centClm([
-                                          SizedBox(
-                                            height: 30.w,
-                                            width: 90.w,
-                                            child: Align(
-                                              alignment: const Alignment(-1, 0),
-                                              child: GetX<
-                                                      StatisticsFacilitatorListController>(
-                                                  builder: (_) {
-                                                return Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 11.w),
-                                                  child: getSimpleText(
-                                                      "${controller.filterTypeList[index]["name"] ?? ""}",
-                                                      12,
-                                                      controller.filterTypeIdx ==
-                                                              index
-                                                          ? AppColor.textRed
-                                                          : AppColor.textBlack),
-                                                );
-                                              }),
-                                            ),
-                                          ),
-                                        ]))),
-                                // value: ctrl.machineDataIdx,
-                                value: controller.filterTypeIdx,
-                                buttonWidth: 90.w,
-                                buttonHeight: 60.w,
-                                itemHeight: 30.w,
-                                onChanged: (value) {
-                                  controller.filterTypeIdx = value;
-                                },
-                                itemPadding: EdgeInsets.zero,
-                                dropdownPadding: EdgeInsets.zero,
-                                // dropdownWidth: 90.w,
-                                dropdownDecoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(4.w),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          color: const Color(0x1A040000),
-                                          // offset: Offset(0, 5.w),
-                                          blurRadius: 5.w)
-                                    ])))
-                      ],
-                    );
-                  },
-                )
-              ],
-            )),
+                                    ),
+                                  )
+                                : gwb(0)
+                          ]))
+                    ]);
+                  })
+            ])),
         Positioned.fill(
             top: 55.w,
             child: GetBuilder<StatisticsFacilitatorListController>(
@@ -326,266 +362,246 @@ class StatisticsFacilitatorList extends StatelessWidget {
       int index, Map data, StatisticsFacilitatorListController controller) {
     bool open = data["open"] ?? false;
     int cellCount = 5;
+    bool isZs = (data["location"] ?? 0) <= 1;
     return UnconstrainedBox(
-      child: AnimatedContainer(
-        margin: EdgeInsets.only(top: 15.w),
-        duration: const Duration(milliseconds: 300),
-        width: 345.w,
-        height: open ? 75.w + 25.w + cellCount * 23.w + 45.w + 45.w : 165.w,
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(4.w)),
-        child: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 75.w,
-                child: Center(
-                  child: sbRow([
-                    centRow([
-                      gwb(15),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(45.w / 2),
-                        child: CustomNetworkImage(
-                          src: AppDefault().imageUrl + (data["u_Avatar"] ?? ""),
-                          width: 45.w,
-                          height: 45.w,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      gwb(9.5),
-                      centClm([
-                        centRow([
-                          getSimpleText(
-                              data["u_Name"] != null &&
-                                      data["u_Name"].isNotEmpty
-                                  ? data["u_Name"]
-                                  : data["u_Mobile"] ?? "",
-                              15,
-                              AppColor.text2,
-                              isBold: true),
-                          gwb(5),
-                          Image.asset(
-                            assetsName(
-                                "mine/vip/level${data["uL_Level"] ?? 1}"),
-                            width: 31.5.w,
-                            fit: BoxFit.fitWidth,
-                          ),
-                          getSimpleText(data["uLevelName"] ?? "", 10,
-                              const Color(0xFFBB5D10))
-                        ]),
-                        ghb(5),
-                        getSimpleText(hidePhoneNum(data["u_Mobile"] ?? ""), 12,
-                            AppColor.text2),
-                      ], crossAxisAlignment: CrossAxisAlignment.start)
-                    ]),
-                    Container(
-                      width: 50.w,
-                      height: 18.w,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.horizontal(
-                              left: Radius.circular(9.w)),
-                          color: (data["tStatu"] ?? -1) == 1
-                              ? AppColor.theme.withOpacity(0.1)
-                              : (data["tStatu"] ?? -1) == 0
-                                  ? AppColor.red.withOpacity(0.1)
-                                  : Colors.transparent),
-                      child: Align(
-                        child: getSimpleText(
-                            (data["tStatu"] ?? -1) == 1
-                                ? "有效"
-                                : (data["tStatu"] ?? -1) == 0
-                                    ? "无效"
-                                    : "",
-                            10,
-                            (data["tStatu"] ?? -1) == 1
-                                ? AppColor.theme
-                                : (data["tStatu"] ?? -1) == 0
-                                    ? AppColor.red
-                                    : Colors.transparent),
-                      ),
-                    )
-                  ], width: 345, crossAxisAlignment: CrossAxisAlignment.start),
-                ),
-              ),
-              AnimatedContainer(
-                height: open ? 25.w + cellCount * 23.w + 45.w : 45.w,
-                width: 315.w,
-                duration: const Duration(milliseconds: 300),
-                decoration: BoxDecoration(
-                    color: AppColor.pageBackgroundColor,
-                    borderRadius: BorderRadius.circular(4.w)),
-                child: SingleChildScrollView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  child: Column(
-                    children: [
-                      sbhRow([
-                        Padding(
-                          padding: EdgeInsets.only(left: 15.5.w),
-                          child: Text.rich(TextSpan(
-                              text: "累积交易(元)：",
-                              style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: AppColor.text2,
-                                  fontWeight: AppDefault.fontBold),
-                              children: [
-                                TextSpan(
-                                    text: priceFormat(data["tolAmt"] ?? 0,
-                                        savePoint: 2,
-                                        tenThousand:
-                                            (data["tolAmt"] ?? 0) >= 100000,
-                                        tenThousandUnit: false),
-                                    style: TextStyle(
-                                        fontSize: 12.sp,
-                                        color: AppColor.red,
-                                        fontWeight: AppDefault.fontBold)),
-                                TextSpan(
-                                  text:
-                                      "${(data["tolAmt"] ?? 0) >= 100000 ? "万" : ""}元",
-                                ),
-                              ])),
-                        ),
+      child: CustomButton(
+        onPressed: () {
+          push(StatisticsFacilitatorDetail(isDirectly: isZs, teamData: data),
+              null,
+              binding: StatisticsFacilitatorDetailBinding());
+        },
+        child: AnimatedContainer(
+          margin: EdgeInsets.only(top: 15.w),
+          duration: const Duration(milliseconds: 300),
+          width: 345.w,
+          // height: open ? 75.w + 25.w + cellCount * 23.w + 45.w + 45.w : 165.w,
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(4.w)),
+          child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 75.w,
+                  child: Center(
+                    child: sbRow([
+                      centRow([
+                        gwb(15),
                         SizedBox(
-                          width: 31.w,
-                          height: 45.w,
-                          child: Center(
-                              child: AnimatedRotation(
-                            turns: open ? 1.25 : 1,
-                            duration: const Duration(milliseconds: 200),
-                            child: Image.asset(
-                              assetsName("statistics/icon_arrow_right_gray"),
-                              width: 12.w,
+                          width: 45.w,
+                          height: isZs ? 55.w : 45.w,
+                          child: Stack(
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(45.w / 2),
+                                  child: CustomNetworkImage(
+                                    src: AppDefault().imageUrl +
+                                        (data["u_Avatar"] ?? ""),
+                                    width: 45.w,
+                                    height: 45.w,
+                                    fit: BoxFit.cover,
+                                    errorWidget: Image.asset(
+                                        assetsName("common/default_head"),
+                                        width: 45.w,
+                                        height: 45.w,
+                                        fit: BoxFit.fill),
+                                  )),
+                              !isZs
+                                  ? gemp()
+                                  : Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Container(
+                                          width: 43.w,
+                                          height: 18.w,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                              color: const Color(0xFFFF8D40),
+                                              borderRadius:
+                                                  BorderRadius.circular(4.w)),
+                                          child: getSimpleText(
+                                              "直属", 12, Colors.white)),
+                                    )
+                            ],
+                          ),
+                        ),
+                        gwb(9.5),
+                        centClm([
+                          centRow([
+                            getSimpleText(
+                                data["u_Name"] != null &&
+                                        data["u_Name"].isNotEmpty
+                                    ? data["u_Name"]
+                                    : data["u_Mobile"] ?? "",
+                                15,
+                                AppColor.text2,
+                                isBold: true),
+                            gwb(5),
+                            Image.asset(
+                              assetsName(
+                                  "mine/vip/level${data["u_Level"] ?? 1}"),
+                              width: 31.5.w,
                               fit: BoxFit.fitWidth,
                             ),
-                          )),
-                        ),
-                      ], width: 315, height: 45),
-                      gline(300, 0.5, color: const Color(0xFFDFDFDF)),
-                      SizedBox(
-                        width: 315.w,
-                        height: 25.w + cellCount * 23.w,
-                        child: (data["isLoading"] ?? false)
-                            ? Center(
-                                child: kIsWeb
-                                    ? CustomEmptyView(
-                                        isLoading: (data["isLoading"] ?? false),
-                                        topSpace: 20,
-                                        bottomSpace: 20,
-                                        centerSpace: 10)
-                                    : SkeletonParagraph(
-                                        style: SkeletonParagraphStyle(
-                                            padding: EdgeInsets.only(
-                                                top: 15.w,
-                                                left: 15.w,
-                                                right: 15.w),
-                                            lines: cellCount,
-                                            spacing: 13.w,
-                                            lineStyle: SkeletonLineStyle(
-                                              // randomLength: true,
-                                              // width: 265.w,
-                                              height: 10.w,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              // minLength: 150.w,
-                                              // maxLength: 160.w,
-                                            )),
-                                      ),
-                              )
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(cellCount, (index) {
-                                  String t1 = "";
-                                  String t2 = "";
-                                  Map oData = data["openData"] ?? {};
-                                  if (cellCount == 8) {
-                                    switch (index) {
-                                      case 0:
-                                        t1 = "注册时间";
-                                        t2 = "${oData["zcTime"] ?? ""}";
-                                        break;
-                                      case 1:
-                                        t1 = "盘主数量(人)";
-                                        t2 = "${oData["ul3Num"] ?? 0}";
-                                        break;
-                                      case 2:
-                                        t1 = "伙伴数量(人)";
-                                        t2 = "${oData["ul2Num"] ?? 0}";
-                                        break;
-                                      case 3:
-                                        t1 = "累计贡献(元)";
-                                        t2 = priceFormat(oData["toAmt"] ?? 0,
-                                            tenThousand: true);
-                                        break;
-                                      case 4:
-                                        t1 = "累计收益(元)";
-                                        t2 = priceFormat(oData["myAmt"] ?? 0,
-                                            tenThousand: true);
-                                        break;
-                                      case 5:
-                                        t1 = "库存(台)";
-                                        t2 = "${oData["noBingNum"] ?? 0}";
-                                        break;
-                                      case 6:
-                                        t1 = "已激活(台)";
-                                        t2 = "${oData["atcNum"] ?? 0}";
-                                        break;
-                                      case 7:
-                                        t1 = "有效激活(台)";
-                                        t2 = "${oData["haveAtcNum"] ?? 0}";
-                                        break;
-                                    }
-                                  } else {
-                                    switch (index) {
-                                      case 0:
-                                        t1 = "注册时间";
-                                        t2 = "${oData["zcTime"] ?? ""}";
-                                        break;
-                                      // case 1:
-                                      //   t1 = "盘主数量(人)";
-                                      //   t2 = "${oData["ul3Num"] ?? 0}";
-                                      //   break;
-                                      case 1:
-                                        t1 = "伙伴数量(人)";
-                                        t2 = "${oData["ul2Num"] ?? 0}";
-                                        break;
-                                      case 2:
-                                        t1 = "累计贡献(元)";
-                                        t2 = priceFormat(oData["toAmt"] ?? 0,
-                                            tenThousand: true);
-                                        break;
-                                      case 3:
-                                        t1 = "累计收益(元)";
-                                        t2 = priceFormat(oData["myAmt"] ?? 0,
-                                            tenThousand: true);
-                                        break;
-                                      case 4:
-                                        t1 = "库存(台)";
-                                        t2 = "${oData["noBingNum"] ?? 0}";
-                                        break;
-                                      case 5:
-                                        t1 = "已激活(台)";
-                                        t2 = "${oData["atcNum"] ?? 0}";
-                                        break;
-                                      case 6:
-                                        t1 = "有效激活(台)";
-                                        t2 = "${oData["haveAtcNum"] ?? 0}";
-                                        break;
-                                    }
-                                  }
-
-                                  return sbhRow([
-                                    getSimpleText(t1, 12, AppColor.text3),
-                                    getSimpleText(t2, 12, AppColor.text2),
-                                  ], width: 315 - 15 * 2, height: 23);
-                                }),
-                              ),
-                      ),
+                            getSimpleText(data["uLevelName"] ?? "", 10,
+                                const Color(0xFFBB5D10))
+                          ]),
+                          ghb(5),
+                          getSimpleText(hidePhoneNum(data["u_Mobile"] ?? ""),
+                              12, AppColor.text2),
+                        ], crossAxisAlignment: CrossAxisAlignment.start)
+                      ]),
+                      isZs
+                          ? gwb(0)
+                          : Padding(
+                              padding: EdgeInsets.only(right: 15.w),
+                              child: getSimpleText(
+                                  "所属团队：${data["t_Name"] ?? ""}",
+                                  12,
+                                  AppColor.textGrey5),
+                            )
                     ],
+                        width: 345,
+                        crossAxisAlignment: CrossAxisAlignment.start),
                   ),
                 ),
-              ),
-              // ghb(15),
-            ],
+                AnimatedContainer(
+                  height: open ? 25.w + cellCount * 23.w + 45.w : 45.w,
+                  width: 315.w,
+                  duration: const Duration(milliseconds: 300),
+                  decoration: BoxDecoration(
+                      color: AppColor.pageBackgroundColor,
+                      borderRadius: BorderRadius.circular(4.w)),
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: Column(
+                      children: [
+                        CustomButton(
+                          onPressed: () {
+                            data["open"] = !open;
+                            controller.update();
+                          },
+                          child: sbhRow([
+                            Padding(
+                              padding: EdgeInsets.only(left: 15.5.w),
+                              child: Text.rich(TextSpan(
+                                  text: "累积交易(元)：",
+                                  style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: AppColor.text2,
+                                      fontWeight: AppDefault.fontBold),
+                                  children: [
+                                    TextSpan(
+                                        text: priceFormat(data["tolAmt"] ?? 0,
+                                            savePoint: 2,
+                                            tenThousand:
+                                                (data["tolAmt"] ?? 0) >= 100000,
+                                            tenThousandUnit: false),
+                                        style: TextStyle(
+                                            fontSize: 12.sp,
+                                            color: AppColor.red,
+                                            fontWeight: AppDefault.fontBold)),
+                                    TextSpan(
+                                      text:
+                                          "${(data["tolAmt"] ?? 0) >= 100000 ? "万" : ""}元",
+                                    ),
+                                  ])),
+                            ),
+                            SizedBox(
+                              width: 31.w,
+                              height: 45.w,
+                              child: Center(
+                                  child: AnimatedRotation(
+                                turns: open ? 0.5 : 1,
+                                duration: const Duration(milliseconds: 200),
+                                child: Image.asset(
+                                  assetsName("statistics_page/icon_cell_open"),
+                                  width: 18.w,
+                                  fit: BoxFit.fitWidth,
+                                ),
+                              )),
+                            ),
+                          ], width: 315, height: 45),
+                        ),
+                        gline(300, 0.5, color: const Color(0xFFDFDFDF)),
+                        SizedBox(
+                          width: 315.w,
+                          height: 25.w + cellCount * 23.w,
+                          child: (data["isLoading"] ?? false)
+                              ? Center(
+                                  child: kIsWeb
+                                      ? CustomEmptyView(
+                                          isLoading:
+                                              (data["isLoading"] ?? false),
+                                          topSpace: 20,
+                                          bottomSpace: 20,
+                                          centerSpace: 10)
+                                      : SkeletonParagraph(
+                                          style: SkeletonParagraphStyle(
+                                              padding: EdgeInsets.only(
+                                                  top: 15.w,
+                                                  left: 15.w,
+                                                  right: 15.w),
+                                              lines: cellCount,
+                                              spacing: 13.w,
+                                              lineStyle: SkeletonLineStyle(
+                                                // randomLength: true,
+                                                // width: 265.w,
+                                                height: 10.w,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                // minLength: 150.w,
+                                                // maxLength: 160.w,
+                                              )),
+                                        ),
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(cellCount, (index) {
+                                    String t1 = "";
+                                    String t2 = "";
+
+                                    switch (index) {
+                                      case 0:
+                                        t1 = "日交易量(元)";
+                                        t2 = priceFormat(
+                                            data["teamThisDAmount"] ?? 0);
+                                        break;
+                                      case 1:
+                                        t1 = "月激活台数";
+                                        t2 =
+                                            "${data["actTermiMonthNum"] ?? 0}台/月";
+                                        break;
+                                      case 2:
+                                        t1 = "日激活台数";
+                                        t2 =
+                                            "${data["teamThisDActTerminal"] ?? 0}台/日";
+                                        break;
+                                      case 3:
+                                        t1 = "月返现台数";
+                                        t2 =
+                                            "${data["serverTermiMonthNum"] ?? 0}台/月";
+                                        break;
+                                      case 4:
+                                        t1 = "日返现台数";
+                                        t2 =
+                                            "${data["serverTeamThisDTerminal"] ?? 0}台/日";
+                                        break;
+                                    }
+
+                                    return sbhRow([
+                                      getSimpleText(t1, 12, AppColor.text3),
+                                      getSimpleText(t2, 12, AppColor.text2),
+                                    ], width: 315 - 15 * 2, height: 23);
+                                  }),
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                ghb(15)
+              ],
+            ),
           ),
         ),
       ),

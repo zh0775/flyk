@@ -269,49 +269,49 @@ class Rank extends GetView<RankController> {
                               image: AssetImage(assetsName("rank/bg_rank")))),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: paddingSizeTop(context) + kToolbarHeight),
-                            child: centRow(List.generate(
-                                2,
-                                (index) => CustomButton(
-                                      onPressed: () {
-                                        controller.dayMonthIdx = index;
-                                      },
-                                      child: Container(
-                                        width: 51.w,
-                                        height: 30.w,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                            color: controller.dayMonthIdx ==
-                                                    index
-                                                ? AppColor.theme
-                                                : Colors.white,
-                                            border:
-                                                controller
-                                                            .dayMonthIdx ==
-                                                        index
-                                                    ? null
-                                                    : Border
-                                                        .all(
-                                                            width: 1.w,
-                                                            color: AppColor
-                                                                .theme),
-                                            borderRadius: BorderRadius
-                                                .horizontal(
-                                                    left: Radius.circular(
-                                                        index == 0 ? 2.w : 0),
-                                                    right: Radius.circular(
-                                                        index == 1 ? 2.w : 0))),
-                                        child: getSimpleText(
-                                            index == 0 ? "日榜" : "月榜",
-                                            16,
-                                            controller.dayMonthIdx == index
-                                                ? Colors.white
-                                                : AppColor.theme),
-                                      ),
-                                    ))),
-                          )
+                          // Padding(
+                          //   padding: EdgeInsets.only(
+                          //       top: paddingSizeTop(context) + kToolbarHeight),
+                          //   child: centRow(List.generate(
+                          //       2,
+                          //       (index) => CustomButton(
+                          //             onPressed: () {
+                          //               controller.dayMonthIdx = index;
+                          //             },
+                          //             child: Container(
+                          //               width: 51.w,
+                          //               height: 30.w,
+                          //               alignment: Alignment.center,
+                          //               decoration: BoxDecoration(
+                          //                   color: controller.dayMonthIdx ==
+                          //                           index
+                          //                       ? AppColor.theme
+                          //                       : Colors.white,
+                          //                   border:
+                          //                       controller
+                          //                                   .dayMonthIdx ==
+                          //                               index
+                          //                           ? null
+                          //                           : Border
+                          //                               .all(
+                          //                                   width: 1.w,
+                          //                                   color: AppColor
+                          //                                       .theme),
+                          //                   borderRadius: BorderRadius
+                          //                       .horizontal(
+                          //                           left: Radius.circular(
+                          //                               index == 0 ? 2.w : 0),
+                          //                           right: Radius.circular(
+                          //                               index == 1 ? 2.w : 0))),
+                          //               child: getSimpleText(
+                          //                   index == 0 ? "日榜" : "月榜",
+                          //                   16,
+                          //                   controller.dayMonthIdx == index
+                          //                       ? Colors.white
+                          //                       : AppColor.theme),
+                          //             ),
+                          //           ))),
+                          // )
                         ],
                       ),
                     ),
@@ -411,7 +411,7 @@ class Rank extends GetView<RankController> {
                       return SizedBox(
                         // color: Colors.amber,
                         width: 375.w,
-                        height: 115.w,
+                        // height: 115.w,
                         child: Column(
                           children: [
                             SizedBox(
@@ -438,81 +438,81 @@ class Rank extends GetView<RankController> {
                                 ],
                               ),
                             ),
-                            SizedBox(
-                              width: 375.w,
-                              height: 43.5.w,
-                              child: GetX<RankController>(
-                                builder: (_) {
-                                  List dateList = controller.dayMonthIdx == 0
-                                      ? controller.dayList
-                                      : controller.monthList;
-                                  int dateIdx = controller.dayMonthIdx == 0
-                                      ? controller.dayIdx
-                                      : controller.monthIdx;
-                                  return ListView.builder(
-                                    controller: controller.dateScrollerCtrl,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: dateList.length,
-                                    itemBuilder: (context, index) {
-                                      int date = dateList[index];
-                                      return CustomButton(
-                                        onPressed: () {
-                                          if (controller.dayMonthIdx == 0) {
-                                            controller.dayIdx = index;
-                                          } else {
-                                            controller.monthIdx = index;
-                                          }
-                                        },
-                                        child: SizedBox(
-                                          width: 50.w,
-                                          height: 43.5.w,
-                                          child: Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: centClm([
-                                              getSimpleText(
-                                                  "$date",
-                                                  16,
-                                                  controller.dayMonthIdx == 0
-                                                      ? dateIdx == index
-                                                          ? AppColor.textBlack
-                                                          : AppColor.textGrey5
-                                                      : dateIdx == index
-                                                          ? AppColor.textBlack
-                                                          : AppColor.textGrey5,
-                                                  isBold:
-                                                      controller.dayMonthIdx ==
-                                                              0
-                                                          ? dateIdx == index
-                                                          : dateIdx == index),
-                                              ghb(13),
-                                              Container(
-                                                width: 15.w,
-                                                height: 3.w,
-                                                decoration: BoxDecoration(
-                                                    color: controller
-                                                                .dayMonthIdx ==
-                                                            0
-                                                        ? dateIdx == index
-                                                            ? AppColor.theme
-                                                            : Colors.transparent
-                                                        : dateIdx == index
-                                                            ? AppColor.theme
-                                                            : Colors
-                                                                .transparent,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1.5.w)),
-                                              )
-                                            ]),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                            gline(375, 0.5),
+                            // SizedBox(
+                            //   width: 375.w,
+                            //   height: 43.5.w,
+                            //   child: GetX<RankController>(
+                            //     builder: (_) {
+                            //       List dateList = controller.dayMonthIdx == 0
+                            //           ? controller.dayList
+                            //           : controller.monthList;
+                            //       int dateIdx = controller.dayMonthIdx == 0
+                            //           ? controller.dayIdx
+                            //           : controller.monthIdx;
+                            //       return ListView.builder(
+                            //         controller: controller.dateScrollerCtrl,
+                            //         scrollDirection: Axis.horizontal,
+                            //         itemCount: dateList.length,
+                            //         itemBuilder: (context, index) {
+                            //           int date = dateList[index];
+                            //           return CustomButton(
+                            //             onPressed: () {
+                            //               if (controller.dayMonthIdx == 0) {
+                            //                 controller.dayIdx = index;
+                            //               } else {
+                            //                 controller.monthIdx = index;
+                            //               }
+                            //             },
+                            //             child: SizedBox(
+                            //               width: 50.w,
+                            //               height: 43.5.w,
+                            //               child: Align(
+                            //                 alignment: Alignment.bottomCenter,
+                            //                 child: centClm([
+                            //                   getSimpleText(
+                            //                       "$date",
+                            //                       16,
+                            //                       controller.dayMonthIdx == 0
+                            //                           ? dateIdx == index
+                            //                               ? AppColor.textBlack
+                            //                               : AppColor.textGrey5
+                            //                           : dateIdx == index
+                            //                               ? AppColor.textBlack
+                            //                               : AppColor.textGrey5,
+                            //                       isBold:
+                            //                           controller.dayMonthIdx ==
+                            //                                   0
+                            //                               ? dateIdx == index
+                            //                               : dateIdx == index),
+                            //                   ghb(13),
+                            //                   Container(
+                            //                     width: 15.w,
+                            //                     height: 3.w,
+                            //                     decoration: BoxDecoration(
+                            //                         color: controller
+                            //                                     .dayMonthIdx ==
+                            //                                 0
+                            //                             ? dateIdx == index
+                            //                                 ? AppColor.theme
+                            //                                 : Colors.transparent
+                            //                             : dateIdx == index
+                            //                                 ? AppColor.theme
+                            //                                 : Colors
+                            //                                     .transparent,
+                            //                         borderRadius:
+                            //                             BorderRadius.circular(
+                            //                                 1.5.w)),
+                            //                   )
+                            //                 ]),
+                            //               ),
+                            //             ),
+                            //           );
+                            //         },
+                            //       );
+                            //     },
+                            //   ),
+                            // ),
+                            // gline(375, 0.5),
                             Container(
                               margin: EdgeInsets.only(top: 14.5.w),
                               width: 345.w,

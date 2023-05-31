@@ -1,18 +1,18 @@
+import 'dart:convert' as convert;
+
 import 'package:cxhighversion2/component/custom_background.dart';
-import 'package:cxhighversion2/information/data_standard_detail.dart';
-import 'package:flutter/material.dart';
-import 'package:cxhighversion2/component/app_bottom_tips.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
+import 'package:cxhighversion2/information/data_standard_detail.dart';
 import 'package:cxhighversion2/information/information_detail.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/notify_default.dart';
 import 'package:cxhighversion2/util/storage_default.dart';
 import 'package:cxhighversion2/util/user_default.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'dart:convert' as convert;
 
 class InformationBinding extends Bindings {
   @override
