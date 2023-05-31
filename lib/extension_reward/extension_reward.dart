@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:cxhighversion2/component/custom_empty_view.dart';
-import 'package:cxhighversion2/machine/machine_order_util.dart';
 import 'package:cxhighversion2/service/http.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -52,7 +51,9 @@ class ExtensionRewardController extends GetxController {
           noticeList = [...noticeList, ...noticeList];
           update();
         } else {
-          _scrollController.animateTo(pixels, duration: const Duration(milliseconds: 500), curve: Curves.linear);
+          _scrollController.animateTo(pixels,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.linear);
         }
       }
     });
@@ -113,7 +114,12 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
             top: 0,
             child: headerContainer(),
           ),
-          Positioned.fill(top: 208.w, left: 15.w, right: 15.w, bottom: 0, child: extensionRewardContainer()),
+          Positioned.fill(
+              top: 208.w,
+              left: 15.w,
+              right: 15.w,
+              bottom: 0,
+              child: extensionRewardContainer()),
         ],
       ),
     );
@@ -134,7 +140,9 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
             width: 375.w,
             height: 28.w,
             padding: EdgeInsets.only(left: 12.5.w),
-            decoration: BoxDecoration(border: Border.all(width: 0.5.w, color: Color(0xFFEFE6D4)), color: Color(0xFFFBFAE6)),
+            decoration: BoxDecoration(
+                border: Border.all(width: 0.5.w, color: Color(0xFFEFE6D4)),
+                color: Color(0xFFFBFAE6)),
             child: Row(
               children: [
                 Image(
@@ -157,7 +165,11 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
                         itemExtent: 320.w,
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
-                          return getSimpleText("${controller.noticeList[index]['title']}", 10, Color(0xFFFF881E), textHeight: 2);
+                          return getSimpleText(
+                              "${controller.noticeList[index]['title']}",
+                              10,
+                              Color(0xFFFF881E),
+                              textHeight: 2);
                         },
                       );
                     },
@@ -195,7 +207,8 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
                         children: [
                           getSimpleText('本月入账(人)', 12, Colors.white),
                           ghb(11.5),
-                          getSimpleText('200.00', 18, Colors.white, isBold: true),
+                          getSimpleText('200.00', 18, Colors.white,
+                              isBold: true),
                         ],
                       )
                     ],
@@ -233,10 +246,13 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
                         Container(
                           width: 3.w,
                           height: 15.w,
-                          decoration: BoxDecoration(color: Color(0xFFFE4D3B), borderRadius: BorderRadius.circular(1.25.w)),
+                          decoration: BoxDecoration(
+                              color: Color(0xFFFE4D3B),
+                              borderRadius: BorderRadius.circular(1.25.w)),
                         ),
                         gwb(10.5),
-                        getSimpleText('奖励记录', 16, Color(0xFF333333), isBold: true)
+                        getSimpleText('奖励记录', 16, Color(0xFF333333),
+                            isBold: true)
                       ],
                     ),
                   ),
@@ -256,12 +272,14 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
                     if (controller.extensionRewardData.isEmpty) {
                       return SingleChildScrollView(
                         child: Center(
-                          child: CustomEmptyView(isLoading: controller.isLoading),
+                          child:
+                              CustomEmptyView(isLoading: controller.isLoading),
                         ),
                       );
                     } else {
                       return EasyRefresh.builder(
-                          onLoad: controller.extensionRewardData.length > controller.total
+                          onLoad: controller.extensionRewardData.length >
+                                  controller.total
                               ? null
                               : () {
                                   controller.pageNum++;
@@ -270,9 +288,12 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
                           childBuilder: (context, physics) {
                             return ListView.builder(
                                 physics: physics,
-                                itemCount: controller.extensionRewardData.length,
+                                itemCount:
+                                    controller.extensionRewardData.length,
                                 itemBuilder: (context, index) {
-                                  Map data = controller.extensionRewardData[index] ?? {};
+                                  Map data =
+                                      controller.extensionRewardData[index] ??
+                                          {};
                                   return extensionRewardItem(data);
                                 });
                           });
@@ -309,19 +330,24 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
                             children: [
                               Row(
                                 children: [
-                                  getSimpleText("${item['name']}", 16, Color(0xFF333333)),
+                                  getSimpleText(
+                                      "${item['name']}", 16, Color(0xFF333333)),
                                   Image.asset(
                                     width: 31.5.w,
                                     height: 15.5.w,
-                                    assetsName("extension_reward/level${item['levelIndex']}"),
+                                    assetsName(
+                                        "extension_reward/level${item['levelIndex']}"),
                                     fit: BoxFit.fill,
                                   ),
                                 ],
                               ),
-                              getSimpleText("+${item['reward']}元", 14, Color(0xFFFE493B), isBold: true)
+                              getSimpleText(
+                                  "+${item['reward']}元", 14, Color(0xFFFE493B),
+                                  isBold: true)
                             ],
                           ),
-                          getSimpleText("注册时间：${item['time']}", 12, Color(0xFF333333))
+                          getSimpleText(
+                              "注册时间：${item['time']}", 12, Color(0xFF333333))
                         ],
                       )),
                 ],
@@ -332,7 +358,9 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
               width: 345.w - 15.w * 2,
               height: 45.w,
               padding: EdgeInsets.only(left: 15.w, right: 15.w),
-              decoration: BoxDecoration(color: Color(0xFFFAFAFA), borderRadius: BorderRadius.circular(4.w)),
+              decoration: BoxDecoration(
+                  color: Color(0xFFFAFAFA),
+                  borderRadius: BorderRadius.circular(4.w)),
               child: Row(
                 children: [
                   SizedBox(
@@ -341,7 +369,9 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
                       children: [
                         getSimpleText('采购台数：', 12, Color(0xFF333333)),
                         gwb(8.5),
-                        getSimpleText("${item['purchaseCount']}", 14, Color(0xFFFE4D3B), isBold: true),
+                        getSimpleText(
+                            "${item['purchaseCount']}", 14, Color(0xFFFE4D3B),
+                            isBold: true),
                       ],
                     ),
                   ),
@@ -351,7 +381,9 @@ class ExtensionRewardPage extends GetView<ExtensionRewardController> {
                       children: [
                         getSimpleText('激活台数：', 12, Color(0xFF333333)),
                         gwb(8.5),
-                        getSimpleText("${item['activateCount']}", 14, Color(0xFFFE4D3B), isBold: true),
+                        getSimpleText(
+                            "${item['activateCount']}", 14, Color(0xFFFE4D3B),
+                            isBold: true),
                       ],
                     ),
                   )

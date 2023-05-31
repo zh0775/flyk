@@ -1,5 +1,3 @@
-import 'dart:convert' as convert;
-
 import 'package:cxhighversion2/component/app_banner.dart';
 import 'package:cxhighversion2/component/app_bottom_tips.dart';
 // import 'package:cxhighversion2/component/app_lottery_webview.dart';
@@ -12,13 +10,9 @@ import 'package:cxhighversion2/entrepreneurship_support/support.dart'
     deferred as support;
 import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart'
     deferred as business_school_detail;
-import 'package:cxhighversion2/home/businessSchool/promotion_skills.dart'
-    deferred as promotion_skills;
 import 'package:cxhighversion2/home/component/custom_message.dart';
 import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart'
     deferred as contact_customer_service;
-import 'package:cxhighversion2/home/fodderlib/fodder_lib.dart'
-    deferred as fodder_lib;
 import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase.dart'
     deferred as integral_repurchase;
 import 'package:cxhighversion2/home/machine_manage.dart'
@@ -44,8 +38,6 @@ import 'package:cxhighversion2/machine/machine_register.dart'
     deferred as machine_register;
 import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication.dart'
     deferred as identity_authentication;
-import 'package:cxhighversion2/mine/mine_help_center.dart'
-    deferred as mine_help_center;
 import 'package:cxhighversion2/mine/myWallet/my_wallet.dart'
     deferred as my_wallet;
 import 'package:cxhighversion2/pay/share_invite.dart' deferred as share_invite;
@@ -673,11 +665,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                           binding: share_invite
                                               .ShareInviteBinding());
                                     } else if (index == 1) {
-                                      await promotion_skills.loadLibrary();
-                                      push(promotion_skills.PromotionSkills(),
-                                          null,
-                                          binding: promotion_skills
-                                              .PromotionSkillsBinding());
                                     } else if (index == 2) {
                                       await machine_transfer.loadLibrary();
                                       push(
@@ -1069,6 +1056,12 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             push(product_store_list.ProductStoreList(), null,
                 binding: product_store_list.ProductStoreListBinding(),
                 arguments: {"levelType": type, "title": e["name"] ?? ""});
+          } else if (path == "/pages/extensionreward") {
+            /// 拓新奖励
+            CustomDeferred().toExtensionRewardPage();
+          } else if (path == "/pages/promotionskills") {
+            /// 推广技巧
+            CustomDeferred().toPromotionSkills();
           }
         },
         child: SizedBox(

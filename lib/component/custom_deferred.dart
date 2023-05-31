@@ -7,10 +7,14 @@ import 'package:cxhighversion2/business/pointsMall/shopping_product_list.dart'
     deferred as shopping_product_list;
 import 'package:cxhighversion2/component/custom_webview.dart'
     deferred as customwebview;
+import 'package:cxhighversion2/extension_reward/extension_reward.dart'
+    deferred as extension_reward;
 import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart'
     deferred as business_school_detail;
 import 'package:cxhighversion2/home/businessSchool/business_school_list_page.dart'
     deferred as business_school_list_page;
+import 'package:cxhighversion2/home/businessSchool/promotion_skills.dart'
+    deferred as promotion_skills;
 import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart'
     deferred as contact_customer_service;
 import 'package:cxhighversion2/home/fodderlib/fodder_lib.dart'
@@ -109,6 +113,40 @@ class CustomDeferred {
           binding: business_school_detail.BusinessSchoolDetailBinding());
     } else {
       toBusinessSchoolDetail(arg: arg);
+    }
+  }
+
+  /// 拓新奖励/推广奖励
+  toExtensionRewardPage({dynamic arg}) async {
+    var completer = Completer();
+    extension_reward.loadLibrary().then((_) {
+      completer.complete(true);
+    }).catchError((e) {
+      completer.complete(false);
+    });
+    var loaded = await completer.future;
+    if (loaded) {
+      Get.to(extension_reward.ExtensionRewardPage(),
+          binding: extension_reward.ExtensionRewardBinding());
+    } else {
+      toExtensionRewardPage(arg: arg);
+    }
+  }
+
+  /// 推广奖励
+  toPromotionSkills({dynamic arg}) async {
+    var completer = Completer();
+    promotion_skills.loadLibrary().then((_) {
+      completer.complete(true);
+    }).catchError((e) {
+      completer.complete(false);
+    });
+    var loaded = await completer.future;
+    if (loaded) {
+      Get.to(promotion_skills.PromotionSkills(),
+          binding: promotion_skills.PromotionSkillsBinding());
+    } else {
+      toPromotionSkills(arg: arg);
     }
   }
 

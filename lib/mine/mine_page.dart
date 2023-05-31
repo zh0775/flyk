@@ -708,11 +708,10 @@ class _MinePageState extends State<MinePage>
           child: centRow([
             centRow([
               Image.asset(
-                assetsName(
-                    "mine/${title == "我的钱包" ? "icon_qbye" : "icon_jfye"}"),
-                height: 26.w,
-                fit: BoxFit.fitHeight,
-              ),
+                  assetsName(
+                      "mine/${title == "我的钱包" ? "icon_qbye" : "icon_jfye"}"),
+                  height: 26.w,
+                  fit: BoxFit.fitHeight),
               gwb(17.5),
               centClm([
                 getSimpleText(title, 15, AppColor.text, isBold: true),
