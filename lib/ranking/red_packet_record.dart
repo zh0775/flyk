@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:oktoast/oktoast.dart';
 
 class RedPacketRecordBinding implements Bindings {
   @override
@@ -75,7 +76,7 @@ class RedPacketRecordController extends GetxController {
         params: {},
         success: (success, json) {
           if (success) {
-            Map jsonData = json['data'] ?? {};
+            showToast("撤单成功");
           }
         },
         after: () {});
@@ -201,7 +202,7 @@ class RedPacketRecordPage extends GetView<RedPacketRecordController> {
                     children: [
                       CustomButton(
                         onPressed: () {
-                          push(const RedPacketDetailPage(), null, binding: RedPacketDetailBinding());
+                          push(const RedPacketDetailPage(), null, binding: RedPacketDetailBinding(), arguments: {"data": item['id']});
                         },
                         child: Container(
                           width: 65.w,
@@ -214,7 +215,6 @@ class RedPacketRecordPage extends GetView<RedPacketRecordController> {
                       CustomButton(
                         onPressed: () {
                           controller.showModal('是否取消奖励金红包订单？', () {
-                            print("确认=========");
                             controller.confirmRedPacketID(item['id']);
                           });
                         },
