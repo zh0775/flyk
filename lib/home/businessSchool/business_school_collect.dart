@@ -6,7 +6,7 @@ import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -105,7 +105,7 @@ class BusinessSchoolCollectController extends GetxController {
     Map<String, dynamic> params = {
       "pageNo": pageNos[myLoadIdx],
       "pageSize": pageSizes[myLoadIdx],
-      "type": listStatus[myLoadIdx]["id"],
+      "type": listStatus[myLoadIdx]["id"]
     };
     // if (searchText != null && searchText.isNotEmpty) {
     //   params["devNo"] = searchText;

@@ -206,19 +206,22 @@ class ProductStoreConfirmController extends GetxController {
     if (payTypeList.isEmpty) {
       return;
     }
-    Map<String, dynamic> params = {
-      "delivery_Method": deliveryType + 1,
-      "levelConfigId": productData["levelGiftId"],
-      "num": currentCount,
-      "contactID": address["id"] ?? 0,
-      "pay_MethodType":
-          int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"),
-      "pay_Method": int.parse("${payTypeList[currentPayTypeIndex]["value"]}")
-    };
+    // Map<String, dynamic> params = {
+    //   "delivery_Method": deliveryType + 1,
+    //   "levelConfigId": productData["levelGiftId"],
+    //   "num": currentCount,
+    //   "contactID": address["id"] ?? 0,
+    //   "pay_MethodType":
+    //       int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"),
+    //   "pay_Method": int.parse("${payTypeList[currentPayTypeIndex]["value"]}")
+    // };
+    List orderContent = [
+      {"id": productData["levelGiftId"], "num": currentCount}
+    ];
 
     simpleRequest(
       url: Urls.previewOrder,
-      params: params,
+      params: {"orderContent": orderContent},
       success: (success, json) {
         if (success) {
           previewOrderData = json["data"];
@@ -252,12 +255,16 @@ class ProductStoreConfirmController extends GetxController {
       "levelConfigId": productData["levelGiftId"],
       "num": currentCount,
       "contactID": address["id"],
+      "purchase_Type": 1,
       "pay_MethodType":
           int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"),
       "pay_Method": int.parse("${payTypeList[currentPayTypeIndex]["value"]}"),
       "version_Origin": AppDefault().versionOriginForPay(),
       // "u_3nd_Pad": payPwd,
       "user_Remarks": remarkInputCtrl.text,
+      "orderContent": [
+        {"id": productData["levelGiftId"], "num": currentCount}
+      ]
     };
     if (payPwd.isNotEmpty) {
       params["u_3nd_Pad"] = payPwd;

@@ -1,8 +1,8 @@
 // 统计 主页
-
 import 'dart:math' as math;
 
 import 'package:cxhighversion2/component/custom_button.dart';
+import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/statistics/statistics_page/statistics_business_list.dart';
 import 'package:cxhighversion2/statistics/statistics_page/statistics_facilitator_list.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
@@ -105,11 +105,44 @@ class StatisticsPageController extends GetxController {
     // print(box.size.width);
   }
 
+  /// 服务商排序
+  List filterTypeList = [
+    {"id": 0, "name": "默认排序"},
+    {"id": 1, "name": "当日激活"},
+    {"id": 2, "name": "当月激活"},
+    {"id": 3, "name": "当月交易"},
+    {"id": 4, "name": "级别排序"}
+  ];
+  final _filterTypeIdx = 0.obs;
+
+  /// 服务商排序index
+  int get filterTypeIdx => _filterTypeIdx.value;
+  set filterTypeIdx(v) {
+    if (_filterTypeIdx.value != v) {
+      _filterTypeIdx.value = v;
+    }
+  }
+
   List<GlobalKey> keyList = [GlobalKey(), GlobalKey(), GlobalKey()];
 
   final _dealSelectIdx = 0.obs;
   int get dealSelectIdx => _dealSelectIdx.value;
   set dealSelectIdx(v) => _dealSelectIdx.value = v;
+
+  /// 服务商统计
+  List teamList = [
+    {"id": 0, "name": "全部"},
+    {"id": 1, "name": "自营"},
+    {"id": 2, "name": "团队"},
+  ];
+  final _machineTeamSelectIdx = 0.obs;
+  int get machineTeamSelectIdx => _machineTeamSelectIdx.value;
+  set machineTeamSelectIdx(v) {
+    if (_machineTeamSelectIdx.value != v) {
+      _machineTeamSelectIdx.value = v;
+      loadBusinessData();
+    }
+  }
 
   List ppList = [];
 // 品牌选择
@@ -122,19 +155,22 @@ class StatisticsPageController extends GetxController {
     }
   }
 
-  // 0交易 1终端 2服务商
   final _selectTopRightType = 0.obs;
+
+  /// 0交易 1终端 2服务商
   int get selectTopRightType => _selectTopRightType.value;
   set selectTopRightType(v) {
     if (_selectTopRightType.value != v) {
       _selectTopRightType.value = v;
-
       // 数据如果为空则请求
-      if (selectTopRightType == 0 && sevendDaysDatas.isEmpty) {
+      if (selectTopRightType == 0) {
+        // && sevendDaysDatas.isEmpty
         loadSevendDaysData();
-      } else if (selectTopRightType == 1 && machineDatas.isEmpty) {
+      } else if (selectTopRightType == 1) {
+        //  && machineDatas.isEmpty
         loadMachineData();
-      } else if (selectTopRightType == 2 && businessDatas.isEmpty) {
+      } else if (selectTopRightType == 2) {
+        //  && businessDatas.isEmpty
         loadBusinessData();
       }
     }
@@ -143,7 +179,12 @@ class StatisticsPageController extends GetxController {
   // 交易金额选择的月份
   final _dealSelectDate = "".obs;
   String get dealSelectDate => _dealSelectDate.value;
-  set dealSelectDate(v) => _dealSelectDate.value = v;
+  set dealSelectDate(v) {
+    if (_dealSelectDate.value != v) {
+      _dealSelectDate.value = v;
+      loadSevendDaysData();
+    }
+  }
 
   // 终端 选择月份
   final _machineSelectDate = "".obs;
@@ -169,7 +210,7 @@ class StatisticsPageController extends GetxController {
         double.parse(homeTeamTanNo["teamLastMAmount"] ?? "0");
 
     double teamThisMAmount =
-        double.parse(homeTeamTanNo["teamThisMAmount"] ?? 0);
+        double.parse(homeTeamTanNo["teamThisMAmount"] ?? "0");
     double dValue = teamThisMAmount - teamLastMAmount;
     String cStr =
         "${dValue >= 0 ? "+" : "-"}${dValue.abs() / (teamLastMAmount <= 0.0 ? 1 : teamLastMAmount)}";
@@ -202,128 +243,185 @@ class StatisticsPageController extends GetxController {
   final _updateDate = "".obs;
   String get updateDate => _updateDate.value;
   set updateDate(v) => _updateDate.value = v;
-  // 近七日交易数据
-  final _sevendDaysDatas = Rx<List<ChartSampleData>>([]);
+
+  /// 近七日交易数据
   List<ChartSampleData> get sevendDaysDatas => _sevendDaysDatas.value;
+  final _sevendDaysDatas = Rx<List<ChartSampleData>>([]);
   set sevendDaysDatas(v) => _sevendDaysDatas.value = v;
-  // 终端统计数据
-  final _machineDatas = Rx<List<ChartSampleData>>([]);
+
+  /// 终端统计数据
   List<ChartSampleData> get machineDatas => _machineDatas.value;
+  final _machineDatas = Rx<List<ChartSampleData>>([]);
   set machineDatas(v) => _machineDatas.value = v;
   // 商户统计数据
   final _businessDatas = Rx<List<ChartSampleData>>([]);
   List<ChartSampleData> get businessDatas => _businessDatas.value;
   set businessDatas(v) => _businessDatas.value = v;
-// 请求终端统计数据
+
+  Map machineData = {};
+  String machineBuildId = "StatisticsPage_machineBuildId";
+
+  /// 请求终端统计数据
   loadMachineData() {
-    Future.delayed(const Duration(seconds: 1), () {
-      updateDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
+    DateTime date = dateFormat.parse(dealSelectDate);
+    DateFormat date2 = DateFormat("yyyy-MM-dd");
+    simpleRequest(
+        url: Urls.userTermiList,
+        params: {
+          "terminalBrandId": ppList[selectPP]["enumValue"] ?? -1,
+          "startingTime": date2.format(DateTime(date.year, date.month, 1)),
+          "end_Time": date2.format(DateTime(date.year, date.month + 1, 0)),
+        },
+        success: (success, json) {
+          if (success) {
+            machineData = json["data"] ?? {};
+            machineDatas.clear();
+            // String maxKey = "";
+            // int maxNum = 0;
+            // for (var key in machineData.keys) {
+            //   if (key != "totalNum" && key != "totalActNum") {
+            //     if (machineData[key] > maxNum) {
+            //       maxNum = machineData[key];
+            //       maxKey = key;
+            //     }
+            //   }
+            // }
+            // machineDatas.add(ChartSampleData(
+            //     x: "终端总数",
+            //     y: machineData["totalNum"] ?? 0,
+            //     text: "100%",
+            //     pointColor: getChartColor(0)));
+            // machineDatas.add(ChartSampleData(
+            //     x: "已激活总数",
+            //     y: machineData["totalActNum"] ?? 0,
+            //     text: "100%",
+            //     pointColor: getChartColor(0)));
 
-      int maxIdx = 0;
-      int max = 0;
+            machineDatas.add(ChartSampleData(
+                x: "库存",
+                y: machineData["noBingNum"] ?? 0,
+                // text: maxKey == "noBingNum" ? "100%" : "90%",
+                text: "100%",
+                pointColor: getChartColor(0)));
+            machineDatas.add(ChartSampleData(
+                x: "出库",
+                y: machineData["outNum"] ?? 0,
+                // text: maxKey == "outNum" ? "100%" : "90%",
+                text: "100%",
+                pointColor: getChartColor(1)));
+            machineDatas.add(ChartSampleData(
+                x: "已激活",
+                y: machineData["dateActNum"] ?? 0,
+                // text: maxKey == "dateActNum" ? "100%" : "90%",
+                text: "100%",
+                pointColor: getChartColor(2)));
+            machineDatas.add(ChartSampleData(
+                x: "达标,有效激活",
+                y: machineData["dateActivNum"] ?? 0,
+                // text: maxKey == "dateActivNum" ? "100%" : "90%",
+                text: "100%",
+                pointColor: getChartColor(3)));
+            machineDatas.add(ChartSampleData(
+                x: "无效",
+                y: machineData["invalidNum"] ?? 0,
+                // text: maxKey == "invalidNum" ? "100%" : "90%",
+                text: "100%",
+                pointColor: getChartColor(4)));
 
-      List tmpList = [];
-      for (var i = 0; i < 6; i++) {
-        Map tmp = {
-          "title": i == 0
-              ? "有效"
-              : i == 1
-                  ? "新增"
-                  : i == 2
-                      ? "已激活"
-                      : i == 3
-                          ? "有效激活"
-                          : i == 4
-                              ? "无效"
-                              : "其他",
-          "value":
-              (100.0 + math.Random().nextDouble() * (2000.0 - 100.0)).ceil(),
-        };
-        if (max < (tmp["value"] ?? 0)) {
-          max = tmp["value"] ?? 0;
-          maxIdx = i;
-        }
-        tmpList.add(tmp);
-      }
-
-      machineDatas = tmpList
-          .asMap()
-          .entries
-          .map((e) => ChartSampleData(
-              x: e.value["title"] ?? "",
-              y: e.value["value"] ?? 0,
-              text: "${e.key == maxIdx ? "100" : "90"}%",
-              pointColor: getChartColor(e.key)))
-          .toList();
-    });
+            update([machineBuildId]);
+            update();
+          }
+        },
+        after: () {});
   }
 
-// 请求商户统计数据
+  Map businessData = {};
+  String businessBuildId = "StatisticsPage_businessData";
+
+  /// 请求商户统计数据
   loadBusinessData() {
-    Future.delayed(const Duration(seconds: 1), () {
-      updateDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
+    DateTime date = dateFormat.parse(dealSelectDate);
+    DateFormat date2 = DateFormat("yyyy-MM-dd");
+    simpleRequest(
+        url: Urls.userPeopleList,
+        params: {
+          "startingTime": date2.format(DateTime(date.year, date.month, 1)),
+          "end_Time": date2.format(DateTime(date.year, date.month + 1, 0)),
+          "teamType": teamList[machineTeamSelectIdx]["id"]
+        },
+        success: (success, json) {
+          if (success) {
+            businessData = json["data"] ?? {};
+            businessDatas.clear();
 
-      int maxIdx = 0;
-      int max = 0;
+            int chanTotalAddUser = businessData["chanTotalAddUser"] ?? 0;
+            int soleTotalAddUser = businessData["soleTotalAddUser"] ?? 0;
 
-      List tmpList = [];
-      for (var i = 0; i < 6; i++) {
-        Map tmp = {
-          "title": i == 0
-              ? "有效商户"
-              : i == 1
-                  ? "新增商户"
-                  : i == 2
-                      ? "已激活商户"
-                      : i == 3
-                          ? "有效激活商户"
-                          : i == 4
-                              ? "无效商户"
-                              : "其他商户",
-          "value":
-              (100.0 + math.Random().nextDouble() * (2000.0 - 100.0)).ceil(),
-        };
-        if (max < (tmp["value"] ?? 0)) {
-          max = tmp["value"] ?? 0;
-          maxIdx = i;
-        }
-        tmpList.add(tmp);
-      }
-
-      businessDatas = tmpList
-          .asMap()
-          .entries
-          .map((e) => ChartSampleData(
-              x: e.value["title"] ?? "",
-              y: e.value["value"] ?? 0,
-              text: "${e.key == maxIdx ? "100" : "90"}%",
-              pointColor: getChartColor(e.key)))
-          .toList();
-    });
+            businessDatas.add(ChartSampleData(
+                x: "我的新增",
+                y: soleTotalAddUser,
+                text: "100%",
+                pointColor: const Color(0xFF3AD3D2)));
+            businessDatas.add(ChartSampleData(
+                x: "其他新增",
+                y: chanTotalAddUser - soleTotalAddUser,
+                text: "100%",
+                pointColor: const Color(0xFF437BFE)));
+            update([businessBuildId]);
+            update();
+          }
+        },
+        after: () {});
   }
 
+  Map dealData = {};
+  List dealList = [[], []];
+  String dealBuildId = "StatisticsPage_dealBuildId";
   // 请求7天交易数据
   loadSevendDaysData() {
-    Future.delayed(const Duration(seconds: 1), () {
-      updateDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
-      List tmpList = [];
-      DateTime now = DateTime.now();
-      for (var i = 0; i < 7; i++) {
-        tmpList.add({
-          "title":
-              DateFormat("MM-dd").format(now.subtract(Duration(days: 6 - i))),
-          "bs": 100.0 + math.Random().nextDouble() * (2000.0 - 100.0),
-          "amout": 2000.0 + math.Random().nextDouble() * (100000.0 - 2000.0),
-        });
-      }
-      sevendDaysDatas = tmpList
-          .map((e) => ChartSampleData(
-                x: e["title"] ?? "",
-                y: e["amout"] ?? 0.0,
-                secondSeriesYValue: e["bs"] ?? 0.0,
-              ))
-          .toList();
-    });
+    DateTime date = dateFormat.parse(dealSelectDate);
+    DateFormat date2 = DateFormat("yyyy-MM-dd");
+    simpleRequest(
+        url: Urls.userTranList,
+        params: {
+          "terminalBrandId": ppList[selectPP]["enumValue"] ?? -1,
+          "startingTime": date2.format(DateTime(date.year, date.month, 1)),
+          "end_Time": date2.format(DateTime(date.year, date.month + 1, 0)),
+        },
+        success: (success, json) {
+          if (success) {
+            dealData = json["data"] ?? {};
+            // Map publicHomeData = AppDefault().homeData;
+            List tranTopData = dealData["tranTopData"] ?? [];
+            sevendDaysDatas = tranTopData
+                .map((e) => ChartSampleData(
+                      x: (e["rq"] ?? "").isEmpty
+                          ? ""
+                          : DateFormat("MM-dd").format(
+                              DateFormat("yyyy/MM/dd HH:mm:ss").parse(e["rq"])),
+                      y: e["tolTxnAmt"] ?? 0.0,
+                      secondSeriesYValue: e["tolTxnNum"] ?? 0,
+                    ))
+                .toList();
+
+            List tranTypeData = dealData["tranTypeData"] ?? [];
+            List list1 = [];
+            List list2 = [];
+            for (var e in tranTypeData) {
+              int v = e["tranValue"] ?? -1;
+              if (v == 1 || v == 2) {
+                list2.add(e);
+              } else {
+                list1.add(e);
+              }
+            }
+            dealList[0] = list1;
+            dealList[1] = list2;
+            update([dealBuildId]);
+            update();
+          }
+        },
+        after: () {});
   }
 
   homeDataNotify(arg) {
@@ -390,104 +488,7 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                           children: [
                             ghb(25),
                             sbRow([
-                              DropdownButtonHideUnderline(
-                                  child: DropdownButton2(
-                                      dropdownElevation: 0,
-                                      buttonElevation: 0,
-                                      offset: Offset(0, -5.w),
-                                      customButton: Container(
-                                        // width: 105.w,
-                                        height: 24.w,
-                                        decoration: BoxDecoration(
-                                          color: AppColor.pageBackgroundColor,
-                                          borderRadius:
-                                              BorderRadius.circular(12.w),
-                                        ),
-                                        alignment: Alignment.center,
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15.w),
-                                          height: 24.w,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12.w),
-                                              color:
-                                                  AppColor.pageBackgroundColor),
-                                          alignment: Alignment.center,
-                                          child: centRow([
-                                            GetX<StatisticsPageController>(
-                                                builder: (_) {
-                                              return getSimpleText(
-                                                  controller.ppList[controller
-                                                              .selectPP]
-                                                          ["enumName"] ??
-                                                      "",
-                                                  12,
-                                                  AppColor.textBlack);
-                                            }),
-                                            gwb(12),
-                                            Image.asset(
-                                              assetsName(
-                                                  "income/btn_down_arrow"),
-                                              width: 6.w,
-                                              fit: BoxFit.fitWidth,
-                                            )
-                                          ]),
-                                        ),
-                                      ),
-                                      items: List.generate(
-                                          controller.ppList.length,
-                                          (index) => DropdownMenuItem<int>(
-                                              value: index,
-                                              child: centClm([
-                                                SizedBox(
-                                                  height: 30.w,
-                                                  width: 90.w,
-                                                  child: Align(
-                                                    alignment:
-                                                        const Alignment(-1, 0),
-                                                    child: GetX<
-                                                            StatisticsPageController>(
-                                                        builder: (_) {
-                                                      return Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                left: 9.w),
-                                                        child: getSimpleText(
-                                                            "${controller.ppList[index]["enumName"] ?? ""}",
-                                                            12,
-                                                            controller.selectPP ==
-                                                                    index
-                                                                ? AppColor
-                                                                    .textRed
-                                                                : AppColor
-                                                                    .textBlack),
-                                                      );
-                                                    }),
-                                                  ),
-                                                ),
-                                              ]))),
-                                      // value: ctrl.machineDataIdx,
-                                      value: controller.selectPP,
-                                      buttonWidth: 90.w,
-                                      buttonHeight: 60.w,
-                                      itemHeight: 30.w,
-                                      onChanged: (value) {
-                                        controller.selectPP = value;
-                                      },
-                                      itemPadding: EdgeInsets.zero,
-                                      dropdownPadding: EdgeInsets.zero,
-                                      // dropdownWidth: 90.w,
-                                      dropdownDecoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(4.w),
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: const Color(0x1A040000),
-                                                // offset: Offset(0, 5.w),
-                                                blurRadius: 5.w)
-                                          ]))),
+                              dropSelectView(),
                               centRow(List.generate(
                                   3,
                                   (index) => CustomButton(
@@ -569,17 +570,12 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                                                       getSimpleText(
                                                           controller.selectTopRightType ==
                                                                   1
-                                                              ? controller
-                                                                      .homeTeamTanNo[index ==
-                                                                          0
-                                                                      ? "teamTotalBindTerminal"
-                                                                      : "teamTotalActTerminal"] ??
-                                                                  "0"
+                                                              ? "${controller.machineData[index == 0 ? "totalNum" : "totalActNum"] ?? "0"}"
                                                               : controller
                                                                       .homeTeamTanNo[index ==
                                                                           0
-                                                                      ? "teamTotalAddMerchant"
-                                                                      : "teamThisMAddMerchant"] ??
+                                                                      ? "teamTotalAddUser"
+                                                                      : "teamThisMAddUser"] ??
                                                                   "0",
                                                           30,
                                                           AppColor.textBlack,
@@ -596,10 +592,10 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                                                                   builder:
                                                                       (context) {
                                                                 int cLastData = int.parse(
-                                                                        controller.homeTeamTanNo["teamThisMAddMerchant"] ??
+                                                                        controller.homeTeamTanNo["teamThisMAddUser"] ??
                                                                             "0") -
                                                                     int.parse(
-                                                                        controller.homeTeamTanNo["teamLastMAddMerchant"] ??
+                                                                        controller.homeTeamTanNo["teamLastMAddUser"] ??
                                                                             "0");
 
                                                                 return cLastData ==
@@ -631,10 +627,15 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                                                   AppColor.textBlack),
                                               ghb(5),
                                               getSimpleText(
-                                                  priceFormat(controller
-                                                              .homeTeamTanNo[
-                                                          "teamThisMAmount"] ??
-                                                      0),
+                                                  priceFormat(
+                                                      controller.homeTeamTanNo[
+                                                              "teamThisMAmount"] ??
+                                                          0,
+                                                      tenThousand: double.parse(
+                                                              controller.homeTeamTanNo[
+                                                                      "teamThisMAmount"] ??
+                                                                  "0") >=
+                                                          100000),
                                                   30,
                                                   AppColor.textBlack,
                                                   isBold: true)
@@ -643,7 +644,7 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                                                     CrossAxisAlignment.start),
                                             getRichText(
                                                 "同比上月  ",
-                                                "${controller.comparedLastM >= 0 ? "+" : ""}${controller.comparedLastM * 100}%",
+                                                "${controller.comparedLastM >= 0 ? "+" : ""}${priceFormat(controller.comparedLastM * 100, savePoint: 0)}%",
                                                 12,
                                                 AppColor.textBlack,
                                                 18,
@@ -741,108 +742,101 @@ class StatisticsPage extends GetView<StatisticsPageController> {
               ], width: 345),
               ghb(25),
               SizedBox(
-                width: 375.w,
-                height: 210.w,
-                child: GetX<StatisticsPageController>(builder: (_) {
-                  return SfCircularChart(
-                    // margin: EdgeInsets.zero,
-                    title: ChartTitle(text: ''),
-                    legend: Legend(
-                        isVisible: true,
-                        width: "30%",
-                        // itemPadding: 12.w,
-                        // offset: Offset(100, 0),
-                        alignment: ChartAlignment.center,
-                        legendItemBuilder:
-                            (legendText, series, point, seriesIndex) {
-                          // ChartSampleData pointData = point as ChartSampleData;
-                          return Padding(
-                            padding: EdgeInsets.only(
-                                top: seriesIndex == 0 ? 0 : 12.w),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 10.w,
-                                  height: 10.w,
-                                  color: point.pointColor ??
-                                      controller.getChartColor(seriesIndex),
-                                ),
-                                gwb(8),
-                                getSimpleText("${point.x}(${point.y})", 12,
-                                    AppColor.textBlack)
-                              ],
-                            ),
-                          );
-                        },
-                        overflowMode: LegendItemOverflowMode.scroll),
-                    series: <DoughnutSeries<ChartSampleData, String>>[
-                      DoughnutSeries<ChartSampleData, String>(
-                        radius: '90%',
-                        // explode: true,
-                        // explodeOffset: '20%',
-                        animationDuration: 1000,
-                        dataSource: controller.selectTopRightType == 1
-                            ? controller.machineDatas
-                            : controller.businessDatas,
-                        xValueMapper: (ChartSampleData data, _) =>
-                            data.x as String,
-                        yValueMapper: (ChartSampleData data, _) => data.y,
-                        dataLabelMapper: (ChartSampleData data, _) =>
-                            data.x as String,
-                        startAngle: 100,
-                        endAngle: 100,
-                        pointRadiusMapper: (ChartSampleData data, _) =>
-                            data.text,
-                        pointColorMapper: (ChartSampleData data, _) =>
-                            data.pointColor,
-                        // dataLabelSettings: const DataLabelSettings(
-                        //     isVisible: true,
-                        //     labelPosition: ChartDataLabelPosition.outside)
-                      )
-                    ],
-                    // onTooltipRender: (TooltipArgs args) {
-                    //   final NumberFormat format = NumberFormat.decimalPattern();
-                    //   args.text = args.dataPoints![args.pointIndex!.toInt()].x
-                    //           .toString() +
-                    //       ' : ' +
-                    //       format.format(
-                    //           args.dataPoints![args.pointIndex!.toInt()].y);
-                    // },
-                    tooltipBehavior: TooltipBehavior(enable: true),
-                  );
-                }),
-              ),
+                  width: 375.w,
+                  height: 210.w,
+                  child: GetX<StatisticsPageController>(builder: (_) {
+                    return SfCircularChart(
+                        // margin: EdgeInsets.zero,
+                        title: ChartTitle(text: ''),
+                        legend: Legend(
+                            isVisible: true,
+                            width: "30%",
+                            // itemPadding: 12.w,
+                            // offset: Offset(100, 0),
+                            alignment: ChartAlignment.center,
+                            legendItemBuilder:
+                                (legendText, series, point, seriesIndex) {
+                              // ChartSampleData pointData = point as ChartSampleData;
+                              return Padding(
+                                  padding: EdgeInsets.only(
+                                      top: seriesIndex == 0 ? 0 : 12.w),
+                                  child: Row(children: [
+                                    Container(
+                                      width: 10.w,
+                                      height: 10.w,
+                                      color: point.pointColor ??
+                                          controller.getChartColor(seriesIndex),
+                                    ),
+                                    gwb(8),
+                                    getSimpleText("${point.x}(${point.y}人)", 12,
+                                        AppColor.textBlack)
+                                  ]));
+                            },
+                            overflowMode: LegendItemOverflowMode.scroll),
+                        series: <DoughnutSeries<ChartSampleData, String>>[
+                          DoughnutSeries<ChartSampleData, String>(
+                              radius: '110%',
+                              // explode: true,
+                              // explodeOffset: '20%',
+                              animationDuration: 1000,
+                              dataSource: controller.selectTopRightType == 1
+                                  ? controller.machineDatas
+                                  : controller.businessDatas,
+                              xValueMapper: (ChartSampleData data, _) =>
+                                  data.x as String,
+                              yValueMapper: (ChartSampleData data, _) => data.y,
+                              dataLabelMapper: (ChartSampleData data, _) =>
+                                  data.x as String,
+                              startAngle: 100,
+                              endAngle: 100,
+                              pointRadiusMapper: (ChartSampleData data, _) =>
+                                  data.text,
+                              pointColorMapper: (ChartSampleData data, _) =>
+                                  data.pointColor
+                              // dataLabelSettings: const DataLabelSettings(
+                              //     isVisible: true,
+                              //     labelPosition: ChartDataLabelPosition.outside)
+                              )
+                        ],
+                        // onTooltipRender: (TooltipArgs args) {
+                        //   final NumberFormat format = NumberFormat.decimalPattern();
+                        //   args.text = args.dataPoints![args.pointIndex!.toInt()].x
+                        //           .toString() +
+                        //       ' : ' +
+                        //       format.format(
+                        //           args.dataPoints![args.pointIndex!.toInt()].y);
+                        // },
+                        tooltipBehavior: TooltipBehavior(enable: true));
+                  })),
               ghb(30),
               centRow(List.generate(
-                  controller.selectTopRightType == 1 ? 2 : 3,
+                  controller.selectTopRightType == 1 ? 3 : 2,
                   (index) => SizedBox(
-                        width: 345.w /
-                            (controller.selectTopRightType == 1 ? 2 : 3),
-                        child: Center(
+                      width:
+                          345.w / (controller.selectTopRightType == 1 ? 3 : 2),
+                      child: Center(
                           child: centClm([
-                            getSimpleText(
-                                "${controller.selectTopRightType == 1 ? controller.homeTeamTanNo[index == 0 ? "服务商新增" : "我的新增"] ?? 0 : controller.selectTopRightType == 2 ? controller.homeTeamTanNo[index == 0 ? "本月总台数" : index == 1 ? "团队激活" : "个人激活"] ?? 0 : ""}",
-                                18,
-                                AppColor.textBlack,
-                                isBold: true),
-                            ghb(12),
-                            getSimpleText(
-                                controller.selectTopRightType == 1
+                        getSimpleText(
+                            "${controller.selectTopRightType == 1 ? controller.machineData[index == 0 ? "teamTotalBingTerminal" : index == 1 ? "teamTotalActTerminal" : "mineTotalActTerminal"] ?? 0 : controller.selectTopRightType == 2 ? controller.businessData[index == 0 ? "chanTotalAddUser" : "soleTotalAddUser"] ?? "" : ""}",
+                            18,
+                            AppColor.textBlack,
+                            isBold: true),
+                        ghb(12),
+                        getSimpleText(
+                            controller.selectTopRightType == 1
+                                ? index == 0
+                                    ? "本月总台数"
+                                    : index == 1
+                                        ? "团队激活"
+                                        : "个人激活"
+                                : controller.selectTopRightType == 2
                                     ? index == 0
                                         ? "服务商新增"
                                         : "我的新增"
-                                    : controller.selectTopRightType == 2
-                                        ? index == 0
-                                            ? "本月总台数"
-                                            : index == 1
-                                                ? "团队激活"
-                                                : "个人激活"
-                                        : "",
-                                12,
-                                AppColor.textBlack)
-                          ]),
-                        ),
-                      ))),
+                                    : "",
+                            12,
+                            AppColor.textBlack)
+                      ]))))),
               ghb(25)
             ],
           );
@@ -1075,40 +1069,34 @@ class StatisticsPage extends GetView<StatisticsPageController> {
               ),
             ),
             GetX<StatisticsPageController>(builder: (_) {
-              int length = controller.dealSelectIdx == 0 ? 6 : 2;
+              List dataList = controller.dealList[controller.dealSelectIdx];
+
               return centClm(
                   List.generate(
-                      length,
+                      dataList.length,
                       (index) => centClm([
                             sbhRow([
                               centRow([
                                 Image.asset(
                                   assetsName(
-                                      "statistics_page/icon_dealtype_${index == 0 ? "normal" : index == 1 ? "alipay" : index == 2 ? "wx" : index == 3 ? "union" : index == 4 ? "union" : "up"}"),
+                                      "statistics_page/icon_dealtype${dataList[index]["tranValue"] ?? 1}"),
                                   width: 30.w,
                                   fit: BoxFit.fitWidth,
                                 ),
                                 gwb(13),
-                                getSimpleText(
-                                    index == 0
-                                        ? "正常"
-                                        : index == 1
-                                            ? "支付宝"
-                                            : index == 2
-                                                ? "微信支付"
-                                                : index == 3
-                                                    ? "银联二维码≤1000"
-                                                    : index == 4
-                                                        ? "银联二维码＞1000"
-                                                        : "成长值",
-                                    14,
-                                    AppColor.textBlack)
+                                getSimpleText(dataList[index]["title"] ?? "",
+                                    14, AppColor.textBlack)
                               ]),
                               getSimpleText(
-                                  "5226513.00", 16, AppColor.textBlack,
+                                  priceFormat(
+                                      dataList[index]["tolTxnAmt"] ?? 0),
+                                  16,
+                                  AppColor.textBlack,
                                   isBold: true)
                             ], width: 375 - 30 * 2, height: 55),
-                            index >= length - 1 ? ghb(0) : gline(270, 0.5)
+                            index >= dataList.length - 1
+                                ? ghb(0)
+                                : gline(270, 0.5)
                           ])),
                   crossAxisAlignment: CrossAxisAlignment.end);
             }),
@@ -1124,7 +1112,12 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                                 child: Center(
                                     child: centClm([
                                   getSimpleText(
-                                      "15216245.20", 18, AppColor.textBlack,
+                                      priceFormat(controller.dealData[index == 0
+                                              ? "teamTaxAmt"
+                                              : "mineTaxAmt"] ??
+                                          0),
+                                      18,
+                                      AppColor.textBlack,
                                       isBold: true),
                                   ghb(12),
                                   getSimpleText(
@@ -1173,42 +1166,115 @@ class StatisticsPage extends GetView<StatisticsPageController> {
         color: Colors.white,
         child: Column(
           children: [
-            Row(
-              children: List.generate(
-                  3,
-                  (index) => CustomButton(
-                        key: controller.keyList[index],
-                        onPressed: () {
-                          controller.topIdx = index;
-                          controller.changeTagPosition();
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: centClm([
-                            GetX<StatisticsPageController>(builder: (_) {
-                              controller.topIdx;
-                              return getSimpleText(
-                                  index == 0
-                                      ? "统计"
-                                      : index == 1
-                                          ? "服务商"
-                                          : "商户",
-                                  controller.topIdx == index ? 18 : 16,
-                                  controller.topIdx == index
-                                      ? AppColor.textBlack
-                                      : AppColor.textGrey5,
-                                  isBold: controller.topIdx == index);
-                            }),
-                            ghb(6),
-                          ]),
-                        ),
-                      )),
-            ),
+            sbRow([
+              Row(
+                  children: List.generate(
+                      3,
+                      (index) => CustomButton(
+                          key: controller.keyList[index],
+                          onPressed: () {
+                            controller.topIdx = index;
+                            controller.changeTagPosition();
+                          },
+                          child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 15.w),
+                              child: centClm([
+                                GetX<StatisticsPageController>(builder: (_) {
+                                  controller.topIdx;
+                                  return getSimpleText(
+                                      index == 0
+                                          ? "统计"
+                                          : index == 1
+                                              ? "服务商"
+                                              : "商户",
+                                      controller.topIdx == index ? 18 : 16,
+                                      controller.topIdx == index
+                                          ? AppColor.textBlack
+                                          : AppColor.textGrey5,
+                                      isBold: controller.topIdx == index);
+                                }),
+                                ghb(6),
+                              ]))))),
+              GetX<StatisticsPageController>(builder: (_) {
+                return controller.topIdx != 1
+                    ? gwb(0)
+                    : DropdownButtonHideUnderline(
+                        child: DropdownButton2(
+                            dropdownElevation: 0,
+                            buttonElevation: 0,
+                            offset: Offset(-10.w, -5.w),
+                            customButton: Container(
+                              width: 80.w,
+                              height: 30.w,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4.w),
+                                  color: Colors.white),
+                              alignment: Alignment.center,
+                              child: centRow([
+                                Image.asset(
+                                  assetsName("product_store/icon_filter"),
+                                  width: 14.w,
+                                  fit: BoxFit.fitWidth,
+                                ),
+                                gwb(5),
+                                getSimpleText("筛选", 14, AppColor.textBlack)
+                              ]),
+                            ),
+                            items: List.generate(
+                                controller.filterTypeList.length,
+                                (index) => DropdownMenuItem<int>(
+                                    value: index,
+                                    child: centClm([
+                                      SizedBox(
+                                        height: 30.w,
+                                        width: 90.w,
+                                        child: Align(
+                                          alignment: const Alignment(-1, 0),
+                                          child: GetX<StatisticsPageController>(
+                                              builder: (_) {
+                                            return Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 11.w),
+                                              child: getSimpleText(
+                                                  "${controller.filterTypeList[index]["name"] ?? ""}",
+                                                  12,
+                                                  controller.filterTypeIdx ==
+                                                          index
+                                                      ? AppColor.textRed
+                                                      : AppColor.textBlack),
+                                            );
+                                          }),
+                                        ),
+                                      ),
+                                    ]))),
+                            // value: ctrl.machineDataIdx,
+                            value: controller.filterTypeIdx,
+                            buttonWidth: 90.w,
+                            buttonHeight: 50.w,
+                            itemHeight: 30.w,
+                            onChanged: (value) {
+                              controller.filterTypeIdx = value;
+                              bus.emit("setFacilitatorIdx",
+                                  controller.filterTypeIdx);
+                            },
+                            itemPadding: EdgeInsets.zero,
+                            dropdownPadding: EdgeInsets.zero,
+                            // dropdownWidth: 90.w,
+                            dropdownDecoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4.w),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: const Color(0x1A040000),
+                                      // offset: Offset(0, 5.w),
+                                      blurRadius: 5.w)
+                                ])));
+              })
+            ], width: 375),
             SizedBox(
-              width: 375.w,
-              height: 3.w,
-              child: Stack(
-                children: [
+                width: 375.w,
+                height: 3.w,
+                child: Stack(children: [
                   GetX<StatisticsPageController>(builder: (_) {
                     return AnimatedPositioned(
                         top: 0,
@@ -1222,14 +1288,121 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                               color: AppColor.theme),
                         ));
                   })
-                ],
-              ),
-            ),
+                ])),
             gline(375, 0.5),
           ],
         ),
       ),
     );
+  }
+
+  Widget dropSelectView() {
+    return GetX<StatisticsPageController>(builder: (_) {
+      return DropdownButtonHideUnderline(
+          child: DropdownButton2(
+              dropdownElevation: 0,
+              buttonElevation: 0,
+              offset: Offset(0, -5.w),
+              customButton: Container(
+                // width: 105.w,
+                height: 24.w,
+                decoration: BoxDecoration(
+                  color: AppColor.pageBackgroundColor,
+                  borderRadius: BorderRadius.circular(12.w),
+                ),
+                alignment: Alignment.center,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15.w),
+                  height: 24.w,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.w),
+                      color: AppColor.pageBackgroundColor),
+                  alignment: Alignment.center,
+                  child: centRow([
+                    GetX<StatisticsPageController>(builder: (_) {
+                      return controller.selectTopRightType == 2
+                          ? getSimpleText(
+                              controller
+                                      .teamList[controller.machineTeamSelectIdx]
+                                  ["name"],
+                              12,
+                              AppColor.textBlack)
+                          : getSimpleText(
+                              controller.ppList[controller.selectPP]
+                                      ["enumName"] ??
+                                  "",
+                              12,
+                              AppColor.textBlack);
+                    }),
+                    gwb(12),
+                    Image.asset(
+                      assetsName("income/btn_down_arrow"),
+                      width: 6.w,
+                      fit: BoxFit.fitWidth,
+                    )
+                  ]),
+                ),
+              ),
+              items: List.generate(
+                  controller.selectTopRightType == 2
+                      ? controller.teamList.length
+                      : controller.ppList.length,
+                  (index) => DropdownMenuItem<int>(
+                      value: index,
+                      child: centClm([
+                        SizedBox(
+                          height: 30.w,
+                          width: 90.w,
+                          child: Align(
+                            alignment: const Alignment(-1, 0),
+                            child: GetX<StatisticsPageController>(builder: (_) {
+                              return Padding(
+                                padding: EdgeInsets.only(left: 9.w),
+                                child: controller.selectTopRightType == 2
+                                    ? getSimpleText(
+                                        "${controller.teamList[index]["name"]}",
+                                        12,
+                                        controller.machineTeamSelectIdx == index
+                                            ? AppColor.textRed
+                                            : AppColor.textBlack)
+                                    : getSimpleText(
+                                        "${controller.ppList[index]["enumName"] ?? ""}",
+                                        12,
+                                        controller.selectPP == index
+                                            ? AppColor.textRed
+                                            : AppColor.textBlack),
+                              );
+                            }),
+                          ),
+                        ),
+                      ]))),
+              // value: ctrl.machineDataIdx,
+              value: controller.selectTopRightType == 2
+                  ? controller.machineTeamSelectIdx
+                  : controller.selectPP,
+              buttonWidth: 90.w,
+              buttonHeight: 60.w,
+              itemHeight: 30.w,
+              onChanged: (value) {
+                if (controller.selectTopRightType == 2) {
+                  controller.machineTeamSelectIdx = value;
+                } else {
+                  controller.selectPP = value;
+                }
+              },
+              itemPadding: EdgeInsets.zero,
+              dropdownPadding: EdgeInsets.zero,
+              // dropdownWidth: 90.w,
+              dropdownDecoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4.w),
+                  boxShadow: [
+                    BoxShadow(
+                        color: const Color(0x1A040000),
+                        // offset: Offset(0, 5.w),
+                        blurRadius: 5.w)
+                  ])));
+    });
   }
 }
 

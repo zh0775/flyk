@@ -1,3 +1,4 @@
+import 'dart:convert' as convert;
 import 'dart:io';
 
 import 'package:cxhighversion2/component/custom_button.dart';
@@ -11,14 +12,11 @@ import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/tools.dart';
 import 'package:easy_refresh/easy_refresh.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-// import 'package:skeletons/skeletons.dart';
-import 'dart:convert' as convert;
-
 import 'package:shimmer/shimmer.dart';
+import 'dart:math' as math;
 
 class ProductStoreListBinding implements Bindings {
   @override
@@ -45,10 +43,41 @@ class ProductStoreListController extends GetxController {
   set isList(value) => _isList.value = value;
   get isList => _isList.value;
 
-  // 是否显示清除搜索文字按钮
-  final _needCleanInput = false.obs;
+  /// 是否显示清除搜索文字按钮
   bool get needCleanInput => _needCleanInput.value;
+  final _needCleanInput = false.obs;
   set needCleanInput(v) => _needCleanInput.value = v;
+
+  /// 机具兑换 顶部按钮index
+  int get exchangeTopBtnIdx => _exchangeTopBtnIdx.value;
+  final _exchangeTopBtnIdx = 0.obs;
+  set exchangeTopBtnIdx(v) {
+    if (_exchangeTopBtnIdx.value != v) {
+      _exchangeTopBtnIdx.value = v;
+      loadData();
+    }
+  }
+
+  /// 机具兑换 顶部排序按钮index
+  int get exchangeSortIdx => _exchangeSortIdx.value;
+  final _exchangeSortIdx = 0.obs;
+  set exchangeSortIdx(v) => _exchangeSortIdx.value = v;
+
+  /// 机具兑换 型号index
+  int get xhFilterSelectIdx => _xhFilterSelectIdx.value;
+  final _xhFilterSelectIdx = (-1).obs;
+  set xhFilterSelectIdx(v) => _xhFilterSelectIdx.value = v;
+
+  /// 机具兑换 确认的型号index
+  int xhRealFilterSelectIdx = -1;
+
+  /// 机具兑换 品牌index
+  int get brandFilterSelectIdx => _brandFilterSelectIdx.value;
+  final _brandFilterSelectIdx = (-1).obs;
+  set brandFilterSelectIdx(v) => _brandFilterSelectIdx.value = v;
+
+  /// 机具兑换 确认的品牌index
+  int brandRealFilterSelectIdx = -1;
 
   final searchInputCtrl = TextEditingController();
   searchInputListener() {
@@ -402,114 +431,11 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                           ),
                         ),
                       ]),
-                      // 品牌 选择
-                      SizedBox(
-                        width: 375.w,
-                        height: 52.w,
-                        child: Center(
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                  width: 325.w,
-                                  height: 52.w,
-                                  child: GetX<ProductStoreListController>(
-                                      builder: (_) {
-                                    return ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 15.w),
-                                      itemCount: controller.brandList.length,
-                                      itemBuilder: (context, index) {
-                                        return CustomButton(
-                                          key: controller.keyList[index],
-                                          onPressed: () {
-                                            controller.brandSelectIdx = index;
-                                          },
-                                          child: sbClm([
-                                            ghb(3),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 15.w),
-                                              child: GetX<
-                                                      ProductStoreListController>(
-                                                  builder: (_) {
-                                                return getSimpleText(
-                                                    controller.brandList[index]
-                                                            ["enumName"] ??
-                                                        "",
-                                                    16,
-                                                    controller.brandSelectIdx ==
-                                                            index
-                                                        ? AppColor.textBlack
-                                                        : AppColor.textGrey5,
-                                                    isBold: controller
-                                                            .brandSelectIdx ==
-                                                        index);
-                                              }),
-                                            ),
-                                            ghb(0)
-                                          ], height: 53),
-                                        );
-                                      },
-                                    );
-                                  })),
-                              CustomButton(
-                                onPressed: () {
-                                  controller.showFilter();
-                                },
-                                child: SizedBox(
-                                  width: 50.w,
-                                  height: 52.w,
-                                  child: GetX<ProductStoreListController>(
-                                      builder: (_) {
-                                    return centClm([
-                                      AnimatedRotation(
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        turns:
-                                            controller.isShowFilter ? 0.5 : 1,
-                                        child: Image.asset(
-                                          assetsName(
-                                              "product_store/btn_select_arrow"),
-                                          width: 18.w,
-                                          fit: BoxFit.fitWidth,
-                                        ),
-                                      ),
-                                      getSimpleText(
-                                          controller.isShowFilter ? "收回" : "展开",
-                                          10,
-                                          AppColor.textGrey5,
-                                          textHeight: 1.0)
-                                    ]);
-                                  }),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 375.w,
-                        height: 3.w,
-                        child: Stack(
-                          children: [
-                            GetX<ProductStoreListController>(
-                                builder: (context) {
-                              return AnimatedPositioned(
-                                  width: 18.w,
-                                  height: 3.w,
-                                  left: controller.tagX,
-                                  duration: const Duration(milliseconds: 200),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(1.5.w),
-                                        color: AppColor.theme),
-                                  ));
-                            })
-                          ],
-                        ),
-                      )
+
+                      /// 品牌筛选 采购商城
+                      controller.levelType == 2
+                          ? brandSelectView()
+                          : exchangeTopView()
                     ],
                   ),
                 )),
@@ -919,5 +845,361 @@ class ProductStoreList extends GetView<ProductStoreListController> {
         );
       }),
     );
+  }
+
+  /// 品牌筛选 采购商城
+  Widget brandSelectView() {
+    return centClm([
+      SizedBox(
+        width: 375.w,
+        height: 52.w,
+        child: Center(
+          child: Row(
+            children: [
+              SizedBox(
+                  width: 325.w,
+                  height: 52.w,
+                  child: GetX<ProductStoreListController>(builder: (_) {
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: EdgeInsets.symmetric(horizontal: 15.w),
+                      itemCount: controller.brandList.length,
+                      itemBuilder: (context, index) {
+                        return CustomButton(
+                          key: controller.keyList[index],
+                          onPressed: () {
+                            controller.brandSelectIdx = index;
+                          },
+                          child: sbClm([
+                            ghb(3),
+                            Padding(
+                              padding: EdgeInsets.only(left: 15.w),
+                              child: GetX<ProductStoreListController>(
+                                  builder: (_) {
+                                return getSimpleText(
+                                    controller.brandList[index]["enumName"] ??
+                                        "",
+                                    16,
+                                    controller.brandSelectIdx == index
+                                        ? AppColor.textBlack
+                                        : AppColor.textGrey5,
+                                    isBold: controller.brandSelectIdx == index);
+                              }),
+                            ),
+                            ghb(0)
+                          ], height: 53),
+                        );
+                      },
+                    );
+                  })),
+              CustomButton(
+                onPressed: () {
+                  controller.showFilter();
+                },
+                child: SizedBox(
+                  width: 50.w,
+                  height: 52.w,
+                  child: GetX<ProductStoreListController>(builder: (_) {
+                    return centClm([
+                      AnimatedRotation(
+                        duration: const Duration(milliseconds: 200),
+                        turns: controller.isShowFilter ? 0.5 : 1,
+                        child: Image.asset(
+                            assetsName("product_store/btn_select_arrow"),
+                            width: 18.w,
+                            fit: BoxFit.fitWidth),
+                      ),
+                      getSimpleText(controller.isShowFilter ? "收回" : "展开", 10,
+                          AppColor.textGrey5,
+                          textHeight: 1.0)
+                    ]);
+                  }),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+      SizedBox(
+        width: 375.w,
+        height: 3.w,
+        child: Stack(
+          children: [
+            GetX<ProductStoreListController>(builder: (context) {
+              return AnimatedPositioned(
+                  width: 18.w,
+                  height: 3.w,
+                  left: controller.tagX,
+                  duration: const Duration(milliseconds: 200),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(1.5.w),
+                        color: AppColor.theme),
+                  ));
+            })
+          ],
+        ),
+      )
+    ]);
+  }
+
+  /// 机具兑换 顶部按钮
+  Widget exchangeTopView() {
+    double width = 375.w / 4;
+    return sbRow([
+      CustomButton(
+          onPressed: () {
+            controller.exchangeTopBtnIdx = 0;
+          },
+          child: SizedBox(
+              width: width,
+              height: 55.w,
+              child:
+                  Center(child: GetX<ProductStoreListController>(builder: (_) {
+                return sbClm([
+                  ghb(3),
+                  getSimpleText(
+                      "综合",
+                      controller.exchangeTopBtnIdx == 0 ? 16 : 15,
+                      AppColor.textBlack,
+                      isBold: controller.exchangeTopBtnIdx == 0),
+                  controller.exchangeTopBtnIdx == 0
+                      ? Container(
+                          width: 18.w,
+                          height: 3.w,
+                          decoration: BoxDecoration(
+                              color: AppColor.theme,
+                              borderRadius: BorderRadius.circular(1.5.w)))
+                      : ghb(3)
+                ], height: 55);
+              })))),
+      CustomButton(
+        onPressed: () {
+          controller.exchangeTopBtnIdx = 1;
+          if (controller.exchangeSortIdx >= 2) {
+            controller.exchangeSortIdx = 0;
+          } else {
+            controller.exchangeSortIdx++;
+          }
+        },
+        child: SizedBox(
+            width: width,
+            height: 55.w,
+            child: GetX<ProductStoreListController>(builder: (_) {
+              return centRow([
+                getSimpleText(
+                    "兑换量",
+                    controller.exchangeTopBtnIdx == 1 ? 16 : 15,
+                    AppColor.textBlack,
+                    isBold: controller.exchangeTopBtnIdx == 1),
+                gwb(3),
+                Transform.rotate(
+                  angle: controller.exchangeSortIdx == 1 ? 0 : math.pi / 1,
+                  child: Image.asset(
+                      assetsName(
+                          "product_store/icon_${controller.exchangeSortIdx == 0 ? "un" : ""}sort"),
+                      width: 6.w,
+                      fit: BoxFit.fitWidth),
+                )
+              ]);
+            })),
+      ),
+      CustomButton(
+        onPressed: () {
+          showFilterModel();
+        },
+        child: SizedBox(
+          width: width,
+          height: 55.w,
+          child: centRow([
+            getSimpleText("筛选", 15, AppColor.textBlack),
+            gwb(3),
+            Image.asset(assetsName("product_store/icon_filter"),
+                width: 10.5.w, fit: BoxFit.fitWidth)
+          ]),
+        ),
+      )
+    ], width: 375);
+  }
+
+  /// 机具兑换 底部筛选弹窗
+  showFilterModel() {
+    controller.brandFilterSelectIdx = controller.brandRealFilterSelectIdx;
+    controller.xhFilterSelectIdx = controller.xhRealFilterSelectIdx;
+    Get.bottomSheet(
+        UnconstrainedBox(
+            child: Container(
+          width: 375.w,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(8.w))),
+          child: Column(
+            children: [
+              sbhRow([
+                gwb(42),
+                getSimpleText("筛选", 18, AppColor.textBlack, isBold: true),
+                CustomButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: SizedBox(
+                      width: 42.w,
+                      height: 53.w,
+                      child: Center(
+                          child: Image.asset(
+                              assetsName("common/btn_model_close2"),
+                              width: 14.w,
+                              fit: BoxFit.fitWidth))),
+                )
+              ], width: 375, height: 53),
+              gline(375, 1),
+              sbhRow([
+                getSimpleText("品牌", 15, AppColor.textBlack, isBold: true),
+              ], width: 345, height: 57),
+              SizedBox(
+                  width: 345.w,
+                  child: Wrap(
+                      spacing: (345.w - 105.w * 3) / 2 - 0.1,
+                      runSpacing: 10.w,
+                      children: List.generate(
+                          controller.brandList.length,
+                          (index) => CustomButton(onPressed: () {
+                                if (controller.brandFilterSelectIdx == index) {
+                                  controller.brandFilterSelectIdx = -1;
+                                } else {
+                                  controller.brandFilterSelectIdx = index;
+                                }
+                              }, child: GetX<ProductStoreListController>(
+                                  builder: (context) {
+                                return Container(
+                                    width: 105.w,
+                                    height: 30.w,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(4.w),
+                                        color:
+                                            controller
+                                                        .brandFilterSelectIdx ==
+                                                    index
+                                                ? null
+                                                : const Color(0xFFFAFAFA),
+                                        gradient: controller
+                                                    .brandFilterSelectIdx ==
+                                                index
+                                            ? const LinearGradient(
+                                                colors: [
+                                                    Color(0xFFFD573B),
+                                                    Color(0xFFFF3A3A)
+                                                  ],
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter)
+                                            : null),
+                                    child: getSimpleText(
+                                        controller.brandList[index]
+                                                ["enumName"] ??
+                                            "",
+                                        12,
+                                        controller.brandFilterSelectIdx == index
+                                            ? Colors.white
+                                            : AppColor.textBlack));
+                              }))))),
+              sbhRow(
+                  [getSimpleText("机具型号", 15, AppColor.textBlack, isBold: true)],
+                  width: 345, height: 57),
+              SizedBox(
+                  width: 345.w,
+                  child: Wrap(
+                      spacing: (345.w - 105.w * 3) / 2 - 0.1,
+                      runSpacing: 10.w,
+                      children: List.generate(
+                          controller.typeList.length,
+                          (index) => CustomButton(onPressed: () {
+                                if (controller.xhFilterSelectIdx == index) {
+                                  controller.xhFilterSelectIdx = -1;
+                                } else {
+                                  controller.xhFilterSelectIdx = index;
+                                }
+                              }, child: GetX<ProductStoreListController>(
+                                  builder: (context) {
+                                return Container(
+                                    width: 105.w,
+                                    height: 30.w,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(4
+                                            .w),
+                                        color: controller
+                                                    .xhFilterSelectIdx ==
+                                                index
+                                            ? null
+                                            : const Color(0xFFFAFAFA),
+                                        gradient: controller
+                                                    .xhFilterSelectIdx ==
+                                                index
+                                            ? const LinearGradient(
+                                                colors: [
+                                                    Color(0xFFFD573B),
+                                                    Color(0xFFFF3A3A)
+                                                  ],
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter)
+                                            : null),
+                                    child: getSimpleText(
+                                        controller.typeList[index]
+                                                ["terninal_Name"] ??
+                                            "",
+                                        12,
+                                        controller.xhFilterSelectIdx == index
+                                            ? Colors.white
+                                            : AppColor.textBlack));
+                              }))))),
+              ghb(24),
+              centRow(List.generate(
+                  2,
+                  (index) => CustomButton(
+                        onPressed: () {
+                          if (index == 0) {
+                            controller.brandFilterSelectIdx = -1;
+                            controller.xhFilterSelectIdx = -1;
+                          } else {
+                            controller.brandRealFilterSelectIdx =
+                                controller.brandFilterSelectIdx;
+                            controller.xhRealFilterSelectIdx =
+                                controller.xhFilterSelectIdx;
+                            controller.loadData();
+                            Get.back();
+                          }
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.only(
+                              bottom: paddingSizeBottom(
+                                  Global.navigatorKey.currentContext!)),
+                          width: 375.w / 2,
+                          height: 55.w,
+                          decoration: BoxDecoration(
+                              color: index == 0
+                                  ? AppColor.theme.withOpacity(0.1)
+                                  : null,
+                              gradient: index == 0
+                                  ? null
+                                  : const LinearGradient(
+                                      colors: [
+                                          Color(0xFFFD573B),
+                                          Color(0xFFFF3A3A)
+                                        ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter)),
+                          child: getSimpleText(index == 0 ? "重置" : "确定", 15,
+                              index == 0 ? AppColor.theme : Colors.white),
+                        ),
+                      )))
+            ],
+          ),
+        )),
+        isDismissible: true,
+        enableDrag: true,
+        isScrollControlled: true);
   }
 }

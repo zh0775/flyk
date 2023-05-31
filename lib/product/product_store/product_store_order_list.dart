@@ -73,13 +73,18 @@ class ProductStoreOrderListController extends GetxController {
     {"id": 0, "name": "待付款"},
     {"id": 1, "name": "待发货"},
     {"id": 2, "name": "待收货"},
-    {"id": 3, "name": "已完成"},
+    {"id": 3, "name": "已完成"}
   ];
   List integralStatusList = [
+    // {"id": -1, "name": "全部"},
+    // {"id": 1, "name": "待发货"},
+    // {"id": 2, "name": "待收货"},
+    // {"id": 3, "name": "已完成"}
     {"id": -1, "name": "全部"},
+    {"id": 0, "name": "待付款"},
     {"id": 1, "name": "待发货"},
     {"id": 2, "name": "待收货"},
-    {"id": 3, "name": "已完成"},
+    {"id": 3, "name": "已完成"}
   ];
 
   final _statusList = Rx<List>([]);
@@ -105,12 +110,7 @@ class ProductStoreOrderListController extends GetxController {
   List pageSizes = [];
   List dataLists = [];
   List normalDataLists = [[], [], [], [], []];
-  List integralDataLists = [
-    [],
-    [],
-    [],
-    [],
-  ];
+  List integralDataLists = [[], [], [], []];
 
   changeLevelType() {
     if (naviIndex == 0) {
@@ -381,10 +381,13 @@ class ProductStoreOrderListController extends GetxController {
     int myLoadIdx = listIndex ?? topIndex;
     int myLevelIdx = listLevelType ?? naviIndex;
     isLoad ? pageNos[myLoadIdx]++ : pageNos[myLoadIdx] = 1;
-    Map<String, dynamic> params = {};
+    Map<String, dynamic> params = {
+      "order_Type": myLevelIdx == 0 ? 2 : 1,
+    };
     params["orderState"] = statusList[myLoadIdx]["id"];
     params["pageSize"] = pageSizes[myLoadIdx];
     params["pageNo"] = pageNos[myLoadIdx];
+
     // if (myLevelIdx == 1) {
     //   params["shopType"] == 2;
     // }
@@ -491,14 +494,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
   Widget build(BuildContext context) {
     controller.dataInit(index, levelType);
     return Scaffold(
-      appBar: getDefaultAppBar(
-          context,
-          // orderType == StoreOrderType.storeOrderTypeIntegral
-          //     ? "商城订单"
-          //     : orderType == StoreOrderType.storeOrderTypePackage
-          //         ? "礼包订单"
-          //         : "采购订单",
-          !AppDefault().checkDay ? "积分订单" : "",
+      appBar: getDefaultAppBar(context, "",
           flexibleSpace: !AppDefault().checkDay
               ? null
               : Align(
@@ -516,7 +512,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                                     height: kToolbarHeight,
                                     child: Center(
                                       child: getSimpleText(
-                                          index == 0 ? "订购订单" : "兑换订单",
+                                          index == 0 ? "采购订单" : "礼包订单",
                                           18,
                                           controller.naviIndex == index
                                               ? AppColor.textBlack
@@ -695,13 +691,16 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                                   Global.navigatorKey.currentContext!)),
                       itemCount: controller.dataLists[listIndex].length,
                       itemBuilder: (context, index) {
-                        return levelIdx == 0
-                            ? orderCell(controller.dataLists[listIndex][index],
-                                index, context, listIndex)
-                            : integralCell(
-                                controller.dataLists[listIndex][index],
-                                index,
-                                listIndex);
+                        return orderCell(controller.dataLists[listIndex][index],
+                            index, context, listIndex);
+
+                        // levelIdx == 0
+                        //     ? orderCell(controller.dataLists[listIndex][index],
+                        //         index, context, listIndex)
+                        //     : integralCell(
+                        //         controller.dataLists[listIndex][index],
+                        //         index,
+                        //         listIndex);
                       },
                     ));
         });

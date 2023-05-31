@@ -28,6 +28,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -186,58 +187,59 @@ class _MainAppState extends State<MainApp> {
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
         builder: (BuildContext buildContext, Widget? child) {
-          return spashEnble == null
-              ? fakeLaunch(ctx: buildContext)
-              : spashEnble!
-                  ? MaterialApp(
-                      title: AppDefault.projectName,
-                      home: Scaffold(body: splashView),
-                      debugShowCheckedModeBanner: false,
-                    )
-                  : pullRefresh(
-                      child: GetMaterialApp(
-                      darkTheme: getThemeData(),
-                      theme: getThemeData(),
-                      navigatorKey: Global.navigatorKey,
-                      initialRoute: AppDefault.firstLaunchApp
-                          ? Routes.main
-                          : Routes.splash,
-                      debugShowCheckedModeBanner: false,
-                      defaultTransition: Transition.rightToLeft,
-                      getPages: [
-                        GetPage(
-                          name: Routes.main,
-                          page: () => const MainPage(),
-                          binding: MainPageBinding(),
-                        ),
-                        GetPage(
-                          name: Routes.splash,
-                          page: () => const AppLaunchSplash(),
-                          binding: AppLaunchSplashBinding(),
-                        ),
-                      ],
-                      initialBinding: AppBinding(),
-                      useInheritedMediaQuery: false,
-                      enableLog: true,
+          return OKToast(
+              child: spashEnble == null
+                  ? fakeLaunch(ctx: buildContext)
+                  : spashEnble!
+                      ? MaterialApp(
+                          title: AppDefault.projectName,
+                          home: Scaffold(body: splashView),
+                          debugShowCheckedModeBanner: false,
+                        )
+                      : pullRefresh(
+                          child: GetMaterialApp(
+                          darkTheme: getThemeData(),
+                          theme: getThemeData(),
+                          navigatorKey: Global.navigatorKey,
+                          initialRoute: AppDefault.firstLaunchApp
+                              ? Routes.main
+                              : Routes.splash,
+                          debugShowCheckedModeBanner: false,
+                          defaultTransition: Transition.rightToLeft,
+                          getPages: [
+                            GetPage(
+                              name: Routes.main,
+                              page: () => const MainPage(),
+                              binding: MainPageBinding(),
+                            ),
+                            GetPage(
+                              name: Routes.splash,
+                              page: () => const AppLaunchSplash(),
+                              binding: AppLaunchSplashBinding(),
+                            ),
+                          ],
+                          initialBinding: AppBinding(),
+                          useInheritedMediaQuery: false,
+                          enableLog: true,
 
-                      title: AppDefault.projectName,
-                      // home: MainPage(),
-                      localizationsDelegates: const [
-                        RefreshLocalizations.delegate,
-                        GlobalMaterialLocalizations.delegate,
-                        GlobalCupertinoLocalizations.delegate,
-                        GlobalWidgetsLocalizations.delegate
-                      ],
-                      supportedLocales: const [Locale("en"), Locale("zh")],
+                          title: AppDefault.projectName,
+                          // home: MainPage(),
+                          localizationsDelegates: const [
+                            RefreshLocalizations.delegate,
+                            GlobalMaterialLocalizations.delegate,
+                            GlobalCupertinoLocalizations.delegate,
+                            GlobalWidgetsLocalizations.delegate
+                          ],
+                          supportedLocales: const [Locale("en"), Locale("zh")],
 
-                      builder: (getCtx, materialAppChild) {
-                        return MediaQuery(
-                            data: MediaQuery.of(getCtx).copyWith(
-                                textScaleFactor: 1.0, boldText: false),
-                            child: materialAppChild!);
-                      },
-                      navigatorObservers: [GLObserver()],
-                    ));
+                          builder: (getCtx, materialAppChild) {
+                            return MediaQuery(
+                                data: MediaQuery.of(getCtx).copyWith(
+                                    textScaleFactor: 1.0, boldText: false),
+                                child: materialAppChild!);
+                          },
+                          navigatorObservers: [GLObserver()],
+                        )));
         },
       ),
     );

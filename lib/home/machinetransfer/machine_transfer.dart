@@ -165,7 +165,12 @@ class MachineTransfer extends GetView<MachineTransferController> {
                 children: [
                   getSubmitBtn("生成划拨清单", () {
                     controller.terminalTransferAction();
-                  }),
+                  },
+                      height: 45,
+                      linearGradient: LinearGradient(
+                          colors: [AppColor.gradient1, AppColor.gradient2],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter)),
                 ],
               )),
           Positioned.fill(

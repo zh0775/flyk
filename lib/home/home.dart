@@ -1,10 +1,10 @@
 import 'dart:convert' as convert;
 
-import 'package:cxhighversion2/bounspool/bonuspool.dart';
 import 'package:cxhighversion2/component/app_banner.dart';
 import 'package:cxhighversion2/component/app_bottom_tips.dart';
 // import 'package:cxhighversion2/component/app_lottery_webview.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
+import 'package:cxhighversion2/component/custom_deferred.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/component/custom_webview.dart'
     deferred as customwebview;
@@ -15,8 +15,6 @@ import 'package:cxhighversion2/home/businessSchool/promotion_skills.dart'
 import 'package:cxhighversion2/home/component/custom_message.dart';
 import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart'
     deferred as contact_customer_service;
-import 'package:cxhighversion2/home/fodderlib/fodder_lib.dart'
-    deferred as fodder_lib;
 import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase.dart'
     deferred as integral_repurchase;
 import 'package:cxhighversion2/home/machine_manage.dart'
@@ -36,6 +34,8 @@ import 'package:cxhighversion2/home/news/news_list.dart' deferred as news_list;
 import 'package:cxhighversion2/home/store/vip_store.dart' deferred as vip_store;
 import 'package:cxhighversion2/home/terminal_binding.dart'
     deferred as terminal_binding;
+import 'package:cxhighversion2/integralstore/integral_store.dart'
+    deferred as integral_store;
 import 'package:cxhighversion2/machine/machine_pay_page.dart'
     deferred as machine_pay_page;
 import 'package:cxhighversion2/machine/machine_register.dart'
@@ -110,134 +110,13 @@ class HomeController extends FullLifeCycleController {
   }
 
   List btnDatas = [];
-  //导航方式 1.立体旋转 2.底部按钮
-  final _pageStyle = 0.obs;
-  int get pageStyle => _pageStyle.value;
-  set pageStyle(v) {
-    if (_pageStyle.value != v) {
-      _pageStyle.value = v;
-      bus.emit(NOTIFY_CHANGE_PAGE_STYLE, {"value": pageStyle});
-    }
-  }
-
-  String drawBoundStr = "";
 
   // 机具数据切换
   final _machineDataIdx = 0.obs;
   int get machineDataIdx => _machineDataIdx.value;
   set machineDataIdx(v) => _machineDataIdx.value = v;
 
-  // 奖金池金额
-  final _bonusPoolMoney = 0.0.obs;
-  double get bonusPoolMoney => _bonusPoolMoney.value;
-  set bonusPoolMoney(v) => _bonusPoolMoney.value = v;
-
-  //是否有个人数据模块
-  final _havePersionData = false.obs;
-  bool get havePersionData => _havePersionData.value;
-  set havePersionData(v) => _havePersionData.value = v;
-  //是否有团队数据模块
-  final _haveTeamData = false.obs;
-  bool get haveTeamData => _haveTeamData.value;
-  set haveTeamData(v) => _haveTeamData.value = v;
-  //是否有积分商城模块
-  final _haveIntegral = false.obs;
-  bool get haveIntegral => _haveIntegral.value;
-  set haveIntegral(v) => _haveIntegral.value = v;
-  //积分商城数据
-  final _integralData = Rx<List>([]);
-  set integralData(v) => _integralData.value = v;
-  List get integralData => _integralData.value;
-
   bool haveNews = false;
-
-  //请求积分商城
-  loadIntegral() {
-    simpleRequest(
-      url: Urls.userProductHomeInfo(2),
-      params: {},
-      success: (success, json) {
-        if (success) {
-          Map data = json["data"] ?? {};
-          if (data["recommend"] != null) {
-            integralData = data["recommend"];
-            if (integralData.length > 4) {
-              integralData = integralData.sublist(0, 4);
-            }
-            UserDefault.saveStr(
-                HOME_INTEGRAL_DATA_STORAGE, convert.jsonEncode(integralData));
-          }
-        }
-      },
-      after: () {},
-    );
-  }
-
-  //是否有商学院模块
-  final _haveBusiness = false.obs;
-  bool get haveBusiness => _haveBusiness.value;
-  set haveBusiness(v) => _haveBusiness.value = v;
-  //商学院数据
-  final _businessData = Rx<List>([]);
-  List get businessData => _businessData.value;
-  set businessData(v) => _businessData.value = v;
-  //请求商学院数据
-  loadBusiness() {
-    simpleRequest(
-      url: Urls.userBusinessSchoolInfo,
-      params: {},
-      success: (success, json) {
-        if (success) {
-          Map data = json["data"] ?? {};
-          if (data["typeList"] != null && data["typeList"].isNotEmpty) {
-            List items = [];
-            for (var e in (data["typeList"] ?? [])) {
-              if (e["items"] != null && e["items"].isNotEmpty) {
-                items.addAll(e["items"]);
-              }
-            }
-            businessData = items;
-            if (businessData.length > 4) {
-              businessData = businessData.sublist(0, 4);
-            }
-            UserDefault.saveStr(
-                HOME_BUSINESS_DATA_STORAGE, convert.jsonEncode(businessData));
-          }
-        }
-      },
-      after: () {},
-    );
-  }
-
-  //是否有产品模块
-  final _haveProduct = false.obs;
-  bool get haveProduct => _haveProduct.value;
-  set haveProduct(v) => _haveProduct.value = v;
-  //产品数据
-  final _productData = Rx<List>([]);
-  List get productData => _productData.value;
-  set productData(v) => _productData.value = v;
-  //请求产品数据
-  loadProductData() {
-    simpleRequest(
-      url: Urls.userLevelGiftList,
-      params: {"pageNo": 1, "pageSize": 4, "levelType": "2"},
-      success: (success, json) {
-        if (success) {
-          Map data = json["data"] ?? {};
-          if (data["data"] != null) {
-            productData = data["data"];
-            if (productData.length > 4) {
-              productData = productData.sublist(0, 4);
-            }
-            UserDefault.saveStr(
-                HOME_PRODUCT_DATA_STORAGE, convert.jsonEncode(productData));
-          }
-        }
-      },
-      after: () {},
-    );
-  }
 
   //是否实名
   bool isAuth = false;
@@ -485,25 +364,7 @@ class HomeController extends FullLifeCycleController {
     if (!AppDefault().loginStatus) {
       return;
     }
-    /*
-    //标板2.0没有自定义首页
-    if (homeData.isNotEmpty) {
-      modules = homeData["homeModule"] ?? [];
-      haveAddModule = false;
-      for (var e in modules) {
-        if (e["module_Flag"] == 0) {
-          haveAddModule = true;
-          break;
-        }
-      }
-      loadModulesData();
-    }
-     */
 
-    // cClient = (homeData["u_Role"] ?? 0) == 0;
-    // cClient = true;
-    // if ((homeData["u_Role"] ?? 0) == 0) {
-    // }
     haveNews = homeData["news"] != null && homeData["news"].isNotEmpty;
     myMessages = homeData["news"] ?? [];
 
@@ -512,9 +373,7 @@ class HomeController extends FullLifeCycleController {
       tmpBanners = tmpBanners.where((e) {
         String type = e["u_Type"] ?? "";
         List types = type.split(",");
-        if (cClient && types.contains("2")) {
-          return true;
-        } else if (!cClient && types.contains("1")) {
+        if (types.contains("1")) {
           return true;
         } else {
           return false;
@@ -544,14 +403,7 @@ class HomeController extends FullLifeCycleController {
           }
         }
       }
-      // int myLevel = homeData["uL_Level"] ?? 1;
-      // if (myLevel <= 1) {
-      //   middleIcons = middleIcons
-      //       .where((e) =>
-      //           (e["apP_Title"] ?? "") != "邀请好友" &&
-      //           (e["apP_Title"] ?? "") != "分享邀请")
-      //       .toList();
-      // }
+
       List tmpBtnDatas = middleIcons.map((e) {
         return Map<String, dynamic>.from({
           "img": "$imageUrl${e["apP_Pic"]}",
@@ -579,66 +431,13 @@ class HomeController extends FullLifeCycleController {
           ((publicHomeData["webSiteInfo"] ?? {})["app"])["apP_SubTitle"] ?? "";
       subTitle = "欢迎您！";
     }
-    if (!cClient &&
-        AppDefault().safeAlert &&
+    if (AppDefault().safeAlert &&
         isHomeData &&
         (AppDefault().firstAlertFromLogin || homeFirst)) {
       showHomeAlert();
     }
     update();
-    // if (cClient) {
-    //   // if (!homeFirst) {
-    //   //   loadWebView();
-    //   // }
-    //   // loadWebView();
-    //   update(["lotteryWebView_buildId"]);
-    // }
   }
-
-  final _cClient = false.obs;
-  bool get cClient => _cClient.value;
-  set cClient(v) => _cClient.value = v;
-
-  double webViewHeight = 447;
-  // WebViewController? _myWebCtrl;
-  // LotteryChannel? lotteryChannel;
-  // set myWebCtrl(v) {
-  //   _myWebCtrl = v;
-  //   loadWebView();
-  //   lotteryChannel ??= LotteryChannel(webViewCtrl: myWebCtrl);
-  // }
-
-  // WebViewController? get myWebCtrl => _myWebCtrl;
-
-  // loadWebView() {
-  //   if (AppDefault().token.isEmpty || homeData.isEmpty) {
-  //     return;
-  //   }
-  //   String params = "";
-  //   if (homeData["lotteryConfig"] != null &&
-  //       homeData["lotteryConfig"] is List &&
-  //       homeData["lotteryConfig"].isNotEmpty) {
-  //     Map lData = homeData["lotteryConfig"][0];
-  //     params += "&prizeList=${convert.jsonEncode(lData["prizeList"] ?? [])}";
-  //     params += "&costAmount=${lData["costAmount"] ?? 0}";
-  //     params += "&lotteryDesc=${lData["lotteryDesc"] ?? ""}";
-  //     params += "&no=${lData["no"] ?? ""}";
-  //   } else {
-  //     return;
-  //   }
-  //   if ((homeData["u_Account"] ?? []).isNotEmpty) {
-  //     for (var e in (homeData["u_Account"] ?? [])) {
-  //       if (e["a_No"] == 4) {
-  //         params += "&amout=${e["amout"] ?? 0}";
-  //       }
-  //     }
-  //   }
-
-  //   String lotteryUrl =
-  //       "${HttpConfig.lotteryUrl}?token=${AppDefault().token}&baseUrl=${HttpConfig.baseUrl}$params&imageUrl=${AppDefault().imageUrl}";
-  //   // lotteryUrl = Uri.encodeFull(lotteryUrl);
-  //   myWebCtrl?.loadUrl(lotteryUrl);
-  // }
 
   applyRequest() {
     simpleRequest(
@@ -704,66 +503,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     return AnnotatedRegion(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
-          // appBar: getDefaultAppBar(context, "",
-          //     color: Colors.transparent,
-          //     leading: gemp(),
-          //     flexibleSpace: SizedBox(
-          //       width: 375.w,
-          //       // height: kToolbarHeight,
-          //       child: Center(
-          //         child: Padding(
-          //           padding: EdgeInsets.only(top: paddingSizeTop(context)),
-          //           child: sbRow([
-          //             centRow([
-          //               Image.asset(
-          //                 assetsName("home/top_logo"),
-          //                 width: 61.5.w,
-          //                 fit: BoxFit.fitWidth,
-          //               ),
-          //               gwb(10),
-          //               GetBuilder<HomeController>(
-          //                 builder: (_) {
-          //                   return ctrl.subTitle.isEmpty
-          //                       ? gwb(0)
-          //                       : gline(1, 14.5, color: AppColor.text2);
-          //                 },
-          //               ),
-          //               gwb(10),
-          //               GetBuilder<HomeController>(
-          //                 builder: (_) {
-          //                   return getSimpleText(
-          //                       ctrl.subTitle, 14, AppColor.text2,
-          //                       textHeight: 1.1);
-          //                 },
-          //               )
-          //             ]),
-          //             CustomButton(
-          //               onPressed: () {
-          //                 contact_customer_service.loadLibrary().then((value) =>
-          //                     push(
-          //                         contact_customer_service
-          //                             .ContactCustomerService(),
-          //                         context,
-          //                         binding: contact_customer_service
-          //                             .ContactCustomerServiceBinding()));
-          //               },
-          //               child: SizedBox(
-          //                 width: 50.w,
-          //                 height: kToolbarHeight,
-          //                 child: Align(
-          //                   alignment: Alignment.centerRight,
-          //                   child: Image.asset(
-          //                     assetsName("home/btn_kf"),
-          //                     width: 24.w,
-          //                     fit: BoxFit.fitWidth,
-          //                   ),
-          //                 ),
-          //               ),
-          //             )
-          //           ], width: 345),
-          //         ),
-          //       ),
-          //     )),
           body: EasyRefresh.builder(
         onRefresh: () => ctrl.homeOnRefresh(),
         childBuilder: (context, physics) {
@@ -779,43 +518,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         AppDefault().scaleWidth = 1.w;
                         return topContent();
                       }),
-
-                  //公告
-                  // GetBuilder<HomeController>(
-                  //   builder: (_) {
-                  //     return messageView();
-                  //   },
-                  // ),
-                  // 本月数据
-                  // GetBuilder<HomeController>(
-                  //   builder: (_) {
-                  //     return thisMonData();
-                  //   },
-                  // ),
-                  // GetBuilder<HomeController>(
-                  //   builder: (_) {
-                  //     return ghb(ctrl.haveNews ? 30 : 10);
-                  //   },
-                  // ),
-
-                  //奖金池
-                  // bonusPool(),
-                  // ghb(15.5),
-                  // yjView(),
-                  // ghb(15.5),
-                  //新手专区
-                  // newUserView(),
-                  // ghb(15.5),
-                  //商学院
-                  // businessView(),
-                  // 商户数据
                   machineDataView(),
                 ]),
-                // ;
-                //   },
-                // ),
                 ghb(14),
-                // ghb(kIsWeb ? 30 : 66),
                 GetBuilder<HomeController>(
                   builder: (_) {
                     return AppBottomTips(
@@ -974,16 +679,18 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                           binding: machine_transfer
                                               .MachineTransferBinding());
                                     } else if (index == 3) {
-                                      await product_store_list.loadLibrary();
-                                      push(
-                                          product_store_list.ProductStoreList(),
-                                          null,
-                                          binding: product_store_list
-                                              .ProductStoreListBinding(),
-                                          arguments: {
-                                            "levelType": 2,
-                                            "title": "采购商城"
-                                          });
+                                      CustomDeferred()
+                                          .toStatisticsMachineEquitiesAdd();
+                                      // await product_store_list.loadLibrary();
+                                      // push(
+                                      //     product_store_list.ProductStoreList(),
+                                      //     null,
+                                      //     binding: product_store_list
+                                      //         .ProductStoreListBinding(),
+                                      //     arguments: {
+                                      //       "levelType": 2,
+                                      //       "title": "采购商城"
+                                      //     });
                                     }
                                   },
                                   child: SizedBox(
@@ -1173,508 +880,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget bonusPool() {
-    return centClm([
-      Container(
-        width: 345.w,
-        height: 40.w,
-        decoration: BoxDecoration(
-            gradient: simpleGradient([
-              const Color(0xFFFDD2A7),
-              const Color(0xFFFFF2DB),
-            ]),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(8.w))),
-        child: Center(
-          child: sbRow([
-            getSimpleText("奖金池", 16, const Color(0xFF5A2F0F), isBold: true),
-            centRow([
-              getSimpleText("今日剩余待领取奖金", 10, const Color(0xFF5A2F0F)),
-              Container(
-                height: 16.w,
-                margin: EdgeInsets.symmetric(horizontal: 3.w),
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                decoration: BoxDecoration(
-                    color: const Color(0xFFF3C274),
-                    borderRadius: BorderRadius.circular(2.w)),
-                child: Center(
-                  child: GetX<HomeController>(
-                    builder: (_) {
-                      return getSimpleText(
-                          priceFormat(ctrl.bonusPoolMoney), 15, Colors.white,
-                          isBold: true, textHeight: 1.1);
-                    },
-                  ),
-                ),
-              ),
-              getSimpleText("元", 10, const Color(0xFF5A2F0F)),
-            ])
-          ], width: 345 - 15.5 * 2),
-        ),
-      ),
-      Container(
-        width: 345.w,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(8.w),
-            ),
-            color: Colors.white),
-        child: Column(
-          children: [
-            ghb(10),
-            Center(
-              child: sbRow([
-                centRow([
-                  Image.asset(
-                    assetsName("home/icon_jjc"),
-                    width: 60.w,
-                    fit: BoxFit.fitWidth,
-                  ),
-                  gwb(8),
-                  centClm([
-                    getSimpleText("超级福利大放送", 15, AppColor.text, isBold: true),
-                    // ghb(1),
-                    getSimpleText("百万现等你来领！", 12, AppColor.text3),
-                  ], crossAxisAlignment: CrossAxisAlignment.start)
-                ]),
-                centRow([
-                  CustomButton(
-                    onPressed: () {
-                      if (ctrl.drawBoundStr.isNotEmpty) {
-                        ShowToast.normal(ctrl.drawBoundStr);
-                        return;
-                      }
-                      Get.find<BounsPoolController>().drawBoundAction();
-                    },
-                    child: Container(
-                      width: 75.w,
-                      height: 30.w,
-                      decoration: BoxDecoration(
-                          gradient: simpleGradient([
-                            const Color(0xFFFFF2DB),
-                            const Color(0xFFFDD2A7),
-                          ]),
-                          borderRadius: BorderRadius.circular(15.w)),
-                      child: Center(
-                        child:
-                            getSimpleText("立即领取", 12, const Color(0xFF5A2F0F)),
-                      ),
-                    ),
-                  )
-                ])
-              ], width: 345 - 7.5 * 2),
-            ),
-            ghb(10),
-          ],
-        ),
-      )
-    ]);
-  }
-
-  bool handleNotification(UserScrollNotification notification) {
-    print("notification is ${notification.runtimeType}");
-    return true;
-  }
-
-  Widget yjView() {
-    return Column(
-      children: [
-        gwb(375),
-        cellTitle("收益统计"),
-        SizedBox(
-          width: 375.w,
-          height: 135.w,
-          child: Listener(
-            onPointerUp: (event) {
-              double margin = 15.w;
-              double width = 285.w;
-              double overSet = yjScrollCtrl.offset % width;
-              double toSet = 0;
-              if (overSet < 85.w) {
-                toSet = yjScrollCtrl.offset - overSet - margin;
-              } else {
-                toSet = yjScrollCtrl.offset + (width - overSet) - margin;
-              }
-              yjScrollCtrl.animateTo(toSet,
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.linearToEaseOut);
-            },
-            child: ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              controller: yjScrollCtrl,
-              itemCount: 1000,
-              itemBuilder: (context, idx) {
-                int index = idx % 3;
-                return Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(right: 15.w),
-                    width: 270.w,
-                    height: 135.w,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: AssetImage(
-                                assetsName("home/bg_wallet${index + 1}")))),
-                    child: Column(
-                      children: [
-                        gwb(270),
-                        sbhRow(
-                          [
-                            centRow([
-                              Image.asset(
-                                assetsName("home/icon_wallet${index + 1}"),
-                                width: 18.w,
-                                fit: BoxFit.fitWidth,
-                              ),
-                              gwb(7),
-                              getSimpleText(
-                                  index == 0
-                                      ? "本月业绩"
-                                      : index == 1
-                                          ? "全部业绩"
-                                          : "昨日业绩",
-                                  16,
-                                  index == 0
-                                      ? const Color(0xFFED8103)
-                                      : index == 1
-                                          ? const Color(0xFF0576CF)
-                                          : const Color(0xFF493AEC),
-                                  isBold: true,
-                                  textHeight: 1.25)
-                            ])
-                          ],
-                          width: 270 - 15 * 2,
-                          height: 45,
-                        ),
-                        Container(
-                          width: 270.w,
-                          height: 90.w - 0.1.w,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.vertical(
-                                  bottom: Radius.circular(8.w))),
-                          child: GetBuilder<HomeController>(
-                            builder: (_) {
-                              Map data = ctrl.homeData["homeBouns"] ?? {};
-                              return Column(
-                                children: [
-                                  ghb(22),
-                                  sbRow([
-                                    centClm([
-                                      getSimpleText(
-                                          index == 0
-                                              ? "本月收益(元)"
-                                              : index == 1
-                                                  ? "全部收益(元)"
-                                                  : "本月收益(元)",
-                                          10,
-                                          AppColor.text2),
-                                      ghb(4),
-                                      getSimpleText(
-                                          priceFormat(data[index == 0
-                                                  ? "totalBouns"
-                                                  : index == 1
-                                                      ? "thisMBouns"
-                                                      : "lastDBouns"] ??
-                                              "0"),
-                                          30,
-                                          AppColor.text,
-                                          isBold: true)
-                                    ],
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start),
-                                    centClm([
-                                      // getSimpleText(
-                                      //     "${index == 0 ? "本月交易额" : index == 1 ? "全部交易额" : "本月交易额"}￥${3462.00}",
-                                      //     10,
-                                      //     AppColor.text2),
-                                      // ghb(5),
-                                      // getSimpleText("交易笔数 126", 10, AppColor.text2),
-                                    ],
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end),
-                                  ],
-                                      width: 270 - 14 * 2,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start)
-                                ],
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget newUserView() {
-    return SizedBox(
-      width: 345.w,
-      child: Column(
-        children: [
-          cellTitle("新手专区"),
-          sbRow([
-            CustomButton(
-              onPressed: () {
-                fodder_lib.loadLibrary().then((value) => push(
-                    fodder_lib.FodderLib(
-                      key: ValueKey("Home"),
-                    ),
-                    context,
-                    binding: fodder_lib.FodderLibBinding()));
-              },
-              child: Container(
-                  width: 155.w,
-                  height: 125.w,
-                  padding: EdgeInsets.only(left: 15.w),
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(assetsName("home/bg_sck")),
-                          fit: BoxFit.fitWidth)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ghb(22),
-                      getSimpleText("素材库", 16, AppColor.text, isBold: true),
-                      ghb(6),
-                      getSimpleText("精美营销素材使用", 12, const Color(0xFF999999)),
-                      ghb(8),
-                      getSimpleButton(
-                          null, getSimpleText("去下载", 10, Colors.white),
-                          width: 55,
-                          height: 18,
-                          colors: [
-                            const Color(0xFFFEA764),
-                            const Color(0xFFFF5156),
-                          ])
-                    ],
-                  )),
-            ),
-            centClm([
-              CustomButton(
-                onPressed: () {
-                  mine_help_center.loadLibrary().then((value) => push(
-                      mine_help_center.MineHelpCenter(), context,
-                      binding: mine_help_center.MineHelpCenterBinding(),
-                      arguments: {"index": 0}));
-                },
-                child: Container(
-                    width: 180.w,
-                    height: 57.5.w,
-                    padding: EdgeInsets.only(left: 17.w, bottom: 2.w),
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(assetsName("home/bg_czzn")),
-                            fit: BoxFit.fitWidth)),
-                    child: centClm([
-                      getSimpleText("操作指南", 14, AppColor.text, isBold: true),
-                      ghb(5),
-                      getSimpleButton(
-                          null, getSimpleText("立即查看", 10, Colors.white),
-                          width: 55,
-                          height: 18,
-                          colors: [
-                            const Color(0xFF8DB3FD),
-                            const Color(0xFF5496F9),
-                          ]),
-                    ], crossAxisAlignment: CrossAxisAlignment.start)),
-              ),
-              ghb(10),
-              CustomButton(
-                onPressed: () {
-                  mine_help_center.loadLibrary().then((value) => push(
-                      mine_help_center.MineHelpCenter(), context,
-                      binding: mine_help_center.MineHelpCenterBinding(),
-                      arguments: {"index": 1}));
-                },
-                child: Container(
-                    width: 180.w,
-                    height: 57.5.w,
-                    padding: EdgeInsets.only(left: 17.w, bottom: 2.w),
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage(assetsName("home/bg_zclc")),
-                            fit: BoxFit.fitWidth)),
-                    child: centClm([
-                      getSimpleText("注册流程", 14, AppColor.text, isBold: true),
-                      ghb(5),
-                      getSimpleButton(
-                        null,
-                        getSimpleText("立即查看", 10, Colors.white),
-                        width: 55,
-                        height: 18,
-                        colors: [
-                          const Color(0xFF0FDDB4),
-                          const Color(0xFF1BC69C),
-                        ],
-                      )
-                    ], crossAxisAlignment: CrossAxisAlignment.start)),
-              ),
-            ]),
-          ], width: 345)
-        ],
-      ),
-    );
-  }
-
-  Widget businessView() {
-    return SizedBox(
-      width: 345.w,
-      child: Column(
-        children: [
-          cellTitle(
-            "商学院",
-            right: [
-              getSimpleText("赋能企业搭建在线学习平台", 12, AppColor.text3),
-              gwb(3),
-              Padding(
-                padding: EdgeInsets.only(top: 2.5.w),
-                child: Image.asset(
-                  assetsName("home/icon_right_arrow"),
-                  width: 12.w,
-                  fit: BoxFit.fitWidth,
-                ),
-              ),
-            ],
-            rightOnPressed: () {
-              business_school_list_page.loadLibrary().then((value) => push(
-                  business_school_list_page.BusinessSchoolListPage(), context,
-                  binding:
-                      business_school_list_page.BusinessSchoolListPageBinding(),
-                  arguments: {"index": 0}));
-            },
-          ),
-          CustomButton(
-            onPressed: () {
-              business_school_list_page.loadLibrary().then((value) => push(
-                  business_school_list_page.BusinessSchoolListPage(), context,
-                  binding:
-                      business_school_list_page.BusinessSchoolListPageBinding(),
-                  arguments: {"index": 0}));
-            },
-            child: Image.asset(
-              assetsName("home/btn_businessSchool"),
-              width: 345.w,
-              fit: BoxFit.fitWidth,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget cellTitle(String title,
-      {List<Widget> right = const [], Function()? rightOnPressed}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 20.w),
-      child: sbRow([
-        centRow([
-          Image.asset(
-            assetsName("home/cell_tag"),
-            width: 6.w,
-            fit: BoxFit.fitWidth,
-          ),
-          gwb(9),
-          getSimpleText(title, 16, AppColor.text, isBold: true),
-        ]),
-        CustomButton(onPressed: rightOnPressed, child: centRow(right))
-      ], width: 345),
-    );
-  }
-
-  Widget thisMonData() {
-    return centClm([
-      ghb(10),
-      getDefaultTilte("本月数据"),
-      ghb(10),
-      Container(
-          width: 345.w,
-          height: 150.w,
-          decoration: getBBDec(colors: [
-            const Color(0xFF3E98F7),
-            const Color(0xFF1C5BFF),
-          ], color: AppDefault().getThemeColor()),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                  child: Image.asset(
-                assetsName("home/bg_sy2"),
-                width: 345.w,
-                height: 150.w,
-                fit: BoxFit.fill,
-              )),
-              Positioned(
-                  left: 11.w,
-                  top: 0,
-                  width: 295.w,
-                  height: 93.w,
-                  child: ColorFiltered(
-                    colorFilter: ColorFilter.mode(
-                        AppDefault().getThemeColor(index: 1) ?? Colors.white,
-                        BlendMode.modulate),
-                    child: Image.asset(
-                      assetsName("home/bg_sy3"),
-                      width: 295.w,
-                      height: 93.w,
-                      fit: BoxFit.fill,
-                    ),
-                  )),
-              Positioned.fill(
-                  child: GetBuilder<HomeController>(
-                init: ctrl,
-                builder: (_) {
-                  Map homeTeamTanNo = ctrl.homeData["homeTeamTanNo"] ?? {};
-                  return Column(
-                    children: [
-                      ghb(15),
-                      dataView(
-                          priceFormat(homeTeamTanNo["teamThisMAmount"] ?? 0),
-                          "交易金额(元)",
-                          type: 0),
-                      ghb(18),
-                      sbRow([
-                        dataView("新增伙伴(人)",
-                            "${homeTeamTanNo["teamThisMAddUser"] ?? 0}"),
-                        dataView("绑定机具(台)",
-                            "${homeTeamTanNo["teamThisMAddMerchant"] ?? 0}"),
-                      ], width: 345 - 57 * 2),
-                    ],
-                  );
-                },
-              ))
-            ],
-          )),
-    ]);
-  }
-
-  Widget hdBtn(int type, {Function()? onPressed}) {
-    return CustomButton(
-      onPressed: onPressed,
-      child: sbhRow([
-        centClm([
-          getSimpleText(type == 0 ? "排行榜" : "会员权益", 18, AppColor.textBlack3),
-          ghb(8),
-          getSimpleText(
-              type == 0 ? "每日排行 火速比拼" : "高额比例 亿万收益", 11, AppColor.textGrey4),
-        ], crossAxisAlignment: CrossAxisAlignment.start),
-        Image.asset(
-          assetsName("home/icon_${type == 0 ? "phb" : "hyqy"}"),
-          width: 44.w,
-          height: 44.w,
-          fit: BoxFit.fill,
-        )
-      ], width: 146, height: 84),
-    );
-  }
-
   Widget dataView(String t1, String t2, {int type = 1}) {
     return centClm([
       getSimpleText(t1, type == 0 ? 30 : 12, Colors.white,
@@ -1729,9 +934,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 binding: mybusiness.MyBusinessBinding());
           } else if (e["path"] == "/home/integralstore") {
             // 积分商城
-            await points_mall_page.loadLibrary();
-            push(points_mall_page.PointsMallPage(), null,
-                binding: points_mall_page.PointsMallPageBinding());
+            await integral_store.loadLibrary();
+            push(integral_store.IntegralStore(), null,
+                binding: integral_store.IntegralStoreBinding());
           } else if (e["path"] == "/home/machinetransfer") {
             // 机具划拨
             await machine_transfer.loadLibrary();
@@ -1759,17 +964,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 binding:
                     business_school_list_page.BusinessSchoolListPageBinding(),
                 arguments: {"index": 0});
-            // 联系客服
-            // push(const ContactCustomerService(), context,
-            //     binding: ContactCustomerServiceBinding());
-            // 积分复购
-
-            // push(const IntegralRepurchase(), context,
-            //     binding: IntegralRepurchaseBinding());
-
-            //设备采购
-            // push(const MachinePayPage(), context,
-            //     binding: MachinePayPageBinding());
           } else if (path == "/home/usermanage") {
             // 用户管理
             await statistics_user_manage.loadLibrary();
@@ -1834,6 +1028,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             push(product_store_list.ProductStoreList(), null,
                 binding: product_store_list.ProductStoreListBinding(),
                 arguments: {"levelType": type, "title": e["name"] ?? ""});
+          } else if (path == "/home/equitiesadd") {
+            // 权益添加
+            CustomDeferred().toStatisticsMachineEquitiesAdd();
           }
         },
         child: SizedBox(
@@ -1858,28 +1055,10 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     return buttons;
   }
 
-  // changeIosLogo(String icon) async {
-  //   try {
-  //     if (await DynamicIconFlutter.supportsAlternateIcons) {
-  //       await DynamicIconFlutter.setAlternateIconName(
-  //           icon == "MainActivity" ? "main" : icon);
-  //       print("App icon change successful");
-  //       return;
-  //     }
-  //   } on PlatformException catch (e) {
-  //     if (await DynamicIconFlutter.supportsAlternateIcons) {
-  //       await DynamicIconFlutter.setAlternateIconName(null);
-  //       print("Change app icon back to default");
-  //       return;
-  //     } else {
-  //       print("Failed to change app icon");
-  //     }
-  //   }
-  // }
-
   Widget machineDataView() {
     return GetBuilder<HomeController>(
       builder: (_) {
+        Map tNo = ctrl.homeData["homeTeamTanNo"] ?? {};
         return Container(
           width: 345.w,
           margin: EdgeInsets.only(top: 15.w),
@@ -1896,7 +1075,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       fit: BoxFit.fitWidth,
                     ),
                     gwb(6),
-                    getSimpleText("机具数据", 16, AppColor.textBlack, isBold: true),
+                    getSimpleText(ctrl.machineDataIdx == 0 ? "机具数据" : "商户数据",
+                        16, AppColor.textBlack,
+                        isBold: true),
                   ]),
                   DropdownButtonHideUnderline(
                       child: DropdownButton2(
@@ -1971,15 +1152,31 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                 getSimpleText(
                                     index == 0
                                         ? ctrl.machineDataIdx == 0
-                                            ? "1"
-                                            : "4"
+
+                                            /// 累计总激活
+                                            ? tNo["teamTotalActTerminal"] ?? "0"
+
+                                            /// 累计总达标
+                                            : tNo["teamTotalActivTerminal"] ??
+                                                "0"
                                         : index == 1
                                             ? ctrl.machineDataIdx == 0
-                                                ? "2"
-                                                : "5"
+
+                                                /// 团队当月激活
+                                                ? tNo["teamThisMActTerminal"] ??
+                                                    "0"
+
+                                                /// 团队当月达标
+                                                : tNo["teamThisMActivTerminal"] ??
+                                                    "0"
                                             : ctrl.machineDataIdx == 0
-                                                ? "3"
-                                                : "6",
+
+                                                /// 团队当日激活
+                                                ? tNo["teamThisDActTerminal"] ??
+                                                    "0"
+                                                ////团队当日达标
+                                                : tNo["teamThisDActivTerminal"] ??
+                                                    "0",
                                     18,
                                     AppColor.textBlack,
                                     isBold: true,
