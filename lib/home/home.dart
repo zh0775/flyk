@@ -920,9 +920,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             push(rank.Rank(), null, binding: rank.RankBinding());
           } else if (path.contains("/home/entrepreneurial/support")) {
             // 创业支持
-            await support.loadLibrary();
-            push(support.SupportPage(), null,
-                binding: support.SupportBinding());
+            CustomDeferred().toSupportPage();
           } else if (e['id'] == 2079) {
             // 分享注册
             await share_invite.loadLibrary();
@@ -937,13 +935,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             // 团队管理
             await my_team.loadLibrary();
             push(my_team.MyTeam(), null, binding: my_team.MyTeamBinding());
-          } else if (e['id'] == 2084 ||
-              e["path"] == "/pages/authentication/authentication") {
+          } else if (path == "/pages/authentication") {
             // 实名认证
-            await identity_authentication.loadLibrary();
-            push(identity_authentication.IdentityAuthentication(), null,
-                binding:
-                    identity_authentication.IdentityAuthenticationBinding());
+            CustomDeferred().toIdentityAuthentication();
           } else if (e["path"] == "/home/businessinfo") {
             // 商户信息
             await mybusiness.loadLibrary();
@@ -951,9 +945,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 binding: mybusiness.MyBusinessBinding());
           } else if (e["path"] == "/home/integralstore") {
             // 积分商城
-            await points_mall_page.loadLibrary();
-            push(points_mall_page.PointsMallPage(), null,
-                binding: points_mall_page.PointsMallPageBinding());
+            CustomDeferred().toIntegralStore();
           } else if (e["path"] == "/home/machinetransfer") {
             // 机具划拨
             await machine_transfer.loadLibrary();
@@ -981,17 +973,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 binding:
                     business_school_list_page.BusinessSchoolListPageBinding(),
                 arguments: {"index": 0});
-            // 联系客服
-            // push(const ContactCustomerService(), context,
-            //     binding: ContactCustomerServiceBinding());
-            // 积分复购
-
-            // push(const IntegralRepurchase(), context,
-            //     binding: IntegralRepurchaseBinding());
-
-            //设备采购
-            // push(const MachinePayPage(), context,
-            //     binding: MachinePayPageBinding());
           } else if (path == "/home/usermanage") {
             // 用户管理
             await statistics_user_manage.loadLibrary();
@@ -1038,7 +1019,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           } else if (e["path"] == "/home/terminalbinding") {
             terminal_binding.loadLibrary().then(
                 (value) => push(terminal_binding.TerminalBinding(), context));
-          } else if (path == "/pages/store") {
+          } else if (path.contains("/pages/store")) {
             await product_store_list.loadLibrary();
             int type = 1;
             List subs = path.split("?");
@@ -1062,6 +1043,15 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           } else if (path == "/pages/promotionskills") {
             /// 推广技巧
             CustomDeferred().toPromotionSkills();
+          } else if (path == "/pages/contactservice") {
+            /// 在线客服
+            CustomDeferred().toContactCustomerService();
+          } else if (path == "/home/equitiesadd") {
+            // 权益添加
+            CustomDeferred().toStatisticsMachineEquitiesAdd();
+          } else if (path == "/home/equitiesmachine") {
+            // 权益设备
+            CustomDeferred().toStatisticsMachineEquities();
           }
         },
         child: SizedBox(

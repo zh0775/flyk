@@ -1,9 +1,10 @@
-import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_alipay.dart';
-import 'package:cxhighversion2/mine/myWallet/receipt_setting.dart';
-import 'package:flutter/material.dart';
+import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_upload.dart';
+import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:cxhighversion2/util/notify_default.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class IdentityAuthenticationCheckBinding implements Bindings {
@@ -21,15 +22,15 @@ class IdentityAuthenticationCheckController extends GetxController {
   Map cardData = {};
 
   unBindAction() {
-    Get.offUntil(
-        GetPageRoute(
-          page: () => const WalletThirdBd(),
-        ),
-        (route) => route is GetPageRoute
-            ? route.binding is ReceiptSettingBinding
-                ? true
-                : false
-            : false);
+    // Get.offUntil(
+    //     GetPageRoute(
+    //       page: () => const WalletThirdBd(),
+    //     ),
+    //     (route) => route is GetPageRoute
+    //         ? route.binding is ReceiptSettingBinding
+    //             ? true
+    //             : false
+    //         : false);
   }
 
   dataInit(bool isAli) {
@@ -59,6 +60,38 @@ class IdentityAuthenticationCheckController extends GetxController {
     }
     update();
   }
+
+  // 是否实名认证
+  bool isAuth = false;
+  // 是否支付宝提现认证
+  bool isAlipayCert = false;
+  // 是否银行卡提现认证
+  bool isBankCert = false;
+
+  homeDataNotify(arg) {
+    dataFormat();
+    update();
+  }
+
+  dataFormat() {
+    Map authData = AppDefault().homeData["authentication"] ?? {};
+    isAuth = authData["isCertified"] ?? false;
+    isAlipayCert = authData["isAliPay"] ?? false;
+    isBankCert = authData["isBank"] ?? false;
+  }
+
+  @override
+  void onInit() {
+    dataFormat();
+    bus.on(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    bus.off(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
+    super.onClose();
+  }
 }
 
 class IdentityAuthenticationCheck
@@ -70,75 +103,77 @@ class IdentityAuthenticationCheck
   @override
   Widget build(BuildContext context) {
     controller.dataInit(isAlipay);
+
     return Scaffold(
-        appBar: getDefaultAppBar(context, isAlipay ? "支付宝认证信息" : "认证详情",
-            action: !isAlipay
-                ? null
-                : [
-                    CustomButton(
-                      onPressed: () {
-                        showAlert(
-                          context,
-                          "确定要解绑支付宝账户吗",
-                          confirmOnPressed: () {
-                            Navigator.pop(context);
-                            controller.unBindAction();
-                          },
-                        );
-                      },
-                      child: SizedBox(
-                        width: 60.w,
-                        height: kToolbarHeight,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: getSimpleText("解绑", 14, AppColor.text2),
-                        ),
-                      ),
-                    )
-                  ]),
-        body: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: isAlipay
-                ? [
-                    ghb(1),
-                    UnconstrainedBox(
-                      child: Container(
-                        color: Colors.white,
-                        width: 375.w,
-                        child: Column(
-                          children: [
-                            gwb(375),
-                            ghb(45),
-                            Image.asset(
-                              assetsName("mine/wallet/icon_alipay"),
-                              width: 82.5.w,
-                              fit: BoxFit.fitWidth,
-                            ),
-                            ghb(19),
-                            getSimpleText(controller.cardData["number"] ?? "",
-                                14, AppColor.text3),
-                            ghb(9),
-                            getSimpleText("已绑定支付宝账号", 15, AppColor.text2),
-                            ghb(40),
-                            getSubmitBtn("更换绑定", () {
-                              push(
-                                  const IdentityAuthenticationAlipay(
-                                    isAdd: false,
+        backgroundColor: (isAlipay && !controller.isAlipayCert) ||
+                (!isAlipay && !controller.isAuth)
+            ? Colors.white
+            : AppColor.pageBackgroundColor,
+        appBar: getDefaultAppBar(
+            context,
+            isAlipay
+                ? controller.isAlipayCert
+                    ? "支付宝认证信息"
+                    : "提现认证"
+                : controller.isAuth
+                    ? "认证详情"
+                    : "实名认证"),
+        body: GetBuilder<IdentityAuthenticationCheckController>(
+          builder: (_) {
+            return (isAlipay && !controller.isAlipayCert) ||
+                    (!isAlipay && !controller.isAuth)
+                ? waitApplyView()
+                : SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: isAlipay
+                          ? [
+                              ghb(1),
+                              UnconstrainedBox(
+                                child: Container(
+                                  color: Colors.white,
+                                  width: 375.w,
+                                  child: Column(
+                                    children: [
+                                      gwb(375),
+                                      ghb(45),
+                                      Image.asset(
+                                        assetsName("mine/wallet/icon_alipay"),
+                                        width: 82.5.w,
+                                        fit: BoxFit.fitWidth,
+                                      ),
+                                      ghb(19),
+                                      getSimpleText(
+                                          controller.cardData["number"] ?? "",
+                                          14,
+                                          AppColor.textGrey),
+                                      ghb(9),
+                                      getSimpleText(
+                                          "已绑定支付宝账号", 15, AppColor.textBlack),
+                                      ghb(40),
+                                      getSubmitBtn("更换绑定", () {
+                                        push(
+                                            const IdentityAuthenticationAlipay(
+                                              isAdd: false,
+                                            ),
+                                            null,
+                                            binding:
+                                                IdentityAuthenticationAlipayBinding());
+                                      },
+                                          height: 40,
+                                          color: AppColor.theme,
+                                          fontSize: 15),
+                                      ghb(31.5)
+                                    ],
                                   ),
-                                  null,
-                                  binding:
-                                      IdentityAuthenticationAlipayBinding());
-                            }, height: 40, color: AppColor.theme, fontSize: 15),
-                            ghb(31.5)
-                          ],
-                        ),
-                      ),
-                    )
-                  ]
-                : idCardAuthView(),
-          ),
+                                ),
+                              )
+                            ]
+                          : idCardAuthView(),
+                    ),
+                  );
+          },
         ));
   }
 
@@ -151,13 +186,13 @@ class IdentityAuthenticationCheck
         child: Column(
           children: [
             gwb(375),
-            ghb(30),
+            ghb(35),
             Image.asset(
-              assetsName("common/bg_auth_success"),
-              width: 183.w,
+              assetsName("common/bg_auth_success2"),
+              width: 143.w,
               fit: BoxFit.fitWidth,
             ),
-            ghb(25),
+            ghb(35),
             ...List.generate(4, (index) {
               String t1 = "";
               String t2 = "";
@@ -169,6 +204,9 @@ class IdentityAuthenticationCheck
                 case 1:
                   t1 = "真实姓名";
                   t2 = controller.cardData["name"] ?? "";
+                  if (t2.length >= 2) {
+                    t2 = t2.replaceRange(1, 2, "*");
+                  }
                   break;
                 case 2:
                   t1 = "证件类型";
@@ -183,7 +221,7 @@ class IdentityAuthenticationCheck
               return sbhRow([
                 Padding(
                   padding: EdgeInsets.only(left: 5.w),
-                  child: getSimpleText(t1, 14, AppColor.text3),
+                  child: getSimpleText(t1, 14, AppColor.textGrey),
                 ),
                 index == 0
                     ? Container(
@@ -197,14 +235,78 @@ class IdentityAuthenticationCheck
                       )
                     : Padding(
                         padding: EdgeInsets.only(right: 5.w),
-                        child: getSimpleText(t2, 14, AppColor.text2),
+                        child: getSimpleText(t2, 14, AppColor.textBlack),
                       ),
-              ], width: 375 - 15 * 2, height: 45);
+              ], width: 375 - 15 * 2, height: 38);
             }),
-            ghb(25),
+            ghb(35),
           ],
         ),
       )
     ];
+  }
+
+  Widget waitApplyView() {
+    return Stack(
+      children: [
+        Positioned.fill(
+            bottom:
+                85.w + paddingSizeBottom(Global.navigatorKey.currentContext!),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  gline(375, 0.5),
+                  ghb(56),
+                  Image.asset(
+                    assetsName("mine/authentication/bg_needauth_alert"),
+                    width: 180.w,
+                    height: 180.w,
+                    fit: BoxFit.fill,
+                  ),
+                  ghb(50),
+                  getSimpleText(isAlipay ? "请绑定本人支付宝账号" : "请认证您的真实身份", 21,
+                      AppColor.textBlack,
+                      isBold: true),
+                  ghb(15),
+                  getWidthText(
+                      isAlipay
+                          ? "为保障您的账户安全，避免身份信息被盗用，提现前 请先完成实名认证，我们承诺保护您的信息安全"
+                          : "为保障您的账户安全，避免身份信息被盗用，请认真 完成实名认证，我们承诺保护您的信息安全",
+                      12,
+                      AppColor.textGrey,
+                      280,
+                      5,
+                      textHeight: 1.5)
+                ],
+              ),
+            )),
+        Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height:
+                85.w + paddingSizeBottom(Global.navigatorKey.currentContext!),
+            child: Column(
+              children: [
+                getSubmitBtn("马上认证", () {
+                  if (isAlipay) {
+                    push(const IdentityAuthenticationAlipay(), null,
+                        binding: IdentityAuthenticationAlipayBinding());
+                  } else {
+                    push(const IdentityAuthenticationUpload(), null,
+                        binding: IdentityAuthenticationUploadBinding());
+                  }
+                }, height: 45, color: AppColor.theme),
+                SizedBox(
+                  height: 40.w,
+                  child: Center(
+                    child: getSimpleText(isAlipay ? "需先完成实名认证后方可绑定" : "仅需要2分钟",
+                        12, AppColor.textGrey),
+                  ),
+                )
+              ],
+            ))
+      ],
+    );
   }
 }
