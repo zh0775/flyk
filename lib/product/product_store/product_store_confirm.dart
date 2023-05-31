@@ -22,7 +22,8 @@ import 'dart:convert' as convert;
 class ProductStoreConfirmBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<ProductStoreConfirmController>(ProductStoreConfirmController(datas: Get.arguments));
+    Get.put<ProductStoreConfirmController>(
+        ProductStoreConfirmController(datas: Get.arguments));
   }
 }
 
@@ -31,7 +32,8 @@ class ProductStoreConfirmController extends GetxController {
   ProductStoreConfirmController({this.datas});
 
   cursorToEnd() {
-    numInputCtrl.selection = TextSelection.fromPosition(TextPosition(offset: numInputCtrl.text.length));
+    numInputCtrl.selection = TextSelection.fromPosition(
+        TextPosition(offset: numInputCtrl.text.length));
   }
 
   final Map<String, Timer> _funcDebounce = {};
@@ -181,7 +183,9 @@ class ProductStoreConfirmController extends GetxController {
       return;
     }
     Map homeData = AppDefault().homeData;
-    if ((homeData["u_3rd_password"] == null || homeData["u_3rd_password"].isEmpty) && payTypeList[currentPayTypeIndex]["u_Type"] != 1) {
+    if ((homeData["u_3rd_password"] == null ||
+            homeData["u_3rd_password"].isEmpty) &&
+        payTypeList[currentPayTypeIndex]["u_Type"] != 1) {
       showPayPwdWarn(
         haveClose: true,
         popToRoot: false,
@@ -202,9 +206,6 @@ class ProductStoreConfirmController extends GetxController {
     if (payTypeList.isEmpty) {
       return;
     }
-<<<<<<< HEAD
-    Map<String, dynamic> params = {"delivery_Method": deliveryType + 1, "levelConfigId": productData["levelGiftId"], "num": currentCount, "contactID": address["id"] ?? 0, "pay_MethodType": int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"), "pay_Method": int.parse("${payTypeList[currentPayTypeIndex]["value"]}")};
-=======
     // Map<String, dynamic> params = {
     //   "delivery_Method": deliveryType + 1,
     //   "levelConfigId": productData["levelGiftId"],
@@ -217,7 +218,6 @@ class ProductStoreConfirmController extends GetxController {
     List orderContent = [
       {"id": productData["levelGiftId"], "num": currentCount}
     ];
->>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
 
     simpleRequest(
       url: Urls.previewOrder,
@@ -232,7 +232,8 @@ class ProductStoreConfirmController extends GetxController {
     );
   }
 
-  loadPayOrderDetail(Map orderInfo, {Function(Map orderData)? loadOrderDetailCallBack}) {
+  loadPayOrderDetail(Map orderInfo,
+      {Function(Map orderData)? loadOrderDetailCallBack}) {
     simpleRequest(
       url: Urls.userLevelGiftOrderShow(orderInfo["id"]),
       params: {},
@@ -254,13 +255,9 @@ class ProductStoreConfirmController extends GetxController {
       "levelConfigId": productData["levelGiftId"],
       "num": currentCount,
       "contactID": address["id"],
-<<<<<<< HEAD
-      "pay_MethodType": int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"),
-=======
       "purchase_Type": 1,
       "pay_MethodType":
           int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"),
->>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
       "pay_Method": int.parse("${payTypeList[currentPayTypeIndex]["value"]}"),
       "version_Origin": AppDefault().versionOriginForPay(),
       // "u_3nd_Pad": payPwd,
@@ -299,7 +296,9 @@ class ProductStoreConfirmController extends GetxController {
                             success: (orderData["orderState"] ?? 0) != 0,
                             orderData: orderData,
                             levelType: levelType,
-                            contentTitle: (orderData["orderState"] ?? 0) != 0 ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}" : "",
+                            contentTitle: (orderData["orderState"] ?? 0) != 0
+                                ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}"
+                                : "",
                           ),
                           Global.navigatorKey.currentContext!);
                     },
@@ -315,7 +314,9 @@ class ProductStoreConfirmController extends GetxController {
                           success: aliData["resultStatus"] == "9000",
                           orderData: orderData,
                           levelType: levelType,
-                          contentTitle: aliData["resultStatus"] == "9000" ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}" : "",
+                          contentTitle: aliData["resultStatus"] == "9000"
+                              ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}"
+                              : "",
                         ),
                         Global.navigatorKey.currentContext!);
                   },
@@ -331,7 +332,9 @@ class ProductStoreConfirmController extends GetxController {
                       success: success,
                       orderData: orderData,
                       levelType: levelType,
-                      contentTitle: success ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}" : "",
+                      contentTitle: success
+                          ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}"
+                          : "",
                     ),
                     Global.navigatorKey.currentContext!);
               },
@@ -342,7 +345,9 @@ class ProductStoreConfirmController extends GetxController {
               ProductStorePayResult(
                 success: success,
                 levelType: levelType,
-                contentTitle: success ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}" : json["messages"] ?? "",
+                contentTitle: success
+                    ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}"
+                    : json["messages"] ?? "",
               ),
               Global.navigatorKey.currentContext!);
         }
@@ -416,7 +421,8 @@ class ProductStoreConfirmController extends GetxController {
     currentCount = (datas ?? {})["num"] ?? 1;
     numInputCtrl.text = "$currentCount";
 
-    dynamic tmpPayTypes = convert.jsonDecode(productData["levelGiftPaymentMethod"]);
+    dynamic tmpPayTypes =
+        convert.jsonDecode(productData["levelGiftPaymentMethod"]);
     if (tmpPayTypes != null && tmpPayTypes is List && tmpPayTypes.isNotEmpty) {
       payTypeList = tmpPayTypes;
       isReal = (payTypeList[0]["u_Type"] == 1);
@@ -447,7 +453,11 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
           children: [
             Align(
               alignment: Alignment.topCenter,
-              child: Image.asset(assetsName("product_store/bg_confirm_view_top"), width: 375.w, height: 210.w, fit: BoxFit.fill),
+              child: Image.asset(
+                  assetsName("product_store/bg_confirm_view_top"),
+                  width: 375.w,
+                  height: 210.w,
+                  fit: BoxFit.fill),
             ),
             Positioned.fill(
               bottom: 60.w + paddingSizeBottom(context),
@@ -486,7 +496,15 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                         width: 345.w,
                         height: 45.w,
                         alignment: Alignment.center,
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(20.w), gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFFFD573B), Color(0xFFFF3A3A)])),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.w),
+                            gradient: const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Color(0xFFFD573B),
+                                  Color(0xFFFF3A3A)
+                                ])),
                         child: getSimpleText("提交订单", 16, Colors.white),
                       ),
                     ],
@@ -514,8 +532,11 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
               String beanName = "";
               // 如果是兑换商城，判断是否使用豆支付
               if (controller.levelType == 3) {
-                List payTypes = convert.jsonDecode(controller.productData["levelGiftPaymentMethod"]);
-                if (payTypes.isNotEmpty && payTypes.length == 1 && (payTypes[0]["value"] ?? 0) == 5) {
+                List payTypes = convert.jsonDecode(
+                    controller.productData["levelGiftPaymentMethod"]);
+                if (payTypes.isNotEmpty &&
+                    payTypes.length == 1 &&
+                    (payTypes[0]["value"] ?? 0) == 5) {
                   isBean = true;
                 }
                 beanName = "";
@@ -547,7 +568,10 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                               index == 0
                                   ? "${isReal ? "￥" : ""}${priceFormat((controller.productData["nowPrice"] ?? 0) * controller.currentCount)}${isReal ? "" : isBean ? beanName : "积分"}"
                                   : index == 1
-                                      ? (controller.previewOrderData["pay_Freight"] ?? 0) <= 0
+                                      ? (controller.previewOrderData[
+                                                      "pay_Freight"] ??
+                                                  0) <=
+                                              0
                                           ? "包邮"
                                           : "${isReal ? "￥" : ""}${priceFormat(controller.previewOrderData["pay_Freight"] ?? 0)}${isReal ? "" : isBean ? beanName : "积分"}"
                                       : "${controller.previewOrderData["num"] ?? 1}",
@@ -589,7 +613,9 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                   child: sbClm([
                     GetX<ProductStoreConfirmController>(builder: (_) {
                       // 是否默认地址
-                      bool isDefalut = ((controller.address["isDefault"] ?? 0) == 1) && controller.deliveryType == 0;
+                      bool isDefalut =
+                          ((controller.address["isDefault"] ?? 0) == 1) &&
+                              controller.deliveryType == 0;
                       return Column(
                         children: [
                           Container(
@@ -607,7 +633,10 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                                       width: 345.w / 2 - 0.1.w,
                                       height: 40.w,
                                       child: Center(
-                                        child: getSimpleText(index == 0 ? "快递配送" : "网点自提", 15, AppColor.textGrey),
+                                        child: getSimpleText(
+                                            index == 0 ? "快递配送" : "网点自提",
+                                            15,
+                                            AppColor.textGrey),
                                       ),
                                     ),
                                   );
@@ -620,7 +649,9 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                               push(
                                   MineAddressManager(
                                     getCtrl: controller,
-                                    addressType: controller.deliveryType == 0 ? AddressType.address : AddressType.branch,
+                                    addressType: controller.deliveryType == 0
+                                        ? AddressType.address
+                                        : AddressType.branch,
                                   ),
                                   context,
                                   binding: MineAddressManagerBinding());
@@ -628,9 +659,11 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                             // 没有设置地址
                             child: controller.address.isEmpty
                                 ? sbhRow([
-                                    getSimpleText("请添加您的收货地址", 14, AppColor.textGrey),
+                                    getSimpleText(
+                                        "请添加您的收货地址", 14, AppColor.textGrey),
                                     Image.asset(
-                                      assetsName("product_store/cell_arrow_right"),
+                                      assetsName(
+                                          "product_store/cell_arrow_right"),
                                       width: 18.w,
                                       fit: BoxFit.fitWidth,
                                     )
@@ -641,44 +674,105 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                                       SizedBox(
                                         width: (345 - 9.5 * 2).w - 18.w,
                                         child: Text.rich(
-                                          TextSpan(style: TextStyle(fontSize: 15.sp, color: Colors.black, fontWeight: AppDefault.fontBold, height: 1.0), children: [
-                                            WidgetSpan(child: gwb(9.5)),
-                                            WidgetSpan(
-                                                child: controller.deliveryType == 0 && isDefalut
-                                                    ? Container(
-                                                        width: 30.w,
-                                                        // height: 16.w,
-                                                        alignment: Alignment.center,
-                                                        margin: EdgeInsets.only(bottom: 1.5.w),
-                                                        decoration: BoxDecoration(color: AppColor.theme, borderRadius: BorderRadius.circular(2.w)),
-                                                        child: getSimpleText("默认", 12, Colors.white),
-                                                      )
-                                                    : controller.deliveryType == 1
+                                          TextSpan(
+                                              style: TextStyle(
+                                                  fontSize: 15.sp,
+                                                  color: Colors.black,
+                                                  fontWeight:
+                                                      AppDefault.fontBold,
+                                                  height: 1.0),
+                                              children: [
+                                                WidgetSpan(child: gwb(9.5)),
+                                                WidgetSpan(
+                                                    child: controller
+                                                                    .deliveryType ==
+                                                                0 &&
+                                                            isDefalut
                                                         ? Container(
-                                                            width: 55.w,
+                                                            width: 30.w,
                                                             // height: 16.w,
-                                                            margin: EdgeInsets.only(bottom: 1.5.w),
-                                                            alignment: Alignment.center,
-                                                            decoration: BoxDecoration(border: Border.all(width: 0.5.w, color: AppColor.theme), borderRadius: BorderRadius.circular(2.w)),
-                                                            child: getSimpleText("自提网点", 12, AppColor.theme),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    bottom:
+                                                                        1.5.w),
+                                                            decoration: BoxDecoration(
+                                                                color: AppColor
+                                                                    .theme,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            2.w)),
+                                                            child:
+                                                                getSimpleText(
+                                                                    "默认",
+                                                                    12,
+                                                                    Colors
+                                                                        .white),
                                                           )
-                                                        : gwb(0)),
-                                            WidgetSpan(child: gwb(controller.deliveryType == 0 && !isDefalut ? 0 : 10)),
-                                            TextSpan(text: controller.address["recipient"] ?? ""),
-                                            WidgetSpan(child: gwb(8)),
-                                            TextSpan(text: controller.address["recipientMobile"] ?? ""),
-                                          ]),
+                                                        : controller.deliveryType ==
+                                                                1
+                                                            ? Container(
+                                                                width: 55.w,
+                                                                // height: 16.w,
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            1.5.w),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                decoration: BoxDecoration(
+                                                                    border: Border.all(
+                                                                        width: 0.5
+                                                                            .w,
+                                                                        color: AppColor
+                                                                            .theme),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            2.w)),
+                                                                child: getSimpleText(
+                                                                    "自提网点",
+                                                                    12,
+                                                                    AppColor
+                                                                        .theme),
+                                                              )
+                                                            : gwb(0)),
+                                                WidgetSpan(
+                                                    child: gwb(
+                                                        controller.deliveryType ==
+                                                                    0 &&
+                                                                !isDefalut
+                                                            ? 0
+                                                            : 10)),
+                                                TextSpan(
+                                                    text: controller.address[
+                                                            "recipient"] ??
+                                                        ""),
+                                                WidgetSpan(child: gwb(8)),
+                                                TextSpan(
+                                                    text: controller.address[
+                                                            "recipientMobile"] ??
+                                                        ""),
+                                              ]),
                                           maxLines: 2,
                                         ),
                                       ),
                                       Image.asset(
-                                        assetsName("product_store/cell_arrow_right"),
+                                        assetsName(
+                                            "product_store/cell_arrow_right"),
                                         width: 18.w,
                                         fit: BoxFit.fitWidth,
                                       )
                                     ], width: 345 - 9.5 * 2),
                                     ghb(15),
-                                    getWidthText("${controller.address["provinceName"] ?? ""}${controller.address["cityName"] ?? ""}${controller.address["areaName"] ?? ""}${controller.address["address"] ?? ""}", 12, AppColor.textGrey, 345 - 18.5 * 2, 3)
+                                    getWidthText(
+                                        "${controller.address["provinceName"] ?? ""}${controller.address["cityName"] ?? ""}${controller.address["areaName"] ?? ""}${controller.address["address"] ?? ""}",
+                                        12,
+                                        AppColor.textGrey,
+                                        345 - 18.5 * 2,
+                                        3)
                                   ]),
                           )
                         ],
@@ -704,9 +798,19 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                   width: 182.w,
                   child: Container(
                     alignment: Alignment.center,
-                    padding: EdgeInsets.only(left: controller.deliveryType == 0 ? 0 : 5.5.w, right: controller.deliveryType == 1 ? 0 : 5.5.w),
-                    decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill, image: AssetImage(assetsName("product_store/btn_address_${controller.deliveryType == 0 ? "left" : "right"}")))),
-                    child: getSimpleText(controller.deliveryType == 0 ? "快递配送" : "网点自提", 18, AppColor.textBlack, isBold: true),
+                    padding: EdgeInsets.only(
+                        left: controller.deliveryType == 0 ? 0 : 5.5.w,
+                        right: controller.deliveryType == 1 ? 0 : 5.5.w),
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: AssetImage(assetsName(
+                                "product_store/btn_address_${controller.deliveryType == 0 ? "left" : "right"}")))),
+                    child: getSimpleText(
+                        controller.deliveryType == 0 ? "快递配送" : "网点自提",
+                        18,
+                        AppColor.textBlack,
+                        isBold: true),
                   ));
             },
           )
@@ -722,8 +826,11 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
     String beanName = "";
     // 如果是兑换商城，判断是否使用豆支付
     if (controller.levelType == 3) {
-      List payTypes = convert.jsonDecode(controller.productData["levelGiftPaymentMethod"]);
-      if (payTypes.isNotEmpty && payTypes.length == 1 && (payTypes[0]["value"] ?? 0) == 5) {
+      List payTypes =
+          convert.jsonDecode(controller.productData["levelGiftPaymentMethod"]);
+      if (payTypes.isNotEmpty &&
+          payTypes.length == 1 &&
+          (payTypes[0]["value"] ?? 0) == 5) {
         isBean = true;
       }
       beanName = "";
@@ -745,10 +852,17 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
           ghb(15),
           sbRow([
             centRow([
-              CustomNetworkImage(src: AppDefault().imageUrl + (controller.productData["levelGiftImg"] ?? ""), width: 105.w, height: 105.w, fit: BoxFit.fill),
+              CustomNetworkImage(
+                  src: AppDefault().imageUrl +
+                      (controller.productData["levelGiftImg"] ?? ""),
+                  width: 105.w,
+                  height: 105.w,
+                  fit: BoxFit.fill),
               gwb(12),
               sbClm([
-                getWidthText(controller.productData["levelName"] ?? "", 15, AppColor.textBlack, 315 - 105 - 12, 2, isBold: true),
+                getWidthText(controller.productData["levelName"] ?? "", 15,
+                    AppColor.textBlack, 315 - 105 - 12, 2,
+                    isBold: true),
                 getRichText(
                     isReal ? "￥" : "",
                     "${priceFormat(controller.productData["nowPrice"] ?? 0)}${isReal ? "" : isBean ? beanName : "积分"}",
@@ -766,7 +880,10 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
             Container(
                 width: 91.w,
                 height: 25.w,
-                decoration: BoxDecoration(color: const Color(0xFFF5F5F7), border: Border.all(width: 0.5.w, color: AppColor.lineColor), borderRadius: BorderRadius.circular(25.w / 2)),
+                decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F7),
+                    border: Border.all(width: 0.5.w, color: AppColor.lineColor),
+                    borderRadius: BorderRadius.circular(25.w / 2)),
                 child: centRow(List.generate(
                     3,
                     (index) => index == 1
@@ -778,8 +895,10 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                               width: 40.w,
                               heigth: 21.w,
                               placeholder: "数量",
-                              placeholderStyle: TextStyle(fontSize: 15.sp, color: AppColor.textGrey5),
-                              style: TextStyle(fontSize: 15.sp, color: AppColor.textBlack),
+                              placeholderStyle: TextStyle(
+                                  fontSize: 15.sp, color: AppColor.textGrey5),
+                              style: TextStyle(
+                                  fontSize: 15.sp, color: AppColor.textBlack),
                               textAlignVertical: TextAlignVertical.center,
                               textAlign: TextAlign.center,
                               focusNode: controller.numNode,
@@ -798,13 +917,19 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                                 controller.currentCount += 1;
                               }
                             },
-                            child: GetX<ProductStoreConfirmController>(builder: (_) {
+                            child: GetX<ProductStoreConfirmController>(
+                                builder: (_) {
                               int myNum = controller.currentCount;
                               return SizedBox(
                                 width: 25.w - 0.1.w,
                                 height: 21.w,
                                 child: Center(
-                                  child: getSimpleText(index == 0 ? "⏤" : "+", index == 0 ? 9 : 12, index == 0 && myNum <= 1 ? AppColor.textGrey5 : AppColor.textBlack),
+                                  child: getSimpleText(
+                                      index == 0 ? "⏤" : "+",
+                                      index == 0 ? 9 : 12,
+                                      index == 0 && myNum <= 1
+                                          ? AppColor.textGrey5
+                                          : AppColor.textBlack),
                                 ),
                               );
                             }),
@@ -812,12 +937,15 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
           ], width: 315, height: 54.5),
           gline(315, 0.5),
           ghb(15),
-          sbhRow([getSimpleText("备注", 14, AppColor.textBlack)], width: 315, height: 30),
+          sbhRow([getSimpleText("备注", 14, AppColor.textBlack)],
+              width: 315, height: 30),
           Container(
             width: 315.w,
             height: 60.w,
             alignment: Alignment.center,
-            decoration: BoxDecoration(color: const Color(0xFFFAFAFA), borderRadius: BorderRadius.circular(4.w)),
+            decoration: BoxDecoration(
+                color: const Color(0xFFFAFAFA),
+                borderRadius: BorderRadius.circular(4.w)),
             child: CustomInput(
               width: 315.w - 10.w * 2,
               heigth: 60.w - 6.w * 2,
@@ -826,7 +954,8 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
               textAlignVertical: TextAlignVertical.top,
               textEditCtrl: controller.remarkInputCtrl,
               style: TextStyle(fontSize: 14.sp, color: AppColor.textBlack),
-              placeholderStyle: TextStyle(fontSize: 14.sp, color: AppColor.assisText),
+              placeholderStyle:
+                  TextStyle(fontSize: 14.sp, color: AppColor.assisText),
               maxLines: 100,
             ),
           ),
@@ -845,8 +974,15 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
       builder: (modelBottomCtx) {
         return Container(
           width: 375.w,
-          height: 53.5.w + 98.5.w + controller.payTypeList.length * 45.w + 60.w + 15.w + paddingSizeBottom(context),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(6.w))),
+          height: 53.5.w +
+              98.5.w +
+              controller.payTypeList.length * 45.w +
+              60.w +
+              15.w +
+              paddingSizeBottom(context),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(6.w))),
           child: StatefulBuilder(builder: (context, setModalBottomState) {
             return Column(
               children: [
@@ -860,7 +996,13 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                     child: SizedBox(
                       width: 42.w,
                       height: 53.w,
-                      child: Center(child: Image.asset(assetsName("statistics_page/btn_bottom_model_close"), width: 18.w, height: 18.w, fit: BoxFit.fill)),
+                      child: Center(
+                          child: Image.asset(
+                              assetsName(
+                                  "statistics_page/btn_bottom_model_close"),
+                              width: 18.w,
+                              height: 18.w,
+                              fit: BoxFit.fill)),
                     ),
                   )
                 ], width: 375, height: 53),
@@ -876,13 +1018,20 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                       ),
                       ghb(3),
                       Visibility(
-                          visible: controller.previewOrderData != null && controller.previewOrderData.isNotEmpty,
+                          visible: controller.previewOrderData != null &&
+                              controller.previewOrderData.isNotEmpty,
                           child: GetBuilder<ProductStoreConfirmController>(
                             init: controller,
                             id: controller.confirmButtonBuildId,
                             initState: (_) {},
                             builder: (_) {
-                              return getSimpleText(priceFormat(controller.previewOrderData["pay_Amount"] ?? 0), 30, AppColor.textBlack, isBold: true);
+                              return getSimpleText(
+                                  priceFormat(controller
+                                          .previewOrderData["pay_Amount"] ??
+                                      0),
+                                  30,
+                                  AppColor.textBlack,
+                                  isBold: true);
                             },
                           )),
                     ]),
@@ -901,15 +1050,18 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                               child: sbhRow([
                                 centRow([
                                   Image.asset(
-                                      assetsName("statistics_page/icon_pay_${e.value["value"] == 1 ? "alipay" : e.value["value"] == 2 ? "wx" : "ye"}"),
+                                      assetsName(
+                                          "statistics_page/icon_pay_${e.value["value"] == 1 ? "alipay" : e.value["value"] == 2 ? "wx" : "ye"}"),
                                       width: 24.w,
                                       height: 24.w,
                                       fit: BoxFit.fill),
                                   gwb(8),
-                                  getSimpleText(e.value["name"], 14, AppColor.textBlack),
+                                  getSimpleText(
+                                      e.value["name"], 14, AppColor.textBlack),
                                 ]),
                                 Image.asset(
-                                  assetsName("statistics_page/icon_selectpay_${controller.currentPayTypeIndex == e.key ? "selected" : "normal"}"),
+                                  assetsName(
+                                      "statistics_page/icon_selectpay_${controller.currentPayTypeIndex == e.key ? "selected" : "normal"}"),
                                   width: 21.w,
                                   height: 21.w,
                                   fit: BoxFit.fill,
@@ -927,7 +1079,14 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                   child: getSubmitBtn("确认支付", () {
                     Get.back();
                     controller.payAction();
-                  }, width: 345, height: 45, fontSize: 15, linearGradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFFFD573B), Color(0xFFFF3A3A)])),
+                  },
+                      width: 345,
+                      height: 45,
+                      fontSize: 15,
+                      linearGradient: const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0xFFFD573B), Color(0xFFFF3A3A)])),
                 )
               ],
             );
@@ -945,7 +1104,14 @@ class ProductStorePayResult extends StatelessWidget {
   final String content;
   final Map orderData;
   final int levelType;
-  const ProductStorePayResult({super.key, this.success = true, this.title = "", this.contentTitle = "", this.content = "", this.levelType = 1, this.orderData = const {}});
+  const ProductStorePayResult(
+      {super.key,
+      this.success = true,
+      this.title = "",
+      this.contentTitle = "",
+      this.content = "",
+      this.levelType = 1,
+      this.orderData = const {}});
 
   @override
   Widget build(BuildContext context) {
@@ -955,7 +1121,8 @@ class ProductStorePayResult extends StatelessWidget {
         title,
         backPressed: () {
           Get.until((route) => route is GetPageRoute
-              ? route.binding is ProductStoreListBinding || route.binding is MainPageBinding
+              ? route.binding is ProductStoreListBinding ||
+                      route.binding is MainPageBinding
                   ? true
                   : false
               : false);
@@ -967,7 +1134,12 @@ class ProductStorePayResult extends StatelessWidget {
           children: [
             gwb(375),
             ghb(61.5),
-            Image.asset(assetsName("product_store/icon_pay_${success ? "success" : "fail"}"), width: 200.w, height: 200.w, fit: BoxFit.fill),
+            Image.asset(
+                assetsName(
+                    "product_store/icon_pay_${success ? "success" : "fail"}"),
+                width: 200.w,
+                height: 200.w,
+                fit: BoxFit.fill),
             ghb(9),
             getSimpleText(
                 contentTitle.isEmpty
@@ -1005,22 +1177,37 @@ class ProductStorePayResult extends StatelessWidget {
                             : const ProductStoreOrderDetail(
                                 data: {},
                               ),
-                        binding: orderData.isEmpty ? ProductStoreOrderListBinding() : ProductStoreOrderDetailBinding(),
-                        settings: RouteSettings(name: orderData.isEmpty ? "ProductStoreOrderList" : "ProductStoreOrderDetail", arguments: arguments)),
+                        binding: orderData.isEmpty
+                            ? ProductStoreOrderListBinding()
+                            : ProductStoreOrderDetailBinding(),
+                        settings: RouteSettings(
+                            name: orderData.isEmpty
+                                ? "ProductStoreOrderList"
+                                : "ProductStoreOrderDetail",
+                            arguments: arguments)),
                     (route) => route is GetPageRoute
-                        ? route.binding is ProductStoreListBinding || route.binding is MainPageBinding
+                        ? route.binding is ProductStoreListBinding ||
+                                route.binding is MainPageBinding
                             ? true
                             : false
                         : false);
               } else {
                 Get.back();
               }
-            }, width: 300, height: 45, fontSize: 15, linearGradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFFFD573B), Color(0xFFFF3A3A)])),
+            },
+                width: 300,
+                height: 45,
+                fontSize: 15,
+                linearGradient: const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xFFFD573B), Color(0xFFFF3A3A)])),
             ghb(15),
             CustomButton(
               onPressed: () {
                 Get.until((route) => route is GetPageRoute
-                    ? route.binding is ProductStoreListBinding || route.binding is MainPageBinding
+                    ? route.binding is ProductStoreListBinding ||
+                            route.binding is MainPageBinding
                         ? true
                         : false
                     : false);
@@ -1029,7 +1216,9 @@ class ProductStorePayResult extends StatelessWidget {
                 width: 300.w,
                 height: 45.w,
                 alignment: Alignment.center,
-                decoration: BoxDecoration(border: Border.all(width: 0.5.w, color: AppColor.theme), borderRadius: BorderRadius.circular(45.w / 2)),
+                decoration: BoxDecoration(
+                    border: Border.all(width: 0.5.w, color: AppColor.theme),
+                    borderRadius: BorderRadius.circular(45.w / 2)),
                 child: getSimpleText("返回商城首页", 15, AppColor.theme),
               ),
             )

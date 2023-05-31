@@ -614,13 +614,8 @@ class _MinePageState extends State<MinePage>
       case "我的钱包":
         imgSubStr = "wdqb";
         onPressed = () {
-<<<<<<< HEAD
           push(const MyWallet(), null, binding: MyWalletBinding());
           // push(const ExtensionRewardPage(), null, binding: ExtensionRewardBinding());
-=======
-          push(const ExtensionRewardPage(), null,
-              binding: ExtensionRewardBinding());
->>>>>>> 993bc48fb2254a7b172ab309311223fe46236421
         };
 
         break;
