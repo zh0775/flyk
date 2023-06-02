@@ -6,8 +6,6 @@ import 'package:cxhighversion2/component/custom_deferred.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/component/custom_webview.dart'
     deferred as customwebview;
-import 'package:cxhighversion2/entrepreneurship_support/support.dart'
-    deferred as support;
 import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart'
     deferred as business_school_detail;
 import 'package:cxhighversion2/home/component/custom_message.dart';
@@ -23,9 +21,6 @@ import 'package:cxhighversion2/home/machinetransfer/machine_transfer_userlist.da
     deferred as machine_transfer_userlist;
 import 'package:cxhighversion2/home/merchantAccessNetwork/merchant_access_network.dart'
     deferred as merchant_access_network;
-import 'package:cxhighversion2/home/myTeam/my_team.dart' deferred as my_team;
-import 'package:cxhighversion2/home/mybusiness/mybusiness.dart'
-    deferred as mybusiness;
 import 'package:cxhighversion2/home/news/news_detail.dart'
     deferred as news_detail;
 import 'package:cxhighversion2/home/news/news_list.dart' deferred as news_list;
@@ -36,8 +31,6 @@ import 'package:cxhighversion2/machine/machine_pay_page.dart'
     deferred as machine_pay_page;
 import 'package:cxhighversion2/machine/machine_register.dart'
     deferred as machine_register;
-import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication.dart'
-    deferred as identity_authentication;
 import 'package:cxhighversion2/mine/myWallet/my_wallet.dart'
     deferred as my_wallet;
 import 'package:cxhighversion2/pay/share_invite.dart' deferred as share_invite;
@@ -72,8 +65,6 @@ import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
-import '../business/pointsMall/points_mall_page.dart'
-    deferred as points_mall_page;
 import 'businessSchool/business_school_list_page.dart'
     deferred as business_school_list_page;
 
@@ -422,8 +413,14 @@ class HomeController extends FullLifeCycleController {
           "path": e["path"]
         }));
       }
-      subTitle =
-          ((publicHomeData["webSiteInfo"] ?? {})["app"])["apP_SubTitle"] ?? "";
+      if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
+        subTitle =
+            (publicHomeData["webSiteInfo"] ?? {})["System_Home_Name"] ?? "";
+      } else {
+        subTitle =
+            ((publicHomeData["webSiteInfo"] ?? {})["app"])["apP_SubTitle"] ??
+                "";
+      }
       subTitle = "欢迎您！";
     }
     if (AppDefault().safeAlert &&
@@ -502,9 +499,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
         onRefresh: () => ctrl.homeOnRefresh(),
         childBuilder: (context, physics) {
           return SingleChildScrollView(
-            physics: physics,
-            child: Column(
-              children: [
+              physics: physics,
+              child: Column(children: [
                 centClm([
                   // 轮播图/金刚区
                   GetBuilder<HomeController>(
@@ -513,19 +509,13 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         AppDefault().scaleWidth = 1.w;
                         return topContent();
                       }),
-                  machineDataView(),
+                  machineDataView()
                 ]),
                 ghb(14),
-                GetBuilder<HomeController>(
-                  builder: (_) {
-                    return AppBottomTips(
-                      pData: ctrl.publicHomeData,
-                    );
-                  },
-                )
-              ],
-            ),
-          );
+                GetBuilder<HomeController>(builder: (_) {
+                  return AppBottomTips(pData: ctrl.publicHomeData);
+                })
+              ]));
         },
       )),
     );
@@ -908,41 +898,56 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     for (var e in data) {
       buttons.add(CustomButton(
         onPressed: () async {
+          bool isOld = HttpConfig.baseUrl.contains(AppDefault.oldSystem);
           String path = e["path"] ?? "";
-          if (e["path"] == "/home/machinemanage") {
+          if (isOld
+              ? path == "/pages/machine/machine"
+              : path == "/home/machinemanage") {
             // 设备管理
             await machine_manage.loadLibrary();
             push(machine_manage.MachineManage(), null,
                 binding: machine_manage.MachineManageBinding());
-          } else if (path.contains("/home/rank")) {
+          } else if (isOld && path == "/pages/shop/shop_vip") {
+            // Vip礼包
+            await product_store_list.loadLibrary();
+            push(product_store_list.ProductStoreList(), null,
+                binding: product_store_list.ProductStoreListBinding(),
+                arguments: {"levelType": 1, "title": "VIP商城"});
+          } else if (isOld && path == "/pages/shop/shop") {
+            // 采购商城
+            await product_store_list.loadLibrary();
+            push(product_store_list.ProductStoreList(), null,
+                binding: product_store_list.ProductStoreListBinding(),
+                arguments: {"levelType": 2, "title": e["name"] ?? ""});
+          } else if (isOld
+              ? path == "/pages/rank_list/rank_list"
+              : path.contains("/home/rank")) {
             // 排行榜
             await rank.loadLibrary();
             push(rank.Rank(), null, binding: rank.RankBinding());
           } else if (path.contains("/home/entrepreneurial/support")) {
             // 创业支持
             CustomDeferred().toSupportPage();
-          } else if (e['id'] == 2079) {
-            // 分享注册
-            await share_invite.loadLibrary();
-            push(share_invite.ShareInvite(), null,
-                binding: share_invite.ShareInviteBinding());
           } else if (e["path"] == "/home/productpurchase") {
             // 礼包商城
             await product_purchase_list.loadLibrary();
             push(product_purchase_list.ProductPurchaseList(), null,
                 binding: product_purchase_list.ProductPurchaseListBinding());
-          } else if (e["path"] == "/home/teammanage") {
+          } else if (isOld
+              ? path == "/pages/team/team"
+              : e["path"] == "/home/teammanage") {
             // 团队管理
-            await my_team.loadLibrary();
-            push(my_team.MyTeam(), null, binding: my_team.MyTeamBinding());
-          } else if (path == "/pages/authentication") {
+            CustomDeferred().toStatisticsFacilitatorList(arg: {"isPage": true});
+          } else if (isOld
+              ? path == "/pages/attestation/attestation"
+              : path == "/pages/authentication") {
             // 实名认证
             CustomDeferred().toIdentityAuthentication();
-          } else if (e["path"] == "/home/businessinfo") {
+          } else if (isOld
+              ? path == "/pages/merchant/merchant"
+              : e["path"] == "/home/businessinfo") {
             // 商户信息
-            await mybusiness.loadLibrary();
-            push(mybusiness.MyBusiness(), null,
-                binding: mybusiness.MyBusinessBinding());
+            CustomDeferred().toStatisticsBusinessList(arg: {"isPage": true});
           } else if (e["path"] == "/home/integralstore") {
             // 积分商城
             CustomDeferred().toIntegralStore();
@@ -960,13 +965,17 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 null,
                 binding:
                     machine_transfer_userlist.MachineTransferUserListBinding());
-          } else if (e["path"] == "/home/shareinvite") {
+          } else if (isOld
+              ? path == "/pages/share/share"
+              : path == "/home/shareinvite") {
             await share_invite.loadLibrary();
             push(share_invite.ShareInvite(), null,
                 binding: share_invite.ShareInviteBinding());
           } else if (e["path"] == "/home/vipstore") {
             pushStore(e);
-          } else if (e["path"] == "/home/businessschool") {
+          } else if (isOld
+              ? path == "/pages/academy/academy"
+              : e["path"] == "/home/businessschool") {
             // 商学院
             await business_school_list_page.loadLibrary();
             push(business_school_list_page.BusinessSchoolListPage(), null,
@@ -1077,157 +1086,141 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   }
 
   Widget machineDataView() {
-    return GetBuilder<HomeController>(
-      builder: (_) {
-        Map tNo = ctrl.homeData["homeTeamTanNo"] ?? {};
-        return Container(
+    return GetBuilder<HomeController>(builder: (_) {
+      Map tNo = ctrl.homeData["homeTeamTanNo"] ?? {};
+      return Container(
           width: 345.w,
           margin: EdgeInsets.only(top: 15.w),
           decoration: getDefaultWhiteDec(radius: 8),
           child: GetX<HomeController>(builder: (_) {
-            return Column(
-              children: [
-                ghb(12),
-                sbRow([
-                  centRow([
-                    Image.asset(
-                      assetsName("home/icon_data"),
-                      width: 18.w,
-                      fit: BoxFit.fitWidth,
-                    ),
-                    gwb(6),
-                    getSimpleText(ctrl.machineDataIdx == 0 ? "机具数据" : "商户数据",
-                        16, AppColor.textBlack,
-                        isBold: true),
-                  ]),
-                  DropdownButtonHideUnderline(
-                      child: DropdownButton2(
-                          dropdownElevation: 0,
-                          buttonElevation: 0,
-                          offset: Offset(11.w, -5.w),
-                          customButton: Container(
-                            width: 105.w,
-                            height: 24.w,
-                            decoration: BoxDecoration(
-                              color: AppColor.pageBackgroundColor,
-                              borderRadius: BorderRadius.circular(12.w),
-                            ),
-                            alignment: Alignment.center,
-                            child: sbhRow([
-                              getSimpleText(
-                                  ctrl.machineDataIdx == 0 ? "押金/激活" : "达标/返现",
-                                  12,
-                                  AppColor.textBlack),
-                              Image.asset(
-                                assetsName("home/icon_arrow_down"),
-                                width: 6.w,
-                                height: 4.w,
-                                fit: BoxFit.fill,
-                              ),
-                            ], width: 105 - 15 * 2, height: 24),
+            return Column(children: [
+              ghb(12),
+              sbRow([
+                centRow([
+                  Image.asset(
+                    assetsName("home/icon_data"),
+                    width: 18.w,
+                    fit: BoxFit.fitWidth,
+                  ),
+                  gwb(6),
+                  getSimpleText(ctrl.machineDataIdx == 0 ? "机具数据" : "商户数据", 16,
+                      AppColor.textBlack,
+                      isBold: true),
+                ]),
+                DropdownButtonHideUnderline(
+                    child: DropdownButton2(
+                        dropdownElevation: 0,
+                        buttonElevation: 0,
+                        offset: Offset(11.w, -5.w),
+                        customButton: Container(
+                          width: 105.w,
+                          height: 24.w,
+                          decoration: BoxDecoration(
+                            color: AppColor.pageBackgroundColor,
+                            borderRadius: BorderRadius.circular(12.w),
                           ),
-                          items: List.generate(
-                              2,
-                              (index) => DropdownMenuItem<int>(
-                                  value: index,
-                                  child: centClm([
-                                    SizedBox(
-                                      height: 30.w,
-                                      child: Align(
-                                        alignment: const Alignment(-0.3, 0),
-                                        child: getSimpleText(
-                                            index == 0 ? "押金/激活" : "达标/返现",
-                                            12,
-                                            ctrl.machineDataIdx == index
-                                                ? AppColor.textRed
-                                                : AppColor.textBlack),
-                                      ),
+                          alignment: Alignment.center,
+                          child: sbhRow([
+                            getSimpleText(
+                                ctrl.machineDataIdx == 0 ? "押金/激活" : "达标/返现",
+                                12,
+                                AppColor.textBlack),
+                            Image.asset(
+                              assetsName("home/icon_arrow_down"),
+                              width: 6.w,
+                              height: 4.w,
+                              fit: BoxFit.fill,
+                            ),
+                          ], width: 105 - 15 * 2, height: 24),
+                        ),
+                        items: List.generate(
+                            2,
+                            (index) => DropdownMenuItem<int>(
+                                value: index,
+                                child: centClm([
+                                  SizedBox(
+                                    height: 30.w,
+                                    child: Align(
+                                      alignment: const Alignment(-0.3, 0),
+                                      child: getSimpleText(
+                                          index == 0 ? "押金/激活" : "达标/返现",
+                                          12,
+                                          ctrl.machineDataIdx == index
+                                              ? AppColor.textRed
+                                              : AppColor.textBlack),
                                     ),
-                                  ]))),
-                          value: ctrl.machineDataIdx,
-                          // buttonWidth: 70.w,
-                          buttonHeight: 60.w,
-                          itemHeight: 30.w,
-                          onChanged: (value) {
-                            ctrl.machineDataIdx = value;
-                          },
-                          itemPadding: EdgeInsets.zero,
-                          dropdownPadding: EdgeInsets.zero,
-                          dropdownWidth: 90.w,
-                          dropdownDecoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(4.w),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: const Color(0x1A040000),
-                                    // offset: Offset(0, 5.w),
-                                    blurRadius: 5.w)
-                              ]))),
-                ], width: 315),
-                ghb(25),
-                Padding(
+                                  ),
+                                ]))),
+                        value: ctrl.machineDataIdx,
+                        // buttonWidth: 70.w,
+                        buttonHeight: 60.w,
+                        itemHeight: 30.w,
+                        onChanged: (value) {
+                          ctrl.machineDataIdx = value;
+                        },
+                        itemPadding: EdgeInsets.zero,
+                        dropdownPadding: EdgeInsets.zero,
+                        dropdownWidth: 90.w,
+                        dropdownDecoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.w),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: const Color(0x1A040000),
+                                  // offset: Offset(0, 5.w),
+                                  blurRadius: 5.w)
+                            ]))),
+              ], width: 315),
+              ghb(25),
+              Padding(
                   padding: EdgeInsets.only(left: (26 - 15).w / 2),
                   child: sbRow(
                       List.generate(
                           3,
                           (index) => centClm([
                                 getSimpleText(
-                                    index == 0
-                                        ? ctrl.machineDataIdx == 0
+                                    "${index == 0 ? ctrl.machineDataIdx == 0
 
-                                            /// 累计总激活
-                                            ? tNo["teamTotalActTerminal"] ?? "0"
+                                        /// 累计总激活
+                                        ? tNo["teamTotalActTerminal"] ?? "0"
 
-                                            /// 累计总达标
-                                            : tNo["teamTotalActivTerminal"] ??
-                                                "0"
-                                        : index == 1
-                                            ? ctrl.machineDataIdx == 0
+                                        /// 累计总达标
+                                        : tNo["teamTotalActivTerminal"] ?? "0" : index == 1 ? ctrl.machineDataIdx == 0
 
-                                                /// 团队当月激活
-                                                ? tNo["teamThisMActTerminal"] ??
-                                                    "0"
+                                        /// 团队当月激活
+                                        ? tNo["teamThisMActTerminal"] ?? "0"
 
-                                                /// 团队当月达标
-                                                : tNo["teamThisMActivTerminal"] ??
-                                                    "0"
-                                            : ctrl.machineDataIdx == 0
+                                        /// 团队当月达标
+                                        : tNo["teamThisMActivTerminal"] ?? "0" : ctrl.machineDataIdx == 0
 
-                                                /// 团队当日激活
-                                                ? tNo["teamThisDActTerminal"] ??
-                                                    "0"
-                                                ////团队当日达标
-                                                : tNo["teamThisDActivTerminal"] ??
-                                                    "0",
+                                        /// 团队当日激活
+                                        ? tNo["teamThisDActTerminal"] ?? "0"
+                                        ////团队当日达标
+                                        : tNo["teamThisDActivTerminal"] ?? "0"}",
                                     18,
                                     AppColor.textBlack,
                                     isBold: true,
                                     textHeight: 1.0),
                                 ghb(13),
                                 getSimpleText(
-                                  index == 0
-                                      ? ctrl.machineDataIdx == 0
-                                          ? "累计总激活"
-                                          : "累计总达标"
-                                      : index == 1
-                                          ? ctrl.machineDataIdx == 0
-                                              ? "团队当月激活"
-                                              : "团队当月达标"
-                                          : ctrl.machineDataIdx == 0
-                                              ? "团队当日激活"
-                                              : "团队当日达标",
-                                  12,
-                                  AppColor.textBlack,
-                                ),
+                                    index == 0
+                                        ? ctrl.machineDataIdx == 0
+                                            ? "累计总激活"
+                                            : "累计总达标"
+                                        : index == 1
+                                            ? ctrl.machineDataIdx == 0
+                                                ? "团队当月激活"
+                                                : "团队当月达标"
+                                            : ctrl.machineDataIdx == 0
+                                                ? "团队当日激活"
+                                                : "团队当日达标",
+                                    12,
+                                    AppColor.textBlack)
                               ])),
-                      width: 345 - 15 - 26),
-                ),
-                ghb(25),
-              ],
-            );
-          }),
-        );
-      },
-    );
+                      width: 345 - 15 - 26)),
+              ghb(25)
+            ]);
+          }));
+    });
   }
 
   pushStore(Map e) async {

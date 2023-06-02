@@ -1,3 +1,4 @@
+import 'package:cxhighversion2/service/http_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cxhighversion2/util/app_default.dart';
@@ -11,23 +12,36 @@ class AppBottomTips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map publicHomeData = {};
-    if (pData != null && pData.isNotEmpty) {
+    if (pData.isNotEmpty) {
       publicHomeData = pData;
     } else {
       publicHomeData = AppDefault().publicHomeData;
     }
 
-    bool haveData = publicHomeData != null &&
-        publicHomeData["webSiteInfo"] != null &&
-        publicHomeData["webSiteInfo"]["app"] != null &&
-        publicHomeData["webSiteInfo"]["app"]["apP_Name"] != null &&
-        publicHomeData["webSiteInfo"]["app"]["apP_Name"].isNotEmpty &&
-        publicHomeData["webSiteInfo"]["app"]["apP_SubTitle"] != null &&
-        publicHomeData["webSiteInfo"]["app"]["apP_SubTitle"].isNotEmpty;
-    String appName =
-        haveData ? publicHomeData["webSiteInfo"]["app"]["apP_Name"] : "";
-    String subTitle =
-        haveData ? publicHomeData["webSiteInfo"]["app"]["apP_SubTitle"] : "";
+    bool haveData = false;
+    String appName = "";
+    String subTitle = "";
+    Map webSiteInfo = publicHomeData["webSiteInfo"] ?? {};
+    if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
+      haveData = publicHomeData.isNotEmpty &&
+          webSiteInfo.isNotEmpty &&
+          webSiteInfo["System_Home_Name"] != null &&
+          webSiteInfo["System_Home_Name"].isNotEmpty &&
+          webSiteInfo["System_Home_SubTitle"] != null &&
+          webSiteInfo["System_Home_SubTitle"].isNotEmpty;
+      appName = haveData ? webSiteInfo["System_Home_Name"] : "";
+      subTitle = haveData ? webSiteInfo["System_Home_SubTitle"] : "";
+    } else {
+      Map app = webSiteInfo["app"] ?? {};
+      haveData = app.isNotEmpty &&
+          app["apP_Name"] != null &&
+          app["apP_Name"].isNotEmpty &&
+          app["apP_SubTitle"] != null &&
+          app["apP_SubTitle"].isNotEmpty;
+      appName = haveData ? app["apP_Name"] : "";
+      subTitle = haveData ? app["apP_SubTitle"] : "";
+    }
+
     return SizedBox(
       width: 375.w,
       // height: 40,

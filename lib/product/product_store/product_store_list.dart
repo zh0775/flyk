@@ -220,14 +220,17 @@ class ProductStoreListController extends GetxController {
   dateFormat() {
     Map publicHomeData = AppDefault().publicHomeData;
     List terminalBrands = publicHomeData["terminalBrand"] ?? [];
+    brandList = [
+      {"enumName": "全部", "enumValue": -1, "selected": false}
+    ];
     if (terminalBrands.isNotEmpty) {
       brandList = [
-        {"enumName": "全部", "enumValue": -1},
+        ...brandList,
         ...terminalBrands.map((e) => {...e, "selected": false}).toList()
       ];
-      for (var e in brandList) {
-        keyList.add(GlobalKey());
-      }
+    }
+    for (var e in brandList) {
+      keyList.add(GlobalKey());
     }
     List terminalConfigs = publicHomeData["terminalConfig"] ?? [];
     if (terminalConfigs.isNotEmpty) {
@@ -453,11 +456,12 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                     )),
             GetX<ProductStoreListController>(
               builder: (_) {
+                bool isShowFilter = controller.isShowFilter;
                 return AnimatedPositioned(
                     top: controller.levelType == 1
                         ? 0
                         : 106.w +
-                            (controller.isShowFilter
+                            (isShowFilter
                                 ? controller.typesViewHeight + 5.w
                                 : 0),
                     left: 0,
@@ -539,16 +543,12 @@ class ProductStoreList extends GetView<ProductStoreListController> {
 
   Widget listCell(int index) {
     Map data = controller.dataList[index];
+
+    List payTypes = convert.jsonDecode(data["levelGiftPaymentMethod"]);
+
     bool isReal = controller.levelType != 3;
-    bool isBean = false;
-    if (controller.levelType == 3) {
-      List payTypes = convert.jsonDecode(data["levelGiftPaymentMethod"]);
-      if (payTypes.isNotEmpty &&
-          payTypes.length == 1 &&
-          (payTypes[0]["value"] ?? 0) == 5) {
-        isBean = true;
-      }
-    }
+
+    if (payTypes.isNotEmpty) {}
 
     double imageWidth = 127.5;
 

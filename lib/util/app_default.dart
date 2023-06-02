@@ -33,6 +33,7 @@ import 'package:cxhighversion2/mine/mine_verify_identity.dart'
 import 'package:cxhighversion2/product/product_pay_result_page.dart'
     deferred as product_pay_result_page;
 import 'package:cxhighversion2/service/http.dart';
+import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/device_util.dart';
@@ -65,6 +66,7 @@ class AppDefault {
   static const FontWeight fontBold = FontWeight.w600;
   static const String projectName = "付利优客";
   static const String fromDate = "2022-11-09 09:00:00";
+  static const String oldSystem = "192.168.1.200:1026";
   static const int jfWallet = 4;
   static const int awardWallet = 3;
 
@@ -120,17 +122,13 @@ class AppDefault {
   }
 
   setThemeColorList() {
-    if (publicHomeData.isEmpty) {
-      // themeColorList = [];
-      return;
-    }
+    if (publicHomeData.isEmpty) return;
     List colorList = ((publicHomeData["versionInfo"] ?? {})["theme"] ??
             {})["themeColorList"] ??
         [];
     themeColorList = colorList.map((e) {
       String colorStr = e["color"];
       int transparency = ((e["transparency"] as double) / 100 * 255).ceil();
-
       colorStr = colorStr.substring(1);
       String opacity = transparency.toRadixString(16);
       String colorHex = "0x$opacity$colorStr";
@@ -408,10 +406,17 @@ void toLogin(
 updateErr(String title) {
   if (!kIsWeb) {
     if (Platform.isAndroid) {
-      String downloadUrl =
-          (((AppDefault().publicHomeData["webSiteInfo"] ?? {})["app"] ??
-                  {})["apP_ExternalReg_Url"] ??
-              "");
+      String downloadUrl = "";
+      if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
+        downloadUrl = (AppDefault().publicHomeData["webSiteInfo"] ??
+                {})["System_Download_Url"] ??
+            "";
+      } else {
+        downloadUrl =
+            (((AppDefault().publicHomeData["webSiteInfo"] ?? {})["app"] ??
+                    {})["apP_ExternalReg_Url"] ??
+                "");
+      }
       if (downloadUrl.isNotEmpty) {
         if (downloadUrl.substring(downloadUrl.length - 1, downloadUrl.length) ==
             "/") {
@@ -3441,12 +3446,11 @@ Future<Map> getUserData() async {
 
 String getImageUrl(Map pData) {
   AppDefault appDefault = AppDefault();
-  Map webSiteInfo = pData["webSiteInfo"] ?? {};
-  if (webSiteInfo["System_Images_Url"] != null) {
-    appDefault.imageUrl = webSiteInfo["System_Images_Url"] ?? "";
-  } else if (webSiteInfo["app"] != null &&
-      webSiteInfo["app"]["apP_Images_Url"] != null) {
-    appDefault.imageUrl = webSiteInfo["app"]["apP_Images_Url"] ?? "";
+  if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
+    appDefault.imageUrl = (pData["webSiteInfo"] ?? {})["System_Images_Url"];
+  } else {
+    appDefault.imageUrl =
+        ((pData["webSiteInfo"] ?? {})["app"] ?? {})["apP_Images_Url"] ?? "";
   }
   return appDefault.imageUrl;
 }

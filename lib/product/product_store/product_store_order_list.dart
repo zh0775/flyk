@@ -507,11 +507,13 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
     return Scaffold(
       appBar: getDefaultAppBar(
           context,
-          levelType == 1
-              ? "礼包订单"
-              : levelType == 2
-                  ? "采购商城订单"
-                  : "机具兑换订单",
+          isBuyAndVip
+              ? ""
+              : levelType == 1
+                  ? "礼包订单"
+                  : levelType == 2
+                      ? "采购商城订单"
+                      : "机具兑换订单",
           flexibleSpace: !isBuyAndVip
               ? null
               : !AppDefault().checkDay

@@ -45,9 +45,10 @@ class MineSettingAboutMeController extends GetxController {
     loadAgreement(1);
     loadAgreement(5);
     Map publicHomeData = AppDefault().publicHomeData;
-    // Map info = (publicHomeData["webSiteInfo"] ?? {})["app"] ?? {};
     appInfo = {};
-    if (!HttpConfig.baseUrl.contains("woliankeji")) {
+    if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
+      appInfo = publicHomeData["webSiteInfo"] ?? {};
+    } else {
       Map info = (publicHomeData["webSiteInfo"] ?? {})["app"] ?? {};
       Map systemInfo = (publicHomeData["systemInfo"] ?? {})["system"] ?? {};
       appInfo = {
@@ -57,8 +58,6 @@ class MineSettingAboutMeController extends GetxController {
         "System_Home_Logo": info["apP_Logo"] ?? "",
         "System_ServiceHotline": systemInfo["system_ServiceHotline"] ?? "",
       };
-    } else if (HttpConfig.baseUrl.contains("woliankeji")) {
-      appInfo = publicHomeData["webSiteInfo"] ?? {};
     }
     super.onInit();
   }

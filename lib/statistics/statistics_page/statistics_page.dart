@@ -207,10 +207,10 @@ class StatisticsPageController extends GetxController {
     homeTeamTanNo = homeData["homeTeamTanNo"] ?? {};
     // 交易额相比上月百分比
     double teamLastMAmount =
-        double.parse(homeTeamTanNo["teamLastMAmount"] ?? "0");
+        double.parse("${homeTeamTanNo["teamLastMAmount"] ?? "0"}");
 
     double teamThisMAmount =
-        double.parse(homeTeamTanNo["teamThisMAmount"] ?? "0");
+        double.parse("${homeTeamTanNo["teamThisMAmount"] ?? "0"}");
     double dValue = teamThisMAmount - teamLastMAmount;
     String cStr =
         "${dValue >= 0 ? "+" : "-"}${dValue.abs() / (teamLastMAmount <= 0.0 ? 1 : teamLastMAmount)}";
@@ -218,13 +218,15 @@ class StatisticsPageController extends GetxController {
 
     Map publicHomeData = AppDefault().publicHomeData;
     if (publicHomeData.isNotEmpty &&
-        publicHomeData["terminalBrand"].isNotEmpty &&
-        publicHomeData["terminalBrand"] is List) {
-      List terminalBrands = publicHomeData["terminalBrand"] ?? [];
+        publicHomeData["terminalConfig"] != null &&
+        publicHomeData["terminalConfig"].isNotEmpty &&
+        publicHomeData["terminalConfig"] is List) {
+      List terminalBrands = publicHomeData["terminalConfig"] ?? [];
       selectPP = 0;
       ppList = [
         {"enumValue": -1, "enumName": "全部品牌"},
         ...terminalBrands
+            .map((e) => {"enumValue": e["id"], "enumName": e["terninal_Name"]})
       ];
     }
     if (dealSelectDate.isEmpty) {
@@ -261,6 +263,9 @@ class StatisticsPageController extends GetxController {
   Map machineData = {};
   String machineBuildId = "StatisticsPage_machineBuildId";
 
+  /// 终端统计总数
+  int totalMachineCount = 0;
+
   /// 请求终端统计数据
   loadMachineData() {
     DateTime date = dateFormat.parse(dealSelectDate);
@@ -268,7 +273,8 @@ class StatisticsPageController extends GetxController {
     simpleRequest(
         url: Urls.userTermiList,
         params: {
-          "terminalBrandId": ppList[selectPP]["enumValue"] ?? -1,
+          "terminalBrandId":
+              ppList.isEmpty ? -1 : ppList[selectPP]["enumValue"] ?? -1,
           "startingTime": date2.format(DateTime(date.year, date.month, 1)),
           "end_Time": date2.format(DateTime(date.year, date.month + 1, 0)),
         },
@@ -276,54 +282,55 @@ class StatisticsPageController extends GetxController {
           if (success) {
             machineData = json["data"] ?? {};
             machineDatas.clear();
-            // String maxKey = "";
-            // int maxNum = 0;
-            // for (var key in machineData.keys) {
-            //   if (key != "totalNum" && key != "totalActNum") {
-            //     if (machineData[key] > maxNum) {
-            //       maxNum = machineData[key];
-            //       maxKey = key;
-            //     }
-            //   }
-            // }
-            // machineDatas.add(ChartSampleData(
-            //     x: "终端总数",
-            //     y: machineData["totalNum"] ?? 0,
-            //     text: "100%",
-            //     pointColor: getChartColor(0)));
-            // machineDatas.add(ChartSampleData(
-            //     x: "已激活总数",
-            //     y: machineData["totalActNum"] ?? 0,
-            //     text: "100%",
-            //     pointColor: getChartColor(0)));
+            totalMachineCount = 0;
+
+            /// 库存
+            int noBingNum = machineData["noBingNum"] ?? 0;
+            totalMachineCount += noBingNum;
+
+            /// 出库
+            int outNum = machineData["outNum"] ?? 0;
+            totalMachineCount += outNum;
+
+            /// 已激活
+            int dateActNum = machineData["dateActNum"] ?? 0;
+            totalMachineCount += dateActNum;
+
+            /// 达标,有效激活
+            int dateActivNum = machineData["dateActivNum"] ?? 0;
+            totalMachineCount += dateActivNum;
+
+            /// 无效
+            int invalidNum = machineData["invalidNum"] ?? 0;
+            totalMachineCount += invalidNum;
 
             machineDatas.add(ChartSampleData(
                 x: "库存",
-                y: machineData["noBingNum"] ?? 0,
+                y: totalMachineCount == 0 ? 1 : noBingNum,
                 // text: maxKey == "noBingNum" ? "100%" : "90%",
                 text: "100%",
                 pointColor: getChartColor(0)));
             machineDatas.add(ChartSampleData(
                 x: "出库",
-                y: machineData["outNum"] ?? 0,
+                y: totalMachineCount == 0 ? 1 : outNum,
                 // text: maxKey == "outNum" ? "100%" : "90%",
                 text: "100%",
                 pointColor: getChartColor(1)));
             machineDatas.add(ChartSampleData(
                 x: "已激活",
-                y: machineData["dateActNum"] ?? 0,
+                y: totalMachineCount == 0 ? 1 : dateActNum,
                 // text: maxKey == "dateActNum" ? "100%" : "90%",
                 text: "100%",
                 pointColor: getChartColor(2)));
             machineDatas.add(ChartSampleData(
                 x: "达标,有效激活",
-                y: machineData["dateActivNum"] ?? 0,
+                y: totalMachineCount == 0 ? 1 : dateActivNum,
                 // text: maxKey == "dateActivNum" ? "100%" : "90%",
                 text: "100%",
                 pointColor: getChartColor(3)));
             machineDatas.add(ChartSampleData(
                 x: "无效",
-                y: machineData["invalidNum"] ?? 0,
+                y: totalMachineCount == 0 ? 1 : invalidNum,
                 // text: maxKey == "invalidNum" ? "100%" : "90%",
                 text: "100%",
                 pointColor: getChartColor(4)));
@@ -337,6 +344,9 @@ class StatisticsPageController extends GetxController {
 
   Map businessData = {};
   String businessBuildId = "StatisticsPage_businessData";
+
+  /// 商户统计总数
+  int totalBusinessCount = 0;
 
   /// 请求商户统计数据
   loadBusinessData() {
@@ -357,14 +367,19 @@ class StatisticsPageController extends GetxController {
             int chanTotalAddUser = businessData["chanTotalAddUser"] ?? 0;
             int soleTotalAddUser = businessData["soleTotalAddUser"] ?? 0;
 
+            totalBusinessCount += chanTotalAddUser;
+            totalBusinessCount += (chanTotalAddUser - soleTotalAddUser);
+
             businessDatas.add(ChartSampleData(
                 x: "我的新增",
-                y: soleTotalAddUser,
+                y: totalBusinessCount == 0 ? 1 : soleTotalAddUser,
                 text: "100%",
                 pointColor: const Color(0xFF3AD3D2)));
             businessDatas.add(ChartSampleData(
                 x: "其他新增",
-                y: chanTotalAddUser - soleTotalAddUser,
+                y: totalBusinessCount == 0
+                    ? 1
+                    : chanTotalAddUser - soleTotalAddUser,
                 text: "100%",
                 pointColor: const Color(0xFF437BFE)));
             update([businessBuildId]);
@@ -384,7 +399,8 @@ class StatisticsPageController extends GetxController {
     simpleRequest(
         url: Urls.userTranList,
         params: {
-          "terminalBrandId": ppList[selectPP]["enumValue"] ?? -1,
+          "terminalBrandId":
+              ppList.isEmpty ? -1 : ppList[selectPP]["enumValue"] ?? -1,
           "startingTime": date2.format(DateTime(date.year, date.month, 1)),
           "end_Time": date2.format(DateTime(date.year, date.month + 1, 0)),
         },
@@ -571,12 +587,7 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                                                           controller.selectTopRightType ==
                                                                   1
                                                               ? "${controller.machineData[index == 0 ? "totalNum" : "totalActNum"] ?? "0"}"
-                                                              : controller
-                                                                      .homeTeamTanNo[index ==
-                                                                          0
-                                                                      ? "teamTotalAddUser"
-                                                                      : "teamThisMAddUser"] ??
-                                                                  "0",
+                                                              : "${controller.homeTeamTanNo[index == 0 ? "teamTotalAddUser" : "teamThisMAddUser"] ?? "0"}",
                                                           30,
                                                           AppColor.textBlack,
                                                           isBold: true),
@@ -591,12 +602,11 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                                                               child: Builder(
                                                                   builder:
                                                                       (context) {
-                                                                int cLastData = int.parse(
-                                                                        controller.homeTeamTanNo["teamThisMAddUser"] ??
-                                                                            "0") -
+                                                                int cLastData = int
+                                                                        .parse(
+                                                                            "${controller.homeTeamTanNo["teamThisMAddUser"] ?? "0"}") -
                                                                     int.parse(
-                                                                        controller.homeTeamTanNo["teamLastMAddUser"] ??
-                                                                            "0");
+                                                                        "${controller.homeTeamTanNo["teamLastMAddUser"] ?? "0"}");
 
                                                                 return cLastData ==
                                                                         0
@@ -632,9 +642,7 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                                                               "teamThisMAmount"] ??
                                                           0,
                                                       tenThousand: double.parse(
-                                                              controller.homeTeamTanNo[
-                                                                      "teamThisMAmount"] ??
-                                                                  "0") >=
+                                                              "${controller.homeTeamTanNo["teamThisMAmount"] ?? 0}") >=
                                                           100000),
                                                   30,
                                                   AppColor.textBlack,
@@ -768,7 +776,9 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                                           controller.getChartColor(seriesIndex),
                                     ),
                                     gwb(8),
-                                    getSimpleText("${point.x}(${point.y}人)", 12,
+                                    getSimpleText(
+                                        "${point.x}(${(controller.selectTopRightType == 1 && controller.totalMachineCount == 0) || (controller.selectTopRightType == 2 && controller.totalBusinessCount == 0) ? 0 : point.y}${controller.selectTopRightType == 1 ? "台" : "人"})",
+                                        12,
                                         AppColor.textBlack)
                                   ]));
                             },
@@ -806,7 +816,21 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                         //       format.format(
                         //           args.dataPoints![args.pointIndex!.toInt()].y);
                         // },
-                        tooltipBehavior: TooltipBehavior(enable: true));
+                        tooltipBehavior: TooltipBehavior(
+                          enable: true,
+                          duration: 2000,
+                          builder:
+                              (data, point, series, pointIndex, seriesIndex) {
+                            ChartSampleData myPoint = data;
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: getSimpleText(
+                                  "${myPoint.x}:${(controller.selectTopRightType == 1 && controller.totalMachineCount == 0) || (controller.selectTopRightType == 2 && controller.totalBusinessCount == 0) ? 0 : myPoint.y}${controller.selectTopRightType == 1 ? "台" : "人"}",
+                                  12,
+                                  Colors.white),
+                            );
+                          },
+                        ));
                   })),
               ghb(30),
               centRow(List.generate(
@@ -1328,9 +1352,11 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                               12,
                               AppColor.textBlack)
                           : getSimpleText(
-                              controller.ppList[controller.selectPP]
-                                      ["enumName"] ??
-                                  "",
+                              controller.ppList.isEmpty
+                                  ? ""
+                                  : controller.ppList[controller.selectPP]
+                                          ["enumName"] ??
+                                      "",
                               12,
                               AppColor.textBlack);
                     }),
@@ -1352,7 +1378,7 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                       child: centClm([
                         SizedBox(
                           height: 30.w,
-                          width: 90.w,
+                          width: 110.w,
                           child: Align(
                             alignment: const Alignment(-1, 0),
                             child: GetX<StatisticsPageController>(builder: (_) {
@@ -1380,7 +1406,8 @@ class StatisticsPage extends GetView<StatisticsPageController> {
               value: controller.selectTopRightType == 2
                   ? controller.machineTeamSelectIdx
                   : controller.selectPP,
-              buttonWidth: 90.w,
+              buttonWidth: 110.w,
+              dropdownWidth: 110.w,
               buttonHeight: 60.w,
               itemHeight: 30.w,
               onChanged: (value) {

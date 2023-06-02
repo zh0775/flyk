@@ -7,12 +7,20 @@ import 'package:cxhighversion2/statistics/statistics_page/statistics_business_de
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:skeletons/skeletons.dart';
+
+class StatisticsBusinessListBinding implements Bindings {
+  @override
+  void dependencies() {
+    Get.put<StatisticsBusinessListController>(
+        StatisticsBusinessListController());
+  }
+}
 
 class StatisticsBusinessListController extends GetxController {
   final _isLoading = false.obs;
@@ -263,10 +271,19 @@ class StatisticsBusinessListController extends GetxController {
 }
 
 class StatisticsBusinessList extends StatelessWidget {
-  const StatisticsBusinessList({super.key});
+  final bool isPage;
+  const StatisticsBusinessList({super.key, this.isPage = false});
 
   @override
   Widget build(BuildContext context) {
+    return isPage
+        ? Scaffold(
+            appBar: getDefaultAppBar(context, "商户列表"),
+            body: contentView(context))
+        : contentView(context);
+  }
+
+  Widget contentView(BuildContext context) {
     return GetBuilder<StatisticsBusinessListController>(
         init: StatisticsBusinessListController(),
         builder: (controller) {
@@ -553,61 +570,74 @@ class StatisticsBusinessList extends StatelessWidget {
     //   }
     // }
 
-    return CustomDropDownView(
-        dropDownCtrl:
-            index == 0 ? controller.filterCtrl1 : controller.filterCtrl2,
-        height: height,
-        dropdownMenuChange: (isShow) {
-          if (!isShow) {
-            controller.filterIdx = -1;
-          }
-        },
-        dropWidget: GetX<StatisticsBusinessListController>(
-          builder: (_) {
-            return filterView(
-              index == 0
-                  ? controller.filterTypeList1
-                  : controller.filterTypeList2,
-              index == 0 ? controller.filterIdx1 : controller.filterIdx2,
-              onPressed: (clickIdx) {
-                controller.filterSelectAction(index, clickIdx);
-              },
-            );
+    return Builder(builder: (context) {
+      double maxHeight = ScreenUtil().screenHeight -
+          (Scaffold.of(context).appBarMaxHeight ?? 0) -
+          (isPage
+              ? 0
+              : (kBottomNavigationBarHeight + paddingSizeBottom(context))) -
+          106.w -
+          50.w;
+
+      return CustomDropDownView(
+          dropDownCtrl:
+              index == 0 ? controller.filterCtrl1 : controller.filterCtrl2,
+          height: height > maxHeight ? maxHeight : height,
+          dropdownMenuChange: (isShow) {
+            if (!isShow) {
+              controller.filterIdx = -1;
+            }
           },
-        ));
+          dropWidget: GetX<StatisticsBusinessListController>(
+            builder: (_) {
+              return filterView(
+                  index == 0
+                      ? controller.filterTypeList1
+                      : controller.filterTypeList2,
+                  index == 0 ? controller.filterIdx1 : controller.filterIdx2,
+                  onPressed: (clickIdx) {
+                controller.filterSelectAction(index, clickIdx);
+              }, height: height > maxHeight ? maxHeight : null);
+            },
+          ));
+    });
   }
 
   Widget filterView(List filterList, int selectIdx,
-      {Function(int clickIdx)? onPressed}) {
+      {Function(int clickIdx)? onPressed, double? height}) {
     return Container(
       color: Colors.white,
-      height: filterList.length * 40.0.w,
-      child: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: Column(
-          children: List.generate(
-              filterList.length,
-              (index) => CustomButton(
-                    onPressed: () {
-                      if (onPressed != null) {
-                        onPressed(index);
-                      }
-                    },
-                    child: sbhRow([
-                      getSimpleText(
-                          "${filterList[index]["name"]}${filterList[index]["num"] != null ? "(${filterList[index]["num"]})" : ""}",
-                          14,
-                          AppColor.text2),
-                      selectIdx == index
-                          ? Image.asset(
-                              assetsName(
-                                  "statistics_page/icon_cell_filter_selected"),
-                              width: 15.w,
-                              fit: BoxFit.fitWidth,
-                            )
-                          : gwb(0)
-                    ], width: 375 - 15 * 2, height: 40),
-                  )),
+      height: height ?? filterList.length * 40.0.w,
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          physics: height != null
+              ? const BouncingScrollPhysics()
+              : const NeverScrollableScrollPhysics(),
+          child: Column(
+            children: List.generate(
+                filterList.length,
+                (index) => CustomButton(
+                      onPressed: () {
+                        if (onPressed != null) {
+                          onPressed(index);
+                        }
+                      },
+                      child: sbhRow([
+                        getSimpleText(
+                            "${filterList[index]["name"]}${filterList[index]["num"] != null ? "(${filterList[index]["num"]})" : ""}",
+                            14,
+                            AppColor.text2),
+                        selectIdx == index
+                            ? Image.asset(
+                                assetsName(
+                                    "statistics_page/icon_cell_filter_selected"),
+                                width: 15.w,
+                                fit: BoxFit.fitWidth,
+                              )
+                            : gwb(0)
+                      ], width: 375 - 15 * 2, height: 40),
+                    )),
+          ),
         ),
       ),
     );

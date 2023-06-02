@@ -187,11 +187,8 @@ class IdentityAuthenticationCheck
           children: [
             gwb(375),
             ghb(35),
-            Image.asset(
-              assetsName("common/bg_auth_success2"),
-              width: 143.w,
-              fit: BoxFit.fitWidth,
-            ),
+            Image.asset(assetsName("common/bg_auth_success"),
+                width: 143.w, fit: BoxFit.fitWidth),
             ghb(35),
             ...List.generate(4, (index) {
               String t1 = "";

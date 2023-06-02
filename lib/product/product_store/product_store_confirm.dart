@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cxhighversion2/component/bottom_paypassword.dart';
 import 'package:cxhighversion2/component/custom_alipay.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
@@ -54,7 +53,6 @@ class ProductStoreConfirmController extends GetxController {
   }
 
   int levelType = 1;
-
   final _currentCount = 1.obs;
   set currentCount(v) {
     if (_currentCount.value != v) {
@@ -77,9 +75,9 @@ class ProductStoreConfirmController extends GetxController {
   final numNode = FocusNode();
 
   // 订单预览数据
-  final _previewOrderData = Rx<Map>({});
-  Map get previewOrderData => _previewOrderData.value;
-  set previewOrderData(v) => _previewOrderData.value = v;
+  // final _previewOrderData = Rx<Map>({});
+  // Map get previewOrderData => _previewOrderData.value;
+  // set previewOrderData(v) => _previewOrderData.value = v;
 
   // 商品数据
   final _productData = Rx<Map>({});
@@ -203,33 +201,33 @@ class ProductStoreConfirmController extends GetxController {
 
   // 订单预览
   loadPreviewOrder() {
-    if (payTypeList.isEmpty) {
-      return;
-    }
-    // Map<String, dynamic> params = {
-    //   "delivery_Method": deliveryType + 1,
-    //   "levelConfigId": productData["levelGiftId"],
-    //   "num": currentCount,
-    //   "contactID": address["id"] ?? 0,
-    //   "pay_MethodType":
-    //       int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"),
-    //   "pay_Method": int.parse("${payTypeList[currentPayTypeIndex]["value"]}")
-    // };
-    List orderContent = [
-      {"id": productData["levelGiftId"], "num": currentCount}
-    ];
+    // if (payTypeList.isEmpty) {
+    //   return;
+    // }
+    // // Map<String, dynamic> params = {
+    // //   "delivery_Method": deliveryType + 1,
+    // //   "levelConfigId": productData["levelGiftId"],
+    // //   "num": currentCount,
+    // //   "contactID": address["id"] ?? 0,
+    // //   "pay_MethodType":
+    // //       int.parse("${payTypeList[currentPayTypeIndex]["u_Type"]}"),
+    // //   "pay_Method": int.parse("${payTypeList[currentPayTypeIndex]["value"]}")
+    // // };
+    // List orderContent = [
+    //   {"id": productData["levelGiftId"], "num": currentCount}
+    // ];
 
-    simpleRequest(
-      url: Urls.previewOrder,
-      params: {"orderContent": orderContent},
-      success: (success, json) {
-        if (success) {
-          previewOrderData = json["data"];
-          update([confirmButtonBuildId]);
-        }
-      },
-      after: () {},
-    );
+    // simpleRequest(
+    //   url: Urls.previewOrder,
+    //   params: {"orderContent": orderContent},
+    //   success: (success, json) {
+    //     if (success) {
+    //       previewOrderData = json["data"];
+    //       update([confirmButtonBuildId]);
+    //     }
+    //   },
+    //   after: () {},
+    // );
   }
 
   loadPayOrderDetail(Map orderInfo,
@@ -262,22 +260,34 @@ class ProductStoreConfirmController extends GetxController {
       "version_Origin": AppDefault().versionOriginForPay(),
       // "u_3nd_Pad": payPwd,
       "user_Remarks": remarkInputCtrl.text,
-      "orderContent": [
-        {"id": productData["levelGiftId"], "num": currentCount}
+      // "orderContent": [
+      //   {"id": productData["levelGiftId"], "num": currentCount}
+      // ]
+      "orderProduct": [
+        {
+          "carId": 0,
+          "productId": productData["levelGiftId"],
+          "productListId": productData["levelGiftId"],
+          "num": currentCount
+        }
       ]
     };
     if (payPwd.isNotEmpty) {
       params["u_3nd_Pad"] = payPwd;
     }
+    Map payData = payTypeList[currentPayTypeIndex];
+    bool isReal = (payData["u_Type"] ?? 1) == 1;
+    String unit = payData["name"] ?? "";
     simpleRequest(
       url: Urls.userLevelGiftPay,
       params: params,
       success: (success, json) async {
         if (success) {
-          Map data = json["data"];
-          Map payData = payTypeList[currentPayTypeIndex];
-          Map orderInfo = data["orderInfo"];
+          Map data = json["data"] ?? {};
+
+          Map orderInfo = data["orderInfo"] ?? {};
           String aliDataStr = data["aliData"] ?? "";
+
           if (payData["u_Type"] == 1) {
             if (payData["value"] == 1) {
               //支付宝
@@ -285,6 +295,7 @@ class ProductStoreConfirmController extends GetxController {
                 ShowToast.normal("支付失败，请稍后再试");
                 return;
               }
+
               Map aliData = await CustomAlipay().payAction(
                 aliDataStr,
                 payBack: () {
@@ -297,7 +308,7 @@ class ProductStoreConfirmController extends GetxController {
                             orderData: orderData,
                             levelType: levelType,
                             contentTitle: (orderData["orderState"] ?? 0) != 0
-                                ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}"
+                                ? "支付订单金额为${isReal ? "￥" : ""}${priceFormat((productData["nowPrice"] ?? 0) * currentCount)}${isReal ? "" : unit}"
                                 : "",
                           ),
                           Global.navigatorKey.currentContext!);
@@ -315,7 +326,7 @@ class ProductStoreConfirmController extends GetxController {
                           orderData: orderData,
                           levelType: levelType,
                           contentTitle: aliData["resultStatus"] == "9000"
-                              ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}"
+                              ? "支付订单金额为${isReal ? "￥" : ""}${priceFormat((productData["nowPrice"] ?? 0) * currentCount)}${isReal ? "" : unit}"
                               : "",
                         ),
                         Global.navigatorKey.currentContext!);
@@ -333,7 +344,7 @@ class ProductStoreConfirmController extends GetxController {
                       orderData: orderData,
                       levelType: levelType,
                       contentTitle: success
-                          ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}"
+                          ? "支付订单金额为${isReal ? "￥" : ""}${priceFormat((productData["nowPrice"] ?? 0) * currentCount)}${isReal ? "" : unit}"
                           : "",
                     ),
                     Global.navigatorKey.currentContext!);
@@ -346,7 +357,7 @@ class ProductStoreConfirmController extends GetxController {
                 success: success,
                 levelType: levelType,
                 contentTitle: success
-                    ? "支付订单金额为￥${priceFormat(previewOrderData["pay_Amount"] ?? 0)}"
+                    ? "支付订单金额为${isReal ? "￥" : ""}${priceFormat((productData["nowPrice"] ?? 0) * currentCount)}${isReal ? "" : unit}"
                     : json["messages"] ?? "",
               ),
               Global.navigatorKey.currentContext!);
@@ -484,10 +495,10 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                 height: 60.w + paddingSizeBottom(context),
                 child: CustomButton(
                   onPressed: () {
-                    if (controller.previewOrderData.isEmpty) {
-                      ShowToast.normal("正在获取数据，请稍等...");
-                      return;
-                    }
+                    // if (controller.previewOrderData.isEmpty) {
+                    //   ShowToast.normal("正在获取数据，请稍等...");
+                    //   return;
+                    // }
                     showPayChoose(context);
                   },
                   child: Column(
@@ -527,28 +538,10 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
             decoration: getDefaultWhiteDec(radius: 8),
             margin: EdgeInsets.only(top: 15.w),
             child: GetX<ProductStoreConfirmController>(builder: (_) {
-              bool isReal = controller.levelType != 3;
-              bool isBean = false;
-              String beanName = "";
-              // 如果是兑换商城，判断是否使用豆支付
-              if (controller.levelType == 3) {
-                List payTypes = convert.jsonDecode(
-                    controller.productData["levelGiftPaymentMethod"]);
-                if (payTypes.isNotEmpty &&
-                    payTypes.length == 1 &&
-                    (payTypes[0]["value"] ?? 0) == 5) {
-                  isBean = true;
-                }
-                beanName = "";
-                List wallets = AppDefault().homeData["u_Account"] ?? [];
-                //获取豆名称
-                for (var e in wallets) {
-                  if ((e["a_No"] ?? 0) == 5) {
-                    beanName = e["name"] ?? "";
-                    break;
-                  }
-                }
-              }
+              Map currentPayType =
+                  controller.payTypeList[controller.currentPayTypeIndex];
+              bool isReal = (currentPayType["u_Type"] ?? 1) == 1;
+              String unit = currentPayType["name"] ?? "";
               return Column(
                 children: [
                   ...List.generate(4, (index) {
@@ -566,20 +559,15 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                       index != 3
                           ? getSimpleText(
                               index == 0
-                                  ? "${isReal ? "￥" : ""}${priceFormat((controller.productData["nowPrice"] ?? 0) * controller.currentCount)}${isReal ? "" : isBean ? beanName : "积分"}"
+                                  ? "${isReal ? "￥" : ""}${priceFormat((controller.productData["nowPrice"] ?? 0) * controller.currentCount)}${isReal ? "" : unit}"
                                   : index == 1
-                                      ? (controller.previewOrderData[
-                                                      "pay_Freight"] ??
-                                                  0) <=
-                                              0
-                                          ? "包邮"
-                                          : "${isReal ? "￥" : ""}${priceFormat(controller.previewOrderData["pay_Freight"] ?? 0)}${isReal ? "" : isBean ? beanName : "积分"}"
-                                      : "${controller.previewOrderData["num"] ?? 1}",
+                                      ? "包邮"
+                                      : "${controller.currentCount}",
                               14,
                               AppColor.textBlack)
                           : getRichText(
                               isReal ? "￥" : "",
-                              "${priceFormat(controller.previewOrderData["pay_Amount"] ?? 0)}${isReal ? "" : isBean ? beanName : "积分"}",
+                              "${priceFormat((controller.productData["nowPrice"] ?? 0) * controller.currentCount)}${isReal ? "" : unit}",
                               12,
                               const Color(0xFFFE4B3B),
                               18,
@@ -821,148 +809,133 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
 
   // 商品信息视图
   Widget productInfoView() {
-    bool isReal = controller.levelType != 3;
-    bool isBean = false;
-    String beanName = "";
-    // 如果是兑换商城，判断是否使用豆支付
-    if (controller.levelType == 3) {
-      List payTypes =
-          convert.jsonDecode(controller.productData["levelGiftPaymentMethod"]);
-      if (payTypes.isNotEmpty &&
-          payTypes.length == 1 &&
-          (payTypes[0]["value"] ?? 0) == 5) {
-        isBean = true;
-      }
-      beanName = "";
-      List wallets = AppDefault().homeData["u_Account"] ?? [];
-      //获取豆名称
-      for (var e in wallets) {
-        if ((e["a_No"] ?? 0) == 5) {
-          beanName = e["name"] ?? "";
-          break;
-        }
-      }
-    }
-    return Container(
-      width: 345.w,
-      decoration: getDefaultWhiteDec(radius: 8),
-      margin: EdgeInsets.only(top: 15.w),
-      child: Column(
-        children: [
-          ghb(15),
-          sbRow([
-            centRow([
-              CustomNetworkImage(
-                  src: AppDefault().imageUrl +
-                      (controller.productData["levelGiftImg"] ?? ""),
-                  width: 105.w,
-                  height: 105.w,
-                  fit: BoxFit.fill),
-              gwb(12),
-              sbClm([
-                getWidthText(controller.productData["levelName"] ?? "", 15,
-                    AppColor.textBlack, 315 - 105 - 12, 2,
-                    isBold: true),
-                getRichText(
-                    isReal ? "￥" : "",
-                    "${priceFormat(controller.productData["nowPrice"] ?? 0)}${isReal ? "" : isBean ? beanName : "积分"}",
-                    12,
-                    const Color(0xFFFE4B3B),
-                    18,
-                    const Color(0xFFFE4B3B),
-                    isBold2: true),
-              ], height: 105, crossAxisAlignment: CrossAxisAlignment.start),
-            ])
-          ], width: 345 - 15 * 2),
-          sbhRow([
-            getSimpleText("数量", 14, AppColor.textBlack),
-            // 数量选择器
-            Container(
-                width: 91.w,
-                height: 25.w,
-                decoration: BoxDecoration(
-                    color: const Color(0xFFF5F5F7),
-                    border: Border.all(width: 0.5.w, color: AppColor.lineColor),
-                    borderRadius: BorderRadius.circular(25.w / 2)),
-                child: centRow(List.generate(
-                    3,
-                    (index) => index == 1
-                        ? Container(
-                            width: 40.w,
-                            height: 21.w,
-                            color: Colors.white,
-                            child: CustomInput(
+    return GetX<ProductStoreConfirmController>(builder: (_) {
+      Map currentPayType =
+          controller.payTypeList[controller.currentPayTypeIndex];
+      bool isReal = (currentPayType["u_Type"] ?? 1) == 1;
+      String unit = currentPayType["name"] ?? "";
+      return Container(
+        width: 345.w,
+        decoration: getDefaultWhiteDec(radius: 8),
+        margin: EdgeInsets.only(top: 15.w),
+        child: Column(
+          children: [
+            ghb(15),
+            sbRow([
+              centRow([
+                CustomNetworkImage(
+                    src: AppDefault().imageUrl +
+                        (controller.productData["levelGiftImg"] ?? ""),
+                    width: 105.w,
+                    height: 105.w,
+                    fit: BoxFit.fill),
+                gwb(12),
+                sbClm([
+                  getWidthText(controller.productData["levelName"] ?? "", 15,
+                      AppColor.textBlack, 315 - 105 - 12, 2,
+                      isBold: true),
+                  getRichText(
+                      isReal ? "￥" : "",
+                      "${priceFormat(controller.productData["nowPrice"] ?? 0)}${isReal ? "" : unit}",
+                      12,
+                      const Color(0xFFFE4B3B),
+                      18,
+                      const Color(0xFFFE4B3B),
+                      isBold2: true),
+                ], height: 105, crossAxisAlignment: CrossAxisAlignment.start),
+              ])
+            ], width: 345 - 15 * 2),
+            sbhRow([
+              getSimpleText("数量", 14, AppColor.textBlack),
+              // 数量选择器
+              Container(
+                  width: 91.w,
+                  height: 25.w,
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFF5F5F7),
+                      border:
+                          Border.all(width: 0.5.w, color: AppColor.lineColor),
+                      borderRadius: BorderRadius.circular(25.w / 2)),
+                  child: centRow(List.generate(
+                      3,
+                      (index) => index == 1
+                          ? Container(
                               width: 40.w,
-                              heigth: 21.w,
-                              placeholder: "数量",
-                              placeholderStyle: TextStyle(
-                                  fontSize: 15.sp, color: AppColor.textGrey5),
-                              style: TextStyle(
-                                  fontSize: 15.sp, color: AppColor.textBlack),
-                              textAlignVertical: TextAlignVertical.center,
-                              textAlign: TextAlign.center,
-                              focusNode: controller.numNode,
-                              keyboardType: TextInputType.number,
-                              textEditCtrl: controller.numInputCtrl,
-                            ))
-                        : CustomButton(
-                            onPressed: () {
-                              if (index == 0) {
-                                if (controller.currentCount <= 1) {
-                                  ShowToast.normal("最少购买一件");
-                                  return;
+                              height: 21.w,
+                              color: Colors.white,
+                              child: CustomInput(
+                                width: 40.w,
+                                heigth: 21.w,
+                                placeholder: "数量",
+                                placeholderStyle: TextStyle(
+                                    fontSize: 15.sp, color: AppColor.textGrey5),
+                                style: TextStyle(
+                                    fontSize: 15.sp, color: AppColor.textBlack),
+                                textAlignVertical: TextAlignVertical.center,
+                                textAlign: TextAlign.center,
+                                focusNode: controller.numNode,
+                                keyboardType: TextInputType.number,
+                                textEditCtrl: controller.numInputCtrl,
+                              ))
+                          : CustomButton(
+                              onPressed: () {
+                                if (index == 0) {
+                                  if (controller.currentCount <= 1) {
+                                    ShowToast.normal("最少购买一件");
+                                    return;
+                                  }
+                                  controller.currentCount -= 1;
+                                } else {
+                                  controller.currentCount += 1;
                                 }
-                                controller.currentCount -= 1;
-                              } else {
-                                controller.currentCount += 1;
-                              }
-                            },
-                            child: GetX<ProductStoreConfirmController>(
-                                builder: (_) {
-                              int myNum = controller.currentCount;
-                              return SizedBox(
-                                width: 25.w - 0.1.w,
-                                height: 21.w,
-                                child: Center(
-                                  child: getSimpleText(
-                                      index == 0 ? "⏤" : "+",
-                                      index == 0 ? 9 : 12,
-                                      index == 0 && myNum <= 1
-                                          ? AppColor.textGrey5
-                                          : AppColor.textBlack),
-                                ),
-                              );
-                            }),
-                          ))))
-          ], width: 315, height: 54.5),
-          gline(315, 0.5),
-          ghb(15),
-          sbhRow([getSimpleText("备注", 14, AppColor.textBlack)],
-              width: 315, height: 30),
-          Container(
-            width: 315.w,
-            height: 60.w,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-                color: const Color(0xFFFAFAFA),
-                borderRadius: BorderRadius.circular(4.w)),
-            child: CustomInput(
-              width: 315.w - 10.w * 2,
-              heigth: 60.w - 6.w * 2,
-              placeholder: "请输入留言",
-              textAlign: TextAlign.start,
-              textAlignVertical: TextAlignVertical.top,
-              textEditCtrl: controller.remarkInputCtrl,
-              style: TextStyle(fontSize: 14.sp, color: AppColor.textBlack),
-              placeholderStyle:
-                  TextStyle(fontSize: 14.sp, color: AppColor.assisText),
-              maxLines: 100,
+                              },
+                              child: GetX<ProductStoreConfirmController>(
+                                  builder: (_) {
+                                int myNum = controller.currentCount;
+                                return SizedBox(
+                                  width: 25.w - 0.1.w,
+                                  height: 21.w,
+                                  child: Center(
+                                    child: getSimpleText(
+                                        index == 0 ? "⏤" : "+",
+                                        index == 0 ? 9 : 12,
+                                        index == 0 && myNum <= 1
+                                            ? AppColor.textGrey5
+                                            : AppColor.textBlack),
+                                  ),
+                                );
+                              }),
+                            ))))
+            ], width: 315, height: 54.5),
+            gline(315, 0.5),
+            ghb(15),
+            sbhRow([getSimpleText("备注", 14, AppColor.textBlack)],
+                width: 315, height: 30),
+            Container(
+              width: 315.w,
+              height: 60.w,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  color: const Color(0xFFFAFAFA),
+                  borderRadius: BorderRadius.circular(4.w)),
+              child: CustomInput(
+                width: 315.w - 10.w * 2,
+                heigth: 60.w - 6.w * 2,
+                placeholder: "请输入留言",
+                textAlign: TextAlign.start,
+                textAlignVertical: TextAlignVertical.top,
+                textEditCtrl: controller.remarkInputCtrl,
+                style: TextStyle(fontSize: 14.sp, color: AppColor.textBlack),
+                placeholderStyle:
+                    TextStyle(fontSize: 14.sp, color: AppColor.assisText),
+                maxLines: 100,
+              ),
             ),
-          ),
-          ghb(18),
-        ],
-      ),
-    );
+            ghb(18),
+          ],
+        ),
+      );
+    });
   }
 
   // 底部model，需订单预览数据
@@ -1017,23 +990,20 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                         AppColor.textGrey5,
                       ),
                       ghb(3),
-                      Visibility(
-                          visible: controller.previewOrderData != null &&
-                              controller.previewOrderData.isNotEmpty,
-                          child: GetBuilder<ProductStoreConfirmController>(
-                            init: controller,
-                            id: controller.confirmButtonBuildId,
-                            initState: (_) {},
-                            builder: (_) {
-                              return getSimpleText(
-                                  priceFormat(controller
-                                          .previewOrderData["pay_Amount"] ??
-                                      0),
-                                  30,
-                                  AppColor.textBlack,
-                                  isBold: true);
-                            },
-                          )),
+                      GetBuilder<ProductStoreConfirmController>(
+                        init: controller,
+                        id: controller.confirmButtonBuildId,
+                        initState: (_) {},
+                        builder: (_) {
+                          return getSimpleText(
+                              priceFormat(
+                                  (controller.productData["nowPrice"] ?? 0) *
+                                      controller.currentCount),
+                              30,
+                              AppColor.textBlack,
+                              isBold: true);
+                        },
+                      ),
                     ]),
                   ),
                 ),

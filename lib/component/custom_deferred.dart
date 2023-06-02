@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:cxhighversion2/business/pointsMall/points_mall_page.dart'
     deferred as points_mall_page;
 import 'package:cxhighversion2/business/pointsMall/shopping_product_detail.dart'
@@ -40,8 +41,6 @@ import 'package:cxhighversion2/integralstore/integral_store.dart'
 // import 'package:cxhighversion2/home/store/vip_store.dart' deferred as vip_store;
 import 'package:cxhighversion2/machine/machine_pay_page.dart'
     deferred as machine_pay_page;
-import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication.dart'
-    deferred as identity_authentication;
 import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_check.dart'
     deferred as identity_authentication_check;
 import 'package:cxhighversion2/mine/mine_help_center.dart'
@@ -53,6 +52,8 @@ import 'package:cxhighversion2/statistics/machineEquities/statistics_machine_equ
     deferred as statistics_machine_equities;
 import 'package:cxhighversion2/statistics/machineEquities/statistics_machine_equities_add.dart'
     deferred as statistics_machine_equities_add;
+import 'package:cxhighversion2/statistics/statistics_page/statistics_facilitator_list.dart'
+    deferred as statistics_facilitator_list;
 // import 'package:cxhighversion2/product/product.dart' deferred as product;
 // import 'package:cxhighversion2/product/product_purchase_list.dart'
 //     deferred as product_purchase_list;
@@ -60,6 +61,8 @@ import 'package:cxhighversion2/statistics/userManage/statistics_user_manage.dart
     deferred as statistics_user_manage;
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:cxhighversion2/statistics/statistics_page/statistics_business_list.dart'
+    deferred as statistics_business_list;
 
 class CustomDeferred {
   static CustomDeferred? _instance;
@@ -609,6 +612,47 @@ class CustomDeferred {
           binding: integral_store.IntegralStoreBinding());
     } else {
       toIntegralStore(arg: arg);
+    }
+  }
+
+  /// 商户列表
+  toStatisticsBusinessList({dynamic arg}) async {
+    var completer = Completer();
+    statistics_business_list.loadLibrary().then((_) {
+      completer.complete(true);
+    }).catchError((e) {
+      completer.complete(false);
+    });
+    var loaded = await completer.future;
+    if (loaded) {
+      Get.to(
+          statistics_business_list.StatisticsBusinessList(
+            isPage: (arg ?? {})["isPage"] ?? false,
+          ),
+          binding: statistics_business_list.StatisticsBusinessListBinding());
+    } else {
+      toStatisticsBusinessList(arg: arg);
+    }
+  }
+
+  // 服务商列表
+  toStatisticsFacilitatorList({dynamic arg}) async {
+    var completer = Completer();
+    statistics_facilitator_list.loadLibrary().then((_) {
+      completer.complete(true);
+    }).catchError((e) {
+      completer.complete(false);
+    });
+    var loaded = await completer.future;
+    if (loaded) {
+      Get.to(
+          statistics_facilitator_list.StatisticsFacilitatorList(
+            isPage: (arg ?? {})["isPage"] ?? false,
+          ),
+          binding:
+              statistics_facilitator_list.StatisticsFacilitatorListBinding());
+    } else {
+      toStatisticsFacilitatorList(arg: arg);
     }
   }
 }

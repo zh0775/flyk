@@ -103,10 +103,7 @@ class UserLoginController extends GetxController {
   Map publicHomeData = {};
 
   loadPublicHomeData() async {
-    if (AppDefault().publicHomeData != null &&
-        AppDefault().publicHomeData.isNotEmpty &&
-        AppDefault().publicHomeData["webSiteInfo"] != null &&
-        AppDefault().publicHomeData["webSiteInfo"].isNotEmpty) {
+    if (AppDefault().publicHomeData.isNotEmpty) {
       publicHomeData = AppDefault().publicHomeData;
       update([appInfobuildId]);
       return;
@@ -629,12 +626,12 @@ class UserLogin extends GetView<UserLoginController> {
       initState: (_) {},
       builder: (_) {
         Map appInfo = {};
-        if (!HttpConfig.baseUrl.contains("woliankeji")) {
+        if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
+          appInfo = controller.publicHomeData["webSiteInfo"] ?? {};
+        } else {
           Map info =
               (controller.publicHomeData["webSiteInfo"] ?? {})["app"] ?? {};
           appInfo = {"System_Home_Name": info["apP_Name"] ?? ""};
-        } else if (HttpConfig.baseUrl.contains("woliankeji")) {
-          appInfo = controller.publicHomeData["webSiteInfo"] ?? {};
         }
 
         return CustomButton(

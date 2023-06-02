@@ -15,6 +15,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:skeletons/skeletons.dart';
 
+class StatisticsFacilitatorListBinding implements Bindings {
+  @override
+  void dependencies() {
+    Get.put<StatisticsFacilitatorListController>(
+        StatisticsFacilitatorListController());
+  }
+}
+
 class StatisticsFacilitatorListController extends GetxController {
   final _isLoading = false.obs;
   bool get isLoading => _isLoading.value;
@@ -104,13 +112,7 @@ class StatisticsFacilitatorListController extends GetxController {
             Map data = json["data"] ?? {};
             count = data["count"];
             List tmpList = data["data"] ?? [];
-
-            /// 测试
-            if (tmpList.isEmpty) {
-              tmpList = [{}, {}];
-            }
             dataList = isLoad ? [...dataList, ...tmpList] : tmpList;
-
             update();
           }
         },
@@ -154,10 +156,95 @@ class StatisticsFacilitatorListController extends GetxController {
 }
 
 class StatisticsFacilitatorList extends StatelessWidget {
-  const StatisticsFacilitatorList({super.key});
+  final bool isPage;
+  const StatisticsFacilitatorList({super.key, this.isPage = false});
 
   @override
   Widget build(BuildContext context) {
+    return isPage
+        ? Scaffold(
+            appBar: getDefaultAppBar(context, "服务商", action: [
+              GetBuilder<StatisticsFacilitatorListController>(
+                  init: StatisticsFacilitatorListController(),
+                  builder: (controller) {
+                    return DropdownButtonHideUnderline(
+                        child: DropdownButton2(
+                            dropdownElevation: 0,
+                            buttonElevation: 0,
+                            offset: Offset(-10.w, -5.w),
+                            customButton: Container(
+                              width: 80.w,
+                              height: 30.w,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4.w),
+                                  color: Colors.white),
+                              alignment: Alignment.center,
+                              child: centRow([
+                                Image.asset(
+                                  assetsName("product_store/icon_filter"),
+                                  width: 14.w,
+                                  fit: BoxFit.fitWidth,
+                                ),
+                                gwb(5),
+                                getSimpleText("筛选", 14, AppColor.textBlack)
+                              ]),
+                            ),
+                            items: List.generate(
+                                controller.filterTypeList.length,
+                                (index) => DropdownMenuItem<int>(
+                                    value: index,
+                                    child: centClm([
+                                      SizedBox(
+                                        height: 30.w,
+                                        width: 90.w,
+                                        child: Align(
+                                          alignment: const Alignment(-1, 0),
+                                          child: GetX<
+                                                  StatisticsFacilitatorListController>(
+                                              builder: (_) {
+                                            return Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 11.w),
+                                              child: getSimpleText(
+                                                  "${controller.filterTypeList[index]["name"] ?? ""}",
+                                                  12,
+                                                  controller.filterTypeIdx ==
+                                                          index
+                                                      ? AppColor.textRed
+                                                      : AppColor.textBlack),
+                                            );
+                                          }),
+                                        ),
+                                      ),
+                                    ]))),
+                            // value: ctrl.machineDataIdx,
+                            value: controller.filterTypeIdx,
+                            buttonWidth: 90.w,
+                            buttonHeight: 50.w,
+                            itemHeight: 30.w,
+                            onChanged: (value) {
+                              controller.filterTypeIdx = value;
+                            },
+                            itemPadding: EdgeInsets.zero,
+                            dropdownPadding: EdgeInsets.zero,
+                            // dropdownWidth: 90.w,
+                            dropdownDecoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4.w),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: const Color(0x1A040000),
+                                      // offset: Offset(0, 5.w),
+                                      blurRadius: 5.w)
+                                ])));
+                  })
+            ]),
+            body: contentPage(context),
+          )
+        : contentPage(context);
+  }
+
+  Widget contentPage(BuildContext context) {
     return Stack(
       children: [
         Positioned(

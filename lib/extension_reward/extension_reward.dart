@@ -19,7 +19,7 @@ class ExtensionRewardBinding implements Bindings {
 
 class ExtensionRewardController extends GetxController {
   List noticeList = [
-    {"title": "新增服务商注册30天以内，线上采购5台并激活1台奖励100元"},
+    {"title": "新增服务商注册30天以内，线上采购5台并激活1台奖励100元"}
   ];
 
   final _isLoading = false.obs;

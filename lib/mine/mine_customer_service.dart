@@ -1,8 +1,9 @@
 import 'package:cxhighversion2/component/custom_button.dart';
+import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class MineCustomerServiceBinding implements Bindings {
@@ -14,13 +15,17 @@ class MineCustomerServiceBinding implements Bindings {
 
 class MineCustomerServiceController extends GetxController {
   Map publicHomeData = {};
-  // Map homeData = {};
   Map webSiteInfo = {};
 
   @override
   void onInit() {
     publicHomeData = AppDefault().publicHomeData;
-    webSiteInfo = (publicHomeData["systemInfo"] ?? {})["system"] ?? {};
+    if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
+      webSiteInfo = (publicHomeData["systemInfo"] ?? {})["system"] ?? {};
+    } else {
+      webSiteInfo = (publicHomeData["systemInfo"] ?? {})["system"] ?? {};
+    }
+
     super.onInit();
   }
 }
@@ -36,28 +41,6 @@ class MineCustomerService extends GetView<MineCustomerServiceController> {
       backgroundColor: AppColor.pageBackgroundColor,
       body: Stack(
         children: [
-          // Positioned.fill(
-          //     child: Container(
-          //   decoration: const BoxDecoration(
-          //       gradient: LinearGradient(
-          //           begin: Alignment.topCenter,
-          //           end: Alignment(0, -0.3),
-          //           colors: [
-          //         Color(0xFFD2F1FE),
-          //         Color(0xFFF7F7F7),
-          //       ])),
-          // )),
-          // Positioned(
-          //   top: paddingSizeTop(context),
-          //   left: 0,
-          //   right: 0,
-          //   height: kToolbarHeight.w,
-          //   child: sbhRow([
-          //     defaultBackButton(context),
-          //     getDefaultAppBarTitile("客户服务"),
-          //     gwb(50),
-          //   ], width: 375, height: kToolbarHeight),
-          // ),
           Positioned.fill(
               child: SingleChildScrollView(
             child: Column(
@@ -67,39 +50,8 @@ class MineCustomerService extends GetView<MineCustomerServiceController> {
                   getSimpleText("联系方式", 18, Colors.black, fw: FontWeight.w500),
                 ], width: 375 - 24 * 2),
                 ghb(3),
-                // getWidthText(
-                //     "您可拨打电话联系客服，${controller.webSiteInfo["system_WeChatOfficial"] == null || controller.webSiteInfo["system_WeChatOfficial"].isEmpty ? "" : "或复制公众号进入微信搜索关注、"}或添加微信即可在线沟通",
-                //     14,
-                //     const Color(0xFF4D4D4D),
-                //     375 - 24 * 2,
-                //     2),
-
                 getWidthText(
                     "您可拨打电话联系客服", 14, const Color(0xFF4D4D4D), 375 - 24 * 2, 2),
-                // Image.asset(
-                //   assetsName(
-                //     "mine/help_bg",
-                //   ),
-                //   width: (375 - 29 * 2).w,
-                //   fit: BoxFit.fitWidth,
-                // ),
-                // ghb(10),
-                // sbRow([
-                //   Container(
-                //     padding: EdgeInsets.only(
-                //         top: 15.w, left: 12.w, right: 12.w, bottom: 15.w),
-                //     decoration: BoxDecoration(
-                //         color: Colors.white,
-                //         borderRadius: BorderRadius.only(
-                //             topLeft: Radius.circular(10.w),
-                //             topRight: Radius.circular(5.w),
-                //             bottomLeft: Radius.circular(5.w),
-                //             bottomRight: Radius.circular(10.w))),
-                //     child: getSimpleText(
-                //         "有任何问题请按下方的联系方式咨询!! ", 14, AppColor.textBlack),
-                //   )
-                // ], width: 375 - 29 * 2),
-                // ghb(45),
                 ghb(13),
                 GetBuilder<MineCustomerServiceController>(
                   init: controller,

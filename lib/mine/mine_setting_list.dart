@@ -1,11 +1,11 @@
 import 'package:cxhighversion2/component/custom_button.dart';
-import 'package:cxhighversion2/main.dart';
 import 'package:cxhighversion2/mine/mine_account_manage.dart';
 import 'package:cxhighversion2/mine/mine_address_manager.dart';
 import 'package:cxhighversion2/mine/mine_certificate_authorization.dart';
 import 'package:cxhighversion2/mine/mine_protocol_page.dart';
 import 'package:cxhighversion2/mine/myWallet/receipt_setting.dart';
 import 'package:cxhighversion2/mine/personal_information.dart';
+import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
@@ -67,33 +67,20 @@ class MineSettingListController extends GetxController {
   }
 
   cancelAction() {
-    showAlert(
-      Global.navigatorKey.currentContext!,
-      "1分钟“几百万”上下 确定留不住你？",
-      confirmOnPressed: () {
-        simpleRequest(
+    showAlert(Global.navigatorKey.currentContext!, "1分钟“几百万”上下 确定留不住你？",
+        confirmOnPressed: () {
+      simpleRequest(
           url: Urls.userCancel,
           params: {},
           success: (success, json) {
             if (success) {
               ShowToast.normal("注销成功");
-              setUserDataFormat(false, {}, {}, {}).then((value) => popToLogin());
+              setUserDataFormat(false, {}, {}, {})
+                  .then((value) => popToLogin());
             }
           },
-          after: () {},
-        );
-      },
-    );
-    // Get.until((route) {
-    //   if (route is GetPageRoute) {
-    //     if (route.binding is AppBinding) {
-    //       return true;
-    //     }
-    //     return false;
-    //   } else {
-    //     return false;
-    //   }
-    // });
+          after: () {});
+    });
   }
 
   @override
@@ -106,7 +93,16 @@ class MineSettingListController extends GetxController {
   String aboutMeInfoContent = "";
   @override
   void onInit() {
-    aboutMeInfoContent = ((AppDefault().publicHomeData["webSiteInfo"] ?? {})["app"] ?? {})["apP_Introduction"] ?? "";
+    if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
+      aboutMeInfoContent = (AppDefault().publicHomeData["webSiteInfo"] ??
+              {})["System_Introduction"] ??
+          "";
+    } else {
+      aboutMeInfoContent =
+          ((AppDefault().publicHomeData["webSiteInfo"] ?? {})["app"] ??
+                  {})["apP_Introduction"] ??
+              "";
+    }
     isCanCancel = homeData["isCanCancel"] ?? false;
     loadData();
     bus.on(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
@@ -148,7 +144,8 @@ class MineSettingList extends GetView<MineSettingListController> {
                     0,
                     t2: "修改",
                     onPressed: () {
-                      push(const PersonalInformation(), context, binding: PersonalInformationBinding());
+                      push(const PersonalInformation(), context,
+                          binding: PersonalInformationBinding());
                     },
                   );
                 },
@@ -165,14 +162,16 @@ class MineSettingList extends GetView<MineSettingListController> {
                 "更换手机号",
                 0,
                 onPressed: () {
-                  push(const ReceiptSetting(), context, binding: ReceiptSettingBinding());
+                  push(const ReceiptSetting(), context,
+                      binding: ReceiptSettingBinding());
                 },
               ),
               cell(
                 "地址管理",
                 0,
                 onPressed: () {
-                  push(const MineAddressManager(), context, binding: MineAddressManagerBinding());
+                  push(const MineAddressManager(), context,
+                      binding: MineAddressManagerBinding());
                 },
               ),
               ghb(15),
@@ -184,14 +183,21 @@ class MineSettingList extends GetView<MineSettingListController> {
                     ShowToast.normal("正在获取数据，请稍后...");
                     return;
                   }
-                  push(OtherPolicyPage(userRegistPolicy: controller.userAgreement["content"] ?? "", userServicePolicy: controller.userAgreement["content"] ?? ""), context);
+                  push(
+                      OtherPolicyPage(
+                          userRegistPolicy:
+                              controller.userAgreement["content"] ?? "",
+                          userServicePolicy:
+                              controller.userAgreement["content"] ?? ""),
+                      context);
                 },
               ),
               cell(
                 "授权证书",
                 0,
                 onPressed: () {
-                  push(const MineCertificateAuthorization(), context, binding: MineCertificateAuthorizationBinding());
+                  push(const MineCertificateAuthorization(), context,
+                      binding: MineCertificateAuthorizationBinding());
                 },
               ),
               cell(
@@ -240,9 +246,11 @@ class MineSettingList extends GetView<MineSettingListController> {
                     title: "退出登录",
                     cancelText: "取消",
                     confirmBtnColor: Colors.white,
-                    confirmStyle: TextStyle(fontSize: 16.sp, color: AppColor.theme),
+                    confirmStyle:
+                        TextStyle(fontSize: 16.sp, color: AppColor.theme),
                     confirmOnPressed: () {
-                      setUserDataFormat(false, {}, {}, {}).then((value) => popToLogin());
+                      setUserDataFormat(false, {}, {}, {})
+                          .then((value) => popToLogin());
                     },
                   );
                 },
@@ -252,7 +260,11 @@ class MineSettingList extends GetView<MineSettingListController> {
         ));
   }
 
-  Widget cell(String t1, int type, {Function()? onPressed, String? t2, bool needLine = true, bool topLine = false}) {
+  Widget cell(String t1, int type,
+      {Function()? onPressed,
+      String? t2,
+      bool needLine = true,
+      bool topLine = false}) {
     // String img = "icon_zhgl";
     switch (t1) {
       case "账号管理":
@@ -282,9 +294,14 @@ class MineSettingList extends GetView<MineSettingListController> {
               child: t1 == "安全退出"
                   ? getSimpleText("安全退出", 16, const Color(0xFFF93635))
                   : sbhRow([
-                      centRow([gwb(6.5), getSimpleText(t1, 16, AppColor.textBlack)]),
                       centRow([
-                        t2 != null ? getSimpleText(t2, 16, AppColor.textGrey5) : gwb(0),
+                        gwb(6.5),
+                        getSimpleText(t1, 16, AppColor.textBlack)
+                      ]),
+                      centRow([
+                        t2 != null
+                            ? getSimpleText(t2, 16, AppColor.textGrey5)
+                            : gwb(0),
                         Image.asset(
                           assetsName("statistics/icon_arrow_right_gray"),
                           width: 18.w,
@@ -302,7 +319,8 @@ class MineSettingList extends GetView<MineSettingListController> {
 class OtherPolicyPage extends StatelessWidget {
   final String userServicePolicy;
   final String userRegistPolicy;
-  const OtherPolicyPage({super.key, this.userServicePolicy = "", this.userRegistPolicy = ""});
+  const OtherPolicyPage(
+      {super.key, this.userServicePolicy = "", this.userRegistPolicy = ""});
 
   @override
   Widget build(BuildContext context) {
@@ -315,7 +333,13 @@ class OtherPolicyPage extends StatelessWidget {
                 2,
                 (index) => CustomButton(
                       onPressed: () {
-                        push(MineProtocolPage(title: index == 0 ? "用户服务协议" : "用户注册协议", src: index == 0 ? userServicePolicy : userRegistPolicy), context);
+                        push(
+                            MineProtocolPage(
+                                title: index == 0 ? "用户服务协议" : "用户注册协议",
+                                src: index == 0
+                                    ? userServicePolicy
+                                    : userRegistPolicy),
+                            context);
                       },
                       child: Container(
                         width: 375.w,
@@ -323,7 +347,8 @@ class OtherPolicyPage extends StatelessWidget {
                         alignment: Alignment.center,
                         color: Colors.white,
                         child: sbRow([
-                          getSimpleText(index == 0 ? "用户服务协议" : "用户注册协议", 16, AppColor.textBlack),
+                          getSimpleText(index == 0 ? "用户服务协议" : "用户注册协议", 16,
+                              AppColor.textBlack),
                           Image.asset(
                             assetsName("statistics/icon_arrow_right_gray"),
                             width: 18.w,
