@@ -553,7 +553,17 @@ class StatisticsBusinessDealData
             //       format.format(
             //           args.dataPoints![args.pointIndex!.toInt()].y);
             // },
-            tooltipBehavior: TooltipBehavior(enable: true)));
+            tooltipBehavior: TooltipBehavior(
+                enable: true,
+                builder: (data, point, series, pointIndex, seriesIndex) {
+                  ChartSampleData myPoint = data;
+                  return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: getSimpleText(
+                          "${myPoint.x}:${priceFormat((idx == 0 ? controller.totalPrice : controller.totalPrice2) == 0 ? 0 : myPoint.y)}",
+                          12,
+                          Colors.white));
+                })));
   }
 
   showMonthPick() async {

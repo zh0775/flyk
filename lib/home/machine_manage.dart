@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:cxhighversion2/component/custom_cell.dart';
 import 'package:cxhighversion2/home/my_machine.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -50,13 +49,21 @@ class MachineManage extends GetView<MachineManageController> {
               left: 0,
               right: 0,
               height: 80.w + paddingSizeBottom(context),
-              child: getBottomBlueSubmitBtn(
-                context,
-                "查看全部机具",
-                onPressed: () {
-                  Get.to(const MyMachine(), binding: MyMachineBinding());
-                },
-              )),
+              child: Container(
+                  color: Colors.white,
+                  child: getSubmitBtn(
+                      "查看全部机具",
+                      () => Get.to(
+                            const MyMachine(),
+                            binding: MyMachineBinding(),
+                          ),
+                      linearGradient: LinearGradient(
+                          colors: [
+                            AppColor.gradient1,
+                            AppColor.gradient2,
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter)))),
           Positioned(
               top: 0,
               right: 0,

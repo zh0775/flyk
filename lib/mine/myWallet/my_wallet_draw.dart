@@ -2,6 +2,7 @@ import 'package:cxhighversion2/component/bottom_paypassword.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/home/home.dart';
+import 'package:cxhighversion2/mine/debitCard/debit_card_add.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_draw_history.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_draw_result.dart';
@@ -217,11 +218,9 @@ class MyWalletDrawController extends GetxController {
   void onInit() {
     // update();
     newDraw = true;
-    bottomPayPassword = BottomPayPassword.init(
-      confirmClick: (payPwd) {
-        loadDrawRequest(payPwd);
-      },
-    );
+    bottomPayPassword = BottomPayPassword.init(confirmClick: (payPwd) {
+      loadDrawRequest(payPwd);
+    });
     dataFormat();
     super.onInit();
   }
@@ -255,20 +254,21 @@ class MyWalletDrawController extends GetxController {
       }
     }
     accountList = [];
-    if (openAlipay) {
-      accountList = [
-        {
-          "id": 0,
-          "name": "支付宝账户",
-          "no": authentication["user_OnlinePay_Account"] ?? "",
-          "title": "支付宝账户(${authentication["user_OnlinePay_Account"] ?? ""})",
-          "type": 2
-        }
-      ];
-    }
-    if (openCard) {
-      loadCardData();
-    }
+    // accountList = [];
+    // if (openAlipay) {
+    //   accountList = [
+    //     {
+    //       "id": 0,
+    //       "name": "支付宝账户",
+    //       "no": authentication["user_OnlinePay_Account"] ?? "",
+    //       "title": "支付宝账户(${authentication["user_OnlinePay_Account"] ?? ""})",
+    //       "type": 2
+    //     }
+    //   ];
+    // }
+    // if (openCard) {
+    //   loadCardData();
+    // }
 
     // List payTypes =
     //     ((drawInfo["System_PayType"] ?? "") as String).split(",");
@@ -276,14 +276,18 @@ class MyWalletDrawController extends GetxController {
     if (haveAlipay && openAlipay) {
       alipayData = {
         "name": authentication["user_OnlinePay_Name"],
-        "accound": authentication["user_OnlinePay_Account"]
+        "accound": authentication["user_OnlinePay_Account"],
+        "type": 1
       };
+      accountList.add(alipayData);
     }
     if (haveCard && openCard) {
       cardData = {
         "name": authentication["bank_AccountName"],
-        "accound": authentication["bank_AccountNumber"]
+        "accound": authentication["bank_AccountNumber"],
+        "type": 2
       };
+      accountList.add(cardData);
     }
     update();
   }
@@ -363,17 +367,33 @@ class MyWalletDraw extends GetView<MyWalletDrawController> {
                         ),
                         CustomButton(
                           onPressed: () {
+                            // if (controller.accountList.isEmpty) {
+                            //   Get.offUntil(
+                            //       GetPageRoute(
+                            //         page: () => const ReceiptSetting(),
+                            //         binding: ReceiptSettingBinding(),
+                            //       ),
+                            //       (route) => route is GetPageRoute
+                            //           ? route.binding is MyWalletBinding
+                            //               ? true
+                            //               : false
+                            //           : false);
+                            //   return;
+                            // }
                             if (controller.accountList.isEmpty) {
-                              Get.offUntil(
-                                  GetPageRoute(
-                                    page: () => const ReceiptSetting(),
-                                    binding: ReceiptSettingBinding(),
-                                  ),
-                                  (route) => route is GetPageRoute
-                                      ? route.binding is MyWalletBinding
-                                          ? true
-                                          : false
-                                      : false);
+                              push(const DebitCardAdd(), context,
+                                  binding: DebitCardAddBinding());
+
+                              // Get.offUntil(
+                              //     GetPageRoute(
+                              //       page: () => const ReceiptSetting(),
+                              //       binding: ReceiptSettingBinding(),
+                              //     ),
+                              //     (route) => route is GetPageRoute
+                              //         ? route.binding is MyWalletBinding
+                              //             ? true
+                              //             : false
+                              //         : false);
                               return;
                             }
                             showSelectAccount(context);
@@ -384,24 +404,38 @@ class MyWalletDraw extends GetView<MyWalletDrawController> {
                                   child: centRow([
                                 GetX<MyWalletDrawController>(
                                   builder: (_) {
-                                    return getSimpleText(
-                                        controller.accountList.isEmpty
-                                            ? "请先添加提现账户"
-                                            : controller.accountList[controller
-                                                .defaultAccountIdx]["title"],
-                                        15,
-                                        controller.accountList.isEmpty
-                                            ? AppColor.text3
-                                            : AppColor.text,
-                                        isBold: true);
+                                    return controller.accountList.isEmpty
+                                        ? centRow([
+                                            Image.asset(
+                                                assetsName(
+                                                    "statistics/machine/btn_navi_add"),
+                                                width: 18.w,
+                                                fit: BoxFit.fitWidth),
+                                            gwb(3),
+                                            getSimpleText(
+                                                "添加", 14, AppColor.textBlack),
+                                            gwb(5)
+                                          ])
+                                        : centRow([
+                                            getSimpleText(
+                                                controller.accountList[
+                                                        controller
+                                                            .defaultAccountIdx]
+                                                    ["name"],
+                                                15,
+                                                controller.accountList.isEmpty
+                                                    ? AppColor.text3
+                                                    : AppColor.text,
+                                                isBold: true),
+                                            Image.asset(
+                                              assetsName(
+                                                  "statistics/icon_arrow_right_gray"),
+                                              width: 18.w,
+                                              fit: BoxFit.fitWidth,
+                                            )
+                                          ]);
                                   },
                                 ),
-                                Image.asset(
-                                  assetsName(
-                                      "statistics/icon_arrow_right_gray"),
-                                  width: 18.w,
-                                  fit: BoxFit.fitWidth,
-                                )
                               ]))),
                         ),
                       ], width: 345 - 7.5 * 2, height: 66),

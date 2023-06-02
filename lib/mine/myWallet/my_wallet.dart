@@ -3,6 +3,7 @@ import 'package:cxhighversion2/home/home.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_convert.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_deal_list.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart';
+import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
@@ -125,42 +126,79 @@ class MyWalletController extends GetxController {
       List userAccounts = homeData["u_Account"] ?? [];
       userAccounts = userAccounts.where((e) => (e["a_No"] ?? 0) <= 3).toList();
       isAuth = (homeData["authentication"] ?? {})["isCertified"] ?? false;
-      tmpWallet = List.generate(userAccounts.length, (index) {
-        Map e = userAccounts[index];
-        e["show"] = true;
-        Map walletDrawInfo = {};
-        if (drawInfo["draw_Account${e["a_No"] ?? -1}"] != null) {
-          walletDrawInfo = drawInfo["draw_Account${e["a_No"] ?? -1}"];
-        }
-        e["haveDraw"] = walletDrawInfo.isNotEmpty;
-        if (walletDrawInfo.isNotEmpty) {
-          e["minCharge"] = "${walletDrawInfo["draw_Account_SingleAmountMin"] ?? 0}";
-          e["charge"] = "${walletDrawInfo["draw_Account_ServiceCharges"] ?? 0}";
-          e["fee"] = "${walletDrawInfo["draw_Account_SingleFee"] ?? 0}";
-        }
-        e["lColor"] = walletColors[index % walletColors.length][0];
-        e["rColor"] = walletColors[index % walletColors.length][1];
-        // if (index == 0) {
-        //   e["lColor"] = const Color(0xFF6B96FD);
-        //   e["rColor"] = const Color(0xFF366EFD);
-        // } else if (index == 1) {
-        //   e["lColor"] = const Color(0xFFFB993E);
-        //   e["rColor"] = const Color(0xFFFD5843);
-        // } else {
-        //   Color c = AppDefault().getThemeColor(index: index - 2, open: true) ??
-        //       const Color(0xFF366EFD);
-        //   e["lColor"] = c.withOpacity(0.7);
-        //   e["rColor"] = c;
-        // }
-        // e["icon"] = "mine/wallet/icon_wallet${index % 2 + 1}";
-        e["icon"] = "mine/wallet/icon_wallet1";
-        return e;
-      });
+
+      if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
+        List drawWallets =
+            (drawInfo["System_AllowDrawAccount"] as String).split(",");
+        List drawCharges =
+            (drawInfo["System_TiHandlingCharge"] as String).split(",");
+        List drawFees = (drawInfo["System_DrawFee"] as String).split(",");
+
+        tmpWallet = List.generate(userAccounts.length, (index) {
+          Map e = userAccounts[index];
+          e["show"] = true;
+
+          int walletIdx = -1;
+          for (var i = 0; i < drawWallets.length; i++) {
+            if (e["a_No"] == int.parse(drawWallets[i])) {
+              walletIdx = i;
+              break;
+            }
+          }
+          e["haveDraw"] = walletIdx != -1 ? true : false;
+
+          if (walletIdx != -1) {
+            e["minCharge"] = drawInfo["System_MinHandingCharge"];
+            e["charge"] = drawCharges[walletIdx];
+            e["fee"] = drawFees[walletIdx];
+          }
+
+          e["lColor"] = walletColors[index % walletColors.length][0];
+          e["rColor"] = walletColors[index % walletColors.length][1];
+
+          return e;
+        });
+      } else {
+        tmpWallet = List.generate(userAccounts.length, (index) {
+          Map e = userAccounts[index];
+          e["show"] = true;
+          Map walletDrawInfo = {};
+          if (drawInfo["draw_Account${e["a_No"] ?? -1}"] != null) {
+            walletDrawInfo = drawInfo["draw_Account${e["a_No"] ?? -1}"];
+          }
+          e["haveDraw"] = walletDrawInfo.isNotEmpty;
+          if (walletDrawInfo.isNotEmpty) {
+            e["minCharge"] =
+                "${walletDrawInfo["draw_Account_SingleAmountMin"] ?? 0}";
+            e["charge"] =
+                "${walletDrawInfo["draw_Account_ServiceCharges"] ?? 0}";
+            e["fee"] = "${walletDrawInfo["draw_Account_SingleFee"] ?? 0}";
+          }
+          e["lColor"] = walletColors[index % walletColors.length][0];
+          e["rColor"] = walletColors[index % walletColors.length][1];
+          // if (index == 0) {
+          //   e["lColor"] = const Color(0xFF6B96FD);
+          //   e["rColor"] = const Color(0xFF366EFD);
+          // } else if (index == 1) {
+          //   e["lColor"] = const Color(0xFFFB993E);
+          //   e["rColor"] = const Color(0xFFFD5843);
+          // } else {
+          //   Color c = AppDefault().getThemeColor(index: index - 2, open: true) ??
+          //       const Color(0xFF366EFD);
+          //   e["lColor"] = c.withOpacity(0.7);
+          //   e["rColor"] = c;
+          // }
+          // e["icon"] = "mine/wallet/icon_wallet${index % 2 + 1}";
+          e["icon"] = "mine/wallet/icon_wallet1";
+          return e;
+        });
+      }
 
       if (cClient) {
         List tmpWallet2 = [];
         for (var e in tmpWallet) {
-          if (e["a_No"] == AppDefault.awardWallet || e["a_No"] == AppDefault.jfWallet) {
+          if (e["a_No"] == AppDefault.awardWallet ||
+              e["a_No"] == AppDefault.jfWallet) {
             tmpWallet2.add(e);
           }
         }
@@ -367,7 +405,9 @@ class MyWallet extends GetView<MyWalletController> {
           sbhRow([
             Padding(
               padding: EdgeInsets.only(left: 15.w),
-              child: getSimpleText("${data["name"] ?? ""}钱包", 16, AppColor.textBlack, isBold: true),
+              child: getSimpleText(
+                  "${data["name"] ?? ""}钱包", 16, AppColor.textBlack,
+                  isBold: true),
             ),
             CustomButton(
               onPressed: () {
@@ -379,7 +419,11 @@ class MyWallet extends GetView<MyWalletController> {
                     null,
                     binding: MyWalletDealListBinding());
               },
-              child: SizedBox(width: 60.w, height: 45.w, child: Center(child: getSimpleText("明细", 14, AppColor.textBlack))),
+              child: SizedBox(
+                  width: 60.w,
+                  height: 45.w,
+                  child: Center(
+                      child: getSimpleText("明细", 14, AppColor.textBlack))),
             )
           ], width: 375, height: 45),
           Container(
@@ -411,7 +455,13 @@ class MyWallet extends GetView<MyWalletController> {
                           // )
                         ]),
                         ghb(10),
-                        getSimpleText(priceFormat(data["amout"] ?? 0, tenThousand: tenThousand), 30, Colors.white, fw: FontWeight.w700, textHeight: 1),
+                        getSimpleText(
+                            priceFormat(data["amout"] ?? 0,
+                                tenThousand: tenThousand),
+                            30,
+                            Colors.white,
+                            fw: FontWeight.w700,
+                            textHeight: 1),
                       ], crossAxisAlignment: CrossAxisAlignment.start),
                       Visibility(
                           // visible: draw || data["a_No"] == 4,
@@ -419,7 +469,11 @@ class MyWallet extends GetView<MyWalletController> {
                           child: CustomButton(
                             onPressed: () {
                               if (data["a_No"] == 4) {
-                                push(MyWalletConvert(walletNo: data["a_No"] ?? 0), null, binding: MyWalletConvertBinding());
+                                push(
+                                    MyWalletConvert(
+                                        walletNo: data["a_No"] ?? 0),
+                                    null,
+                                    binding: MyWalletConvertBinding());
                               } else {
                                 checkIdentityAlert(toNext: () {
                                   push(
@@ -435,26 +489,47 @@ class MyWallet extends GetView<MyWalletController> {
                               width: 90.w,
                               height: 30.w,
                               margin: EdgeInsets.only(right: 3.w),
-                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(15.w), color: Colors.white),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.w),
+                                  color: Colors.white),
                               child: Center(
-                                child: getSimpleText(data["a_No"] == 4 ? "去兑换" : "去提现", 15, lColor),
+                                child: getSimpleText(
+                                    data["a_No"] == 4 ? "去兑换" : "去提现",
+                                    15,
+                                    lColor),
                               ),
                             ),
                           )),
-                    ], width: 345 - 21 * 2, crossAxisAlignment: CrossAxisAlignment.end),
+                    ],
+                        width: 345 - 21 * 2,
+                        crossAxisAlignment: CrossAxisAlignment.end),
                   ),
                   sbRow([
                     centRow([
                       gwb(21),
                       centClm([
-                        getWidthText(priceFormat(data["amout2"] ?? 0, tenThousand: inTenThousand), 14, Colors.white.withOpacity(0.7), 116, 1),
+                        getWidthText(
+                            priceFormat(data["amout2"] ?? 0,
+                                tenThousand: inTenThousand),
+                            14,
+                            Colors.white.withOpacity(0.7),
+                            116,
+                            1),
                         ghb(3),
-                        getWidthText("总收入$inUnit", 12, Colors.white.withOpacity(0.7), 116, 1),
+                        getWidthText("总收入$inUnit", 12,
+                            Colors.white.withOpacity(0.7), 116, 1),
                       ], crossAxisAlignment: CrossAxisAlignment.start),
                       centClm([
-                        getWidthText(priceFormat(data["amout3"] ?? 0, tenThousand: outTenThousand), 14, Colors.white.withOpacity(0.7), 116, 1),
+                        getWidthText(
+                            priceFormat(data["amout3"] ?? 0,
+                                tenThousand: outTenThousand),
+                            14,
+                            Colors.white.withOpacity(0.7),
+                            116,
+                            1),
                         ghb(3),
-                        getWidthText("总支出$outUnit", 12, Colors.white.withOpacity(0.7), 116, 1),
+                        getWidthText("总支出$outUnit", 12,
+                            Colors.white.withOpacity(0.7), 116, 1),
                       ], crossAxisAlignment: CrossAxisAlignment.start)
                     ]),
                     Image.asset(

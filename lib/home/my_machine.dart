@@ -193,6 +193,7 @@ class MyMachineController extends GetxController {
     // _dropDownCtrl = CustomDropDownController();
     publicHomeData = AppDefault().publicHomeData;
     if (publicHomeData.isNotEmpty &&
+        publicHomeData["terminalMod"] != null &&
         publicHomeData["terminalMod"].isNotEmpty &&
         publicHomeData["terminalMod"] is List) {
       xhList = [
@@ -327,7 +328,8 @@ class MyMachine extends GetView<MyMachineController> {
                           Container(
                               color: Colors.white,
                               width: 375.w,
-                              height: 362.w,
+                              height: 282.w,
+                              // height: 362.w,
                               child: Stack(
                                 children: [
                                   Positioned(
@@ -344,12 +346,14 @@ class MyMachine extends GetView<MyMachineController> {
                                           return centClm([
                                             gline(375, 0.5),
                                             ghb(4.5),
-                                            sbhRow([
-                                              getSimpleText("机具类型", 14,
-                                                  AppColor.textBlack),
-                                            ],
-                                                width: 375 - 23.5 * 2,
-                                                height: 13 + 15.5 * 2),
+                                            controller.xhList.isEmpty
+                                                ? ghb(0)
+                                                : sbhRow([
+                                                    getSimpleText("机具类型", 14,
+                                                        AppColor.textBlack),
+                                                  ],
+                                                    width: 375 - 23.5 * 2,
+                                                    height: 13 + 15.5 * 2),
                                             SizedBox(
                                               width: 345.w,
                                               child: Wrap(

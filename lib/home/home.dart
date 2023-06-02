@@ -1019,13 +1019,12 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                     merchant_access_network.MerchantAccessNetworkBinding());
           } else if (e["path"] == "/pages/booked/booked") {
           } else if (e["path"] == "/home/terminalreceive") {
-            // push(const TerminalReceive(), context,
-            //     binding: TerminalReceiveBinding());
             await product.loadLibrary();
-
             push(product.Product(subPage: true), null,
                 binding: product.ProductBinding());
-          } else if (e["path"] == "/home/terminalbinding") {
+          } else if (isOld
+              ? path == "/pages/associate/associate"
+              : e["path"] == "/home/terminalbinding") {
             terminal_binding.loadLibrary().then(
                 (value) => push(terminal_binding.TerminalBinding(), context));
           } else if (path.contains("/pages/store")) {

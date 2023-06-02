@@ -628,6 +628,7 @@ class CustomDeferred {
       Get.to(
           statistics_business_list.StatisticsBusinessList(
             isPage: (arg ?? {})["isPage"] ?? false,
+            key: GlobalKey(),
           ),
           binding: statistics_business_list.StatisticsBusinessListBinding());
     } else {

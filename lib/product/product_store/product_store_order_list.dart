@@ -781,7 +781,11 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
             sbhRow([
               getSimpleText(
                   "订单编号：${data["orderNo"] ?? ""}", 10, AppColor.textGrey),
-              getSimpleText(data["orderStateStr"] ?? "", 12, AppColor.textBlack)
+              getSimpleText(
+                  data["orderStateStr"] ??
+                      getOrderStatustStr(data["orderState"] ?? -1),
+                  12,
+                  AppColor.textBlack)
             ], height: 40, width: 315),
             Container(
               width: 315.w,

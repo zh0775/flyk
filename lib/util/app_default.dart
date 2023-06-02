@@ -1015,6 +1015,41 @@ AppBar getDefaultAppBar(
   );
 }
 
+/// 礼包/兑换/采购 商品订单状态
+String getOrderStatustStr(int status) {
+  String statusStr = "";
+  switch (status) {
+    case 0:
+      statusStr = "待付款";
+      break;
+    case 1:
+      statusStr = "待发货";
+      break;
+    case 2:
+      statusStr = "待收货";
+      break;
+    case 3:
+      statusStr = "已完成";
+      break;
+    case 4:
+      statusStr = "退货中";
+      break;
+    case 5:
+      statusStr = "退货完成";
+      break;
+    case 6:
+      statusStr = "支付超时";
+      break;
+    case 7:
+      statusStr = "已取消";
+      break;
+    case 8:
+      statusStr = "已取消";
+      break;
+  }
+  return statusStr;
+}
+
 Widget getDefaultAppBarTitile(String title,
     {TextStyle? titleStyle, bool white = false, bool centerTitle = false}) {
   return getSimpleText(

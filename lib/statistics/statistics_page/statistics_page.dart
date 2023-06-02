@@ -817,20 +817,18 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                         //           args.dataPoints![args.pointIndex!.toInt()].y);
                         // },
                         tooltipBehavior: TooltipBehavior(
-                          enable: true,
-                          duration: 2000,
-                          builder:
-                              (data, point, series, pointIndex, seriesIndex) {
-                            ChartSampleData myPoint = data;
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: getSimpleText(
-                                  "${myPoint.x}:${(controller.selectTopRightType == 1 && controller.totalMachineCount == 0) || (controller.selectTopRightType == 2 && controller.totalBusinessCount == 0) ? 0 : myPoint.y}${controller.selectTopRightType == 1 ? "台" : "人"}",
-                                  12,
-                                  Colors.white),
-                            );
-                          },
-                        ));
+                            enable: true,
+                            duration: 2000,
+                            builder:
+                                (data, point, series, pointIndex, seriesIndex) {
+                              ChartSampleData myPoint = data;
+                              return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: getSimpleText(
+                                      "${myPoint.x}:${(controller.selectTopRightType == 1 && controller.totalMachineCount == 0) || (controller.selectTopRightType == 2 && controller.totalBusinessCount == 0) ? 0 : myPoint.y}${controller.selectTopRightType == 1 ? "台" : "人"}",
+                                      12,
+                                      Colors.white));
+                            }));
                   })),
               ghb(30),
               centRow(List.generate(

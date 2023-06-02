@@ -7,7 +7,6 @@ import 'package:cxhighversion2/statistics/statistics_page/statistics_business_de
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:easy_refresh/easy_refresh.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,6 +39,8 @@ class StatisticsBusinessListController extends GetxController {
 
   /// 品牌筛选
   List filterTypeList1 = [];
+  String businessFilterBuildId =
+      "StatisticsBusinessListController_businessBuildId";
 
   /// 商户类型筛选
   List filterTypeList2 = [];
@@ -53,13 +54,14 @@ class StatisticsBusinessListController extends GetxController {
             List datas = json["data"];
             for (var item in filterTypeList2) {
               for (var item2 in datas) {
-                if ("${item["enumValue"]}" == "${item2["status"]}") {
-                  item["count"] = item2["num"];
+                if ("${item["id"] ?? -1}" == "${item2["status"] ?? -2}") {
+                  item["num"] = item2["num"];
                   break;
                 }
               }
             }
-            businessEnumFormat();
+
+            update([businessFilterBuildId]);
           }
         },
         after: () {});
@@ -71,62 +73,65 @@ class StatisticsBusinessListController extends GetxController {
         params: {},
         success: (success, json) {
           if (success) {
-            filterTypeList2 = json["data"];
-            loadBusiness();
-          }
-        },
-        after: () {});
-  }
+            filterTypeList2 = (json["data"] ?? [])
+                .map((e) => {
+                      "name": e["textDesc"] ?? "",
+                      ...e,
+                    })
+                .toList();
 
-  loadBusinessEnum() {
-    simpleRequest(
-        url: Urls.userMerchantEnum,
-        params: {},
-        success: (success, json) {
-          if (success) {
-            businessEnum = (json["data"] ?? {})["children"] ?? [];
-            if (filterTypeList2.isNotEmpty) {
-              businessEnumFormat();
-            }
+            loadBusiness();
+            update([businessFilterBuildId]);
           }
         },
         after: () {},
         useCache: true);
   }
 
-  String businessEnumBuildId =
-      "StatisticsBusinessListController_businessEnumBuildId";
-  businessEnumFormat() {
-    if (businessEnum.isNotEmpty && filterTypeList2.isNotEmpty) {
-      for (var item in filterTypeList2) {
-        if ("${item["enumValue"]}" == "0") {
-          item["desc"] = "我的所有直属商户";
-        }
-        for (var item2 in businessEnum) {
-          if ("${item["enumValue"]}" == "${item2["enumValue"]}") {
-            item["desc"] = item2["enumDesc"];
-            item["logo"] = item2["logo"];
-          }
-        }
-      }
-      filterTypeList2 = filterTypeList2
-          .map(
-            (e) => {
-              "id": e["enumValue"] ?? -1,
-              "name": e["enumName"] ?? "",
-              "num": e["count"] ?? 0
-            },
-          )
-          .toList();
-      update([businessEnumBuildId]);
-      isLoading = false;
-    }
-  }
+  // loadBusinessEnum() {
+  //   simpleRequest(
+  //       url: Urls.userMerchantEnum,
+  //       params: {},
+  //       success: (success, json) {
+  //         if (success) {
+  //           businessEnum = (json["data"] ?? {})["children"] ?? [];
+  //           if (filterTypeList2.isNotEmpty) {
+  //             businessEnumFormat();
+  //           }
+  //         }
+  //       },
+  //       after: () {},
+  //       useCache: true);
+  // }
 
-  loadbusinessEnumData() {
-    loadBusinessCondition();
-    loadBusinessEnum();
-  }
+  // String businessEnumBuildId =
+  //     "StatisticsBusinessListController_businessEnumBuildId";
+  // businessEnumFormat() {
+  //   if (businessEnum.isNotEmpty && filterTypeList2.isNotEmpty) {
+  //     for (var item in filterTypeList2) {
+  //       if ("${item["enumValue"]}" == "0") {
+  //         item["desc"] = "我的所有直属商户";
+  //       }
+  //       for (var item2 in businessEnum) {
+  //         if ("${item["enumValue"]}" == "${item2["enumValue"]}") {
+  //           item["desc"] = item2["enumDesc"];
+  //           item["logo"] = item2["logo"];
+  //         }
+  //       }
+  //     }
+  //     filterTypeList2 = filterTypeList2
+  //         .map(
+  //           (e) => {
+  //             "id": e["enumValue"] ?? -1,
+  //             "name": e["enumName"] ?? "",
+  //             "num": e["count"] ?? 0
+  //           },
+  //         )
+  //         .toList();
+  //     update([businessEnumBuildId]);
+  //     isLoading = false;
+  //   }
+  // }
 
   final _filterTypeIdx = 0.obs;
   int get filterTypeIdx => _filterTypeIdx.value;
@@ -234,7 +239,7 @@ class StatisticsBusinessListController extends GetxController {
   void onReady() {
     Future.delayed(const Duration(milliseconds: 200), () {
       loadData();
-      loadbusinessEnumData();
+      loadBusinessCondition();
     });
     super.onReady();
   }
@@ -285,6 +290,7 @@ class StatisticsBusinessList extends StatelessWidget {
 
   Widget contentView(BuildContext context) {
     return GetBuilder<StatisticsBusinessListController>(
+        key: GlobalKey(),
         init: StatisticsBusinessListController(),
         builder: (controller) {
           return Stack(
@@ -383,6 +389,7 @@ class StatisticsBusinessList extends StatelessWidget {
               Positioned.fill(
                   top: 106.w,
                   child: GetBuilder<StatisticsBusinessListController>(
+                      key: GlobalKey(),
                       init: StatisticsBusinessListController(),
                       builder: (controller) {
                         return EasyRefresh.builder(
@@ -421,8 +428,9 @@ class StatisticsBusinessList extends StatelessWidget {
                       })),
               dropView(0, controller),
               GetBuilder<StatisticsBusinessListController>(
+                  key: GlobalKey(),
                   init: StatisticsBusinessListController(),
-                  id: controller.businessEnumBuildId,
+                  id: controller.businessFilterBuildId,
                   builder: (controller) {
                     return dropView(1, controller);
                   })
@@ -589,6 +597,7 @@ class StatisticsBusinessList extends StatelessWidget {
             }
           },
           dropWidget: GetX<StatisticsBusinessListController>(
+            init: StatisticsBusinessListController(),
             builder: (_) {
               return filterView(
                   index == 0
