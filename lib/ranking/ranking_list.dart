@@ -115,7 +115,9 @@ class RankListController extends GetxController {
           if (success) {
             // 今日领取金额
             userTodayHasReceiveMoney = double.parse(json['value'] ?? '0.0');
+            userTodayReceiveStatus = 0;
             handleRedPacketPopup(fn);
+            update();
           }
         },
         after: () {});

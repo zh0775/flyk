@@ -1,6 +1,7 @@
 // 奖励金领取明细记录
 import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/service/http.dart';
+import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -13,11 +14,14 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 class RedPacketDetailBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<RedPacketDetailController>(RedPacketDetailController());
+    Get.put<RedPacketDetailController>(RedPacketDetailController(datas: Get.arguments));
   }
 }
 
 class RedPacketDetailController extends GetxController {
+  final dynamic datas;
+  RedPacketDetailController({this.datas});
+
   bool topAnimation = false; // top动画
 
   final _isLoading = false.obs;
@@ -41,7 +45,13 @@ class RedPacketDetailController extends GetxController {
   // 已领取选择时间
   final _hasSelectDate = "".obs;
   String get hasSelectDate => _hasSelectDate.value;
-  set hasSelectDate(v) => _hasSelectDate.value = v;
+  // set hasSelectDate(v) => _hasSelectDate.value = v;
+
+  set hasSelectDate(v) {
+    _hasSelectDate.value = v;
+    // redPacketDetailData[topCurrentIndex]['data'] = [];
+    getRedPacketDetailData(topCurrentIndex);
+  }
 
   // 已失效领取时间
   final _hasBeenSelectDate = "".obs;
@@ -49,6 +59,7 @@ class RedPacketDetailController extends GetxController {
   set hasBeenSelectDate(v) => _hasBeenSelectDate.value = v;
 
   DateFormat dateFormat = DateFormat("yyyy年MM月");
+
   // late PageController pageCtrl;
   final PageController pageCtrl = PageController();
 
@@ -60,6 +71,7 @@ class RedPacketDetailController extends GetxController {
       "title": "已领取",
       "pageNum": 1,
       "pageSize": 10,
+      "total": 0,
       "data": [
         // {"id": 1, "title": "红包领取", "time": "2022-09-17 15:56:11", "money": "0.5"},
         // {"id": 2, "title": "红包领取", "time": "2022-09-17 15:56:11", "money": "0.5"}
@@ -69,6 +81,7 @@ class RedPacketDetailController extends GetxController {
       "title": "已失效",
       "pageNum": 1,
       "pageSize": 10,
+      "total": 0,
       "data": [
         // {"id": 1, "title": "红包领取失效", "time": "2022-09-17 15:56:22", "money": "0.5"},
         // {"id": 2, "title": "红包领取失效", "time": "2022-09-17 15:56:22", "money": "0.5"},
@@ -91,20 +104,41 @@ class RedPacketDetailController extends GetxController {
       isLoading = true;
     }
 
-    Http().doPost('https://mock.apifox.cn/m1/2153127-0-default/api/redpacket/detail', {"type": topIndex, "pageNum": redPacketDetailData[topIndex]['pageNum'], "pageSize": 10, "time": topCurrentIndex == 0 ? hasSelectDate : hasBeenSelectDate}, success: (json) {
-      if (json['success']) {
-        Map data = json['data'] ?? {};
-        redPacketDetailData[topIndex]['total'] = data['total'] ?? 0;
-        if (redPacketDetailData[topIndex]['data'].length <= redPacketDetailData[topIndex]['total']) {
-          List newData = data['rows'] ?? [];
-          redPacketDetailData[topIndex]['data'] = isLoad ? [...redPacketDetailData[topIndex]['data'], ...newData] : newData;
-        }
+    simpleRequest(
+        url: Urls.userHongbaoQueueList,
+        params: {},
+        otherData: {"id": datas['data'], "d_Type": topIndex == 0 ? 2 : 1, "pageNo": redPacketDetailData[topIndex]['pageNum'], "pageSize": 10, "year": topCurrentIndex == 0 ? dateFormat.parse(hasSelectDate).year : dateFormat.parse(hasBeenSelectDate).year, "month": topCurrentIndex == 0 ? dateFormat.parse(hasSelectDate).month : dateFormat.parse(hasBeenSelectDate).month},
+        success: (success, json) {
+          Map jsonData = json['data'] ?? {};
+          redPacketDetailData[topIndex]['total'] = jsonData['count'] ?? 0;
 
-        update([topIndex == 0 ? hasRedPacketDetailId : hasNotRedPacketDetailId]);
-      }
-    }, after: () {
-      isLoading = false;
-    });
+          List newData = jsonData['data'] ?? [];
+          redPacketDetailData[topIndex]['data'] = isLoad ? [...redPacketDetailData[topIndex]['data'], ...newData] : newData;
+          // if (redPacketDetailData[topIndex]['data'].length <= redPacketDetailData[topIndex]['total']) {
+          //   List newData = jsonData['data'] ?? [];
+          //   redPacketDetailData[topIndex]['data'] = isLoad ? [...redPacketDetailData[topIndex]['data'], ...newData] : newData;
+          // }
+
+          update([topIndex == 0 ? hasRedPacketDetailId : hasNotRedPacketDetailId]);
+        },
+        after: () {
+          isLoading = false;
+        });
+
+    // Http().doPost('https://mock.apifox.cn/m1/2153127-0-default/api/redpacket/detail', {"type": topIndex, "pageNum": redPacketDetailData[topIndex]['pageNum'], "pageSize": 10, "time": topCurrentIndex == 0 ? hasSelectDate : hasBeenSelectDate}, success: (json) {
+    //   if (json['success']) {
+    //     Map data = json['data'] ?? {};
+    //     redPacketDetailData[topIndex]['total'] = data['total'] ?? 0;
+    //     if (redPacketDetailData[topIndex]['data'].length <= redPacketDetailData[topIndex]['total']) {
+    //       List newData = data['rows'] ?? [];
+    //       redPacketDetailData[topIndex]['data'] = isLoad ? [...redPacketDetailData[topIndex]['data'], ...newData] : newData;
+    //     }
+
+    //     update([topIndex == 0 ? hasRedPacketDetailId : hasNotRedPacketDetailId]);
+    //   }
+    // }, after: () {
+    //   isLoading = false;
+    // });
   }
 
   @override
@@ -371,18 +405,22 @@ class RedPacketDetailPage extends GetView<RedPacketDetailController> {
                       onPressed: () {
                         showDatePick(controller.topCurrentIndex);
                       },
-                      child: Row(
-                        children: [
-                          getSimpleText(controller.topCurrentIndex == 0 ? controller.hasSelectDate : controller.hasBeenSelectDate, 12, const Color(0xFF333333)),
-                          Image(
-                            width: 10.w,
-                            height: 10.w,
-                            image: AssetImage(
-                              assetsName('ranking/red_arrow_down'),
-                            ),
-                            fit: BoxFit.fill,
-                          )
-                        ],
+                      child: GetX<RedPacketDetailController>(
+                        builder: (_) {
+                          return Row(
+                            children: [
+                              getSimpleText(controller.topCurrentIndex == 0 ? controller.hasSelectDate : controller.hasBeenSelectDate, 12, const Color(0xFF333333)),
+                              Image(
+                                width: 10.w,
+                                height: 10.w,
+                                image: AssetImage(
+                                  assetsName('ranking/red_arrow_down'),
+                                ),
+                                fit: BoxFit.fill,
+                              )
+                            ],
+                          );
+                        },
                       ),
                     ),
                   )),
@@ -482,12 +520,12 @@ class RedPacketDetailPage extends GetView<RedPacketDetailController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              getSimpleText("${item['title']}", 15, const Color(0xFF333333)),
-              getSimpleText('+0.5', 18, const Color(0xFF333333)),
+              getSimpleText("红包领取", 15, const Color(0xFF333333)),
+              getSimpleText("+${item['amount']}", 18, const Color(0xFF333333)),
             ],
           ),
           ghb(5),
-          SizedBox(width: 375.w, child: getSimpleText('2022-09-17 15:56:44', 12, const Color(0xFF999999)))
+          SizedBox(width: 375.w, child: getSimpleText("${item['receiveTime']}", 12, const Color(0xFF999999)))
         ],
       ),
     );

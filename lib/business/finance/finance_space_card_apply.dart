@@ -15,8 +15,7 @@ import 'package:get/get.dart';
 class FinanceSpaceCardApplyBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<FinanceSpaceCardApplyController>(
-        FinanceSpaceCardApplyController(datas: Get.arguments));
+    Get.put<FinanceSpaceCardApplyController>(FinanceSpaceCardApplyController(datas: Get.arguments));
   }
 }
 
@@ -82,29 +81,16 @@ class FinanceSpaceCardApplyController extends GetxController {
               buttonTitles: const ["查看记录", "返回列表"],
               backPressed: () {
                 Get.until((route) => route is GetPageRoute
-                    ? route.binding is FinanceSpaceBinding ||
-                            route.binding is MainPageBinding
+                    ? route.binding is FinanceSpaceBinding || route.binding is MainPageBinding
                         ? true
                         : false
                     : false);
               },
               onPressed: (index) {
                 Get.offUntil(
-                    GetPageRoute(
-                        page: () => index == 0
-                            ? const FinanceSpaceOrderList()
-                            : const FinanceSpaceCardList(),
-                        binding: index == 0
-                            ? FinanceSpaceOrderListBinding()
-                            : FinanceSpaceCardListBinding(),
-                        settings: RouteSettings(
-                            arguments: {"type": type},
-                            name: index == 0
-                                ? "FinanceSpaceOrderList"
-                                : "FinanceSpaceCardList")),
+                    GetPageRoute(page: () => index == 0 ? const FinanceSpaceOrderList() : const FinanceSpaceCardList(), binding: index == 0 ? FinanceSpaceOrderListBinding() : FinanceSpaceCardListBinding(), settings: RouteSettings(arguments: {"type": type}, name: index == 0 ? "FinanceSpaceOrderList" : "FinanceSpaceCardList")),
                     (route) => route is GetPageRoute
-                        ? route.binding is FinanceSpaceBinding ||
-                                route.binding is MainPageBinding
+                        ? route.binding is FinanceSpaceBinding || route.binding is MainPageBinding
                             ? true
                             : false
                         : false);
@@ -188,23 +174,16 @@ class FinanceSpaceCardApply extends GetView<FinanceSpaceCardApplyController> {
                         right: 15.w,
                         child: Container(
                           alignment: Alignment.bottomCenter,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(8.w))),
+                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(8.w))),
                           child: sbRow([
                             centRow([
                               Container(
                                 width: 3.w,
                                 height: 15.w,
-                                decoration: BoxDecoration(
-                                    color: AppColor.theme,
-                                    borderRadius:
-                                        BorderRadius.circular(1.25.w)),
+                                decoration: BoxDecoration(color: AppColor.theme, borderRadius: BorderRadius.circular(1.25.w)),
                               ),
                               gwb(8),
-                              getSimpleText("请完善您的个人信息", 15, AppColor.text,
-                                  isBold: true),
+                              getSimpleText("请完善您的个人信息", 15, AppColor.text, isBold: true),
                             ]),
                           ], width: 315),
                         ))
@@ -213,10 +192,7 @@ class FinanceSpaceCardApply extends GetView<FinanceSpaceCardApplyController> {
               ),
               Container(
                 width: 345.w,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius:
-                        BorderRadius.vertical(bottom: Radius.circular(8.w))),
+                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(bottom: Radius.circular(8.w))),
                 child: Column(
                   children: [
                     ghb(15),
@@ -233,16 +209,11 @@ class FinanceSpaceCardApply extends GetView<FinanceSpaceCardApplyController> {
                   return getSubmitBtn("立即申请", () {
                     takeBackKeyboard(context);
                     controller.confirmAction();
-                  },
-                      fontSize: 15,
-                      color: AppColor.theme,
-                      height: 45,
-                      enable: controller.btnEnable);
+                  }, fontSize: 15, color: AppColor.theme, height: 45, enable: controller.btnEnable);
                 },
               ),
               ghb(10),
-              getWidthText("*请确认以上信息与申请信息完全一致，填写错误将会导致申请无 法通过，或者无法查询办理进度。", 12,
-                  AppColor.text3, 345, 2)
+              getWidthText("*请确认以上信息与申请信息完全一致，填写错误将会导致申请无 法通过，或者无法查询办理进度。", 12, AppColor.text3, 345, 2)
             ],
           ),
         ),

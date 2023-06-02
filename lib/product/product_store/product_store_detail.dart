@@ -273,25 +273,16 @@ class ProductStoreDetail extends GetView<ProductStoreDetailController> {
       color: Colors.white,
       margin: EdgeInsets.only(top: 15.w),
       child: GetBuilder<ProductStoreDetailController>(builder: (_) {
-        bool isReal = controller.levelType != 3;
+        bool isReal = false;
         bool isBean = false;
-        String beanName = "";
-        if (controller.levelType == 3) {
-          List payTypes = convert
-              .jsonDecode(controller.orderData["levelGiftPaymentMethod"]);
-          if (payTypes.isNotEmpty &&
-              payTypes.length == 1 &&
-              (payTypes[0]["value"] ?? 0) == 5) {
-            isBean = true;
-          }
-          beanName = "";
-          List wallets = AppDefault().homeData["u_Account"] ?? [];
-          for (var e in wallets) {
-            if ((e["a_No"] ?? 0) == 5) {
-              beanName = e["name"] ?? "";
-              break;
-            }
-          }
+        String unit = "";
+        List payTypes =
+            convert.jsonDecode(controller.orderData["levelGiftPaymentMethod"]);
+        if (payTypes.isNotEmpty) {
+          Map payData = payTypes[0];
+          isReal = (payData["u_Type"] ?? 1) == 1;
+          unit = payData["name"] ?? "";
+          isBean = !isReal && (payData["value"] ?? 1) == 5;
         }
 
         return Column(
@@ -303,7 +294,7 @@ class ProductStoreDetail extends GetView<ProductStoreDetailController> {
             sbRow([
               getRichText(
                   isReal ? "￥" : "",
-                  "${priceFormat(controller.orderData["nowPrice"] ?? 0)}${isReal ? "" : isBean ? beanName : "积分"}",
+                  "${priceFormat(controller.orderData["nowPrice"] ?? 0)}${isReal ? "" : unit}",
                   14,
                   const Color(0xFFFE4B3B),
                   24,
@@ -335,9 +326,7 @@ class ProductStoreDetail extends GetView<ProductStoreDetailController> {
               ),
             ),
             CustomHtmlView(
-              width: 315,
-              src: controller.orderData["levelGiftParameter"] ?? "",
-            ),
+                width: 315, src: controller.orderData["level_Parameter"] ?? ""),
             ghb(10)
           ],
         );
@@ -346,25 +335,16 @@ class ProductStoreDetail extends GetView<ProductStoreDetailController> {
   }
 
   showBuyModel() {
-    bool isReal = controller.levelType != 3;
+    bool isReal = false;
     bool isBean = false;
-    String beanName = "";
-    if (controller.levelType == 3) {
-      List payTypes =
-          convert.jsonDecode(controller.orderData["levelGiftPaymentMethod"]);
-      if (payTypes.isNotEmpty &&
-          payTypes.length == 1 &&
-          (payTypes[0]["value"] ?? 0) == 5) {
-        isBean = true;
-      }
-      beanName = "";
-      List wallets = AppDefault().homeData["u_Account"] ?? [];
-      for (var e in wallets) {
-        if ((e["a_No"] ?? 0) == 5) {
-          beanName = e["name"] ?? "";
-          break;
-        }
-      }
+    String unit = "";
+    List payTypes =
+        convert.jsonDecode(controller.orderData["levelGiftPaymentMethod"]);
+    if (payTypes.isNotEmpty) {
+      Map payData = payTypes[0];
+      isReal = (payData["u_Type"] ?? 1) == 1;
+      unit = payData["name"] ?? "";
+      isBean = !isReal && (payData["value"] ?? 1) == 5;
     }
     // ⏤+
     Get.bottomSheet(
@@ -432,7 +412,7 @@ class ProductStoreDetail extends GetView<ProductStoreDetailController> {
                                           isBold: true),
                                       getRichText(
                                           isReal ? "￥" : "",
-                                          "${priceFormat(controller.orderData["nowPrice"] ?? 0)}${isReal ? "" : isBean ? beanName : "积分"}",
+                                          "${priceFormat(controller.orderData["nowPrice"] ?? 0)}${isReal ? "" : unit}",
                                           14,
                                           const Color(0xFFFE4B3B),
                                           24,

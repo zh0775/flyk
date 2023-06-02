@@ -1021,7 +1021,7 @@ class ProductStoreConfirm extends GetView<ProductStoreConfirmController> {
                                 centRow([
                                   Image.asset(
                                       assetsName(
-                                          "statistics_page/icon_pay_${e.value["value"] == 1 ? "alipay" : e.value["value"] == 2 ? "wx" : "ye"}"),
+                                          "statistics_page/icon_pay_${e.value["value"] == 2 ? "alipay" : "ye"}"),
                                       width: 24.w,
                                       height: 24.w,
                                       fit: BoxFit.fill),

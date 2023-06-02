@@ -546,9 +546,15 @@ class ProductStoreList extends GetView<ProductStoreListController> {
 
     List payTypes = convert.jsonDecode(data["levelGiftPaymentMethod"]);
 
-    bool isReal = controller.levelType != 3;
-
-    if (payTypes.isNotEmpty) {}
+    bool isReal = true;
+    bool isBean = false;
+    String unit = "";
+    if (payTypes.isNotEmpty) {
+      Map payData = payTypes[0];
+      isReal = (payData["u_Type"] ?? 1) == 1;
+      unit = payData["name"] ?? "";
+      isBean = (payData["value"] ?? 1) == 5;
+    }
 
     double imageWidth = 127.5;
 
@@ -614,7 +620,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                             //     isBold: true),
                           ])
                         : getSimpleText(
-                            "${isReal ? "￥" : ""}${priceFormat(data["nowPrice"] ?? 0, tenThousand: true)}起",
+                            "${isReal ? "￥" : ""}${priceFormat(data["nowPrice"] ?? 0, tenThousand: true)}${isReal ? "" : unit}起",
                             18,
                             const Color(0xFFF13030),
                             isBold: true),
@@ -654,7 +660,6 @@ class ProductStoreList extends GetView<ProductStoreListController> {
   }
 
   Widget wrapCell(int index) {
-    bool isReal = controller.levelType != 3;
     return Padding(
       padding: EdgeInsets.only(top: 15.w),
       child: Center(
@@ -663,6 +668,19 @@ class ProductStoreList extends GetView<ProductStoreListController> {
               Map data = {};
               if (index * 2 + cellIdx <= controller.dataList.length - 1) {
                 data = controller.dataList[index * 2 + cellIdx];
+              }
+
+              List payTypes =
+                  convert.jsonDecode(data["levelGiftPaymentMethod"]);
+
+              bool isReal = true;
+              bool isBean = false;
+              String unit = "";
+              if (data.isNotEmpty && payTypes.isNotEmpty) {
+                Map payData = payTypes[0];
+                isReal = (payData["u_Type"] ?? 1) == 1;
+                unit = payData["name"] ?? "";
+                isBean = !isReal && (payData["value"] ?? 1) == 5;
               }
               return data.isEmpty
                   ? gwb(0)
@@ -748,7 +766,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                             SizedBox(
                               width: (168 - 8 * 2).w,
                               child: getRichText(
-                                  "${isReal ? "￥" : ""}${priceFormat(data["nowPrice"] ?? 0, tenThousand: true)}",
+                                  "${isReal ? "￥" : ""}${priceFormat(data["nowPrice"] ?? 0, tenThousand: true)}${isReal ? "" : unit}",
                                   "起",
                                   18,
                                   AppColor.integralTextRed,
