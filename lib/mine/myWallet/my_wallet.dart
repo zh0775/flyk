@@ -149,13 +149,14 @@ class MyWalletController extends GetxController {
 
           if (walletIdx != -1) {
             e["minCharge"] = drawInfo["System_MinHandingCharge"];
-            e["charge"] = drawCharges[walletIdx];
-            e["fee"] = drawFees[walletIdx];
+            e["charge"] = drawFees[walletIdx];
+            e["fee"] = drawCharges[walletIdx];
           }
 
           e["lColor"] = walletColors[index % walletColors.length][0];
           e["rColor"] = walletColors[index % walletColors.length][1];
-
+          // e["icon"] = "mine/wallet/icon_wallet1";
+          e["icon"] = "mine/wallet/icon_wallet${index % 2 + 1}";
           return e;
         });
       } else {
@@ -188,8 +189,8 @@ class MyWalletController extends GetxController {
           //   e["lColor"] = c.withOpacity(0.7);
           //   e["rColor"] = c;
           // }
-          // e["icon"] = "mine/wallet/icon_wallet${index % 2 + 1}";
-          e["icon"] = "mine/wallet/icon_wallet1";
+          e["icon"] = "mine/wallet/icon_wallet${index % 2 + 1}";
+          // e["icon"] = "mine/wallet/icon_wallet1";
           return e;
         });
       }

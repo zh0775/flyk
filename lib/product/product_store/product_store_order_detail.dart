@@ -4,6 +4,7 @@ import 'package:cxhighversion2/component/bottom_paypassword.dart';
 import 'package:cxhighversion2/component/custom_alipay.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
+import 'package:cxhighversion2/product/product_store/product_store_order_list.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
@@ -94,23 +95,22 @@ class ProductStoreOrderDetailController extends GetxController {
             homeData["u_3rd_password"].isEmpty) &&
         myData["paymentMethodType"] == 2) {
       showPayPwdWarn(
-        haveClose: true,
-        popToRoot: false,
-        untilToRoot: false,
-        setSuccess: () {},
-      );
+          haveClose: true,
+          popToRoot: false,
+          untilToRoot: false,
+          setSuccess: () {});
       return;
     }
     if (myData["paymentMethodType"] == 1) {
       payAction("");
-    } else if (myData["paymentMethodType"] == 2) {
+      // } else if (myData["paymentMethodType"] == 2) {
+    } else {
       bottomPayPassword.show();
     }
   }
 
   payAction(String pwd) {
     String urls = "";
-
     urls = Urls.userPayGiftOrder(myData["id"]);
     simpleRequest(
       url: urls,
@@ -127,19 +127,14 @@ class ProductStoreOrderDetailController extends GetxController {
               if (json != null &&
                   json["data"] != null &&
                   json["data"]["aliData"] != null) {
-                Map result = await CustomAlipay().payAction(
-                  json["data"]["aliData"],
-                  payBack: () {
-                    alipayH5payBack(
-                      url: urls,
-                      params: {
-                        "orderId": myData["id"],
-                        "version_Origin": AppDefault().versionOriginForPay(),
-                        "u_3nd_Pad": pwd,
-                      },
-                    );
-                  },
-                );
+                Map result = await CustomAlipay()
+                    .payAction(json["data"]["aliData"], payBack: () {
+                  alipayH5payBack(url: urls, params: {
+                    "orderId": myData["id"],
+                    "version_Origin": AppDefault().versionOriginForPay(),
+                    "u_3nd_Pad": pwd
+                  });
+                });
                 if (!kIsWeb) {
                   if (result["resultStatus"] == "6001") {
                   } else if (result["resultStatus"] == "9000") {
@@ -159,6 +154,34 @@ class ProductStoreOrderDetailController extends GetxController {
         }
       },
       after: () {},
+    );
+  }
+
+  deleteOrderAction() {
+    showAlert(
+      Global.navigatorKey.currentContext!,
+      "确定要删除该订单吗",
+      cancelOnPressed: () {
+        Get.back();
+      },
+      confirmOnPressed: () {
+        simpleRequest(
+          url: Urls.userLevelGiftDelOrder(myData["id"]),
+          params: {},
+          success: (success, json) {
+            if (success) {
+              loadDetail();
+              Get.find<ProductStoreOrderListController>().loadList();
+              ShowToast.normal("删除成功");
+              Future.delayed(const Duration(seconds: 1), () {
+                Get.back();
+              });
+            }
+          },
+          after: () {},
+        );
+        Get.back();
+      },
     );
   }
 
@@ -223,9 +246,9 @@ class ProductStoreOrderDetailController extends GetxController {
     if (statusList.isNotEmpty) {
       stateDataList = statusList;
     } else {
-      loadState();
+      // loadState();
     }
-    payCountDown();
+    // payCountDown();
     update();
 
     isFirst = false;
@@ -625,11 +648,11 @@ class ProductStoreOrderDetail
     String autoConfirmDay = "";
     String autoConfirmHour = "";
     if (controller.myData["orderState"] == 0) {
-      Duration duration = controller.dateFormat
-          .parse(controller.myData["addTime"])
-          .add(const Duration(minutes: 30))
-          .difference(now);
-      timeOut = (duration.inMilliseconds < 0);
+      // Duration duration = controller.dateFormat
+      //     .parse(controller.myData["addTime"])
+      //     .add(const Duration(minutes: 30))
+      //     .difference(now);
+      // timeOut = (duration.inMilliseconds < 0);
     } else if (controller.myData["orderState"] == 2) {
       Duration duration = controller.dateFormat
           .parse(controller.myData["addTime"])
@@ -645,9 +668,11 @@ class ProductStoreOrderDetail
 
     switch (controller.myData["orderState"]) {
       case 0:
-        orderStatusTitle = "等待支付订单";
-        orderStatusSubTitle =
-            "请在${controller.minutes}分${controller.second}秒内完成支付";
+        // orderStatusTitle = "等待支付订单";
+        // orderStatusSubTitle =
+        //     "请在${controller.minutes}分${controller.second}秒内完成支付";
+        orderStatusTitle = "未支付订单";
+        orderStatusSubTitle = "";
         break;
       case 1:
         orderStatusTitle = "已付款成功";
@@ -730,65 +755,56 @@ class ProductStoreOrderDetail
 
   showExpressNoModel(BuildContext context, String expressNo) {
     showGeneralDialog(
-      context: context,
-      pageBuilder: (ctx, animation, secondaryAnimation) {
-        return Align(
-          child: SizedBox(
-            width: 345.w,
-            height: 165.w,
-            child: Column(
-              children: [
-                CustomButton(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                  },
-                  child: Icon(
-                    Icons.highlight_off,
-                    size: 36.w,
-                    color: Colors.white,
-                  ),
-                ),
-                Container(
-                  width: 1.5.w,
-                  height: 19.w,
-                  color: Colors.white,
-                ),
-                Container(
+        context: context,
+        pageBuilder: (ctx, animation, secondaryAnimation) {
+          return Align(
+              child: SizedBox(
                   width: 345.w,
-                  height: 110.w,
-                  decoration: BoxDecoration(
-                      color: AppColor.lineColor,
-                      borderRadius: BorderRadius.circular(5.w)),
-                  child: Column(
-                    children: [
-                      ghb(25),
-                      getSimpleText("点击快递编号即可复制查询", 15, AppColor.textBlack,
-                          isBold: true),
-                      ghb(13.5),
-                      CustomButton(
-                        onPressed: () {
-                          Clipboard.setData(ClipboardData(text: expressNo));
-                          ShowToast.normal("已复制");
-                        },
-                        child: Container(
-                          width: 270.w,
-                          height: 35.w,
-                          decoration: getDefaultWhiteDec(),
-                          child: Center(
-                              child: getSimpleText(
-                                  expressNo, 20, AppColor.textBlack,
-                                  isBold: true)),
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
-        );
-      },
-    );
+                  height: 165.w,
+                  child: Column(children: [
+                    CustomButton(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                      },
+                      child: Icon(
+                        Icons.highlight_off,
+                        size: 36.w,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Container(
+                      width: 1.5.w,
+                      height: 19.w,
+                      color: Colors.white,
+                    ),
+                    Container(
+                        width: 345.w,
+                        height: 110.w,
+                        decoration: BoxDecoration(
+                            color: AppColor.lineColor,
+                            borderRadius: BorderRadius.circular(5.w)),
+                        child: Column(children: [
+                          ghb(25),
+                          getSimpleText("点击快递编号即可复制查询", 15, AppColor.textBlack,
+                              isBold: true),
+                          ghb(13.5),
+                          CustomButton(
+                              onPressed: () {
+                                Clipboard.setData(
+                                    ClipboardData(text: expressNo));
+                                ShowToast.normal("已复制");
+                              },
+                              child: Container(
+                                  width: 270.w,
+                                  height: 35.w,
+                                  decoration: getDefaultWhiteDec(),
+                                  child: Center(
+                                      child: getSimpleText(
+                                          expressNo, 20, AppColor.textBlack,
+                                          isBold: true))))
+                        ]))
+                  ])));
+        });
   }
 
   List<Widget> statusButtons(
@@ -801,34 +817,39 @@ class ProductStoreOrderDetail
     // }
 
     if (data["orderState"] == 0) {
-      bool timeOut = false;
-      DateTime now = DateTime.now();
-      Duration duration = controller.dateFormat
-          .parse(data["addTime"])
-          .add(const Duration(minutes: 30))
-          .difference(now);
-      timeOut = (duration.inMilliseconds < 0);
+      // bool timeOut = false;
+      // DateTime now = DateTime.now();
+      // Duration duration = controller.dateFormat
+      //     .parse(data["addTime"])
+      //     .add(const Duration(minutes: 30))
+      //     .difference(now);
+      // timeOut = (duration.inMilliseconds < 0);
       l.addAll([
-        statusButton(
-          "取消订单",
-          const Color(0xFF7B8A99),
-          const Color(0xFF8A9199),
-          onPressed: () {
-            controller.cancelOrderAction();
-          },
-        ),
-        gwb(timeOut ? 0 : 13.5),
-        timeOut
-            ? gwb(0)
-            : statusButton(
-                "立即支付",
-                AppColor.theme,
-                AppColor.theme,
-                bgColor: Colors.white,
-                onPressed: () {
-                  controller.payOrderAction();
-                },
-              ),
+        // statusButton(
+        //   "取消订单",
+        //   const Color(0xFF7B8A99),
+        //   const Color(0xFF8A9199),
+        //   onPressed: () {
+        //     controller.cancelOrderAction();
+        //   },
+        // ),
+        statusButton("删除订单", AppColor.textBlack, const Color(0xFFB3B3B3),
+            onPressed: () {
+          controller.deleteOrderAction();
+          // controller.checkLogisticsAction(index, status);
+        }),
+        // gwb(timeOut ? 0 : 13.5),
+        // timeOut
+        //     ? gwb(0)
+        //     : statusButton(
+        //         "立即支付",
+        //         AppColor.theme,
+        //         AppColor.theme,
+        //         bgColor: Colors.white,
+        //         onPressed: () {
+        //           controller.payOrderAction();
+        //         },
+        //       ),
       ]);
     } else if (data["orderState"] == 1) {
       l.addAll([

@@ -200,6 +200,10 @@ class MyWalletDrawController extends GetxController {
     //   ShowToast.normal("请选择提现方式");
     //   return;
     // }
+    if (accountList.isEmpty) {
+      ShowToast.normal("请先绑定提现到账账户");
+      return;
+    }
     if (AppDefault().homeData["u_3rd_password"] == null ||
         AppDefault().homeData["u_3rd_password"].isEmpty) {
       showPayPwdWarn(

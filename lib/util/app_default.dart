@@ -66,7 +66,9 @@ class AppDefault {
   static const FontWeight fontBold = FontWeight.w600;
   static const String projectName = "付利优客";
   static const String fromDate = "2022-11-09 09:00:00";
-  static const String oldSystem = "192.168.1.200:1026";
+  // static const String oldSystem = "192.168.1.200:1026";
+  static const String oldSystem = "app.plus.my66668888.com";
+
   static const int jfWallet = 4;
   static const int awardWallet = 3;
 
@@ -3482,7 +3484,8 @@ Future<Map> getUserData() async {
 String getImageUrl(Map pData) {
   AppDefault appDefault = AppDefault();
   if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
-    appDefault.imageUrl = (pData["webSiteInfo"] ?? {})["System_Images_Url"];
+    appDefault.imageUrl =
+        (pData["webSiteInfo"] ?? {})["System_Images_Url"] ?? "";
   } else {
     appDefault.imageUrl =
         ((pData["webSiteInfo"] ?? {})["app"] ?? {})["apP_Images_Url"] ?? "";

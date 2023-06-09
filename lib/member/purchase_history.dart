@@ -1,6 +1,5 @@
 // 会员购买记录页面
 import 'package:cxhighversion2/component/custom_list_empty_view.dart';
-import 'package:cxhighversion2/service/http.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -116,12 +115,13 @@ class PurchaseHistoryPage extends GetView<PurchaseHistoryController> {
           initState: (_) {},
           builder: (_) {
             return EasyRefresh.builder(
-                onLoad: controller.purchaseHistoryList.length >= controller.total
-                    ? null
-                    : () {
-                        controller.currentPage++;
-                        controller.getPurchaseHistoryData();
-                      },
+                onLoad:
+                    controller.purchaseHistoryList.length >= controller.total
+                        ? null
+                        : () {
+                            controller.currentPage++;
+                            controller.getPurchaseHistoryData();
+                          },
                 onRefresh: () {
                   controller.currentPage = 1;
                   controller.getPurchaseHistoryData();
@@ -132,13 +132,16 @@ class PurchaseHistoryPage extends GetView<PurchaseHistoryController> {
                           physics: physics,
                           padding: EdgeInsets.fromLTRB(15.w, 15.w, 15.w, 0),
                           child: Column(
-                            children: List.generate(controller.purchaseHistoryList.length, (index) {
-                              Map vipPaymentItem = controller.purchaseHistoryList[index];
+                            children: List.generate(
+                                controller.purchaseHistoryList.length, (index) {
+                              Map vipPaymentItem =
+                                  controller.purchaseHistoryList[index];
                               return vipPaymentHistory(vipPaymentItem);
                             }),
                           ),
                         )
-                      : CustomListEmptyView(physics: physics, isLoading: controller.isLoadding);
+                      : CustomListEmptyView(
+                          physics: physics, isLoading: controller.isLoadding);
                 });
           },
         ));
@@ -158,22 +161,32 @@ class PurchaseHistoryPage extends GetView<PurchaseHistoryController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              getSimpleText("订单号：${item['orderNo']}", 12, const Color(0xFF999999)),
+              getSimpleText(
+                  "订单号：${item['orderNo']}", 12, const Color(0xFF999999)),
               ghb(9),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  getSimpleText("开通超级vip-${item['commodity'][0]['shopModel'] ?? ''} ", 14, const Color(0xFF333333), isBold: true),
-                  getSimpleText("${item['commodity'][0]['nowPrice'].toInt() ?? 0} ", 18, const Color(0xFF333333), isBold: true),
+                  getSimpleText(
+                      // "开通超级vip-${item['commodity'][0]['shopModel'] ?? ''} ",
+                      "开通超级vip-${item['levelName'] ?? ''} ",
+                      14,
+                      const Color(0xFF333333),
+                      isBold: true),
+                  getSimpleText("${priceFormat(item['totalPrice'] ?? 0)} ", 18,
+                      const Color(0xFF333333),
+                      isBold: true),
                 ],
               ),
               ghb(12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  getSimpleText("${item['addTime']}", 12, const Color(0xFF999999)),
+                  getSimpleText(
+                      "${item['addTime']}", 12, const Color(0xFF999999)),
                   // getSimpleText(controller.getPayStatus(item['orderState']), 12, const Color(0xFF999999)),
-                  getSimpleText("${item['orderStateStr']}", 12, const Color(0xFF999999)),
+                  getSimpleText("${item['orderStateStr'] ?? ""}", 12,
+                      const Color(0xFF999999)),
                 ],
               ),
             ],
@@ -184,7 +197,9 @@ class PurchaseHistoryPage extends GetView<PurchaseHistoryController> {
             child: Container(
               width: 3.w,
               height: 15.w,
-              decoration: BoxDecoration(color: const Color(0xFFED1724), borderRadius: BorderRadius.circular(1.5.w)),
+              decoration: BoxDecoration(
+                  color: const Color(0xFFED1724),
+                  borderRadius: BorderRadius.circular(1.5.w)),
             )),
       ],
     );

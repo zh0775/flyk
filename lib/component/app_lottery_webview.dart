@@ -76,9 +76,48 @@ class AppLotteryWebViewController extends GetxController {
           ..src = lotteryUrl
           ..style.border = 'none';
       });
-    } else if (webCtrl != null) {
-      webCtrl!.loadUrl(lotteryUrl);
+    } else {
+      if (webCtrl == null) {
+        webCtrl = WebViewController();
+        webCtrl!.setJavaScriptMode(JavaScriptMode.unrestricted);
+        if (lotteryChannel != null) {
+          webCtrl!.addJavaScriptChannel("setFlutterECount",
+              onMessageReceived: (message) {
+            if (message.message.isNotEmpty) {
+              lotteryChannel!.setFlutterECount(message.message);
+            }
+          });
+          webCtrl!.addJavaScriptChannel("toLoginAction",
+              onMessageReceived: (message) {
+            if (message.message.isNotEmpty) {
+              lotteryChannel!.toLoginAction(message.message);
+            }
+          });
+          webCtrl!.addJavaScriptChannel("payStr", onMessageReceived: (message) {
+            if (message.message.isNotEmpty) {
+              lotteryChannel!.payStr(message.message);
+            }
+          });
+          webCtrl!.addJavaScriptChannel("webScrollHeight",
+              onMessageReceived: (message) {
+            if (message.message.isNotEmpty) {
+              if (lotteryChannel!.getScollerHeight != null) {
+                lotteryChannel!.getScollerHeight!(
+                    lotteryChannel!.webScrollHeight(message.message));
+              }
+            }
+          });
+          webCtrl!.addJavaScriptChannel("toHistory",
+              onMessageReceived: (message) {
+            if (message.message.isNotEmpty) {
+              lotteryChannel!.toHistory();
+            }
+          });
+        }
+      }
+      webCtrl!.loadRequest(Uri.parse(lotteryUrl));
     }
+
     if (isFirst) {
       isFirst = false;
       update();
@@ -94,11 +133,7 @@ class AppLotteryWebViewController extends GetxController {
   }
 }
 
-enum LotteryType {
-  laohu,
-  fanpai,
-  zhuan,
-}
+enum LotteryType { laohu, fanpai, zhuan }
 
 class AppLotteryWebView extends StatefulWidget {
   final LotteryType type;
@@ -114,7 +149,6 @@ class AppLotteryWebView extends StatefulWidget {
       this.insideView = false,
       this.getScollerHeight})
       : super(key: key);
-
   @override
   State<AppLotteryWebView> createState() => _AppLotteryWebViewState();
 }
@@ -175,10 +209,46 @@ class _AppLotteryWebViewState extends State<AppLotteryWebView> {
           ..style.border = 'none';
       });
     } else {
-      if (myWebCtrl != null) {
-        myWebCtrl!.loadUrl(lotteryUrl);
-      } else {
+      if (myWebCtrl == null) {
+        LotteryChannel lotteryC =
+            LotteryChannel(getScollerHeight: widget.getScollerHeight);
+        myWebCtrl = WebViewController()
+          ..setJavaScriptMode(JavaScriptMode.unrestricted)
+          ..addJavaScriptChannel("setFlutterECount",
+              onMessageReceived: (message) {
+            if (message.message.isNotEmpty) {
+              lotteryC.setFlutterECount(message.message);
+            }
+          })
+          ..addJavaScriptChannel("toLoginAction", onMessageReceived: (message) {
+            if (message.message.isNotEmpty) {
+              lotteryC.toLoginAction(message.message);
+            }
+          })
+          ..addJavaScriptChannel("payStr", onMessageReceived: (message) {
+            if (message.message.isNotEmpty) {
+              lotteryC.payStr(message.message);
+            }
+          })
+          ..addJavaScriptChannel("webScrollHeight",
+              onMessageReceived: (message) {
+            if (message.message.isNotEmpty) {
+              if (lotteryC.getScollerHeight != null) {
+                lotteryC.getScollerHeight!(
+                    lotteryC.webScrollHeight(message.message));
+              }
+            }
+          })
+          ..addJavaScriptChannel("toHistory", onMessageReceived: (message) {
+            if (message.message.isNotEmpty) {
+              lotteryC.toHistory();
+            }
+          });
+        // ..addJavaScriptChannel(name, onMessageReceived: onMessageReceived)
+
         setState(() {});
+      } else {
+        myWebCtrl!.loadRequest(Uri.parse(lotteryUrl));
       }
     }
   }
@@ -260,22 +330,24 @@ class _AppLotteryWebViewState extends State<AppLotteryWebView> {
                   }
                 },
               )
-            : WebView(
-                initialUrl: lotteryUrl,
-                // debuggingEnabled: true,
-                javascriptMode: JavascriptMode.unrestricted,
-                onPageFinished: (url) {
-                  // if (controller.webCtrl != null) {
-                  //   controller.lotteryChannel!.setCount();
-                  // }
-                },
-                onWebViewCreated: (webctrl) {
-                  myWebCtrl = webctrl;
-                },
-                javascriptChannels:
-                    LotteryChannel(getScollerHeight: widget.getScollerHeight)
-                        .getChannelSet(),
-              );
+            : WebViewWidget(controller: myWebCtrl!);
+
+    // WebView(
+    //     initialUrl: lotteryUrl,
+    //     // debuggingEnabled: true,
+    //     javascriptMode: JavascriptMode.unrestricted,
+    //     onPageFinished: (url) {
+    //       // if (controller.webCtrl != null) {
+    //       //   controller.lotteryChannel!.setCount();
+    //       // }
+    //     },
+    //     onWebViewCreated: (webctrl) {
+    //       myWebCtrl = webctrl;
+    //     },
+    //     javascriptChannels:
+    //         LotteryChannel(getScollerHeight: widget.getScollerHeight)
+    //             .getChannelSet(),
+    //   );
   }
 }
 
@@ -289,78 +361,78 @@ class LotteryChannel {
   // }
   // factory LotteryChannel() => _instance ?? LotteryChannel.init();
 
-  JavascriptChannel titleJavascriptChannel(BuildContext context) {
-    return JavascriptChannel(
-      name: 'setFlutterECount',
-      onMessageReceived: (JavascriptMessage message) {
-        if (message.message.isNotEmpty) {
-          setFlutterECount(message.message);
-        }
-      },
-    );
-  }
+  // JavascriptChannel titleJavascriptChannel(BuildContext context) {
+  //   return JavascriptChannel(
+  //     name: 'setFlutterECount',
+  //     onMessageReceived: (JavascriptMessage message) {
+  //       if (message.message.isNotEmpty) {
+  //         setFlutterECount(message.message);
+  //       }
+  //     },
+  //   );
+  // }
 
-  JavascriptChannel toLoginJavascriptChannel(BuildContext context) {
-    return JavascriptChannel(
-      name: 'toLoginAction',
-      onMessageReceived: (JavascriptMessage message) {
-        if (message.message.isNotEmpty) {
-          toLoginAction(message.message);
-        }
-      },
-    );
-  }
+  // JavascriptChannel toLoginJavascriptChannel(BuildContext context) {
+  //   return JavascriptChannel(
+  //     name: 'toLoginAction',
+  //     onMessageReceived: (JavascriptMessage message) {
+  //       if (message.message.isNotEmpty) {
+  //         toLoginAction(message.message);
+  //       }
+  //     },
+  //   );
+  // }
 
-  JavascriptChannel playJavascriptChannel(BuildContext context) {
-    return JavascriptChannel(
-      name: 'payStr',
-      onMessageReceived: (JavascriptMessage message) {
-        if (message.message.isNotEmpty) {
-          payStr(message.message);
-          // if (int.tryParse(message.message) != null) {
-          //   int count = int.parse(message.message);
-          //   UserDefault.saveInt(USER_EXPERIENCES_COUNT_DATA, count);
-          // }
-        }
-      },
-    );
-  }
+  // JavascriptChannel playJavascriptChannel(BuildContext context) {
+  //   return JavascriptChannel(
+  //     name: 'payStr',
+  //     onMessageReceived: (JavascriptMessage message) {
+  //       if (message.message.isNotEmpty) {
+  //         payStr(message.message);
+  //         // if (int.tryParse(message.message) != null) {
+  //         //   int count = int.parse(message.message);
+  //         //   UserDefault.saveInt(USER_EXPERIENCES_COUNT_DATA, count);
+  //         // }
+  //       }
+  //     },
+  //   );
+  // }
 
-  JavascriptChannel getScrollHeightJavascriptChannel(BuildContext context) {
-    return JavascriptChannel(
-      name: 'webScrollHeight',
-      onMessageReceived: (JavascriptMessage message) {
-        if (message.message.isNotEmpty) {
-          if (getScollerHeight != null) {
-            getScollerHeight!(webScrollHeight(message.message));
-          }
-          // if (int.tryParse(message.message) != null) {
-          //   int count = int.parse(message.message);
-          //   UserDefault.saveInt(USER_EXPERIENCES_COUNT_DATA, count);
-          // }
-        }
-      },
-    );
-  }
+  // JavascriptChannel getScrollHeightJavascriptChannel(BuildContext context) {
+  //   return JavascriptChannel(
+  //     name: 'webScrollHeight',
+  //     onMessageReceived: (JavascriptMessage message) {
+  //       if (message.message.isNotEmpty) {
+  //         if (getScollerHeight != null) {
+  //           getScollerHeight!(webScrollHeight(message.message));
+  //         }
+  //         // if (int.tryParse(message.message) != null) {
+  //         //   int count = int.parse(message.message);
+  //         //   UserDefault.saveInt(USER_EXPERIENCES_COUNT_DATA, count);
+  //         // }
+  //       }
+  //     },
+  //   );
+  // }
 
-  JavascriptChannel toHistoryJSChannel(BuildContext context) {
-    return JavascriptChannel(
-      name: 'toHistory',
-      onMessageReceived: (JavascriptMessage message) {
-        toHistory();
-      },
-    );
-  }
+  // JavascriptChannel toHistoryJSChannel(BuildContext context) {
+  //   return JavascriptChannel(
+  //     name: 'toHistory',
+  //     onMessageReceived: (JavascriptMessage message) {
+  //       toHistory();
+  //     },
+  //   );
+  // }
 
-  Set<JavascriptChannel> getChannelSet() {
-    return {
-      titleJavascriptChannel(Global.navigatorKey.currentContext!),
-      playJavascriptChannel(Global.navigatorKey.currentContext!),
-      getScrollHeightJavascriptChannel(Global.navigatorKey.currentContext!),
-      toHistoryJSChannel(Global.navigatorKey.currentContext!),
-      toLoginJavascriptChannel(Global.navigatorKey.currentContext!),
-    };
-  }
+  // Set<JavascriptChannel> getChannelSet() {
+  //   return {
+  //     titleJavascriptChannel(Global.navigatorKey.currentContext!),
+  //     playJavascriptChannel(Global.navigatorKey.currentContext!),
+  //     getScrollHeightJavascriptChannel(Global.navigatorKey.currentContext!),
+  //     toHistoryJSChannel(Global.navigatorKey.currentContext!),
+  //     toLoginJavascriptChannel(Global.navigatorKey.currentContext!)
+  //   };
+  // }
 
   Future<int> setCount() async {
     // UserDefault.saveInt(USER_EXPERIENCES_COUNT_DATA, 3);

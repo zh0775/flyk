@@ -25,7 +25,11 @@ class ContactAddOrderController extends GetxController {
   final descriptionInputCtrl = TextEditingController();
   final titleInputCtrl = TextEditingController();
 
-  List serviceTypeList = [];
+  List serviceTypeList = [
+    {"id": 2140, "name": "财务问题"},
+    {"id": 2141, "name": "支付问题"},
+    {"id": 2142, "name": "提现问题"}
+  ];
 
   final _submitEnable = true.obs;
   bool get submitEnable => _submitEnable.value;
@@ -91,13 +95,6 @@ class ContactAddOrderController extends GetxController {
         submitEnable = true;
       },
     );
-  }
-
-  @override
-  void onInit() {
-    serviceTypeList =
-        (AppDefault().publicHomeData["appHelpRule"] ?? {})["serviceType"] ?? [];
-    super.onInit();
   }
 
   @override

@@ -1,6 +1,5 @@
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_empty_view.dart';
-import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/home/contactCustomerService/contact_add_order.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
@@ -54,18 +53,9 @@ class ContactOrderListController extends GetxController {
   }
 
   List topTabs = [
-    {
-      "id": -1,
-      "name": "全部",
-    },
-    {
-      "id": 0,
-      "name": "处理中",
-    },
-    {
-      "id": 1,
-      "name": "已完成",
-    },
+    {"id": -1, "name": "全部"},
+    {"id": 0, "name": "处理中"},
+    {"id": 1, "name": "已完成"}
   ];
 
   List<List> dataLists = [];

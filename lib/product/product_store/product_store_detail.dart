@@ -313,25 +313,20 @@ class ProductStoreDetail extends GetView<ProductStoreDetailController> {
   // 商品详细信息
   Widget productDetailInfoView() {
     return Container(
-      width: 345.w,
-      color: Colors.white,
-      margin: EdgeInsets.only(top: 15.w),
-      child: GetBuilder<ProductStoreDetailController>(builder: (_) {
-        return Column(
-          children: [
+        width: 345.w,
+        color: Colors.white,
+        margin: EdgeInsets.only(top: 15.w),
+        child: GetBuilder<ProductStoreDetailController>(builder: (_) {
+          return Column(children: [
             SizedBox(
-              height: 40.w,
-              child: Center(
-                child: getSimpleText("- 图文详情 -", 12, AppColor.textGrey2),
-              ),
-            ),
+                height: 40.w,
+                child: Center(
+                    child: getSimpleText("- 图文详情 -", 12, AppColor.textGrey2))),
             CustomHtmlView(
                 width: 315, src: controller.orderData["level_Parameter"] ?? ""),
             ghb(10)
-          ],
-        );
-      }),
-    );
+          ]);
+        }));
   }
 
   showBuyModel() {

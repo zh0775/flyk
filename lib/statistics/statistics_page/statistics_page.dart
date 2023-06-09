@@ -151,7 +151,17 @@ class StatisticsPageController extends GetxController {
   set selectPP(v) {
     if (_selectPP.value != v) {
       _selectPP.value = v;
-      loadSevendDaysData();
+      // loadSevendDaysData();
+      if (selectTopRightType == 0) {
+        // && sevendDaysDatas.isEmpty
+        loadSevendDaysData();
+      } else if (selectTopRightType == 1) {
+        //  && machineDatas.isEmpty
+        loadMachineData();
+      } else if (selectTopRightType == 2) {
+        //  && businessDatas.isEmpty
+        loadBusinessData();
+      }
     }
   }
 
@@ -224,7 +234,7 @@ class StatisticsPageController extends GetxController {
       List terminalBrands = publicHomeData["terminalConfig"] ?? [];
       selectPP = 0;
       ppList = [
-        {"enumValue": -1, "enumName": "全部品牌"},
+        {"enumValue": "-1", "enumName": "全部品牌"},
         ...terminalBrands
             .map((e) => {"enumValue": e["id"], "enumName": e["terninal_Name"]})
       ];
@@ -273,8 +283,9 @@ class StatisticsPageController extends GetxController {
     simpleRequest(
         url: Urls.userTermiList,
         params: {
-          "terminalBrandId":
-              ppList.isEmpty ? -1 : ppList[selectPP]["enumValue"] ?? -1,
+          "terminalBrandId": ppList.isEmpty
+              ? -1
+              : int.tryParse(ppList[selectPP]["enumValue"] ?? "-1") ?? -1,
           "startingTime": date2.format(DateTime(date.year, date.month, 1)),
           "end_Time": date2.format(DateTime(date.year, date.month + 1, 0)),
         },
@@ -323,7 +334,7 @@ class StatisticsPageController extends GetxController {
                 text: "100%",
                 pointColor: getChartColor(2)));
             machineDatas.add(ChartSampleData(
-                x: "达标,有效激活",
+                x: "有效激活",
                 y: totalMachineCount == 0 ? 1 : dateActivNum,
                 // text: maxKey == "dateActivNum" ? "100%" : "90%",
                 text: "100%",
@@ -368,7 +379,7 @@ class StatisticsPageController extends GetxController {
             int soleTotalAddUser = businessData["soleTotalAddUser"] ?? 0;
 
             totalBusinessCount += chanTotalAddUser;
-            totalBusinessCount += (chanTotalAddUser - soleTotalAddUser);
+            totalBusinessCount += soleTotalAddUser;
 
             businessDatas.add(ChartSampleData(
                 x: "我的新增",
@@ -377,9 +388,7 @@ class StatisticsPageController extends GetxController {
                 pointColor: const Color(0xFF3AD3D2)));
             businessDatas.add(ChartSampleData(
                 x: "其他新增",
-                y: totalBusinessCount == 0
-                    ? 1
-                    : chanTotalAddUser - soleTotalAddUser,
+                y: totalBusinessCount == 0 ? 1 : chanTotalAddUser,
                 text: "100%",
                 pointColor: const Color(0xFF437BFE)));
             update([businessBuildId]);
@@ -399,8 +408,9 @@ class StatisticsPageController extends GetxController {
     simpleRequest(
         url: Urls.userTranList,
         params: {
-          "terminalBrandId":
-              ppList.isEmpty ? -1 : ppList[selectPP]["enumValue"] ?? -1,
+          "terminalBrandId": ppList.isEmpty
+              ? -1
+              : int.tryParse(ppList[selectPP]["enumValue"] ?? "-1") ?? -1,
           "startingTime": date2.format(DateTime(date.year, date.month, 1)),
           "end_Time": date2.format(DateTime(date.year, date.month + 1, 0)),
         },
@@ -839,7 +849,7 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                       child: Center(
                           child: centClm([
                         getSimpleText(
-                            "${controller.selectTopRightType == 1 ? controller.machineData[index == 0 ? "teamTotalBingTerminal" : index == 1 ? "teamTotalActTerminal" : "mineTotalActTerminal"] ?? 0 : controller.selectTopRightType == 2 ? controller.businessData[index == 0 ? "chanTotalAddUser" : "soleTotalAddUser"] ?? "" : ""}",
+                            "${controller.selectTopRightType == 1 ? controller.machineData[index == 0 ? "teamTotalBingTerminal" : index == 1 ? "teamTotalActTerminal" : "mineTotalActTerminal"] ?? 0 : controller.selectTopRightType == 2 ? index == 0 ? controller.totalBusinessCount : controller.businessData["soleTotalAddUser"] ?? "" : ""}",
                             18,
                             AppColor.textBlack,
                             isBold: true),

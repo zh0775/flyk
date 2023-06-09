@@ -11,6 +11,7 @@ import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart'
 import 'package:cxhighversion2/home/component/custom_message.dart';
 import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart'
     deferred as contact_customer_service;
+import 'package:cxhighversion2/home/fl_full_back.dart';
 import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase.dart'
     deferred as integral_repurchase;
 import 'package:cxhighversion2/home/machine_manage.dart'
@@ -189,8 +190,8 @@ class HomeController extends FullLifeCycleController {
         "versionOrigin": appDefault.versionOrigin
       },
       success: (success, json) async {
-        Map data = json["data"] ?? {};
         if (success) {
+          Map data = json["data"] ?? {};
           setUserDataFormat(true, data, {}, {}).then((value) async {
             await getHomeData();
             if (format) {
@@ -329,7 +330,6 @@ class HomeController extends FullLifeCycleController {
       Map authData = homeData["authentication"] ?? {};
       isAuth = authData["isCertified"] ?? false;
       isBindCard = authData["isBank"] ?? false;
-      imageUrl = AppDefault().imageUrl;
       // if (!isAuth) {
       //   if (Global.navigatorKey.currentContext != null) {
       //     showAuthAlert(
@@ -359,16 +359,16 @@ class HomeController extends FullLifeCycleController {
       tmpBanners = tmpBanners.where((e) {
         String type = e["u_Type"] ?? "";
         List types = type.split(",");
-        if (types.contains("1")) {
+        if (types.contains("2")) {
           return true;
         } else {
           return false;
         }
       }).toList();
 
-      tmpBanners = topBanners = tmpBanners.map((e) {
+      topBanners = tmpBanners.map((e) {
         return BannerData(
-            imagePath: "$imageUrl${e["apP_Pic"]}",
+            imagePath: "${AppDefault().imageUrl}${e["apP_Pic"]}",
             id: "${e["id"]}",
             data: e,
             imgWidth: 345,
@@ -389,10 +389,19 @@ class HomeController extends FullLifeCycleController {
           }
         }
       }
+      middleIcons = middleIcons.where((e) {
+        String type = e["u_Type"] ?? "";
+        List types = type.split(",");
+        if (types.contains("2")) {
+          return true;
+        } else {
+          return false;
+        }
+      }).toList();
 
       List tmpBtnDatas = middleIcons.map((e) {
         return Map<String, dynamic>.from({
-          "img": "$imageUrl${e["apP_Pic"]}",
+          "img": "${AppDefault().imageUrl}${e["apP_Pic"]}",
           "name": e["apP_Title"] ?? "",
           "id": e["id"],
           "path": e["apP_Url"]
@@ -484,7 +493,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   void dispose() {
     // yjScrollCtrl.removeListener(yjScrollListener);
     yjScrollCtrl.dispose();
-
     // pullCtrl.dispose();
     super.dispose();
   }
@@ -585,9 +593,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     double height = (jgTextHeight + jgBtnGap.w + jgImageHeight.w) * 2 +
         jgRunSpace.w +
         (kIsWeb ? 12.w : 0);
-    double tagHeight = ctrl.btnDatas.length > 1
-        ? (jgTagMarginTop.w + 3.w + 12.w)
-        : bottomPadding.w;
     Map tanNo = ctrl.homeData["homeTeamTanNo"] ?? {};
 
     return SizedBox(
@@ -655,6 +660,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                           binding: share_invite
                                               .ShareInviteBinding());
                                     } else if (index == 1) {
+                                      ShowToast.normal("暂未开放");
                                     } else if (index == 2) {
                                       await machine_transfer.loadLibrary();
                                       push(
@@ -1060,6 +1066,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           } else if (path == "/home/equitiesmachine") {
             // 权益设备
             CustomDeferred().toStatisticsMachineEquities();
+          } else if (path == "/home/fullback") {
+            // 付利全返
+            push(const FLFullBack(), context);
           }
         },
         child: SizedBox(
@@ -1102,9 +1111,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                     fit: BoxFit.fitWidth,
                   ),
                   gwb(6),
-                  getSimpleText(ctrl.machineDataIdx == 0 ? "机具数据" : "商户数据", 16,
-                      AppColor.textBlack,
-                      isBold: true),
+                  getSimpleText("商户数据", 16, AppColor.textBlack, isBold: true),
                 ]),
                 DropdownButtonHideUnderline(
                     child: DropdownButton2(

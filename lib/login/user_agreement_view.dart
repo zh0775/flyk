@@ -21,6 +21,7 @@ class UserAgreementViewController extends GetxController {
   String viewType = "UserAgreementView_web";
   bool isFirst = true;
   String url = "";
+  WebViewController? webCtrl;
   dataInit(String u) {
     if (!isFirst) return;
     isFirst = false;
@@ -33,6 +34,10 @@ class UserAgreementViewController extends GetxController {
           ..src = url
           ..style.border = 'none';
       });
+    } else {
+      webCtrl = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..loadRequest(Uri.parse(url));
     }
   }
 }
@@ -65,10 +70,7 @@ class UserAgreementView extends GetView<UserAgreementViewController> {
             )
           : kIsWeb
               ? HtmlElementView(viewType: controller.viewType)
-              : WebView(
-                  javascriptMode: JavascriptMode.unrestricted,
-                  initialUrl: url,
-                );
+              : WebViewWidget(controller: controller.webCtrl!);
     } else {
       return url == null || url.isEmpty
           ? ghb(0)

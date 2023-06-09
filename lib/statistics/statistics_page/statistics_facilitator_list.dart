@@ -571,26 +571,26 @@ class StatisticsFacilitatorList extends StatelessWidget {
                             Padding(
                               padding: EdgeInsets.only(left: 15.5.w),
                               child: Text.rich(TextSpan(
-                                  text: "累积交易(元)：",
+                                  text:
+                                      "月交易量(${(data["teamThisMAmount"] ?? 0) >= 100000 ? "万" : ""}元)：",
                                   style: TextStyle(
                                       fontSize: 12.sp,
                                       color: AppColor.text2,
                                       fontWeight: AppDefault.fontBold),
                                   children: [
                                     TextSpan(
-                                        text: priceFormat(data["tolAmt"] ?? 0,
+                                        text: priceFormat(
+                                            data["teamThisMAmount"] ?? 0,
                                             savePoint: 2,
                                             tenThousand:
-                                                (data["tolAmt"] ?? 0) >= 100000,
+                                                (data["teamThisMAmount"] ??
+                                                        0) >=
+                                                    100000,
                                             tenThousandUnit: false),
                                         style: TextStyle(
                                             fontSize: 12.sp,
                                             color: AppColor.red,
                                             fontWeight: AppDefault.fontBold)),
-                                    TextSpan(
-                                      text:
-                                          "${(data["tolAmt"] ?? 0) >= 100000 ? "万" : ""}元",
-                                    ),
                                   ])),
                             ),
                             SizedBox(

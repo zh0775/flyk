@@ -723,7 +723,11 @@ class Urls {
   /// 商户交易3
   static const userMerchantOrder3List = "/api/Merchant/UserMerchantOrder3List";
 
-  //权益设备 换机记录
+  /// 权益设备 换机记录
   static const userTerminalAssociateLogs =
       "/api/Terminal/User_TerminalAssociateLogs";
+
+  /// 获取市区
+  static String getArea(dynamic type, dynamic code) =>
+      "/api/Member/GetArea/$type/$code";
 }

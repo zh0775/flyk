@@ -188,8 +188,11 @@ class ProductStoreListController extends GetxController {
       "pageSize": pageSize,
       "level_Type": "$levelType"
     };
-    if (brandSelectIdx > 0) {
-      params["tbId"] = "${brandList[brandSelectIdx]["enumValue"]}";
+    // if (brandSelectIdx > 0) {
+    //   params["tbId"] = "${brandList[brandSelectIdx]["enumValue"]}";
+    // }
+    if (searchInputCtrl.text.isNotEmpty) {
+      params["shop_Name"] = searchInputCtrl.text;
     }
     if (typeSelectIdx >= 0) {
       params["tcId"] = "${typeList[typeSelectIdx]["id"]}";
@@ -329,6 +332,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
         body: Stack(
           // key: controller.stackKey,
           children: [
+            /// 机具型号筛选被砍
             controller.levelType == 1 ? gemp() : dropView(),
             controller.levelType == 1
                 ? gemp()
@@ -449,7 +453,10 @@ class ProductStoreList extends GetView<ProductStoreListController> {
 
                           /// 品牌筛选 采购商城
                           controller.levelType == 2
-                              ? brandSelectView()
+                              ?
+
+                              /// 机具型号筛选被砍
+                              brandSelectView()
                               : exchangeTopView()
                         ],
                       ),
@@ -670,8 +677,9 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                 data = controller.dataList[index * 2 + cellIdx];
               }
 
-              List payTypes =
-                  convert.jsonDecode(data["levelGiftPaymentMethod"]);
+              List payTypes = (data["levelGiftPaymentMethod"] ?? "").isEmpty
+                  ? []
+                  : convert.jsonDecode(data["levelGiftPaymentMethod"] ?? "");
 
               bool isReal = true;
               bool isBean = false;

@@ -160,26 +160,22 @@ class ProductStoreOrderListController extends GetxController {
     urls = Urls.userLevelGiftDelOrder(
         getOrderId(index: index, status: status, key: "id"));
 
-    showAlert(
-      Global.navigatorKey.currentContext!,
-      "确定要删除该订单吗",
-      cancelOnPressed: () {
-        Get.back();
-      },
-      confirmOnPressed: () {
-        simpleRequest(
-          url: urls,
-          params: {},
-          success: (success, json) {
-            if (success) {
-              loadList(listIndex: status);
-            }
-          },
-          after: () {},
-        );
-        Get.back();
-      },
-    );
+    showAlert(Global.navigatorKey.currentContext!, "确定要删除该订单吗",
+        cancelOnPressed: () {
+      Get.back();
+    }, confirmOnPressed: () {
+      simpleRequest(
+        url: urls,
+        params: {},
+        success: (success, json) {
+          if (success) {
+            loadList(listIndex: status);
+          }
+        },
+        after: () {},
+      );
+      Get.back();
+    });
   }
 
   payOrderAction(int index, int status) {
@@ -208,7 +204,6 @@ class ProductStoreOrderListController extends GetxController {
   Map payOrder = {};
   payAction(String pwd) {
     String urls = "";
-    int id = 0;
     urls = Urls.userPayGiftOrder(payOrder["id"]);
     simpleRequest(
       url: urls,
@@ -762,10 +757,9 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
     return CustomButton(
       onPressed: () {
         push(
-            ProductStoreOrderDetail(
-              data: data,
-              // statusList: controller.stateDataList,
-            ),
+            ProductStoreOrderDetail(data: data
+                // statusList: controller.stateDataList,
+                ),
             context,
             binding: ProductStoreOrderDetailBinding());
       },
@@ -910,36 +904,41 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
     //   return l;
     // }
     if (data["orderState"] == 0) {
-      bool timeOut = false;
-      if (data["orderState"] == 0) {
-        DateTime now = DateTime.now();
-        Duration duration = controller.dateFormat
-            .parse(data["addTime"])
-            .add(const Duration(minutes: 30))
-            .difference(now);
-        timeOut = (duration.inMilliseconds < 0);
-      }
+      // bool timeOut = false;
+      // if (data["orderState"] == 0) {
+      //   DateTime now = DateTime.now();
+      //   Duration duration = controller.dateFormat
+      //       .parse(data["addTime"])
+      //       .add(const Duration(minutes: 30))
+      //       .difference(now);
+      //   timeOut = (duration.inMilliseconds < 0);
+      // }
       l.addAll([
-        statusButton(
-          "取消订单",
-          const Color(0xFF7B8A99),
-          const Color(0xFF8A9199),
-          onPressed: () {
-            controller.cancelOrderAction(index, status);
-          },
-        ),
-        gwb(timeOut ? 0 : 10),
-        timeOut
-            ? gwb(0)
-            : statusButton(
-                "立即支付",
-                AppColor.theme,
-                AppColor.theme,
-                bgColor: Colors.white,
-                onPressed: () {
-                  controller.payOrderAction(index, status);
-                },
-              ),
+        // statusButton(
+        //   "取消订单",
+        //   const Color(0xFF7B8A99),
+        //   const Color(0xFF8A9199),
+        //   onPressed: () {
+        //     controller.cancelOrderAction(index, status);
+        //   },
+        // ),
+        statusButton("删除订单", AppColor.textBlack, const Color(0xFFB3B3B3),
+            onPressed: () {
+          controller.deleteOrderAction(index, status);
+          // controller.checkLogisticsAction(index, status);
+        }),
+        // gwb(timeOut ? 0 : 10),
+        // timeOut
+        //     ? gwb(0)
+        //     : statusButton(
+        //         "立即支付",
+        //         AppColor.theme,
+        //         AppColor.theme,
+        //         bgColor: Colors.white,
+        //         onPressed: () {
+        //           controller.payOrderAction(index, status);
+        //         },
+        //       ),
       ]);
     } else if (data["orderState"] == 1) {
       l.addAll([

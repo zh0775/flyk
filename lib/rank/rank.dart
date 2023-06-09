@@ -57,7 +57,7 @@ class RankController extends GetxController {
           if (rankData["tradeData"] != null) {
             pageDataList.add({
               "field": "tradeData",
-              "name": "本月交易排行",
+              "name": "个人交易榜",
               "datas": ((rankData["tradeData"] ?? []) as List).map((e) {
                 e["num"] = priceFormat(e["num"], savePoint: 2);
                 return e;
@@ -67,7 +67,7 @@ class RankController extends GetxController {
           if (rankData["activData"] != null) {
             pageDataList.add({
               "field": "activData",
-              "name": "激活排行",
+              "name": "激活排行榜",
               "datas": ((rankData["activData"] ?? []) as List).map((e) {
                 e["num"] = priceFormat(e["num"], savePoint: 0);
                 return e;
@@ -77,7 +77,7 @@ class RankController extends GetxController {
           if (rankData["bounsData"] != null) {
             pageDataList.add({
               "field": "bounsData",
-              "name": "累计收益排行",
+              "name": "收益排行榜",
               "datas": ((rankData["bounsData"] ?? []) as List).map((e) {
                 e["num"] = priceFormat(e["num"], savePoint: 2);
                 return e;
@@ -87,7 +87,7 @@ class RankController extends GetxController {
           if (rankData["tradeTeamData"] != null) {
             pageDataList.add({
               "field": "tradeTeamData",
-              "name": "团队累计交易",
+              "name": "团队交易榜",
               "datas": rankData["tradeTeamData"] ?? []
             });
           }

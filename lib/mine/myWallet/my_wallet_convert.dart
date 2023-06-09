@@ -3,7 +3,6 @@ import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/home/home.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_convert_history.dart';
-import 'package:cxhighversion2/mine/myWallet/my_wallet_draw_history.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';

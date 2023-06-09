@@ -19,7 +19,7 @@ class CustomWebView extends StatefulWidget {
 
 class _CustomWebViewState extends State<CustomWebView> {
   String viewId = "CustomWebViewViewId";
-
+  WebViewController? webCtrl;
   @override
   void initState() {
     if (kIsWeb) {
@@ -31,6 +31,10 @@ class _CustomWebViewState extends State<CustomWebView> {
           ..src = widget.url
           ..style.border = 'none';
       });
+    } else {
+      webCtrl = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..loadRequest(Uri.parse(widget.url));
     }
     super.initState();
   }
@@ -46,12 +50,11 @@ class _CustomWebViewState extends State<CustomWebView> {
               )
             : kIsWeb
                 ? HtmlElementView(
-                    viewType: viewId,
-                    onPlatformViewCreated: (id) {},
-                  )
-                : WebView(
-                    javascriptMode: JavascriptMode.unrestricted,
-                    initialUrl: widget.url,
-                  ));
+                    viewType: viewId, onPlatformViewCreated: (id) {})
+                : WebViewWidget(controller: webCtrl!));
+    // WebView(
+    //     javascriptMode: JavascriptMode.unrestricted,
+    //     initialUrl: widget.url,
+    //   ));
   }
 }

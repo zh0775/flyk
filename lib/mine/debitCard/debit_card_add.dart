@@ -4,7 +4,6 @@ import 'package:cxhighversion2/component/bottom_paypassword.dart';
 import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/home/home.dart';
 import 'package:cxhighversion2/mine/debitCard/debit_card_info.dart';
-import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_success.dart';
 import 'package:cxhighversion2/mine/myWallet/receipt_setting.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
@@ -28,6 +27,10 @@ class DebitCardAddController extends GetxController {
   final cardNoInputCtrl = TextEditingController();
   final bankNameInputCtrl = TextEditingController();
   final phoneInputCtrl = TextEditingController();
+
+  final _submitEnable = true.obs;
+  bool get submitEnable => _submitEnable.value;
+  set submitEnable(v) => _submitEnable.value = v;
 
   final _bankName = "建设银行".obs;
   get bankName => _bankName.value;
@@ -192,12 +195,15 @@ class DebitCardAddController extends GetxController {
       return;
     }
 
+    submitEnable = false;
+
     simpleRequest(
-      url: Urls.bankAdd,
+      url: Urls.bankEdit,
       params: {
         "bankAccountName": authData["u_Name"] ?? "",
         "bankAccountNumber": cardNoInputCtrl.text,
         "bankName": bankNameInputCtrl.text,
+        "bankMobile": phoneInputCtrl.text,
         "u_3nd_Pad": payPwd,
       },
       success: (success, json) {
@@ -225,7 +231,9 @@ class DebitCardAddController extends GetxController {
           });
         }
       },
-      after: () {},
+      after: () {
+        submitEnable = true;
+      },
     );
 
     // userBankEditRequest({
@@ -448,9 +456,14 @@ class DebitCardAdd extends GetView<DebitCardAddController> {
               ]),
             ),
             ghb(31),
-            getSubmitBtn("提交", () {
-              controller.submitAction();
-            }, height: 45, color: AppColor.theme),
+            GetX<DebitCardAddController>(builder: (_) {
+              return getSubmitBtn("提交", () {
+                controller.submitAction();
+              },
+                  height: 45,
+                  color: AppColor.theme,
+                  enable: controller.submitEnable);
+            })
           ],
           buttonHeight: 0,
 
