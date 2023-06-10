@@ -845,7 +845,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                       child: Column(
                     children: [
                       ghb(19.5),
-                      getSimpleText("超值${vipItem['levelDescribe']}卡" '超值月卡', 18, const Color(0xFFFFDBA2)),
+                      getSimpleText("超值${vipItem['levelName']}", 18, const Color(0xFFFFDBA2)),
                       // controller
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
