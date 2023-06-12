@@ -4,49 +4,34 @@ import 'package:cxhighversion2/component/app_bottom_tips.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_deferred.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
-import 'package:cxhighversion2/component/custom_webview.dart'
-    deferred as customwebview;
-import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart'
-    deferred as business_school_detail;
+import 'package:cxhighversion2/component/custom_webview.dart' deferred as customwebview;
+import 'package:cxhighversion2/home/businessSchool/business_school_detail.dart' deferred as business_school_detail;
 import 'package:cxhighversion2/home/component/custom_message.dart';
-import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart'
-    deferred as contact_customer_service;
+import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart' deferred as contact_customer_service;
 import 'package:cxhighversion2/home/fl_full_back.dart';
-import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase.dart'
-    deferred as integral_repurchase;
-import 'package:cxhighversion2/home/machine_manage.dart'
-    deferred as machine_manage;
-import 'package:cxhighversion2/home/machinetransfer/machine_transfer.dart'
-    deferred as machine_transfer;
-import 'package:cxhighversion2/home/machinetransfer/machine_transfer_userlist.dart'
-    deferred as machine_transfer_userlist;
-import 'package:cxhighversion2/home/merchantAccessNetwork/merchant_access_network.dart'
-    deferred as merchant_access_network;
-import 'package:cxhighversion2/home/news/news_detail.dart'
-    deferred as news_detail;
+import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase.dart' deferred as integral_repurchase;
+import 'package:cxhighversion2/home/machine_manage.dart' deferred as machine_manage;
+import 'package:cxhighversion2/home/machinetransfer/machine_transfer.dart' deferred as machine_transfer;
+import 'package:cxhighversion2/home/machinetransfer/machine_transfer_userlist.dart' deferred as machine_transfer_userlist;
+import 'package:cxhighversion2/home/merchantAccessNetwork/merchant_access_network.dart' deferred as merchant_access_network;
+import 'package:cxhighversion2/home/news/news_detail.dart' deferred as news_detail;
 import 'package:cxhighversion2/home/news/news_list.dart' deferred as news_list;
 import 'package:cxhighversion2/home/store/vip_store.dart' deferred as vip_store;
-import 'package:cxhighversion2/home/terminal_binding.dart'
-    deferred as terminal_binding;
-import 'package:cxhighversion2/machine/machine_pay_page.dart'
-    deferred as machine_pay_page;
-import 'package:cxhighversion2/machine/machine_register.dart'
-    deferred as machine_register;
-import 'package:cxhighversion2/mine/myWallet/my_wallet.dart'
-    deferred as my_wallet;
+import 'package:cxhighversion2/home/terminal_binding.dart' deferred as terminal_binding;
+import 'package:cxhighversion2/machine/machine_pay_page.dart' deferred as machine_pay_page;
+import 'package:cxhighversion2/machine/machine_register.dart' deferred as machine_register;
+import 'package:cxhighversion2/merchant/merchant_registration.dart' deferred as merchant_registration;
+import 'package:cxhighversion2/mine/myWallet/my_wallet.dart' deferred as my_wallet;
 import 'package:cxhighversion2/pay/share_invite.dart' deferred as share_invite;
 import 'package:cxhighversion2/product/product.dart' deferred as product;
-import 'package:cxhighversion2/product/product_purchase_list.dart'
-    deferred as product_purchase_list;
-import 'package:cxhighversion2/product/product_store/product_store_list.dart'
-    deferred as product_store_list;
+import 'package:cxhighversion2/product/product_purchase_list.dart' deferred as product_purchase_list;
+import 'package:cxhighversion2/product/product_store/product_store_list.dart' deferred as product_store_list;
 import 'package:cxhighversion2/rank/rank.dart' deferred as rank;
 import 'package:cxhighversion2/ranking/ranking_list.dart' deferred as rankList;
 import 'package:cxhighversion2/service/http.dart' as ht;
 import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/service/urls.dart';
-import 'package:cxhighversion2/statistics/userManage/statistics_user_manage.dart'
-    deferred as statistics_user_manage;
+import 'package:cxhighversion2/statistics/userManage/statistics_user_manage.dart' deferred as statistics_user_manage;
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/notify_default.dart';
@@ -65,8 +50,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:platform_device_id/platform_device_id.dart';
-import 'businessSchool/business_school_list_page.dart'
-    deferred as business_school_list_page;
+
+import 'businessSchool/business_school_list_page.dart' deferred as business_school_list_page;
 
 class HomeBinding extends Bindings {
   @override
@@ -120,8 +105,7 @@ class HomeController extends FullLifeCycleController {
     }
     bool haveAlertNews = false;
 
-    if (homeData["authentication"] != null &&
-        homeData["authentication"]["isCertified"] != null) {
+    if (homeData["authentication"] != null && homeData["authentication"]["isCertified"] != null) {
       isAuth = (homeData["authentication"] ?? {})["isCertified"] ?? false;
     }
 
@@ -141,10 +125,7 @@ class HomeController extends FullLifeCycleController {
             haveAlertShow = false;
             if (!isAuth) {
               if (Global.navigatorKey.currentContext != null) {
-                showAuthAlert(
-                    barrierDismissible: true,
-                    context: Global.navigatorKey.currentContext!,
-                    isAuth: true);
+                showAuthAlert(barrierDismissible: true, context: Global.navigatorKey.currentContext!, isAuth: true);
               }
             }
           },
@@ -183,11 +164,7 @@ class HomeController extends FullLifeCycleController {
     }
     simpleRequest(
       url: Urls.homeData,
-      params: {
-        "phoneKey": appDefault.deviceId,
-        "versionNumber": appDefault.version,
-        "versionOrigin": appDefault.versionOrigin
-      },
+      params: {"phoneKey": appDefault.deviceId, "versionNumber": appDefault.version, "versionOrigin": appDefault.versionOrigin},
       success: (success, json) async {
         if (success) {
           Map data = json["data"] ?? {};
@@ -322,8 +299,7 @@ class HomeController extends FullLifeCycleController {
     homeData = AppDefault().homeData;
     publicHomeData = AppDefault().publicHomeData;
     if (homeData.isEmpty) {
-      setUserDataFormat(false, {}, {}, {})
-          .then((value) => toLogin(isErrorStatus: true, errorCode: 202));
+      setUserDataFormat(false, {}, {}, {}).then((value) => toLogin(isErrorStatus: true, errorCode: 202));
       return;
     } else {
       Map authData = homeData["authentication"] ?? {};
@@ -366,13 +342,7 @@ class HomeController extends FullLifeCycleController {
       }).toList();
 
       topBanners = tmpBanners.map((e) {
-        return BannerData(
-            imagePath: "${AppDefault().imageUrl}${e["apP_Pic"]}",
-            id: "${e["id"]}",
-            data: e,
-            imgWidth: 345,
-            imgHeight: 100,
-            boxFit: BoxFit.fill);
+        return BannerData(imagePath: "${AppDefault().imageUrl}${e["apP_Pic"]}", id: "${e["id"]}", data: e, imgWidth: 345, imgHeight: 100, boxFit: BoxFit.fill);
       }).toList();
       btnDatas = [];
       List tmpMiddle = (publicHomeData["appCofig"] ?? {})["middleIcon"] ?? [];
@@ -399,12 +369,7 @@ class HomeController extends FullLifeCycleController {
       }).toList();
 
       List tmpBtnDatas = middleIcons.map((e) {
-        return Map<String, dynamic>.from({
-          "img": "${AppDefault().imageUrl}${e["apP_Pic"]}",
-          "name": e["apP_Title"] ?? "",
-          "id": e["id"],
-          "path": e["apP_Url"]
-        });
+        return Map<String, dynamic>.from({"img": "${AppDefault().imageUrl}${e["apP_Pic"]}", "name": e["apP_Title"] ?? "", "id": e["id"], "path": e["apP_Url"]});
       }).toList();
 
       int centerBtnIdx = 0;
@@ -414,26 +379,16 @@ class HomeController extends FullLifeCycleController {
           btnDatas.add([]);
         }
         Map e = tmpBtnDatas[i];
-        btnDatas[centerBtnIdx].add(Map<String, dynamic>.from({
-          "img": e["img"],
-          "name": e["name"],
-          "id": e["id"],
-          "path": e["path"]
-        }));
+        btnDatas[centerBtnIdx].add(Map<String, dynamic>.from({"img": e["img"], "name": e["name"], "id": e["id"], "path": e["path"]}));
       }
       if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
-        subTitle =
-            (publicHomeData["webSiteInfo"] ?? {})["System_Home_Name"] ?? "";
+        subTitle = (publicHomeData["webSiteInfo"] ?? {})["System_Home_Name"] ?? "";
       } else {
-        subTitle =
-            ((publicHomeData["webSiteInfo"] ?? {})["app"])["apP_SubTitle"] ??
-                "";
+        subTitle = ((publicHomeData["webSiteInfo"] ?? {})["app"])["apP_SubTitle"] ?? "";
       }
       subTitle = "欢迎您！";
     }
-    if (AppDefault().safeAlert &&
-        isHomeData &&
-        (AppDefault().firstAlertFromLogin || homeFirst)) {
+    if (AppDefault().safeAlert && isHomeData && (AppDefault().firstAlertFromLogin || homeFirst)) {
       showHomeAlert();
     }
     update();
@@ -478,8 +433,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   double jgTextHeight = 0;
 
   // final pullCtrl = RefreshController();
-  final yjScrollCtrl =
-      ScrollController(initialScrollOffset: 500 * 285.w - 15.w);
+  final yjScrollCtrl = ScrollController(initialScrollOffset: 500 * 285.w - 15.w);
 
   @override
   void initState() {
@@ -529,9 +483,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   }
 
   bannerPress(Map data) async {
-    if (data.isNotEmpty &&
-        data["apP_Url"] != null &&
-        data["apP_Url"].isNotEmpty) {
+    if (data.isNotEmpty && data["apP_Url"] != null && data["apP_Url"].isNotEmpty) {
       String path = data["apP_Url"] ?? "";
       if (path.contains("http")) {
         customwebview.loadLibrary().then((value) => push(
@@ -543,8 +495,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       } else if (path.contains("/home/integral/rank")) {
         // new排行榜
         await rankList.loadLibrary();
-        push(rankList.RankListPage(), null,
-            binding: rankList.RankListBinding());
+        push(rankList.RankListPage(), null, binding: rankList.RankListBinding());
       } else {
         if (path.contains("news")) {
           toBannerDetail(0, path);
@@ -577,21 +528,16 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           ),
           context));
     } else if (type == 1) {
-      business_school_detail.loadLibrary().then((value) => Get.to(
-          business_school_detail.BusinessSchoolDetail(id: id),
-          binding: business_school_detail.BusinessSchoolDetailBinding()));
+      business_school_detail.loadLibrary().then((value) => Get.to(business_school_detail.BusinessSchoolDetail(id: id), binding: business_school_detail.BusinessSchoolDetailBinding()));
     }
   }
 
   Widget topContent() {
-    jgTextHeight = calculateTextHeight(
-        "设备管理", jgFontSize, FontWeight.normal, double.infinity, 1, context);
+    jgTextHeight = calculateTextHeight("设备管理", jgFontSize, FontWeight.normal, double.infinity, 1, context);
     // jgHeight = (jgTextHeight + jgBtnGap.w + jgImageHeight.w) * 2 +
     //     jgRunSpace.w;
     double bottomPadding = 18;
-    double height = (jgTextHeight + jgBtnGap.w + jgImageHeight.w) * 2 +
-        jgRunSpace.w +
-        (kIsWeb ? 12.w : 0);
+    double height = (jgTextHeight + jgBtnGap.w + jgImageHeight.w) * 2 + jgRunSpace.w + (kIsWeb ? 12.w : 0);
     Map tanNo = ctrl.homeData["homeTeamTanNo"] ?? {};
 
     return SizedBox(
@@ -603,10 +549,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             Container(
               width: 375.w,
               height: 330.w,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.fill,
-                      image: AssetImage(assetsName("home/bg_top")))),
+              decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill, image: AssetImage(assetsName("home/bg_top")))),
               child: Column(
                 children: [
                   SizedBox(
@@ -619,26 +562,11 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         ], width: 375 - 30 * 2),
                         ghb(5),
                         sbRow([
-                          getSimpleText(
-                              priceFormat(tanNo["soleThisMAmount"] ?? 0),
-                              40,
-                              Colors.white,
-                              isBold: true),
+                          getSimpleText(priceFormat(tanNo["soleThisMAmount"] ?? 0), 40, Colors.white, isBold: true),
                         ], width: 375 - 30 * 2),
                         ghb(20),
                         sbRow([
-                          Text.rich(TextSpan(children: [
-                            TextSpan(
-                                text: "本月团队总交易额",
-                                style: TextStyle(
-                                    fontSize: 12.sp, color: Colors.white)),
-                            WidgetSpan(child: gwb(13)),
-                            TextSpan(
-                                text:
-                                    priceFormat(tanNo["soleThisMAmount"] ?? 0),
-                                style: TextStyle(
-                                    fontSize: 16.sp, color: Colors.white))
-                          ]))
+                          Text.rich(TextSpan(children: [TextSpan(text: "本月团队总交易额", style: TextStyle(fontSize: 12.sp, color: Colors.white)), WidgetSpan(child: gwb(13)), TextSpan(text: priceFormat(tanNo["soleThisMAmount"] ?? 0), style: TextStyle(fontSize: 16.sp, color: Colors.white))]))
                         ], width: 375 - 30 * 2)
                       ],
                     ),
@@ -655,38 +583,23 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                   onPressed: () async {
                                     if (index == 0) {
                                       await share_invite.loadLibrary();
-                                      push(share_invite.ShareInvite(), null,
-                                          binding: share_invite
-                                              .ShareInviteBinding());
+                                      push(share_invite.ShareInvite(), null, binding: share_invite.ShareInviteBinding());
                                     } else if (index == 1) {
-                                      ShowToast.normal("暂未开放");
+                                      await merchant_registration.loadLibrary();
+                                      push(merchant_registration.MerchantRegisterPage(), null, binding: merchant_registration.MerchantRegisterBinding());
                                     } else if (index == 2) {
                                       await machine_transfer.loadLibrary();
-                                      push(
-                                          machine_transfer.MachineTransfer(
-                                              isLock: false),
-                                          null,
-                                          binding: machine_transfer
-                                              .MachineTransferBinding());
+                                      push(machine_transfer.MachineTransfer(isLock: false), null, binding: machine_transfer.MachineTransferBinding());
                                     } else if (index == 3) {
                                       await product_store_list.loadLibrary();
-                                      push(
-                                          product_store_list.ProductStoreList(),
-                                          null,
-                                          binding: product_store_list
-                                              .ProductStoreListBinding(),
-                                          arguments: {
-                                            "levelType": 2,
-                                            "title": "采购商城"
-                                          });
+                                      push(product_store_list.ProductStoreList(), null, binding: product_store_list.ProductStoreListBinding(), arguments: {"levelType": 2, "title": "采购商城"});
                                     }
                                   },
                                   child: SizedBox(
                                     width: 345.w / 4,
                                     child: centClm([
                                       Image.asset(
-                                        assetsName(
-                                            "home/icon_${index == 0 ? "fxyq" : index == 1 ? "shzc" : index == 2 ? "zdhb" : "cgsc"}"),
+                                        assetsName("home/icon_${index == 0 ? "fxyq" : index == 1 ? "shzc" : index == 2 ? "zdhb" : "cgsc"}"),
                                         width: 45.w,
                                         height: 45.w,
                                         fit: BoxFit.fill,
@@ -727,32 +640,20 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
               decoration: getDefaultWhiteDec(radius: 8),
               child: Column(
                 children: [
-                  sbhRow([
-                    getSimpleText("精选服务", 16, AppColor.textBlack,
-                        isBold: true, textHeight: 1.3)
-                  ], width: 345 - 15 * 2, height: 50),
+                  sbhRow([getSimpleText("精选服务", 16, AppColor.textBlack, isBold: true, textHeight: 1.3)], width: 345 - 15 * 2, height: 50),
                   ghb(6),
                   SizedBox(
                       width: jgwidth.w,
                       height: height,
                       child: PageView.builder(
-                        physics:
-                            ctrl.btnDatas == null || ctrl.btnDatas.length == 1
-                                ? const NeverScrollableScrollPhysics()
-                                : const BouncingScrollPhysics(),
-                        itemCount:
-                            ctrl.btnDatas != null && ctrl.btnDatas.isNotEmpty
-                                ? ctrl.btnDatas.length
-                                : 0,
+                        physics: ctrl.btnDatas == null || ctrl.btnDatas.length == 1 ? const NeverScrollableScrollPhysics() : const BouncingScrollPhysics(),
+                        itemCount: ctrl.btnDatas != null && ctrl.btnDatas.isNotEmpty ? ctrl.btnDatas.length : 0,
                         itemBuilder: (context, index) {
                           return Center(
                             child: SizedBox(
                               width: jgwidth.w,
                               height: height,
-                              child: Wrap(
-                                  runSpacing: jgRunSpace.w,
-                                  children: homeButtons(
-                                      ctrl.btnDatas[index], context)),
+                              child: Wrap(runSpacing: jgRunSpace.w, children: homeButtons(ctrl.btnDatas[index], context)),
                             ),
                           );
                         },
@@ -774,28 +675,16 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                     .asMap()
                                     .entries
                                     .map((e) => Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 0.w),
+                                          margin: EdgeInsets.symmetric(horizontal: 0.w),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                ctrl.centerBtnIndex == e.key
-                                                    ? 1.5.w
-                                                    : 0),
+                                            borderRadius: BorderRadius.circular(ctrl.centerBtnIndex == e.key ? 1.5.w : 0),
                                             color: ctrl.centerBtnIndex == e.key
-                                                ? AppDefault()
-                                                        .getThemeColor() ??
-                                                    AppColor.theme
-                                                : AppDefault()
-                                                            .getThemeColor() ==
-                                                        null
+                                                ? AppDefault().getThemeColor() ?? AppColor.theme
+                                                : AppDefault().getThemeColor() == null
                                                     ? const Color(0xFFA9DAFC)
-                                                    : AppDefault()
-                                                        .getThemeColor()!
-                                                        .withOpacity(0.3),
+                                                    : AppDefault().getThemeColor()!.withOpacity(0.3),
                                           ),
-                                          width: ctrl.centerBtnIndex == e.key
-                                              ? 11.w
-                                              : 5.w,
+                                          width: ctrl.centerBtnIndex == e.key ? 11.w : 5.w,
                                           height: 3.w,
                                         ))
                                     .toList()
@@ -821,16 +710,12 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             ? ghb(0)
             : GestureDetector(
                 onTap: () {
-                  news_list.loadLibrary().then((value) => push(
-                      news_list.NewsList(), context,
-                      binding: news_list.NewsListBinding()));
+                  news_list.loadLibrary().then((value) => push(news_list.NewsList(), context, binding: news_list.NewsListBinding()));
                 },
                 child: Container(
                   height: 40.w,
                   width: 345.w,
-                  decoration: BoxDecoration(
-                      color: AppColor.pageBackgroundColor,
-                      borderRadius: BorderRadius.circular(8.w)),
+                  decoration: BoxDecoration(color: AppColor.pageBackgroundColor, borderRadius: BorderRadius.circular(8.w)),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 13.5.w),
                     child: Row(
@@ -868,8 +753,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Widget cellTitle(String title,
-      {List<Widget> right = const [], Function()? rightOnPressed}) {
+  Widget cellTitle(String title, {List<Widget> right = const [], Function()? rightOnPressed}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 20.w),
       child: sbRow([
@@ -889,11 +773,9 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
 
   Widget dataView(String t1, String t2, {int type = 1}) {
     return centClm([
-      getSimpleText(t1, type == 0 ? 30 : 12, Colors.white,
-          fw: type == 0 ? FontWeight.w500 : FontWeight.w400),
+      getSimpleText(t1, type == 0 ? 30 : 12, Colors.white, fw: type == 0 ? FontWeight.w500 : FontWeight.w400),
       ghb(type == 0 ? 6 : 5),
-      getSimpleText(t2, type == 0 ? 18 : 12, Colors.white,
-          fw: type == 0 ? FontWeight.w400 : FontWeight.w500),
+      getSimpleText(t2, type == 0 ? 18 : 12, Colors.white, fw: type == 0 ? FontWeight.w400 : FontWeight.w500),
     ]);
   }
 
@@ -905,28 +787,19 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
         onPressed: () async {
           bool isOld = HttpConfig.baseUrl.contains(AppDefault.oldSystem);
           String path = e["path"] ?? "";
-          if (isOld
-              ? path == "/pages/machine/machine"
-              : path == "/home/machinemanage") {
+          if (isOld ? path == "/pages/machine/machine" : path == "/home/machinemanage") {
             // 设备管理
             await machine_manage.loadLibrary();
-            push(machine_manage.MachineManage(), null,
-                binding: machine_manage.MachineManageBinding());
+            push(machine_manage.MachineManage(), null, binding: machine_manage.MachineManageBinding());
           } else if (isOld && path == "/pages/shop/shop_vip") {
             // Vip礼包
             await product_store_list.loadLibrary();
-            push(product_store_list.ProductStoreList(), null,
-                binding: product_store_list.ProductStoreListBinding(),
-                arguments: {"levelType": 1, "title": "VIP商城"});
+            push(product_store_list.ProductStoreList(), null, binding: product_store_list.ProductStoreListBinding(), arguments: {"levelType": 1, "title": "VIP商城"});
           } else if (isOld && path == "/pages/shop/shop") {
             // 采购商城
             await product_store_list.loadLibrary();
-            push(product_store_list.ProductStoreList(), null,
-                binding: product_store_list.ProductStoreListBinding(),
-                arguments: {"levelType": 2, "title": e["name"] ?? ""});
-          } else if (isOld
-              ? path == "/pages/rank_list/rank_list"
-              : path.contains("/home/rank")) {
+            push(product_store_list.ProductStoreList(), null, binding: product_store_list.ProductStoreListBinding(), arguments: {"levelType": 2, "title": e["name"] ?? ""});
+          } else if (isOld ? path == "/pages/rank_list/rank_list" : path.contains("/home/rank")) {
             // 排行榜
             await rank.loadLibrary();
             push(rank.Rank(), null, binding: rank.RankBinding());
@@ -936,21 +809,14 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           } else if (e["path"] == "/home/productpurchase") {
             // 礼包商城
             await product_purchase_list.loadLibrary();
-            push(product_purchase_list.ProductPurchaseList(), null,
-                binding: product_purchase_list.ProductPurchaseListBinding());
-          } else if (isOld
-              ? path == "/pages/team/team"
-              : e["path"] == "/home/teammanage") {
+            push(product_purchase_list.ProductPurchaseList(), null, binding: product_purchase_list.ProductPurchaseListBinding());
+          } else if (isOld ? path == "/pages/team/team" : e["path"] == "/home/teammanage") {
             // 团队管理
             CustomDeferred().toStatisticsFacilitatorList(arg: {"isPage": true});
-          } else if (isOld
-              ? path == "/pages/attestation/attestation"
-              : path == "/pages/authentication") {
+          } else if (isOld ? path == "/pages/attestation/attestation" : path == "/pages/authentication") {
             // 实名认证
             CustomDeferred().toIdentityAuthentication();
-          } else if (isOld
-              ? path == "/pages/merchant/merchant"
-              : e["path"] == "/home/businessinfo") {
+          } else if (isOld ? path == "/pages/merchant/merchant" : e["path"] == "/home/businessinfo") {
             // 商户信息
             CustomDeferred().toStatisticsBusinessList(arg: {"isPage": true});
           } else if (e["path"] == "/home/integralstore") {
@@ -959,79 +825,52 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           } else if (e["path"] == "/home/machinetransfer") {
             // 机具划拨
             await machine_transfer.loadLibrary();
-            push(machine_transfer.MachineTransfer(isLock: false), null,
-                binding: machine_transfer.MachineTransferBinding());
+            push(machine_transfer.MachineTransfer(isLock: false), null, binding: machine_transfer.MachineTransferBinding());
           } else if (e['path'] == "/home/machinetransferback") {
             // 机具回拨
             await machine_transfer_userlist.loadLibrary();
-            push(
-                machine_transfer_userlist.MachineTransferUserList(
-                    isTerminalBack: true),
-                null,
-                binding:
-                    machine_transfer_userlist.MachineTransferUserListBinding());
-          } else if (isOld
-              ? path == "/pages/share/share"
-              : path == "/home/shareinvite") {
+            push(machine_transfer_userlist.MachineTransferUserList(isTerminalBack: true), null, binding: machine_transfer_userlist.MachineTransferUserListBinding());
+          } else if (isOld ? path == "/pages/share/share" : path == "/home/shareinvite") {
             await share_invite.loadLibrary();
-            push(share_invite.ShareInvite(), null,
-                binding: share_invite.ShareInviteBinding());
+            push(share_invite.ShareInvite(), null, binding: share_invite.ShareInviteBinding());
           } else if (e["path"] == "/home/vipstore") {
             pushStore(e);
-          } else if (isOld
-              ? path == "/pages/academy/academy"
-              : e["path"] == "/home/businessschool") {
+          } else if (isOld ? path == "/pages/academy/academy" : e["path"] == "/home/businessschool") {
             // 商学院
             await business_school_list_page.loadLibrary();
-            push(business_school_list_page.BusinessSchoolListPage(), null,
-                binding:
-                    business_school_list_page.BusinessSchoolListPageBinding(),
-                arguments: {"index": 0});
+            push(business_school_list_page.BusinessSchoolListPage(), null, binding: business_school_list_page.BusinessSchoolListPageBinding(), arguments: {"index": 0});
           } else if (path == "/home/usermanage") {
             // 用户管理
             await statistics_user_manage.loadLibrary();
-            push(statistics_user_manage.StatisticsUserManage(), null,
-                binding: statistics_user_manage.StatisticsUserManageBinding());
+            push(statistics_user_manage.StatisticsUserManage(), null, binding: statistics_user_manage.StatisticsUserManageBinding());
           } else if (path == "/home/contactcustomerservice") {
             // 联系客服
             await contact_customer_service.loadLibrary();
-            push(contact_customer_service.ContactCustomerService(), null,
-                binding:
-                    contact_customer_service.ContactCustomerServiceBinding());
+            push(contact_customer_service.ContactCustomerService(), null, binding: contact_customer_service.ContactCustomerServiceBinding());
           } else if (path == "/home/integralrepurchase") {
             await integral_repurchase.loadLibrary();
             // 积分复购
-            push(integral_repurchase.IntegralRepurchase(), null,
-                binding: integral_repurchase.IntegralRepurchaseBinding());
+            push(integral_repurchase.IntegralRepurchase(), null, binding: integral_repurchase.IntegralRepurchaseBinding());
           } else if (path == "/home/machineregister") {
             //设备注册
             await machine_register.loadLibrary();
-            push(machine_register.MachineRegister(), null,
-                binding: machine_register.MachineRegisterBinding());
+            push(machine_register.MachineRegister(), null, binding: machine_register.MachineRegisterBinding());
           } else if (path == "/home/mywallet") {
             // 我的钱包
             await my_wallet.loadLibrary();
-            push(my_wallet.MyWallet(), null,
-                binding: my_wallet.MyWalletBinding());
+            push(my_wallet.MyWallet(), null, binding: my_wallet.MyWalletBinding());
           } else if (path == "/home/machinestore") {
             await machine_pay_page.loadLibrary();
-            push(machine_pay_page.MachinePayPage(), null,
-                binding: machine_pay_page.MachinePayPageBinding());
+            push(machine_pay_page.MachinePayPage(), null, binding: machine_pay_page.MachinePayPageBinding());
           } else if (e["path"] == "/home/merchantaccessnetwork") {
             await merchant_access_network.loadLibrary();
-            push(merchant_access_network.MerchantAccessNetwork(), null,
-                binding:
-                    merchant_access_network.MerchantAccessNetworkBinding());
+            push(merchant_access_network.MerchantAccessNetwork(), null, binding: merchant_access_network.MerchantAccessNetworkBinding());
           } else if (e["path"] == "/pages/booked/booked") {
           } else if (e["path"] == "/home/terminalreceive") {
             await product.loadLibrary();
-            push(product.Product(subPage: true), null,
-                binding: product.ProductBinding());
-          } else if (isOld
-              ? path == "/pages/associate/associate"
-              : e["path"] == "/home/terminalbinding") {
-            terminal_binding.loadLibrary().then(
-                (value) => push(terminal_binding.TerminalBinding(), context));
+            push(product.Product(subPage: true), null, binding: product.ProductBinding());
+          } else if (isOld ? path == "/pages/associate/associate" : e["path"] == "/home/terminalbinding") {
+            terminal_binding.loadLibrary().then((value) => push(terminal_binding.TerminalBinding(), context));
           } else if (path.contains("/pages/store")) {
             await product_store_list.loadLibrary();
             int type = 1;
@@ -1047,9 +886,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                 }
               }
             }
-            push(product_store_list.ProductStoreList(), null,
-                binding: product_store_list.ProductStoreListBinding(),
-                arguments: {"levelType": type, "title": e["name"] ?? ""});
+            push(product_store_list.ProductStoreList(), null, binding: product_store_list.ProductStoreListBinding(), arguments: {"levelType": type, "title": e["name"] ?? ""});
           } else if (path == "/pages/extensionreward") {
             /// 拓新奖励
             CustomDeferred().toExtensionRewardPage();
@@ -1126,10 +963,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                           ),
                           alignment: Alignment.center,
                           child: sbhRow([
-                            getSimpleText(
-                                ctrl.machineDataIdx == 0 ? "押金/激活" : "达标/返现",
-                                12,
-                                AppColor.textBlack),
+                            getSimpleText(ctrl.machineDataIdx == 0 ? "押金/激活" : "达标/返现", 12, AppColor.textBlack),
                             Image.asset(
                               assetsName("home/icon_arrow_down"),
                               width: 6.w,
@@ -1147,12 +981,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                     height: 30.w,
                                     child: Align(
                                       alignment: const Alignment(-0.3, 0),
-                                      child: getSimpleText(
-                                          index == 0 ? "押金/激活" : "达标/返现",
-                                          12,
-                                          ctrl.machineDataIdx == index
-                                              ? AppColor.textRed
-                                              : AppColor.textBlack),
+                                      child: getSimpleText(index == 0 ? "押金/激活" : "达标/返现", 12, ctrl.machineDataIdx == index ? AppColor.textRed : AppColor.textBlack),
                                     ),
                                   ),
                                 ]))),
@@ -1166,14 +995,12 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         itemPadding: EdgeInsets.zero,
                         dropdownPadding: EdgeInsets.zero,
                         dropdownWidth: 90.w,
-                        dropdownDecoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.w),
-                            boxShadow: [
-                              BoxShadow(
-                                  color: const Color(0x1A040000),
-                                  // offset: Offset(0, 5.w),
-                                  blurRadius: 5.w)
-                            ]))),
+                        dropdownDecoration: BoxDecoration(borderRadius: BorderRadius.circular(4.w), boxShadow: [
+                          BoxShadow(
+                              color: const Color(0x1A040000),
+                              // offset: Offset(0, 5.w),
+                              blurRadius: 5.w)
+                        ]))),
               ], width: 315),
               ghb(25),
               Padding(

@@ -25,9 +25,7 @@ class ShareInvitePreviewController extends GetxController {
 class ShareInvitePreview extends GetView<ShareInvitePreviewController> {
   final bool haveInfo;
   final String image;
-  const ShareInvitePreview(
-      {Key? key, required this.haveInfo, required this.image})
-      : super(key: key);
+  const ShareInvitePreview({Key? key, required this.haveInfo, required this.image}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +40,7 @@ class ShareInvitePreview extends GetView<ShareInvitePreviewController> {
               width: 70.w,
               height: kToolbarHeight,
               child: Center(
-                child:
-                    getSimpleText("取消", 14, AppColor.textBlack, isBold: true),
+                child: getSimpleText("取消", 14, AppColor.textBlack, isBold: true),
               ),
             ),
           ),
@@ -71,18 +68,9 @@ class ShareInvitePreview extends GetView<ShareInvitePreviewController> {
                     child: sbRow([
                       haveInfo
                           ? centClm([
-                              getSimpleText(
-                                  controller.homeData["nickName"].isEmpty
-                                      ? controller.homeData["u_Mobile"]
-                                      : controller.homeData["nickName"],
-                                  20,
-                                  AppColor.textBlack,
-                                  isBold: true),
+                              getSimpleText(controller.homeData["nickName"].isEmpty ? controller.homeData["u_Mobile"] : controller.homeData["nickName"], 20, AppColor.textBlack, isBold: true),
                               ghb(8),
-                              getSimpleText(
-                                  "推荐码：${controller.homeData["u_Number"] ?? ""}",
-                                  13,
-                                  AppColor.textBlack),
+                              getSimpleText("推荐码：${controller.homeData["u_Number"] ?? ""}", 13, AppColor.textBlack),
                             ], crossAxisAlignment: CrossAxisAlignment.start)
                           : gwb(0),
                       // Image.asset("",width: 60.5.w,height: 60.w,),

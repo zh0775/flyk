@@ -191,6 +191,7 @@ flutter:
     - assets/images/ranking/
     - assets/images/support/
     - assets/images/extension_reward/
+    - assets/images/merchant/
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
