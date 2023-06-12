@@ -221,7 +221,7 @@ class MerchantAccessNetworkDetail extends StatelessWidget {
                       getWidthText(productInfo["meta"] ?? "", 14, Colors.white, 180, 3),
                     ], crossAxisAlignment: CrossAxisAlignment.start),
                   ]),
-                  QrImage(
+                  QrImageView(
                     data: productInfo["url"] ?? "",
                     size: 42.w,
                     padding: EdgeInsets.zero,

@@ -1,8 +1,10 @@
 // 创业支持页面
 
+import 'package:cxhighversion2/component/bottom_paypassword.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/entrepreneurship_support/apply_record.dart';
 import 'package:cxhighversion2/service/http.dart';
+import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,8 @@ class SupportBinding implements Bindings {
 }
 
 class SupportController extends GetxController {
+  late BottomPayPassword bottomPayPassword;
+
   final _currentIndex = 0.obs;
   int get currentIndex => _currentIndex.value;
   set currentIndex(v) => _currentIndex.value = v;
@@ -31,25 +35,61 @@ class SupportController extends GetxController {
 
   List supportData = [];
 
-  getSupportData() {
-    Http().doPost(
-      'https://mock.apifox.cn/m1/2153127-0-default/api/entrepreneurship/support/list',
-      {},
-      success: (json) {
-        if (json['success']) {
-          Map data = json['data'] ?? {};
-          supportData = data['rows'] ?? [];
+  int exchangeId = 0;
 
+  getSupportData() {
+    simpleRequest(
+        url: Urls.getSupport,
+        params: {},
+        otherData: {"pageSize": 20, "pageNo": 1},
+        success: (success, json) {
+          if (success) {
+            Map jsonData = json['data'] ?? {};
+            supportData = jsonData['data'] ?? [];
+            update();
+          }
+        },
+        after: () {});
+    // Http().doPost(
+    //   'https://mock.apifox.cn/m1/2153127-0-default/api/entrepreneurship/support/list',
+    //   {},
+    //   success: (json) {
+    //     if (json['success']) {
+    //       Map data = json['data'] ?? {};
+    //       supportData = data['rows'] ?? [];
+
+    //       update();
+    //     }
+    //   },
+    // );
+  }
+
+  // 确定兑换
+  confirmExchangeVoucher(String pwd) {
+    simpleRequest(
+      url: Urls.exchangeVoucher,
+      params: {},
+      otherData: {"id": exchangeId, "u_3nd_Pad": pwd},
+      success: (success, json) {
+        if (success) {
+          ShowToast.normal(json['message'] ?? '提交成功');
           update();
         }
       },
+      after: () {},
     );
   }
+  // exchangeVoucher
 
   // 初始化
   @override
   void onInit() {
     getSupportData();
+    bottomPayPassword = BottomPayPassword.init(
+      confirmClick: (payPwd) {
+        confirmExchangeVoucher(payPwd);
+      },
+    );
     super.onInit();
   }
 }
@@ -154,7 +194,7 @@ class SupportPage extends GetView<SupportController> {
             width: 375.w,
             padding: EdgeInsets.only(top: controller.supportData.isNotEmpty ? 15.w : 120.w + 15.w),
             child: Column(
-                children: List.generate(controller.supportData.length, (index) {
+                children: List.generate((controller.supportData ?? []).length, (index) {
               Map data = controller.supportData[index] ?? {};
               return supportItem(data, index);
             })));
@@ -189,8 +229,17 @@ class SupportPage extends GetView<SupportController> {
                   fit: BoxFit.fill,
                 ),
                 gwb(12.5),
-                getSimpleText("${item['supportName']}", 16, const Color(0xFF333333)),
-                item['isStageable']
+                getSimpleText("${item['cT_Title'] ?? ''}", 16, const Color(0xFF333333)),
+                // Container(
+                //   padding: EdgeInsets.fromLTRB(5.w, 3.w, 5.w, 3.w),
+                //   margin: EdgeInsets.only(left: 7.w),
+                //   decoration: BoxDecoration(
+                //     color: const Color(0x10FE4D3B),
+                //     borderRadius: BorderRadius.circular(2.w),
+                //   ),
+                //   child: getSimpleText('可分期', 12, const Color(0xFFFE4D3B)),
+                // ),
+                ((item['cT_Period'] ?? -1) > 0)
                     ? Container(
                         padding: EdgeInsets.fromLTRB(5.w, 3.w, 5.w, 3.w),
                         margin: EdgeInsets.only(left: 7.w),
@@ -198,18 +247,7 @@ class SupportPage extends GetView<SupportController> {
                           color: const Color(0x10FE4D3B),
                           borderRadius: BorderRadius.circular(2.w),
                         ),
-                        child: getSimpleText('可分期', 12, const Color(0xFFFE4D3B)),
-                      )
-                    : gwb(0),
-                (item['isStageable'] && item['maxPeriods'] > 0)
-                    ? Container(
-                        padding: EdgeInsets.fromLTRB(5.w, 3.w, 5.w, 3.w),
-                        margin: EdgeInsets.only(left: 7.w),
-                        decoration: BoxDecoration(
-                          color: const Color(0x10FE4D3B),
-                          borderRadius: BorderRadius.circular(2.w),
-                        ),
-                        child: getSimpleText("最多${item['maxPeriods']}期", 12, const Color(0xFFFE4D3B)),
+                        child: getSimpleText("兑换周期  ${item['cT_Period'] ?? 0}个月", 12, const Color(0xFFFE4D3B)),
                       )
                     : gwb(0)
               ],
@@ -224,16 +262,29 @@ class SupportPage extends GetView<SupportController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
-                  children: [getSimpleText("${item['maxAmount']}", 18, const Color(0xFF333333), isBold: true), getSimpleText('最大额度(元)', 12, const Color(0xFF999999))],
+                  children: [getSimpleText("${item['cT_BeginLoans'] ?? 0}", 18, const Color(0xFF333333), isBold: true), getSimpleText('最小额度(元)', 12, const Color(0xFF999999))],
                 ),
                 Column(
-                  children: [getSimpleText("> ${item['monthlyShare']}", 18, const Color(0xFF333333), isBold: true), getSimpleText('月分润', 12, const Color(0xFF999999))],
+                  children: [getSimpleText("${item['cT_EndLoans'] ?? 0}", 18, const Color(0xFF333333), isBold: true), getSimpleText('最大额度(元)', 12, const Color(0xFF999999))],
                 ),
                 CustomButton(
                   onPressed: () {
                     controller.currentIndex = current;
-                    ShowToast.normal("您还未获得申请资格");
-                    supportPopupSheet(Global.navigatorKey.currentContext!);
+                    controller.exchangeId = item['id'];
+                    // ShowToast.normal("您还未获得申请资格");
+                    // supportPopupSheet(Global.navigatorKey.currentContext!);
+                    showAlert(
+                      Global.navigatorKey.currentContext!,
+                      "您已选择机具分期套餐，审核达标后客服会与您联系，请保持电话畅通并耐心等待。",
+                      title: "温馨提示",
+                      cancelText: "我再想想",
+                      confirmBtnColor: Colors.white,
+                      confirmStyle: TextStyle(fontSize: 16.sp, color: AppColor.theme),
+                      confirmOnPressed: () {
+                        Get.back();
+                        controller.bottomPayPassword.show();
+                      },
+                    );
                   },
                   child: Container(
                     alignment: Alignment.center,
@@ -251,109 +302,109 @@ class SupportPage extends GetView<SupportController> {
     );
   }
 
-  supportPopupSheet(BuildContext context) {
-    Get.bottomSheet(Container(
-      width: 375.w,
-      height: 300.w,
-      padding: EdgeInsets.all(15.w),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(16.w), topRight: Radius.circular(16.w)),
-        color: Colors.white,
-      ),
-      child: Column(
-        children: [
-          SizedBox(
-            width: 375.w - 15.w * 2,
-            height: 50.w - 15.w,
-            child: Stack(
-              children: [
-                Center(
-                  child: getSimpleText('选择分期', 16, const Color(0xFF333333), isBold: true),
-                ),
-                Positioned(
-                    right: 0,
-                    top: 10.w,
-                    child: CustomButton(
-                      onPressed: () {
-                        controller.stagCurrentIndex = 0;
-                        Get.back();
-                      },
-                      child: Image.asset(
-                        width: 12.w,
-                        height: 12.w,
-                        assetsName('support/icon_close'),
-                        fit: BoxFit.fill,
-                      ),
-                    ))
-              ],
-            ),
-          ),
-          Container(
-            width: 375.w - 15.w * 2,
-            height: 0.5.w,
-            color: const Color(0xFFEEEEEE),
-          ),
-          ghb(20.w),
-          Column(
-            children: [
-              getContentText('选择您想要的分期套餐，审核达标后客服会与您联系，请保持电 话畅通并耐心等待。', 12, const Color(0xFF333333), 345.w, 32.5.w, 2),
-              ghb(26.5),
-              SizedBox(
-                width: 375.w,
-                height: 90.w,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: controller.supportData[controller.currentIndex]['maxPeriods'] ?? 0,
-                    itemBuilder: (context, index) {
-                      return CustomButton(
-                        onPressed: () {
-                          controller.stagCurrentIndex = index;
-                        },
-                        child: GetX<SupportController>(
-                          builder: (_) {
-                            return Container(
-                              width: 90.w,
-                              height: 90.w,
-                              margin: EdgeInsets.only(right: 21.5.w),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.w),
-                                border: Border.all(width: 0.5.w, color: controller.stagCurrentIndex == index ? const Color(0xFFFE4B3B) : const Color(0xFFCCCCCC)),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  getSimpleText("${controller.supportData[controller.currentIndex]['periodsList'][index]['periodMonth']}", 24, controller.stagCurrentIndex == index ? const Color(0xFFFE4B3B) : const Color(0xFF333333), isBold: true),
-                                  getSimpleText("￥${controller.supportData[controller.currentIndex]['periodsList'][index]['periodMoney']}/期", 12, controller.stagCurrentIndex == index ? const Color(0xFFFE4B3B) : const Color(0xFF333333)),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    }),
-              )
-            ],
-          ),
-          ghb(15.w),
-          CustomButton(
-            onPressed: () {
-              ShowToast.success("${controller.currentIndex}-${controller.stagCurrentIndex}");
-            },
-            child: Container(
-              width: 345.w,
-              height: 45.w,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [
-                    Color(0xFFFD573B),
-                    Color(0xFFFF3A3A),
-                  ]),
-                  borderRadius: BorderRadius.circular(45.w / 2)),
-              child: getSimpleText('确定', 16, Colors.white),
-            ),
-          )
-        ],
-      ),
-    ));
-  }
+  // supportPopupSheet(BuildContext context) {
+  //   Get.bottomSheet(Container(
+  //     width: 375.w,
+  //     height: 300.w,
+  //     padding: EdgeInsets.all(15.w),
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.only(topLeft: Radius.circular(16.w), topRight: Radius.circular(16.w)),
+  //       color: Colors.white,
+  //     ),
+  //     child: Column(
+  //       children: [
+  //         SizedBox(
+  //           width: 375.w - 15.w * 2,
+  //           height: 50.w - 15.w,
+  //           child: Stack(
+  //             children: [
+  //               Center(
+  //                 child: getSimpleText('选择分期', 16, const Color(0xFF333333), isBold: true),
+  //               ),
+  //               Positioned(
+  //                   right: 0,
+  //                   top: 10.w,
+  //                   child: CustomButton(
+  //                     onPressed: () {
+  //                       controller.stagCurrentIndex = 0;
+  //                       Get.back();
+  //                     },
+  //                     child: Image.asset(
+  //                       width: 12.w,
+  //                       height: 12.w,
+  //                       assetsName('support/icon_close'),
+  //                       fit: BoxFit.fill,
+  //                     ),
+  //                   ))
+  //             ],
+  //           ),
+  //         ),
+  //         Container(
+  //           width: 375.w - 15.w * 2,
+  //           height: 0.5.w,
+  //           color: const Color(0xFFEEEEEE),
+  //         ),
+  //         ghb(20.w),
+  //         Column(
+  //           children: [
+  //             getContentText('选择您想要的分期套餐，审核达标后客服会与您联系，请保持电 话畅通并耐心等待。', 12, const Color(0xFF333333), 345.w, 32.5.w, 2),
+  //             ghb(26.5),
+  //             SizedBox(
+  //               width: 375.w,
+  //               height: 90.w,
+  //               child: ListView.builder(
+  //                   scrollDirection: Axis.horizontal,
+  //                   itemCount: controller.supportData[controller.currentIndex]['cT_Period'] ?? 0,
+  //                   itemBuilder: (context, index) {
+  //                     return CustomButton(
+  //                       onPressed: () {
+  //                         controller.stagCurrentIndex = index;
+  //                       },
+  //                       child: GetX<SupportController>(
+  //                         builder: (_) {
+  //                           return Container(
+  //                             width: 90.w,
+  //                             height: 90.w,
+  //                             margin: EdgeInsets.only(right: 21.5.w),
+  //                             decoration: BoxDecoration(
+  //                               borderRadius: BorderRadius.circular(8.w),
+  //                               border: Border.all(width: 0.5.w, color: controller.stagCurrentIndex == index ? const Color(0xFFFE4B3B) : const Color(0xFFCCCCCC)),
+  //                             ),
+  //                             child: Column(
+  //                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                               children: [
+  //                                 getSimpleText("${controller.supportData[controller.currentIndex]['periodsList'][index]['periodMonth']}", 24, controller.stagCurrentIndex == index ? const Color(0xFFFE4B3B) : const Color(0xFF333333), isBold: true),
+  //                                 getSimpleText("￥${controller.supportData[controller.currentIndex]['periodsList'][index]['periodMoney']}/期", 12, controller.stagCurrentIndex == index ? const Color(0xFFFE4B3B) : const Color(0xFF333333)),
+  //                               ],
+  //                             ),
+  //                           );
+  //                         },
+  //                       ),
+  //                     );
+  //                   }),
+  //             )
+  //           ],
+  //         ),
+  //         ghb(15.w),
+  //         CustomButton(
+  //           onPressed: () {
+  //             ShowToast.success("${controller.currentIndex}-${controller.stagCurrentIndex}");
+  //           },
+  //           child: Container(
+  //             width: 345.w,
+  //             height: 45.w,
+  //             alignment: Alignment.center,
+  //             decoration: BoxDecoration(
+  //                 gradient: const LinearGradient(colors: [
+  //                   Color(0xFFFD573B),
+  //                   Color(0xFFFF3A3A),
+  //                 ]),
+  //                 borderRadius: BorderRadius.circular(45.w / 2)),
+  //             child: getSimpleText('确定', 16, Colors.white),
+  //           ),
+  //         )
+  //       ],
+  //     ),
+  //   ));
+  // }
 }

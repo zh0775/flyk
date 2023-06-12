@@ -16,8 +16,7 @@ import 'package:universal_html/html.dart' as html;
 class FinanceSpaceCardPopBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<FinanceSpaceCardPopController>(
-        FinanceSpaceCardPopController(datas: Get.arguments));
+    Get.put<FinanceSpaceCardPopController>(FinanceSpaceCardPopController(datas: Get.arguments));
   }
 }
 
@@ -50,12 +49,9 @@ class FinanceSpaceCardPopController extends GetxController {
     homeData = AppDefault().homeData;
     Map publicHomeData = AppDefault().publicHomeData;
     if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
-      shareUrl =
-          (publicHomeData["webSiteInfo"] ?? {})["System_Download_Url"] ?? "";
+      shareUrl = (publicHomeData["webSiteInfo"] ?? {})["System_Download_Url"] ?? "";
     } else {
-      shareUrl = (((publicHomeData["webSiteInfo"] ?? {})["app"] ??
-              {})["apP_ExternalReg_Url"] ??
-          "");
+      shareUrl = (((publicHomeData["webSiteInfo"] ?? {})["app"] ?? {})["apP_ExternalReg_Url"] ?? "");
     }
 
     cardData = (datas ?? {})["data"] ?? {};
@@ -71,19 +67,13 @@ class FinanceSpaceCardPop extends GetView<FinanceSpaceCardPopController> {
     return Scaffold(
         appBar: getDefaultAppBar(context, "我要推广"),
         body: Builder(builder: (context) {
-          controller
-              .setAppBarMaxHeight(Scaffold.of(context).appBarMaxHeight ?? 0);
+          controller.setAppBarMaxHeight(Scaffold.of(context).appBarMaxHeight ?? 0);
 
           return Stack(
             children: [
               Positioned.fill(
                   child: Container(
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        alignment: Alignment.topCenter,
-                        fit: BoxFit.fitWidth,
-                        image: AssetImage(
-                            assetsName("business/finance/bg_tuiguang")))),
+                decoration: BoxDecoration(image: DecorationImage(alignment: Alignment.topCenter, fit: BoxFit.fitWidth, image: AssetImage(assetsName("business/finance/bg_tuiguang")))),
               )),
               Positioned.fill(
                   // bottom: 105.w + paddingSizeBottom(context),
@@ -129,17 +119,13 @@ class FinanceSpaceCardPop extends GetView<FinanceSpaceCardPopController> {
     return Container(
       width: 320.w,
       height: controller.contentHeight,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(share ? 0 : 8.w)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(share ? 0 : 8.w)),
       child: Column(
         children: [
           SizedBox(
             height: 65.w * scale,
             child: Center(
-              child: getSimpleText(
-                  controller.cardData["title"], 18 * scale, AppColor.text,
-                  isBold: true),
+              child: getSimpleText(controller.cardData["title"], 18 * scale, AppColor.text, isBold: true),
             ),
           ),
           CustomNetworkImage(
@@ -162,20 +148,15 @@ class FinanceSpaceCardPop extends GetView<FinanceSpaceCardPopController> {
                   height: 18.w * scale,
                   alignment: Alignment.center,
                   padding: EdgeInsets.symmetric(horizontal: 7.w * scale),
-                  decoration: BoxDecoration(
-                      color: AppColor.theme.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(2.w * scale)),
-                  child: getSimpleText(
-                      "奖励￥${controller.cardData["price"]}", 10, AppColor.theme),
+                  decoration: BoxDecoration(color: AppColor.theme.withOpacity(0.1), borderRadius: BorderRadius.circular(2.w * scale)),
+                  child: getSimpleText("奖励￥${controller.cardData["price"]}", 10, AppColor.theme),
                 )
               ]),
             ),
           ),
           ghb(22 * scale),
-          QrImage(
-            data: controller.shareUrl.isNotEmpty
-                ? "${controller.shareUrl}?u_Number=${controller.homeData["u_Number"] ?? ""}&bankCardId=${controller.cardData["id"] ?? 0}"
-                : "",
+          QrImageView(
+            data: controller.shareUrl.isNotEmpty ? "${controller.shareUrl}?u_Number=${controller.homeData["u_Number"] ?? ""}&bankCardId=${controller.cardData["id"] ?? 0}" : "",
             // size: !kIsWeb ? 66.w : 56.w,
             size: 100.w * scale,
             padding: EdgeInsets.zero,
@@ -183,22 +164,14 @@ class FinanceSpaceCardPop extends GetView<FinanceSpaceCardPopController> {
           SizedBox(
             height: 44.w * scale,
             child: Center(
-              child: getSimpleText(
-                  "我的推广码：${controller.homeData["u_Number"] ?? ""}",
-                  12,
-                  AppColor.text2),
+              child: getSimpleText("我的推广码：${controller.homeData["u_Number"] ?? ""}", 12, AppColor.text2),
             ),
           ),
           ghb(23),
           !share
               ? getSubmitBtn("推荐给好友", () {
                   showShareBottomModel(Global.navigatorKey.currentContext!);
-                },
-                  color: AppColor.themeOrange,
-                  fontSize: 18,
-                  height: 45,
-                  width: 180,
-                  isBold: true)
+                }, color: AppColor.themeOrange, fontSize: 18, height: 45, width: 180, isBold: true)
               : ghb(0)
         ],
       ),
@@ -238,10 +211,7 @@ class FinanceSpaceCardPop extends GetView<FinanceSpaceCardPopController> {
         // }
         // Uint8List imageBytes = byteData.buffer.asUint8List();
 
-        Uint8List imageBytes = await ScreenshotController().captureFromWidget(
-            shareView(true),
-            delay: const Duration(milliseconds: 100),
-            context: context);
+        Uint8List imageBytes = await ScreenshotController().captureFromWidget(shareView(true), delay: const Duration(milliseconds: 100), context: context);
 
         if (idx == 0) {
           AppWechatManager().sharePriendWithFile(imageBytes);
@@ -250,8 +220,7 @@ class FinanceSpaceCardPop extends GetView<FinanceSpaceCardPopController> {
         } else if (idx == 2) {
           saveAssetsImg(imageBytes);
         } else if (idx == 3) {
-          copyClipboard(
-              "${controller.shareUrl}?u_Number=${controller.homeData["u_Number"] ?? ""}&bankCardId=${controller.cardData["id"] ?? 0}");
+          copyClipboard("${controller.shareUrl}?u_Number=${controller.homeData["u_Number"] ?? ""}&bankCardId=${controller.cardData["id"] ?? 0}");
         }
       },
       child: centClm([
@@ -292,8 +261,7 @@ class FinanceSpaceCardPop extends GetView<FinanceSpaceCardPopController> {
     if (kIsWeb) {
       if (imageBytes != null) {
         final base64data = base64Encode(imageBytes.toList());
-        final a =
-            html.AnchorElement(href: 'data:image/jpeg;base64,$base64data');
+        final a = html.AnchorElement(href: 'data:image/jpeg;base64,$base64data');
         a.download = "${DateTime.now().millisecondsSinceEpoch}";
         a.click();
         a.remove();
@@ -321,12 +289,7 @@ class FinanceSpaceCardPop extends GetView<FinanceSpaceCardPopController> {
       padding: EdgeInsets.only(
         bottom: paddingSizeBottom(context),
       ),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(8.w)),
-          boxShadow: [
-            BoxShadow(color: const Color(0x26000000), blurRadius: 5.w)
-          ]),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(8.w)), boxShadow: [BoxShadow(color: const Color(0x26000000), blurRadius: 5.w)]),
       child: centRow([
         shareButotn(3, context),
         gwb(41.5),

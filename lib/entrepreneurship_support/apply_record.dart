@@ -3,6 +3,7 @@
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/service/http.dart';
+import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -55,10 +56,10 @@ class SupportApplyRecordController extends GetxController {
     String applyStatusStr = "";
     switch (index) {
       case 0:
-        applyStatusStr = "申请通过";
+        applyStatusStr = "申请中";
         break;
       case 1:
-        applyStatusStr = "申请中";
+        applyStatusStr = "申请通过 ";
         break;
       case 2:
         applyStatusStr = "申请未通过";
@@ -76,20 +77,37 @@ class SupportApplyRecordController extends GetxController {
       isLoading = true;
     }
 
-    Http().doPost('https://mock.apifox.cn/m1/2153127-0-default/api/entrepreneurship/support/record', {"type": topCurrentIndex, "pageNum": currentPageNumm, "pageSize": 10}, success: (json) {
-      Map data = json['data'] ?? {};
-      applyRecordData[topIndex]['total'] = data['total'] ?? 0;
-      if (applyRecordData[topIndex]['data'].length <= applyRecordData[topIndex]['total']) {
-        List newData = data['rows'] ?? [];
-        applyRecordData[topIndex]['data'] = isLoad ? [...applyRecordData[topIndex]['data'], ...newData] : newData;
-      }
+    // Http().doPost('https://mock.apifox.cn/m1/2153127-0-default/api/entrepreneurship/support/record', {"type": topCurrentIndex, "pageNum": currentPageNumm, "pageSize": 10}, success: (json) {
+    //   Map data = json['data'] ?? {};
+    //   applyRecordData[topIndex]['total'] = data['total'] ?? 0;
+    //   if (applyRecordData[topIndex]['data'].length <= applyRecordData[topIndex]['total']) {
+    //     List newData = data['rows'] ?? [];
+    //     applyRecordData[topIndex]['data'] = isLoad ? [...applyRecordData[topIndex]['data'], ...newData] : newData;
+    //   }
 
-      update([topIndex == 0 ? allApplayRecordId : (topIndex == 1 ? hasApplayRecordId : hasNotApplayRecordId)]);
+    //   update([topIndex == 0 ? allApplayRecordId : (topIndex == 1 ? hasApplayRecordId : hasNotApplayRecordId)]);
 
-      // update([topIndex == 0 ? hasRedPacketDetailId : hasNotRedPacketDetailId]);
-    }, after: () {
-      isLoading = false;
-    });
+    //   // update([topIndex == 0 ? hasRedPacketDetailId : hasNotRedPacketDetailId]);
+    // }, after: () {
+    //   isLoading = false;
+    // });
+    simpleRequest(
+        url: Urls.applyExchangeRecord,
+        params: {},
+        otherData: {"d_Type": topCurrentIndex == 0 ? -1 : topCurrentIndex, "pageNo": currentPageNumm, "pageSize": 10},
+        success: (success, json) {
+          Map jsonData = json['data'] ?? {};
+          applyRecordData[topIndex]['total'] = jsonData['pagesTotal'] ?? 0;
+          if (applyRecordData[topIndex]['data'].length <= applyRecordData[topIndex]['total']) {
+            List newData = jsonData['data'] ?? [];
+            applyRecordData[topIndex]['data'] = isLoad ? [...applyRecordData[topIndex]['data'], ...newData] : newData;
+          }
+
+          update([topIndex == 0 ? allApplayRecordId : (topIndex == 1 ? hasApplayRecordId : hasNotApplayRecordId)]);
+        },
+        after: () {
+          isLoading = false;
+        });
   }
 
   // 初始化数据
@@ -219,10 +237,10 @@ class SupportApplyRecordPage extends GetView<SupportApplyRecordController> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [getSimpleText("${data['name']}", 15, const Color(0xFF333333)), getSimpleText(controller.applyRecordStatus(data['applyStatus']), 12, Color(data['applyStatus'] == 2 ? 0xFFFE4D3B : 0xFF999999))],
+            children: [getSimpleText("${data['cT_Title']}", 15, const Color(0xFF333333)), getSimpleText(controller.applyRecordStatus(data['cT_State']), 12, Color(data['cT_State'] == 2 ? 0xFFFE4D3B : 0xFF999999))],
           ),
           ghb(8),
-          SizedBox(width: 375.w, child: getSimpleText("${data['time']}", 12, const Color(0xFF999999)))
+          SizedBox(width: 375.w, child: getSimpleText("${data['addTime']}", 12, const Color(0xFF999999)))
         ],
       ),
     );
