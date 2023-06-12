@@ -1,5 +1,6 @@
 import 'package:cxhighversion2/business/mallOrder/mall_order_page.dart'
     deferred as mall_order_page;
+import 'package:cxhighversion2/business/mallOrder/mall_order_page.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/entrepreneurship_support/support.dart';
@@ -166,7 +167,8 @@ class MinePageController extends GetxController {
     // cClient = (AppDefault().homeData["u_Role"] ?? 0) == 0;
     aboutMeInfoContent = info["apP_Introduction"] ?? "";
     isAuth = (homeData["authentication"] ?? {})["isCertified"] ?? false;
-    level = homeData["uL_Level"] ?? 1;
+    level = homeData["userVIPLevel"] ?? 1;
+    level -= 1;
     if (level > 9) {
       level = 9;
     }
@@ -595,7 +597,7 @@ class _MinePageState extends State<MinePage>
           //   "newVersionNumber": "测试版",
           //   "newVersionDownloadUrl":
           //       "http://image.gxkunyuan.cn/D0034/Android/1.0.02X0R6.apk",
-          //   "version_Content": "问题修改"
+          //   "version_Content": "问题修改"·
           // });
         };
 
@@ -603,7 +605,9 @@ class _MinePageState extends State<MinePage>
       case "积分订单":
         imgSubStr = "jfdd";
         onPressed = () {
-          push(const SupportPage(), null, binding: SupportBinding());
+          push(const MallOrderPage(), null,
+              binding: MallOrderPageBinding(), arguments: {"index": 0});
+          // push(const SupportPage(), null, binding: SupportBinding());
         };
 
         break;

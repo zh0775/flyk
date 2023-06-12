@@ -65,7 +65,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:platform_device_id/platform_device_id.dart';
-
 import 'businessSchool/business_school_list_page.dart'
     deferred as business_school_list_page;
 
