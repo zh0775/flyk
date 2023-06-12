@@ -90,7 +90,7 @@ dependencies:
   # dynamic_icon_flutter: 
   #   path: /Users/zhanghan/Documents/workspace/flutterPlugin/dynamic_icon_flutter-0.0.7
   fluwx: ^3.9.2
-  qr_flutter: ^4.0.0
+  qr_flutter: ^4.1.0
   screenshot: ^1.2.3
   card_swiper: ^2.0.4
   path_provider: ^2.0.11
