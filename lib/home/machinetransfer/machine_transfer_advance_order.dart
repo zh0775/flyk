@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:cxhighversion2/home/machinetransfer/machine_transfer_success.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class MachineTransferAdvanceOrderBinding extends Bindings {
@@ -19,26 +19,29 @@ class MachineTransferAdvanceOrderController extends GetxController {
   get submitEnable => _submitEnable.value;
 
   submitOrder() {
-    // submitEnable = false;
-    // String tNo = "";
-    // for (var i = 0; i < machineDatas.length; i++) {
-    //   Map item = machineDatas[i];
-    //   tNo += (i == 0 ? "${item["terminalNo"]}" : ",${item["terminalNo"]}");
-    // }
-    List content = [];
+    submitEnable = false;
+    String tNo = "";
     for (var i = 0; i < machineDatas.length; i++) {
       Map item = machineDatas[i];
-      content.add(
-          {"tId": item["tId"], "tNO": item["tNo"], "productId": item["tcId"]});
+      tNo += (i == 0 ? "${item["tNo"]}" : ",${item["tNo"]}");
     }
+    // List content = [];
+    // for (var i = 0; i < machineDatas.length; i++) {
+    //   Map item = machineDatas[i];
+    //   content.add(
+    //       {"tId": item["tId"], "tNO": item["tNo"], "productId": item["tcId"]});
+    // }
+
     simpleRequest(
       url: Urls.terminalTransfer,
       params: {
-        "iuserId": userData["uId"],
-        "createType": 1,
-        "content": content,
-        "customId": 0,
-        "transferType": 2,
+        "uId": userData["uId"],
+        "tIds": tNo
+        // "iuserId": userData["uId"],
+        // "createType": 1,
+        // "content": content,
+        // "customId": 0,
+        // "transferType": 2,
         // "transferType": isLock ? 3 : 2,
       },
       success: (success, json) {

@@ -88,6 +88,7 @@ class MachineTransferSuccess extends GetView<MachineTransferSuccessController> {
       body: SingleChildScrollView(
           child: Column(
         children: [
+          gwb(375),
           ghb(130),
           Image.asset(
             assetsName("home/machinetransfer/bg_hb_success"),
@@ -116,30 +117,29 @@ class MachineTransferSuccess extends GetView<MachineTransferSuccessController> {
               fontSize: 15,
               textColor: Colors.white),
           CustomButton(
-            onPressed: () {
-              Get.offUntil(
-                  GetPageRoute(
-                      page: () => const MachineTransferHistory(),
-                      binding: MachineTransferHistoryBinding(),
-                      settings:
-                          const RouteSettings(name: "MachineTransferHistory")),
-                  (route) => route is GetPageRoute
-                      ? route.binding is MainPageBinding
-                          ? true
-                          : false
-                      : false);
-            },
-            child: Container(
-              width: 300.w,
-              height: 45.w,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(45.w / 2),
-                  border: Border.all(width: 0.5.w, color: AppColor.theme)),
-              child: getSimpleText("查看记录", 15, AppColor.theme),
-            ),
-          )
+              onPressed: () {
+                Get.offUntil(
+                    GetPageRoute(
+                        page: () => const MachineTransferHistory(),
+                        binding: MachineTransferHistoryBinding(),
+                        settings: const RouteSettings(
+                            name: "MachineTransferHistory")),
+                    (route) => route is GetPageRoute
+                        ? route.binding is MainPageBinding
+                            ? true
+                            : false
+                        : false);
+              },
+              child: Container(
+                  margin: EdgeInsets.only(top: 15.w),
+                  width: 300.w,
+                  height: 45.w,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(45.w / 2),
+                      border: Border.all(width: 0.5.w, color: AppColor.theme)),
+                  child: getSimpleText("查看记录", 15, AppColor.theme)))
         ],
       )),
     );

@@ -158,14 +158,14 @@ class MineSettingList extends GetView<MineSettingListController> {
                   push(const MineChangePwdList(), context);
                 },
               ),
-              cell(
-                "更换手机号",
-                0,
-                onPressed: () {
-                  push(const ReceiptSetting(), context,
-                      binding: ReceiptSettingBinding());
-                },
-              ),
+              // cell(
+              //   "更换手机号",
+              //   0,
+              //   onPressed: () {
+              //     push(const ReceiptSetting(), context,
+              //         binding: ReceiptSettingBinding());
+              //   },
+              // ),
               cell(
                 "地址管理",
                 0,

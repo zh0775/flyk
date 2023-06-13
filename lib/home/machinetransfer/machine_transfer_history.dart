@@ -55,14 +55,18 @@ class MachineTransferHistoryController extends GetxController {
   loadList({bool isLoad = false, int index = 0}) {
     isLoad ? pageNos[index]++ : pageNos[index] = 1;
     simpleRequest(
-      url: Urls.terminalTransferOrder,
+      // url: Urls.terminalTransferOrder,
+      // params: {
+      //   "pageSize": pageSizes[index],
+      //   "pageNo": pageNos[index],
+      //   "type": index == 0 ? 1 : 2
+      // },
+      url: Urls.terminalTransferList,
       params: {
         "pageSize": pageSizes[index],
         "pageNo": pageNos[index],
-        "type": index == 0 ? 1 : 2
+        "terminal_Type": 1
       },
-      // url: Urls.terminalTransferList,
-      // params: {"pageSize": pageSize, "pageNo": pageNo, "terminal_Type": 1},
       success: (success, json) {
         if (success) {
           Map data = json["data"] ?? {};
@@ -221,12 +225,12 @@ class MachineTransferHistory extends GetView<MachineTransferHistoryController> {
     return Align(
       child: GestureDetector(
         onTap: () {
-          Get.to(
-              () => MachineTransferOrderDetail(
-                    orderData: data,
-                    type: 2,
-                  ),
-              binding: MachineTransferOrderDetailBinding());
+          // Get.to(
+          //     () => MachineTransferOrderDetail(
+          //           orderData: data,
+          //           type: 2,
+          //         ),
+          //     binding: MachineTransferOrderDetailBinding());
         },
         child: Container(
           margin: EdgeInsets.only(top: 15.w),
@@ -242,7 +246,7 @@ class MachineTransferHistory extends GetView<MachineTransferHistoryController> {
                     sbhRow([
                       centRow([
                         getSimpleText(
-                            "发给${data["suName"] ?? (hidePhoneNum(data["suMobile"] ?? ""))}的划拨订单",
+                            "发给${data["iU_Name"] ?? (hidePhoneNum(data["iU_Mobile"] ?? ""))}的划拨订单",
                             14,
                             AppColor.textBlack,
                             isBold: true)
@@ -290,10 +294,10 @@ class MachineTransferHistory extends GetView<MachineTransferHistoryController> {
                                     textHeight: 1.3),
                                 getWidthText(
                                     index == 0
-                                        ? data["suName"] ?? ""
+                                        ? data["iU_Name"] ?? ""
                                         : index == 1
-                                            ? "${data["applyNum"] ?? ""}台"
-                                            : data["applyTime"] ?? "",
+                                            ? "${data["countNum"] ?? ""}台"
+                                            : data["addtime"] ?? "",
                                     12,
                                     AppColor.textGrey,
                                     315 - 15 * 2 - 55.5,
