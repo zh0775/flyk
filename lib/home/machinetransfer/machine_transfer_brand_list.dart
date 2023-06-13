@@ -4,7 +4,7 @@ import 'package:cxhighversion2/home/machinetransfer/machine_transfer_machine_lis
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class MachineTransferBrandListBinding extends Bindings {
@@ -44,7 +44,17 @@ class MachineTransferBrandListController extends GetxController {
 
   @override
   void onInit() {
-    loadList();
+    // loadList();
+    Map publicHomeData = AppDefault().publicHomeData;
+    brandList = publicHomeData["terminalConfig"] ?? [];
+    brandList = brandList
+        .map((e) => {
+              ...e,
+              "enumName": e["terninal_Name"] ?? "",
+              "logo": e["terninal_Pic"] ?? "",
+              "enumValue": e["id"] ?? 0,
+            })
+        .toList();
     super.onInit();
   }
 }

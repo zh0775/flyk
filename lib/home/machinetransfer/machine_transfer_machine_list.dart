@@ -188,8 +188,8 @@ class MachineTransferMachineListController extends GetxController {
     pageSize = dataSize ?? 20;
 
     Map<String, dynamic> params = {
-      // "tId": terminalBrandId,
-      "terminalBrandId": terminalBrandId,
+      "tId": terminalBrandId,
+      // "terminalBrandId": terminalBrandId,
       "teamType": 0,
       "status": status,
       "terminalModel": -1,
