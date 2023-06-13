@@ -642,7 +642,7 @@ class Rank extends GetView<RankController> {
                     ),
                     gwb(6),
                     getWidthText(
-                        "${data["u_Name"] ?? ""}(${data["u_Mobile"] != null && data["u_Mobile"].isNotEmpty ? "(${data["u_Mobile"] ?? ""})" : ""}",
+                        "${data["u_Name"] ?? ""}${data["u_Mobile"] != null && data["u_Mobile"].isNotEmpty ? "(${data["u_Mobile"] ?? ""})" : ""}",
                         14,
                         AppColor.textBlack,
                         190 - 30 - 6,
