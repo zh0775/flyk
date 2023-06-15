@@ -1,33 +1,21 @@
-import 'package:cxhighversion2/business/mallOrder/mall_order_page.dart'
-    deferred as mall_order_page;
 import 'package:cxhighversion2/business/mallOrder/mall_order_page.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
-import 'package:cxhighversion2/entrepreneurship_support/support.dart';
 import 'package:cxhighversion2/home/contactCustomerService/contact_customer_service.dart';
-import 'package:cxhighversion2/home/integralRepurchase/integral_repurchase_order.dart'
-    deferred as integral_repurchase_order;
-import 'package:cxhighversion2/machine/machine_order_list.dart'
-    deferred as machine_order_list;
 import 'package:cxhighversion2/member/open_member_ship.dart';
 import 'package:cxhighversion2/message_notify/message_notify_list.dart'
     deferred as message_notify_list;
 import 'package:cxhighversion2/mine/debitCard/debit_card_info.dart';
 import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_check.dart';
 import 'package:cxhighversion2/mine/identityAuthentication/identity_authentication_upload.dart';
-import 'package:cxhighversion2/mine/integral/integral_cash_order_list.dart'
-    deferred as integral_cash_order_list;
 import 'package:cxhighversion2/mine/integral/my_integral.dart'
     deferred as my_integral;
-import 'package:cxhighversion2/mine/mineStoreOrder/mine_store_order_list.dart'
-    deferred as mine_store_order_list;
 import 'package:cxhighversion2/mine/mine_setting_list.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_draw.dart'
     deferred as my_wallet_draw;
 import 'package:cxhighversion2/mine/personal_information.dart'
     deferred as personal_information;
-import 'package:cxhighversion2/product/product_store/product_store_list.dart';
 import 'package:cxhighversion2/product/product_store/product_store_order_list.dart';
 import 'package:cxhighversion2/service/http_config.dart';
 import 'package:cxhighversion2/service/urls.dart';
@@ -38,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class MineBinding extends Bindings {
   @override
@@ -135,6 +124,9 @@ class MinePageController extends GetxController {
   bool isAuth = false;
 
   int level = 1;
+
+  /// 是否购买会员
+  final uLevel3 = 0.obs;
   // 豆账户余额
   Map beanAccount = {};
   // 积分账户余额
@@ -168,6 +160,7 @@ class MinePageController extends GetxController {
     aboutMeInfoContent = info["apP_Introduction"] ?? "";
     isAuth = (homeData["authentication"] ?? {})["isCertified"] ?? false;
     level = homeData["userVIPLevel"] ?? 1;
+    uLevel3.value = homeData["uLevel3"] ?? 0;
     level -= 1;
     if (level > 9) {
       level = 9;
@@ -375,7 +368,7 @@ class _MinePageState extends State<MinePage>
                                   SizedBox(
                                     width: viewWidth,
                                     child: Wrap(runSpacing: 22.w, children: [
-                                      funcButton("机具兑换", viewWidth),
+                                      funcButton("机具兑换订单", viewWidth),
                                       funcButton("积分订单", viewWidth),
                                       funcButton("我的钱包", viewWidth),
                                       funcButton("我的银行卡", viewWidth),
@@ -532,6 +525,9 @@ class _MinePageState extends State<MinePage>
       builder: (controller) {
         return GestureDetector(
           onTap: () {
+            if (controller.uLevel3.value > 0) {
+              return;
+            }
             push(const OpenMemberShipPage(), context,
                 binding: OpenMemberShipBinding());
           },
@@ -554,23 +550,48 @@ class _MinePageState extends State<MinePage>
                 Positioned.fill(
                     // bottom: 0.5.w,
                     child: Center(
-                  child: sbRow([
-                    centClm([
-                      Image.asset(
-                        assetsName("mine/text_svip"),
-                        width: 120.5.w,
-                        height: 16.5.w,
-                        fit: BoxFit.fill,
-                      ),
-                      ghb(5),
-                      getSimpleText("会员有效期：2023-08-11 到期", 10, Colors.white)
-                    ], crossAxisAlignment: CrossAxisAlignment.start),
-                    Image.asset(
-                      assetsName("mine/arrow_vip_card"),
-                      width: 5.w,
-                      fit: BoxFit.fitWidth,
-                    )
-                  ], width: 345 - 20 * 2),
+                  child: GetX<MinePageController>(builder: (_) {
+                    int level3 = controller.uLevel3.value;
+                    return sbRow([
+                      centClm([
+                        Image.asset(
+                          assetsName("mine/text_svip"),
+                          width: 120.5.w,
+                          height: 16.5.w,
+                          fit: BoxFit.fill,
+                        ),
+                        ghb(5),
+                        getSimpleText(
+                            level3 <= 0
+                                ? "您还不是会员呢，开通会员尊享多项特权"
+                                : "会员有效期：${(controller.homeData["u_Assign_Time1"] ?? "").isEmpty ? "0000-00-00" : DateFormat("yyyy-MM-dd").format(DateFormat("yyyy/MM/dd HH:mm:ss").parse((controller.homeData["u_Assign_Time1"] ?? "")))} 到期",
+                            10,
+                            Colors.white.withOpacity(level3 <= 0 ? 0.5 : 1))
+                      ], crossAxisAlignment: CrossAxisAlignment.start),
+                      level3 <= 0
+                          ? Container(
+                              width: 65.w,
+                              height: 24.w,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12.w),
+                                  gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0xFFF2E9CA),
+                                        Color(0xFFF3DCAD)
+                                      ],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight)),
+                              child:
+                                  getSimpleText("去开通", 12, AppColor.textBlack))
+                          : gwb(0)
+                      // Image.asset(
+                      //     assetsName("mine/arrow_vip_card"),
+                      //     width: 5.w,
+                      //     fit: BoxFit.fitWidth,
+                      //   )
+                    ], width: 345 - 20 * 2);
+                  }),
                 ))
               ],
             ),
@@ -584,12 +605,14 @@ class _MinePageState extends State<MinePage>
     Function()? onPressed;
     String imgSubStr = "";
     switch (title) {
-      case "机具兑换":
+      case "机具兑换订单":
         imgSubStr = "jjdh";
         onPressed = () {
-          push(const ProductStoreList(), context,
-              binding: ProductStoreListBinding(),
-              arguments: {"levelType": 3, "title": "机具兑换"});
+          // push(const ProductStoreList(), context,
+          //     binding: ProductStoreListBinding(),
+          //     arguments: {"levelType": 3, "title": "机具兑换"});
+          push(const ProductStoreOrderList(levelType: 3), null,
+              binding: ProductStoreOrderListBinding());
 
           // showAppUpdateAlert({
           //   "isDownload": false,
@@ -740,11 +763,7 @@ class _MinePageState extends State<MinePage>
                 getSimpleText("采购订单", 16, AppColor.text, isBold: true),
                 CustomButton(
                   onPressed: () {
-                    push(
-                        const ProductStoreOrderList(
-                          levelType: 2,
-                        ),
-                        null,
+                    push(const ProductStoreOrderList(isBuyAndVip: true), null,
                         binding: ProductStoreOrderListBinding());
                   },
                   child: centRow([
@@ -792,7 +811,8 @@ class _MinePageState extends State<MinePage>
                   return CustomButton(
                     onPressed: () async {
                       push(
-                          ProductStoreOrderList(levelType: 2, index: index + 1),
+                          ProductStoreOrderList(
+                              isBuyAndVip: true, index: index + 1),
                           null,
                           binding: ProductStoreOrderListBinding());
                       // if (index == 0) {

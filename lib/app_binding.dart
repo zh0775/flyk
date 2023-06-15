@@ -1,7 +1,6 @@
 import 'package:cxhighversion2/home/home.dart';
 import 'package:cxhighversion2/income/income_page.dart';
 import 'package:cxhighversion2/mine/mine_page.dart';
-import 'package:cxhighversion2/statistics/statistics.dart';
 import 'package:cxhighversion2/statistics/statistics_page/statistics_page.dart';
 import 'package:get/get.dart';
 

@@ -1,8 +1,10 @@
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/income/income_page_list.dart';
+import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/notify_default.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,27 +22,57 @@ class IncomePageController extends GetxController {
     selectDate = dateFormat.format(DateTime.now());
     bus.on(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
     dataFormat();
+    loadReward();
     super.onInit();
   }
 
   final _selectDate = "".obs;
   String get selectDate => _selectDate.value;
-  set selectDate(v) => _selectDate.value = v;
+  set selectDate(v) {
+    if (_selectDate.value != v) {
+      _selectDate.value = v;
+      loadReward();
+    }
+  }
 
   DateFormat dateFormat = DateFormat("yyyy年MM月");
 
   Map bounsData = {};
   List boundList = [];
   double tolBouns = 0.0;
+
+  loadReward() {
+    DateTime monthDate = dateFormat.parse(selectDate);
+    simpleRequest(
+        url: Urls.userBounsNameByCount,
+        params: {
+          "startingTime": DateFormat("yyyy-MM-dd").format(monthDate),
+          "end_Time": DateFormat("yyyy-MM-dd")
+              .format(DateTime(monthDate.year, monthDate.month + 1, 0))
+        },
+        success: (success, json) {
+          if (success) {
+            boundList = json["data"] ?? [];
+            tolBouns = 0.0;
+            for (var e in boundList) {
+              tolBouns += e["amt"] ?? 0.0;
+            }
+
+            update();
+          }
+        },
+        after: () {});
+  }
+
   dataFormat() {
     Map homeData = AppDefault().homeData;
     bounsData = (homeData["homeBouns"] ?? {})["bounsData"] ?? {};
-    Map publicHomeData = AppDefault().publicHomeData;
-    boundList = publicHomeData["bounsNameList"] ?? [];
-    tolBouns = 0.0;
-    for (var e in boundList) {
-      tolBouns += e["tolBounsN"] ?? 0.0;
-    }
+    // Map publicHomeData = AppDefault().publicHomeData;
+    // boundList = publicHomeData["bounsNameList"] ?? [];
+    // tolBouns = 0.0;
+    // for (var e in boundList) {
+    //   tolBouns += e["tolBounsN"] ?? 0.0;
+    // }
   }
 
   homeDataNotify(arg) {
@@ -85,103 +117,108 @@ class IncomePage extends GetView<IncomePageController> {
                 alignment: Alignment.bottomCenter,
               ),
             ),
-            Positioned.fill(child:
-                SingleChildScrollView(child: GetBuilder<IncomePageController>(
-                    // init: IncomePageController(),
-                    builder: (_) {
-              return Column(children: [
-                // 收益视图
-                topValueView(),
-                // 奖励金列表
-                rewardView()
-              ]);
-            })))
+            Positioned.fill(
+                child: EasyRefresh.builder(
+              header: const MaterialHeader(),
+              onRefresh: () => controller.loadReward(),
+              childBuilder: (context, physics) {
+                return SingleChildScrollView(
+                    physics: physics,
+                    child: GetBuilder<IncomePageController>(
+                        init: IncomePageController(),
+                        builder: (_) {
+                          return Column(children: [
+                            // 收益视图
+                            topValueView(),
+                            // 奖励金列表
+                            rewardView()
+                          ]);
+                        }));
+              },
+            ))
           ]);
         }));
   }
 
   // 奖励金列表
   Widget rewardView() {
-    return GetBuilder<IncomePageController>(builder: (_) {
-      return Container(
-        width: 375.w,
-        color: Colors.white,
-        margin: EdgeInsets.only(top: 15.w),
-        child: Column(
-          children: [
-            ghb(25),
-            sbRow([
-              CustomButton(
-                onPressed: () {
-                  showDatePick();
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  height: 24.w,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.w),
-                      border:
-                          Border.all(width: 0.5.w, color: AppColor.lineColor)),
-                  alignment: Alignment.center,
-                  child: centRow([
-                    GetX<IncomePageController>(builder: (_) {
-                      return getSimpleText(
-                          controller.selectDate, 12, AppColor.textBlack);
-                    }),
-                    gwb(12),
-                    Image.asset(
-                      assetsName("income/btn_down_arrow"),
-                      width: 6.w,
-                      fit: BoxFit.fitWidth,
-                    )
-                  ]),
-                ),
+    return Container(
+      width: 375.w,
+      color: Colors.white,
+      margin: EdgeInsets.only(top: 15.w),
+      child: Column(
+        children: [
+          ghb(25),
+          sbRow([
+            CustomButton(
+              onPressed: () {
+                showDatePick();
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                height: 24.w,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4.w),
+                    border:
+                        Border.all(width: 0.5.w, color: AppColor.lineColor)),
+                alignment: Alignment.center,
+                child: centRow([
+                  GetX<IncomePageController>(builder: (_) {
+                    return getSimpleText(
+                        controller.selectDate, 12, AppColor.textBlack);
+                  }),
+                  gwb(12),
+                  Image.asset(
+                    assetsName("income/btn_down_arrow"),
+                    width: 6.w,
+                    fit: BoxFit.fitWidth,
+                  )
+                ]),
               ),
-            ], width: 345),
-            ghb(17),
-            ...List.generate(controller.boundList.length, (index) {
-              Map data = controller.boundList[index];
-              double scale =
-                  (data["tolBounsN"] ?? 0.0) / controller.tolBouns <= 0
-                      ? 1.0
-                      : controller.tolBouns;
-              scale = scale > 1.0 ? 1.0 : scale;
-              return CustomButton(
-                onPressed: () {
-                  push(const IncomePageList(), null,
-                      binding: IncomePageListBinding(),
-                      arguments: {"data": data});
-                },
-                child: Column(
-                  children: [
-                    ghb(15),
-                    sbRow([
-                      centRow([
-                        Image.asset(
-                            assetsName("income/icon_reward${index % 3 + 1}"),
-                            width: 45.w,
-                            height: 45.w,
-                            fit: BoxFit.fill),
-                        gwb(10),
-                        centClm([
-                          sbRow([
-                            getRichText(
-                                data["codeName"] ?? "",
-                                "  ${priceFormat(scale * 100, savePoint: 0)}%",
-                                14,
-                                AppColor.textBlack,
-                                12,
-                                AppColor.textGrey5,
-                                isBold2: true,
-                                isBold: true,
-                                h1: 1.0,
-                                h2: 1.0),
-                            getSimpleText(priceFormat(data["tolBounsN"] ?? 0.0),
-                                14, AppColor.textBlack,
-                                isBold: true)
-                          ], width: 260),
-                          ghb(7),
-                          Container(
+            ),
+          ], width: 345),
+          ghb(17),
+          ...List.generate(controller.boundList.length, (index) {
+            Map data = controller.boundList[index];
+            double scale = (data["amt"] ?? 0.0) /
+                (controller.tolBouns <= 0 ? 1.0 : controller.tolBouns);
+            scale = scale > 1.0 ? 1.0 : scale;
+            return CustomButton(
+              onPressed: () {
+                push(const IncomePageList(), null,
+                    binding: IncomePageListBinding(),
+                    arguments: {"data": data});
+              },
+              child: Column(
+                children: [
+                  ghb(15),
+                  sbRow([
+                    centRow([
+                      Image.asset(
+                          assetsName("income/icon_reward${index % 3 + 1}"),
+                          width: 45.w,
+                          height: 45.w,
+                          fit: BoxFit.fill),
+                      gwb(10),
+                      centClm([
+                        sbRow([
+                          getRichText(
+                              data["tilte"] ?? "",
+                              "  ${priceFormat((scale * 100).round(), savePoint: 0)}%",
+                              14,
+                              AppColor.textBlack,
+                              12,
+                              AppColor.textGrey5,
+                              isBold2: true,
+                              isBold: true,
+                              h1: 1.0,
+                              h2: 1.0),
+                          getSimpleText(priceFormat(data["amt"] ?? 0.0), 14,
+                              AppColor.textBlack,
+                              isBold: true)
+                        ], width: 260),
+                        ghb(7),
+                        Container(
                             width: 260.w,
                             height: 6.w,
                             alignment: Alignment.centerLeft,
@@ -189,32 +226,29 @@ class IncomePage extends GetView<IncomePageController> {
                                 borderRadius: BorderRadius.circular(3.w),
                                 color: AppColor.pageBackgroundColor),
                             child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              height: 6.w,
-                              width: 260.w * scale,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(3.w),
-                                  color: AppColor.theme),
-                            ),
-                          )
-                        ])
-                      ]),
-                      Image.asset(assetsName("income/cell_arrow"),
-                          width: 4.5.w, fit: BoxFit.fitWidth)
-                    ], width: 375 - 20 * 2),
-                    ghb(14.5),
-                    index >= controller.boundList.length - 1
-                        ? ghb(0)
-                        : sbRow([gwb(0), gline(285, 0.5)], width: 375 - 15 * 2)
-                  ],
-                ),
-              );
-            }),
-            ghb(9)
-          ],
-        ),
-      );
-    });
+                                duration: const Duration(milliseconds: 300),
+                                height: 6.w,
+                                width: 260.w * scale,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3.w),
+                                    color: AppColor.theme)))
+                      ])
+                    ]),
+                    Image.asset(assetsName("income/cell_arrow"),
+                        width: 4.5.w, fit: BoxFit.fitWidth)
+                  ], width: 375 - 20 * 2),
+                  ghb(14.5),
+                  index >= controller.boundList.length - 1
+                      ? ghb(0)
+                      : sbRow([gwb(0), gline(285, 0.5)], width: 375 - 15 * 2)
+                ],
+              ),
+            );
+          }),
+          ghb(9)
+        ],
+      ),
+    );
   }
 
   // 收益视图

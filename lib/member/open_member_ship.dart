@@ -88,7 +88,6 @@ class OpenMemberShipController extends GetxController {
             payTypeList = convert.jsonDecode(
                     superVipData[0]["levelGiftPaymentMethod"] ?? "") ??
                 [];
-
             update();
           }
         },

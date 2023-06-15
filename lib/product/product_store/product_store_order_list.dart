@@ -517,7 +517,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                                         height: kToolbarHeight,
                                         child: Center(
                                           child: getSimpleText(
-                                              index == 0 ? "订购订单" : "兑换订单",
+                                              index == 0 ? "采购订单" : "礼包订单",
                                               18,
                                               controller.naviIndex == index
                                                   ? AppColor.textBlack

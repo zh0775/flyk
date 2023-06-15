@@ -741,4 +741,7 @@ class Urls {
   // 申请记录
   static const applyExchangeRecord =
       '/api/CrediTticket/User_CrediTticketOrderList';
+
+  // 奖励汇总
+  static const userBounsNameByCount = '/api/Finance/User_BounsNameByCount';
 }
