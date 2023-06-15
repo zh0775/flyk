@@ -232,6 +232,9 @@ class StatisticsPageController extends GetxController {
         publicHomeData["terminalConfig"].isNotEmpty &&
         publicHomeData["terminalConfig"] is List) {
       List terminalBrands = publicHomeData["terminalConfig"] ?? [];
+      terminalBrands = terminalBrands
+          .where((element) => (element["terninal_Type"] ?? 0) == 2)
+          .toList();
       selectPP = 0;
       ppList = [
         {"enumValue": "-1", "enumName": "全部品牌"},

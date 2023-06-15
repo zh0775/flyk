@@ -30,20 +30,7 @@ class StatisticsMachineEquitiesChangeController extends GetxController {
   bool get submitEnable => _submitEnable.value;
   set submitEnable(v) => _submitEnable.value = v;
 
-  String explainSrc = '''一、积分获取与计算
-1.购买复购积分只能用于联聚商城区以及联聚拓客合作
-
-2.平台消费或兑换；如有疑问请联系：400 809 1988。
-
-3.为了更好的增加商户粘性度，安装新设备时，如果商户48小时内未绑定联聚拓客平台，则此设备为未达标设备。设备激活后正常交易有效达标1万元，此设备不参与奖励积分（培育奖、直招盘主装机奖励）。
-
-4、注册pos机的资料要和注册联聚拓客平台用户的资料要一致，否则不能获取对应的交易积分
-
-二、积分获取与计算
-1.购买复购积分只能用于联聚商城区以及联聚拓客合作
-为了更好的增加商户粘性度，安装新设备时，如果商户48小时内未绑定联聚拓客平台，则此设备为未达标设备。设备激活后正常交易有效达标1万元，此设备不参与奖励积分（培育奖、直招盘主装机奖励）。
-
-4、注册pos机的资料要和注册联聚拓客平台用户的资料要一致，否则不能获取对应的交易积分''';
+  String explainSrc = '';
 
   Map changeMachine = {};
 

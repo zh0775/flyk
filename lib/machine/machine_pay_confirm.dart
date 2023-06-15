@@ -205,7 +205,7 @@ class MachinePayConfirmController extends GetxController {
               Global.navigatorKey.currentContext!);
 
           // if (payData["u_Type"] == 1) {
-          //   if (payData["value"] == 1) {
+          //   if (payData["value"] == 2) {
           //     //支付宝
           //     if (data["aliData"] == null || data["aliData"].isEmpty) {
           //       ShowToast.normal("支付失败，请稍后再试");

@@ -289,7 +289,7 @@ class ProductStoreConfirmController extends GetxController {
           String aliDataStr = data["aliData"] ?? "";
 
           if (payData["u_Type"] == 1) {
-            if (payData["value"] == 1) {
+            if (payData["value"] == 2) {
               //支付宝
               if (aliDataStr.isEmpty) {
                 ShowToast.normal("支付失败，请稍后再试");

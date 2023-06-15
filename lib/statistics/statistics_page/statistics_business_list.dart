@@ -254,6 +254,9 @@ class StatisticsBusinessListController extends GetxController {
     searchInputCtrl.addListener(searchInputListener);
     Map publicHomeData = AppDefault().publicHomeData;
     List terminalBrands = publicHomeData["terminalConfig"] ?? [];
+    terminalBrands = terminalBrands
+        .where((element) => (element["terninal_Type"] ?? 0) == 2)
+        .toList();
     if (terminalBrands.isNotEmpty) {
       filterTypeList1 = [
         {"name": "全部", "id": -1},

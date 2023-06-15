@@ -2218,111 +2218,115 @@ Future<bool?> showAlert(
   bool singleButton = false,
 }) async {
   bool? show = await showDialog<bool>(
-    context: context,
-    barrierDismissible: barrierDismissible,
-    builder: (context) {
-      return Center(
-        child: Material(
-          color: Colors.transparent,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8.w),
-            child: Container(
-              width: 300.w,
-              height: height.w,
-              color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  centClm([
-                    ghb(30),
-                    getSimpleText(title, 16, AppColor.textBlack,
-                        isBold: true, textHeight: 1.0),
-                    ghb(17),
-                    getWidthText(
-                      content,
-                      13,
-                      AppColor.textGrey5,
-                      300 - 15 * 2,
-                      2,
-                      alignment: Alignment.center,
-                      textAlign: TextAlign.center,
-                    ),
-                    contentWidget ?? ghb(0),
-                  ]),
-                  centClm([
-                    gline(300, 1),
-                    centRow(List.generate(singleButton ? 1 : 3, (index) {
-                      return index == 1
-                          ? gline(1, 50)
-                          : CustomButton(
-                              onPressed: () {
-                                if (index == 0) {
-                                  if (singleButton) {
-                                    if (singleOnPressed != null) {
-                                      singleOnPressed();
-                                    } else {
-                                      Navigator.pop(context);
-                                    }
-                                  } else {
-                                    if (cancelOnPressed != null) {
-                                      cancelOnPressed();
-                                    } else {
-                                      Navigator.pop(context);
-                                    }
-                                  }
-                                } else if (index == 1 || index == 2) {
-                                  if (confirmOnPressed != null) {
-                                    confirmOnPressed();
-                                  } else {
-                                    Navigator.pop(context);
-                                  }
-                                }
-                              },
-                              child: Container(
-                                width: 300.w / (singleButton ? 1 : 2) -
-                                    0.1.w -
-                                    (singleButton ? 0 : 1.w),
-                                height: 50.w,
-                                color: index == 0
-                                    ? singleButton
-                                        ? singleBtnColor ?? Colors.white
-                                        : cancelBtnColor ?? Colors.white
-                                    : orangeTheme
-                                        ? AppColor.themeOrange
-                                        : confirmBtnColor ?? AppColor.theme,
-                                child: Center(
-                                    child: Text(
-                                  index == 0
-                                      ? (singleButton ? singleText : cancelText)
-                                      : confirmText,
-                                  style: index == 0
-                                      ? singleButton
-                                          ? (singlelStyle ??
-                                              TextStyle(
-                                                  fontSize: 14.sp,
-                                                  color: AppColor.theme))
-                                          : (cancelStyle ??
-                                              TextStyle(
-                                                  fontSize: 14.sp,
-                                                  color: AppColor.textGrey5))
-                                      : (confirmStyle ??
-                                          TextStyle(
-                                              fontSize: 14.sp,
-                                              color: Colors.white)),
-                                )),
-                              ),
-                            );
-                    }))
-                  ])
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    },
-  );
-
+      context: context,
+      barrierDismissible: barrierDismissible,
+      builder: (context) {
+        return Center(
+            child: Material(
+                color: Colors.transparent,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8.w),
+                    child: Container(
+                        width: 300.w,
+                        height: height.w,
+                        color: Colors.white,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              centClm([
+                                ghb(30),
+                                getSimpleText(title, 16, AppColor.textBlack,
+                                    isBold: true, textHeight: 1.0),
+                                ghb(17),
+                                getWidthText(
+                                  content,
+                                  13,
+                                  AppColor.textGrey5,
+                                  300 - 15 * 2,
+                                  2,
+                                  alignment: Alignment.center,
+                                  textAlign: TextAlign.center,
+                                ),
+                                contentWidget ?? ghb(0),
+                              ]),
+                              centClm([
+                                gline(300, 1),
+                                centRow(List.generate(singleButton ? 1 : 3,
+                                    (index) {
+                                  return index == 1
+                                      ? gline(1, 50)
+                                      : CustomButton(
+                                          onPressed: () {
+                                            if (index == 0) {
+                                              if (singleButton) {
+                                                if (singleOnPressed != null) {
+                                                  singleOnPressed();
+                                                } else {
+                                                  Navigator.pop(context);
+                                                }
+                                              } else {
+                                                if (cancelOnPressed != null) {
+                                                  cancelOnPressed();
+                                                } else {
+                                                  Navigator.pop(context);
+                                                }
+                                              }
+                                            } else if (index == 1 ||
+                                                index == 2) {
+                                              if (confirmOnPressed != null) {
+                                                confirmOnPressed();
+                                              } else {
+                                                Navigator.pop(context);
+                                              }
+                                            }
+                                          },
+                                          child: Container(
+                                              width: 300.w /
+                                                      (singleButton ? 1 : 2) -
+                                                  0.1.w -
+                                                  (singleButton ? 0 : 1.w),
+                                              height: 50.w,
+                                              color: index == 0
+                                                  ? singleButton
+                                                      ? singleBtnColor ??
+                                                          Colors.white
+                                                      : cancelBtnColor ??
+                                                          Colors.white
+                                                  : orangeTheme
+                                                      ? AppColor.themeOrange
+                                                      : confirmBtnColor ??
+                                                          AppColor.theme,
+                                              child: Center(
+                                                  child: Text(
+                                                      index == 0
+                                                          ? (singleButton
+                                                              ? singleText
+                                                              : cancelText)
+                                                          : confirmText,
+                                                      style: index == 0
+                                                          ? singleButton
+                                                              ? (singlelStyle ??
+                                                                  TextStyle(
+                                                                      fontSize:
+                                                                          14.sp,
+                                                                      color: AppColor
+                                                                          .theme))
+                                                              : (cancelStyle ??
+                                                                  TextStyle(
+                                                                      fontSize:
+                                                                          14.sp,
+                                                                      color: AppColor
+                                                                          .textGrey5))
+                                                          : (confirmStyle ??
+                                                              TextStyle(
+                                                                  fontSize:
+                                                                      14.sp,
+                                                                  color: Colors
+                                                                      .white))))));
+                                }))
+                              ])
+                            ])))));
+      });
   return show;
 }
 

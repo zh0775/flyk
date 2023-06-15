@@ -170,6 +170,9 @@ class ProductController extends GetxController {
       zcList = (publicHomeData["terminalConfig"] as List)
           .map((e) => {...e, "selected": false})
           .toList();
+      zcList = zcList
+          .where((element) => (element["terninal_Type"] ?? 0) == 2)
+          .toList();
       update([zcListBuildId]);
     }
     if (publicHomeData.isNotEmpty &&

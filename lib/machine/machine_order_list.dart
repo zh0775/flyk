@@ -355,10 +355,7 @@ class MachineOrderListController extends GetxController {
   @override
   void onInit() {
     List machineTypes = [
-      {
-        "id": -1,
-        "name": "全部",
-      }
+      {"id": -1, "name": "全部", "terninal_Type": 2}
     ];
     Map publicHomeData = AppDefault().publicHomeData;
     if (publicHomeData.isNotEmpty &&
@@ -376,8 +373,12 @@ class MachineOrderListController extends GetxController {
         machineTypes.add({
           "id": e["id"] ?? -1,
           "name": e["terninal_Name"] ?? "",
+          "terninal_Type": e["terninal_Type"] ?? 0
         });
       });
+      machineTypes = machineTypes
+          .where((element) => (element["terninal_Type"] ?? 0) == 2)
+          .toList();
       typeData["machine"] = machineTypes;
     }
 

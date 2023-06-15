@@ -48,6 +48,9 @@ class MachineTransferBrandListController extends GetxController {
     Map publicHomeData = AppDefault().publicHomeData;
     brandList = publicHomeData["terminalConfig"] ?? [];
     brandList = brandList
+        .where((element) => (element["terninal_Type"] ?? 0) == 2)
+        .toList();
+    brandList = brandList
         .map((e) => {
               ...e,
               "enumName": e["terninal_Name"] ?? "",

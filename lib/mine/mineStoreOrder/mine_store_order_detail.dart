@@ -132,41 +132,31 @@ class MineStoreOrderDetailController extends GetxController {
         "u_3nd_Pad": pwd,
       },
       success: (success, json) async {
-        if (myData["paymentMethod"] != null &&
-            myData["paymentMethodType"] != null) {
-          if (myData["paymentMethodType"] == 1) {
-            if (myData["paymentMethod"] == 1) {
-              if (json != null &&
-                  json["data"] != null &&
-                  json["data"]["aliData"] != null) {
-                Map result = await CustomAlipay().payAction(
-                  json["data"]["aliData"],
-                  payBack: () {
-                    alipayH5payBack(
-                      url: urls,
-                      params: {
-                        "orderId": myData["id"],
-                        "version_Origin": AppDefault().versionOriginForPay(),
-                        "u_3nd_Pad": pwd,
-                      },
-                    );
-                  },
-                );
-                if (!kIsWeb) {
-                  if (result["resultStatus"] == "6001") {
-                  } else if (result["resultStatus"] == "9000") {
-                    toPayResult(orderData: myData);
-                  }
-                }
-              } else {
-                ShowToast.normal("支付失败，请稍后再试");
-                return;
-              }
-            }
-          } else if (myData["paymentMethodType"] == 2) {
-            if (success) {
+        if (json != null &&
+            json["data"] != null &&
+            json["data"]["aliData"] != null) {
+          Map result = await CustomAlipay().payAction(
+            json["data"]["aliData"],
+            payBack: () {
+              alipayH5payBack(
+                url: urls,
+                params: {
+                  "orderId": myData["id"],
+                  "version_Origin": AppDefault().versionOriginForPay(),
+                  "u_3nd_Pad": pwd,
+                },
+              );
+            },
+          );
+          if (!kIsWeb) {
+            if (result["resultStatus"] == "6001") {
+            } else if (result["resultStatus"] == "9000") {
               toPayResult(orderData: myData);
             }
+          }
+        } else {
+          if (success) {
+            toPayResult(orderData: myData);
           }
         }
       },

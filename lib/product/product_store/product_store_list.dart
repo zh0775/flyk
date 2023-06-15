@@ -236,6 +236,9 @@ class ProductStoreListController extends GetxController {
       keyList.add(GlobalKey());
     }
     List terminalConfigs = publicHomeData["terminalConfig"] ?? [];
+    terminalConfigs = terminalConfigs
+        .where((element) => (element["terninal_Type"] ?? 0) == 2)
+        .toList();
     if (terminalConfigs.isNotEmpty) {
       typeList = terminalConfigs.map((e) => {...e, "selected": false}).toList();
     }

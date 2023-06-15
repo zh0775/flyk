@@ -597,49 +597,46 @@ class Rank extends GetView<RankController> {
     bool isCash = rankName.contains("交易") || rankName.contains("收益");
     String num = isCash ? priceFormat(data["num"] ?? "") : "${data["num"]}";
     return Padding(
-      padding: EdgeInsets.only(top: index == 0 ? 7.w : 0),
-      // padding: EdgeInsets.only(top: index == 0 ? 26.w : 19.w, bottom: 19.w),
-      child: SizedBox(
-          width: 375.w,
-          height: 60.w,
-          child: Row(
-            children: [
+        padding: EdgeInsets.only(top: index == 0 ? 7.w : 0),
+        // padding: EdgeInsets.only(top: index == 0 ? 26.w : 19.w, bottom: 19.w),
+        child: SizedBox(
+            width: 375.w,
+            height: 60.w,
+            child: Row(children: [
               SizedBox(
-                width: 70.w,
-                child: Align(
-                    alignment: const Alignment(0.25, 0),
-                    child: index > 2
-                        ? Container(
-                            width: 18.w,
-                            height: 18.w,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                color: const Color(0xFFF9C529),
-                                borderRadius: BorderRadius.circular(9.w)),
-                            child:
-                                getSimpleText("${index + 1}", 14, Colors.white))
-                        : Image.asset(assetsName("rank/icon_text${index + 1}"),
-                            width: 22.w, fit: BoxFit.fitWidth)),
-              ),
+                  width: 70.w,
+                  child: Align(
+                      alignment: const Alignment(0.25, 0),
+                      child: index > 2
+                          ? Container(
+                              width: 18.w,
+                              height: 18.w,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                  color: const Color(0xFFF9C529),
+                                  borderRadius: BorderRadius.circular(9.w)),
+                              child: getSimpleText(
+                                  "${index + 1}", 14, Colors.white))
+                          : Image.asset(
+                              assetsName("rank/icon_text${index + 1}"),
+                              width: 22.w,
+                              fit: BoxFit.fitWidth))),
               SizedBox(
-                width: 190.w,
-                child: Row(
-                  children: [
+                  width: 190.w,
+                  child: Row(children: [
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(15.w),
-                      child: CustomNetworkImage(
-                        src: AppDefault().imageUrl + (data["u_Avatar"] ?? ""),
-                        width: 30.w,
-                        height: 30.w,
-                        fit: BoxFit.cover,
-                        errorWidget: Image.asset(
-                          assetsName("common/default_head"),
-                          width: 30.w,
-                          height: 30.w,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
+                        borderRadius: BorderRadius.circular(15.w),
+                        child: CustomNetworkImage(
+                            src: AppDefault().imageUrl +
+                                (data["u_Avatar"] ?? ""),
+                            width: 30.w,
+                            height: 30.w,
+                            fit: BoxFit.cover,
+                            errorWidget: Image.asset(
+                                assetsName("common/default_head"),
+                                width: 30.w,
+                                height: 30.w,
+                                fit: BoxFit.fill))),
                     gwb(6),
                     getWidthText(
                         "${data["u_Name"] ?? ""}${data["u_Mobile"] != null && data["u_Mobile"].isNotEmpty ? "(${data["u_Mobile"] ?? ""})" : ""}",
@@ -648,14 +645,10 @@ class Rank extends GetView<RankController> {
                         190 - 30 - 6,
                         2,
                         isBold: true)
-                  ],
-                ),
-              ),
+                  ])),
               getWidthText(num, 14, AppColor.theme, 345 - 190 - 70, 2,
                   isBold: true, alignment: Alignment.centerRight)
-            ],
-          )),
-    );
+            ])));
   }
 
   Widget listCell(int index, Map data, Map pageData, bool isHead) {

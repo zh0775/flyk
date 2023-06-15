@@ -192,6 +192,9 @@ class StatisticsMachineEquitiesController extends GetxController {
           "img": e["terninal_Pic"] ?? ""
         };
       });
+      machineTypes = machineTypes
+          .where((element) => (element["terninal_Type"] ?? 0) == 2)
+          .toList();
     }
 
     loadData();

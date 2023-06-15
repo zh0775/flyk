@@ -217,12 +217,16 @@ class StatisticsMachineEquitiesAddListController extends GetxController {
       "currentTypes": currentTypes[currentTypesIdx]["id"]
     };
 
-    if (start != null && start.isNotEmpty) {
-      params["terminal_Start"] = seqNumFormat(start);
+    if (startInputCtrl.text.isNotEmpty) {
+      params["terminalNo"] = startInputCtrl.text;
     }
-    if (end != null && end.isNotEmpty) {
-      params["terminal_End"] = seqNumFormat(end);
-    }
+
+    // if (start != null && start.isNotEmpty) {
+    //   params["terminal_Start"] = seqNumFormat(start);
+    // }
+    // if (end != null && end.isNotEmpty) {
+    //   params["terminal_End"] = seqNumFormat(end);
+    // }
 
     simpleRequest(
       url: Urls.userTerminalReplaceList,
@@ -302,10 +306,7 @@ class StatisticsMachineEquitiesAddListController extends GetxController {
     }
 
     machineTypes = [
-      {
-        "id": -1,
-        "name": "全部",
-      }
+      {"id": -1, "name": "全部", "terninal_Type": 2}
     ];
     Map publicHomeData = AppDefault().publicHomeData;
     if (publicHomeData.isNotEmpty &&
@@ -313,11 +314,12 @@ class StatisticsMachineEquitiesAddListController extends GetxController {
         publicHomeData["terminalConfig"] is List) {
       List.generate((publicHomeData["terminalConfig"] as List).length, (index) {
         Map e = (publicHomeData["terminalConfig"] as List)[index];
-        machineTypes.add({
-          "id": e["id"] ?? -1,
-          "name": e["terninal_Name"] ?? "",
-        });
+        machineTypes
+            .add({"id": e["id"] ?? -1, "name": e["terninal_Name"] ?? "", ...e});
       });
+      machineTypes = machineTypes
+          .where((element) => (element["terninal_Type"] ?? 0) == 2)
+          .toList();
     }
 
     if (toChange) {
@@ -672,96 +674,103 @@ class StatisticsMachineEquitiesAddList
   }
 
   showSearch() {
-    Get.bottomSheet(Container(
-      width: 375.w,
-      height: 230.w,
-      color: Colors.white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          centClm([
-            gwb(375),
-            sbhRow([getSimpleText("搜索区间", 15, AppColor.text, isBold: true)],
-                height: 55, width: 375 - 15 * 2),
-            ...List.generate(2, (int index) {
-              return Container(
-                width: 345.w,
-                height: 40.w,
-                margin: EdgeInsets.only(top: index == 1 ? 15.w : 0),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      width: 0.5.w,
-                      color: AppColor.lineColor,
-                    )),
-                child: Row(
-                  children: [
-                    gwb(15),
-                    CustomInput(
-                      textEditCtrl: index == 0
-                          ? controller.startInputCtrl
-                          : controller.endInputCtrl,
-                      width: (345 - 15 - 50 - 0.1 - 1).w,
-                      heigth: 40.w,
-                      placeholder: "请输入${index == 0 ? "开始" : "结束"}设备编号",
-                      style: TextStyle(fontSize: 12.sp, color: AppColor.text),
-                      placeholderStyle:
-                          TextStyle(fontSize: 12.sp, color: AppColor.assisText),
-                    ),
-                    kIsWeb
-                        ? gwb(0)
-                        : CustomButton(
-                            onPressed: () {
-                              toScanBarCode(((barCode) {
-                                if (index == 0) {
-                                  controller.startInputCtrl.text = barCode;
-                                } else {
-                                  controller.endInputCtrl.text = barCode;
-                                }
-                              }));
-                            },
-                            child: SizedBox(
-                              width: 50.w,
-                              height: 40.w,
-                              child: Center(
-                                child: Image.asset(
-                                  assetsName("machine/btn_scan_code"),
-                                  width: 18.w,
-                                  fit: BoxFit.fitWidth,
+    Get.bottomSheet(UnconstrainedBox(
+      child: Container(
+        width: 375.w,
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            centClm([
+              gwb(375),
+              sbhRow([getSimpleText("搜索机具号", 15, AppColor.text, isBold: true)],
+                  height: 55, width: 375 - 15 * 2),
+              ...List.generate(1, (int index) {
+                return Container(
+                  width: 345.w,
+                  height: 40.w,
+                  margin: EdgeInsets.only(top: index == 1 ? 15.w : 0),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        width: 0.5.w,
+                        color: AppColor.lineColor,
+                      )),
+                  child: Row(
+                    children: [
+                      gwb(15),
+                      CustomInput(
+                        textEditCtrl: index == 0
+                            ? controller.startInputCtrl
+                            : controller.endInputCtrl,
+                        width: (345 - 15 - 50 - 0.1 - 1).w,
+                        heigth: 40.w,
+                        // placeholder: "请输入${index == 0 ? "开始" : "结束"}设备编号",
+                        placeholder: "请输入设备编号",
+                        style: TextStyle(fontSize: 12.sp, color: AppColor.text),
+                        placeholderStyle: TextStyle(
+                            fontSize: 12.sp, color: AppColor.assisText),
+                      ),
+                      kIsWeb
+                          ? gwb(0)
+                          : CustomButton(
+                              onPressed: () {
+                                toScanBarCode(((barCode) {
+                                  if (index == 0) {
+                                    controller.startInputCtrl.text = barCode;
+                                  } else {
+                                    controller.endInputCtrl.text = barCode;
+                                  }
+                                }));
+                              },
+                              child: SizedBox(
+                                width: 50.w,
+                                height: 40.w,
+                                child: Center(
+                                  child: Image.asset(
+                                    assetsName("machine/btn_scan_code"),
+                                    width: 18.w,
+                                    fit: BoxFit.fitWidth,
+                                  ),
                                 ),
                               ),
+                            )
+                    ],
+                  ),
+                );
+              }),
+            ]),
+            Padding(
+              padding: EdgeInsets.only(top: 20.w),
+              child: Row(
+                children: List.generate(
+                    2,
+                    (index) => CustomButton(
+                          onPressed: () {
+                            if (index == 0) {
+                              controller.modelSearchReset();
+                            } else {
+                              controller.modelSearchConfirm();
+                            }
+                          },
+                          child: Container(
+                            width: 375.w / 2 - 0.1.w,
+                            height: 55.w,
+                            color: index == 0
+                                ? AppColor.theme.withOpacity(0.1)
+                                : AppColor.theme,
+                            child: Center(
+                              child: getSimpleText(index == 0 ? "重置" : "确定", 15,
+                                  index == 0 ? AppColor.theme : Colors.white),
                             ),
-                          )
-                  ],
-                ),
-              );
-            }),
-          ]),
-          Row(
-            children: List.generate(
-                2,
-                (index) => CustomButton(
-                      onPressed: () {
-                        if (index == 0) {
-                          controller.modelSearchReset();
-                        } else {
-                          controller.modelSearchConfirm();
-                        }
-                      },
-                      child: Container(
-                        width: 375.w / 2 - 0.1.w,
-                        height: 55.w,
-                        color: index == 0
-                            ? AppColor.theme.withOpacity(0.1)
-                            : AppColor.theme,
-                        child: Center(
-                          child: getSimpleText(index == 0 ? "重置" : "确定", 15,
-                              index == 0 ? AppColor.theme : Colors.white),
-                        ),
-                      ),
-                    )),
-          )
-        ],
+                          ),
+                        )),
+              ),
+            ),
+            SizedBox(
+                height: paddingSizeBottom(Global.navigatorKey.currentContext!))
+          ],
+        ),
       ),
     ));
   }

@@ -539,10 +539,11 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
       if (path.contains("http")) {
         customwebview.loadLibrary().then((value) => push(
             customwebview.CustomWebView(
-              title: data["apP_Title"] ?? "",
-              url: path,
-            ),
+                title: data["apP_Title"] ?? "", url: path),
             context));
+      } else if (path.contains("/home/integralstore")) {
+        // 积分商城
+        CustomDeferred().toIntegralStore();
       } else if (path.contains("/home/integral/rank")) {
         // new排行榜
         await rankList.loadLibrary();
@@ -911,192 +912,190 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
 
     for (var e in data) {
       buttons.add(CustomButton(
-        onPressed: () async {
-          bool isOld = HttpConfig.baseUrl.contains(AppDefault.oldSystem);
-          String path = e["path"] ?? "";
-          if (isOld
-              ? path == "/pages/machine/machine"
-              : path == "/home/machinemanage") {
-            // 设备管理
-            await machine_manage.loadLibrary();
-            push(machine_manage.MachineManage(), null,
-                binding: machine_manage.MachineManageBinding());
-          } else if (isOld && path == "/pages/shop/shop_vip") {
-            // Vip礼包
-            await product_store_list.loadLibrary();
-            push(product_store_list.ProductStoreList(), null,
-                binding: product_store_list.ProductStoreListBinding(),
-                arguments: {"levelType": 1, "title": "VIP商城"});
-          } else if (isOld && path == "/pages/shop/shop") {
-            // 采购商城
-            await product_store_list.loadLibrary();
-            push(product_store_list.ProductStoreList(), null,
-                binding: product_store_list.ProductStoreListBinding(),
-                arguments: {"levelType": 2, "title": e["name"] ?? ""});
-          } else if (isOld
-              ? path == "/pages/rank_list/rank_list"
-              : path.contains("/home/rank")) {
-            // 排行榜
-            await rank.loadLibrary();
-            push(rank.Rank(), null, binding: rank.RankBinding());
-          } else if (path.contains("/home/entrepreneurial/support")) {
-            // 创业支持
-            CustomDeferred().toSupportPage();
-          } else if (e["path"] == "/home/productpurchase") {
-            // 礼包商城
-            await product_purchase_list.loadLibrary();
-            push(product_purchase_list.ProductPurchaseList(), null,
-                binding: product_purchase_list.ProductPurchaseListBinding());
-          } else if (isOld
-              ? path == "/pages/team/team"
-              : e["path"] == "/home/teammanage") {
-            // 团队管理
-            CustomDeferred().toStatisticsFacilitatorList(arg: {"isPage": true});
-          } else if (isOld
-              ? path == "/pages/attestation/attestation"
-              : path == "/pages/authentication") {
-            // 实名认证
-            CustomDeferred().toIdentityAuthentication();
-          } else if (isOld
-              ? path == "/pages/merchant/merchant"
-              : e["path"] == "/home/businessinfo") {
-            // 商户信息
-            CustomDeferred().toStatisticsBusinessList(arg: {"isPage": true});
-          } else if (e["path"] == "/home/integralstore") {
-            // 积分商城
-            CustomDeferred().toIntegralStore();
-          } else if (e["path"] == "/home/machinetransfer") {
-            // 机具划拨
-            await machine_transfer.loadLibrary();
-            push(machine_transfer.MachineTransfer(isLock: false), null,
-                binding: machine_transfer.MachineTransferBinding());
-          } else if (e['path'] == "/home/machinetransferback") {
-            // 机具回拨
-            await machine_transfer_userlist.loadLibrary();
-            push(
-                machine_transfer_userlist.MachineTransferUserList(
-                    isTerminalBack: true),
-                null,
-                binding:
-                    machine_transfer_userlist.MachineTransferUserListBinding());
-          } else if (isOld
-              ? path == "/pages/share/share"
-              : path == "/home/shareinvite") {
-            await share_invite.loadLibrary();
-            push(share_invite.ShareInvite(), null,
-                binding: share_invite.ShareInviteBinding());
-          } else if (e["path"] == "/home/vipstore") {
-            pushStore(e);
-          } else if (isOld
-              ? path == "/pages/academy/academy"
-              : e["path"] == "/home/businessschool") {
-            // 商学院
-            await business_school_list_page.loadLibrary();
-            push(business_school_list_page.BusinessSchoolListPage(), null,
-                binding:
-                    business_school_list_page.BusinessSchoolListPageBinding(),
-                arguments: {"index": 0});
-          } else if (path == "/home/usermanage") {
-            // 用户管理
-            await statistics_user_manage.loadLibrary();
-            push(statistics_user_manage.StatisticsUserManage(), null,
-                binding: statistics_user_manage.StatisticsUserManageBinding());
-          } else if (path == "/home/contactcustomerservice") {
-            // 联系客服
-            await contact_customer_service.loadLibrary();
-            push(contact_customer_service.ContactCustomerService(), null,
-                binding:
-                    contact_customer_service.ContactCustomerServiceBinding());
-          } else if (path == "/home/integralrepurchase") {
-            await integral_repurchase.loadLibrary();
-            // 积分复购
-            push(integral_repurchase.IntegralRepurchase(), null,
-                binding: integral_repurchase.IntegralRepurchaseBinding());
-          } else if (path == "/home/machineregister") {
-            //设备注册
-            await machine_register.loadLibrary();
-            push(machine_register.MachineRegister(), null,
-                binding: machine_register.MachineRegisterBinding());
-          } else if (path == "/home/mywallet") {
-            // 我的钱包
-            await my_wallet.loadLibrary();
-            push(my_wallet.MyWallet(), null,
-                binding: my_wallet.MyWalletBinding());
-          } else if (path == "/home/machinestore") {
-            await machine_pay_page.loadLibrary();
-            push(machine_pay_page.MachinePayPage(), null,
-                binding: machine_pay_page.MachinePayPageBinding());
-          } else if (e["path"] == "/home/merchantaccessnetwork") {
-            await merchant_access_network.loadLibrary();
-            push(merchant_access_network.MerchantAccessNetwork(), null,
-                binding:
-                    merchant_access_network.MerchantAccessNetworkBinding());
-          } else if (e["path"] == "/pages/booked/booked") {
-          } else if (e["path"] == "/home/terminalreceive") {
-            await product.loadLibrary();
-            push(product.Product(subPage: true), null,
-                binding: product.ProductBinding());
-          } else if (isOld
-              ? path == "/pages/associate/associate"
-              : e["path"] == "/home/terminalbinding") {
-            terminal_binding.loadLibrary().then(
-                (value) => push(terminal_binding.TerminalBinding(), context));
-          } else if (path.contains("/pages/store")) {
-            await product_store_list.loadLibrary();
-            int type = 1;
-            List subs = path.split("?");
-            path = subs.length > 1 ? subs[1] : "";
-            if (path.isNotEmpty) {
-              List params = path.split("&");
-              for (String e in params) {
-                List l = e.split("=");
-                if (l.isNotEmpty && l.length > 1 && l[0] == "type") {
-                  type = int.tryParse(l[1]) != null ? int.parse(l[1]) : 1;
-                  break;
+          onPressed: () async {
+            bool isOld = HttpConfig.baseUrl.contains(AppDefault.oldSystem);
+            String path = e["path"] ?? "";
+            if (isOld
+                ? path == "/pages/machine/machine"
+                : path == "/home/machinemanage") {
+              // 设备管理
+              await machine_manage.loadLibrary();
+              push(machine_manage.MachineManage(), null,
+                  binding: machine_manage.MachineManageBinding());
+            } else if (isOld && path == "/pages/shop/shop_vip") {
+              // Vip礼包
+              await product_store_list.loadLibrary();
+              push(product_store_list.ProductStoreList(), null,
+                  binding: product_store_list.ProductStoreListBinding(),
+                  arguments: {"levelType": 1, "title": "VIP商城"});
+            } else if (isOld && path == "/pages/shop/shop") {
+              // 采购商城
+              await product_store_list.loadLibrary();
+              push(product_store_list.ProductStoreList(), null,
+                  binding: product_store_list.ProductStoreListBinding(),
+                  arguments: {"levelType": 2, "title": e["name"] ?? ""});
+            } else if (isOld
+                ? path == "/pages/rank_list/rank_list"
+                : path.contains("/home/rank")) {
+              // 排行榜
+              await rank.loadLibrary();
+              push(rank.Rank(), null, binding: rank.RankBinding());
+            } else if (path.contains("/home/entrepreneurial/support")) {
+              // 创业支持
+              CustomDeferred().toSupportPage();
+            } else if (e["path"] == "/home/productpurchase") {
+              // 礼包商城
+              await product_purchase_list.loadLibrary();
+              push(product_purchase_list.ProductPurchaseList(), null,
+                  binding: product_purchase_list.ProductPurchaseListBinding());
+            } else if (isOld
+                ? path == "/pages/team/team"
+                : e["path"] == "/home/teammanage") {
+              // 团队管理
+              CustomDeferred()
+                  .toStatisticsFacilitatorList(arg: {"isPage": true});
+            } else if (isOld
+                ? path == "/pages/attestation/attestation"
+                : path == "/pages/authentication") {
+              // 实名认证
+              CustomDeferred().toIdentityAuthentication();
+            } else if (isOld
+                ? path == "/pages/merchant/merchant"
+                : e["path"] == "/home/businessinfo") {
+              // 商户信息
+              CustomDeferred().toStatisticsBusinessList(arg: {"isPage": true});
+            } else if (e["path"] == "/home/integralstore") {
+              // 积分商城
+              CustomDeferred().toIntegralStore();
+            } else if (e["path"] == "/home/machinetransfer") {
+              // 机具划拨
+              await machine_transfer.loadLibrary();
+              push(machine_transfer.MachineTransfer(isLock: false), null,
+                  binding: machine_transfer.MachineTransferBinding());
+            } else if (e['path'] == "/home/machinetransferback") {
+              // 机具回拨
+              await machine_transfer_userlist.loadLibrary();
+              push(
+                  machine_transfer_userlist.MachineTransferUserList(
+                      isTerminalBack: true),
+                  null,
+                  binding: machine_transfer_userlist
+                      .MachineTransferUserListBinding());
+            } else if (isOld
+                ? path == "/pages/share/share"
+                : path == "/home/shareinvite") {
+              await share_invite.loadLibrary();
+              push(share_invite.ShareInvite(), null,
+                  binding: share_invite.ShareInviteBinding());
+            } else if (e["path"] == "/home/vipstore") {
+              pushStore(e);
+            } else if (isOld
+                ? path == "/pages/academy/academy"
+                : e["path"] == "/home/businessschool") {
+              // 商学院
+              await business_school_list_page.loadLibrary();
+              push(business_school_list_page.BusinessSchoolListPage(), null,
+                  binding:
+                      business_school_list_page.BusinessSchoolListPageBinding(),
+                  arguments: {"index": 0});
+            } else if (path == "/home/usermanage") {
+              // 用户管理
+              await statistics_user_manage.loadLibrary();
+              push(statistics_user_manage.StatisticsUserManage(), null,
+                  binding:
+                      statistics_user_manage.StatisticsUserManageBinding());
+            } else if (path == "/home/contactcustomerservice") {
+              // 联系客服
+              await contact_customer_service.loadLibrary();
+              push(contact_customer_service.ContactCustomerService(), null,
+                  binding:
+                      contact_customer_service.ContactCustomerServiceBinding());
+            } else if (path == "/home/integralrepurchase") {
+              await integral_repurchase.loadLibrary();
+              // 积分复购
+              push(integral_repurchase.IntegralRepurchase(), null,
+                  binding: integral_repurchase.IntegralRepurchaseBinding());
+            } else if (path == "/home/machineregister") {
+              //设备注册
+              await machine_register.loadLibrary();
+              push(machine_register.MachineRegister(), null,
+                  binding: machine_register.MachineRegisterBinding());
+            } else if (path == "/home/mywallet") {
+              // 我的钱包
+              await my_wallet.loadLibrary();
+              push(my_wallet.MyWallet(), null,
+                  binding: my_wallet.MyWalletBinding());
+            } else if (path == "/home/machinestore") {
+              await machine_pay_page.loadLibrary();
+              push(machine_pay_page.MachinePayPage(), null,
+                  binding: machine_pay_page.MachinePayPageBinding());
+            } else if (e["path"] == "/home/merchantaccessnetwork") {
+              await merchant_access_network.loadLibrary();
+              push(merchant_access_network.MerchantAccessNetwork(), null,
+                  binding:
+                      merchant_access_network.MerchantAccessNetworkBinding());
+            } else if (e["path"] == "/pages/booked/booked") {
+            } else if (e["path"] == "/home/terminalreceive") {
+              await product.loadLibrary();
+              push(product.Product(subPage: true), null,
+                  binding: product.ProductBinding());
+            } else if (isOld
+                ? path == "/pages/associate/associate"
+                : e["path"] == "/home/terminalbinding") {
+              terminal_binding.loadLibrary().then(
+                  (value) => push(terminal_binding.TerminalBinding(), context));
+            } else if (path.contains("/pages/store")) {
+              await product_store_list.loadLibrary();
+              int type = 1;
+              List subs = path.split("?");
+              path = subs.length > 1 ? subs[1] : "";
+              if (path.isNotEmpty) {
+                List params = path.split("&");
+                for (String e in params) {
+                  List l = e.split("=");
+                  if (l.isNotEmpty && l.length > 1 && l[0] == "type") {
+                    type = int.tryParse(l[1]) != null ? int.parse(l[1]) : 1;
+                    break;
+                  }
                 }
               }
+              push(product_store_list.ProductStoreList(), null,
+                  binding: product_store_list.ProductStoreListBinding(),
+                  arguments: {"levelType": type, "title": e["name"] ?? ""});
+            } else if (path == "/pages/extensionreward") {
+              /// 拓新奖励
+              CustomDeferred().toExtensionRewardPage();
+            } else if (path == "/pages/promotionskills") {
+              /// 推广技巧
+              CustomDeferred().toPromotionSkills();
+            } else if (path == "/pages/contactservice") {
+              /// 在线客服
+              CustomDeferred().toContactCustomerService();
+            } else if (path == "/home/equitiesadd") {
+              // 权益添加
+              CustomDeferred().toStatisticsMachineEquitiesAdd();
+            } else if (path == "/home/equitiesmachine") {
+              // 权益设备
+              CustomDeferred().toStatisticsMachineEquities();
+            } else if (path == "/home/fullback") {
+              // 付利全返
+              push(const FLFullBack(), context);
             }
-            push(product_store_list.ProductStoreList(), null,
-                binding: product_store_list.ProductStoreListBinding(),
-                arguments: {"levelType": type, "title": e["name"] ?? ""});
-          } else if (path == "/pages/extensionreward") {
-            /// 拓新奖励
-            CustomDeferred().toExtensionRewardPage();
-          } else if (path == "/pages/promotionskills") {
-            /// 推广技巧
-            CustomDeferred().toPromotionSkills();
-          } else if (path == "/pages/contactservice") {
-            /// 在线客服
-            CustomDeferred().toContactCustomerService();
-          } else if (path == "/home/equitiesadd") {
-            // 权益添加
-            CustomDeferred().toStatisticsMachineEquitiesAdd();
-          } else if (path == "/home/equitiesmachine") {
-            // 权益设备
-            CustomDeferred().toStatisticsMachineEquities();
-          } else if (path == "/home/fullback") {
-            // 付利全返
-            push(const FLFullBack(), context);
-          }
-        },
-        child: SizedBox(
-          width: jgwidth.w / 4 - 0.1.w,
-          child: centClm(
-            [
-              CustomNetworkImage(
-                key: ValueKey(e),
-                src: e["img"],
-                height: jgImageHeight.w,
-                // height: jgImageHeight.w,
-                fit: BoxFit.fitHeight,
-                errorWidget: gemp(),
-              ),
-              ghb(jgBtnGap),
-              getSimpleText(e["name"], jgFontSize, AppColor.textBlack)
-            ],
-          ),
-        ),
-      ));
+          },
+          child: SizedBox(
+              width: jgwidth.w / 4 - 0.1.w,
+              child: centClm([
+                CustomNetworkImage(
+                  key: ValueKey(e),
+                  src: e["img"],
+                  height: jgImageHeight.w,
+                  // height: jgImageHeight.w,
+                  fit: BoxFit.fitHeight,
+                  errorWidget: gemp(),
+                ),
+                ghb(jgBtnGap),
+                getSimpleText(e["name"], jgFontSize, AppColor.textBlack)
+              ]))));
     }
     return buttons;
   }

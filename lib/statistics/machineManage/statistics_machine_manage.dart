@@ -297,10 +297,7 @@ class StatisticsMachineManageController extends GetxController {
     publicHomeData = AppDefault().publicHomeData;
 
     machineTypes = [
-      {
-        "id": -1,
-        "name": "全部",
-      }
+      {"id": -1, "name": "全部", "terninal_Type": 2}
     ];
 
     if (publicHomeData.isNotEmpty &&
@@ -311,8 +308,12 @@ class StatisticsMachineManageController extends GetxController {
         machineTypes.add({
           "id": e["id"] ?? -1,
           "name": e["terninal_Name"] ?? "",
+          "terninal_Type": e["terninal_Type"] ?? 0
         });
       });
+      machineTypes = machineTypes
+          .where((element) => (element["terninal_Type"] ?? 0) == 2)
+          .toList();
       // machineTypes = (publicHomeData["terminalConfig"] as List)
       //     .map((e) => {...e, "selected": false})
       //     .toList();

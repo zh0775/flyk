@@ -401,40 +401,27 @@ class MineStoreOrderListController extends GetxController {
         "u_3nd_Pad": pwd,
       },
       success: (success, json) async {
-        // if (success) {
-        //   // Map result = await tobias.aliPay(json["data"]["aliData"]);
-        // }
-
-        if (payOrder["paymentMethodType"] != null &&
-            payOrder["paymentMethod"] != null) {
-          if (payOrder["paymentMethodType"] == 1 &&
-              payOrder["paymentMethod"] == 1) {
-            if (json != null &&
-                json["data"] != null &&
-                json["data"]["aliData"] != null) {
-              Map result = await CustomAlipay().payAction(
-                json["data"]["aliData"],
-                payBack: () {
-                  alipayH5payBack(
-                    url: Urls.userLevelGiftOrderShow(payOrder["id"]),
-                    params: {},
-                  );
-                },
+        if (json != null &&
+            json["data"] != null &&
+            json["data"]["aliData"] != null) {
+          Map result = await CustomAlipay().payAction(
+            json["data"]["aliData"],
+            payBack: () {
+              alipayH5payBack(
+                url: Urls.userLevelGiftOrderShow(payOrder["id"]),
+                params: {},
               );
-              if (!kIsWeb) {
-                if (result["resultStatus"] == "6001") {
-                  toPayResult(orderData: payOrder, toOrderDetail: true);
-                } else if (result["resultStatus"] == "9000") {
-                  toPayResult(orderData: payOrder);
-                }
-              }
-            } else {
-              ShowToast.normal("支付失败，请稍后再试");
-              return;
+            },
+          );
+          if (!kIsWeb) {
+            if (result["resultStatus"] == "6001") {
+              toPayResult(orderData: payOrder, toOrderDetail: true);
+            } else if (result["resultStatus"] == "9000") {
+              toPayResult(orderData: payOrder);
             }
-          } else if (payOrder["paymentMethodType"] == 2) {
-            toPayResult(orderData: payOrder, toOrderDetail: !success);
           }
+        } else {
+          toPayResult(orderData: payOrder, toOrderDetail: !success);
         }
       },
       after: () {},

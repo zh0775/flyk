@@ -103,10 +103,12 @@ class MachineTransferUserListController extends GetxController {
     }
     if (teamYlocation != null) {
       params["teamYlocation"] = teamYlocation;
+      params["uLevel"] = 1;
     }
     if (levelType != null) {
       params["levelType"] = levelType;
     }
+
     simpleRequest(
       url: Urls.userFindTeam,
       params: params,
