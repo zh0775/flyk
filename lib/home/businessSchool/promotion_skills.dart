@@ -144,16 +144,14 @@ class PromotionSkills extends GetView<PromotionSkillsController> {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4.w),
-                        child: CustomNetworkImage(
-                          src: AppDefault().imageUrl + (data["coverImg"] ?? ""),
-                          width: 345.w,
-                          height: 171.w,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(4.w),
+                            child: CustomNetworkImage(
+                                src: AppDefault().imageUrl +
+                                    (data["coverImg"] ?? ""),
+                                width: 345.w,
+                                height: 171.w,
+                                fit: BoxFit.cover))),
                     Positioned(
                         left: 13.5.w,
                         bottom: 6.w,

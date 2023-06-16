@@ -68,26 +68,25 @@ class MachineTransferSuccess extends GetView<MachineTransferSuccessController> {
     controller.dataInit(successType!, isLock);
 
     return Scaffold(
-      appBar: getDefaultAppBar(
-        context,
-        "划拨结果",
-        backPressed: () {
-          Get.offUntil(
-              GetPageRoute(
-                  page: () => const MachineTransfer(),
-                  binding: MachineTransferBinding(),
-                  settings: const RouteSettings(name: "MachineTransfer")),
-              (route) => route is GetPageRoute
-                  ? route.binding is MainPageBinding
-                      ? true
-                      : false
-                  : false);
-        },
-      ),
-      backgroundColor: AppColor.pageBackgroundColor,
-      body: SingleChildScrollView(
-          child: Column(
-        children: [
+        appBar: getDefaultAppBar(
+          context,
+          "划拨结果",
+          backPressed: () {
+            Get.offUntil(
+                GetPageRoute(
+                    page: () => const MachineTransfer(),
+                    binding: MachineTransferBinding(),
+                    settings: const RouteSettings(name: "MachineTransfer")),
+                (route) => route is GetPageRoute
+                    ? route.binding is MainPageBinding
+                        ? true
+                        : false
+                    : false);
+          },
+        ),
+        backgroundColor: AppColor.pageBackgroundColor,
+        body: SingleChildScrollView(
+            child: Column(children: [
           gwb(375),
           ghb(130),
           Image.asset(
@@ -140,8 +139,6 @@ class MachineTransferSuccess extends GetView<MachineTransferSuccessController> {
                       borderRadius: BorderRadius.circular(45.w / 2),
                       border: Border.all(width: 0.5.w, color: AppColor.theme)),
                   child: getSimpleText("查看记录", 15, AppColor.theme)))
-        ],
-      )),
-    );
+        ])));
   }
 }

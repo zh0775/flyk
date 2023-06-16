@@ -332,12 +332,6 @@ class HomeController extends FullLifeCycleController {
       Map authData = homeData["authentication"] ?? {};
       isAuth = authData["isCertified"] ?? false;
       isBindCard = authData["isBank"] ?? false;
-      // if (!isAuth) {
-      //   if (Global.navigatorKey.currentContext != null) {
-      //     showAuthAlert(
-      //         context: Global.navigatorKey.currentContext!, isAuth: true);
-      //   }
-      // }
     }
   }
 
@@ -345,17 +339,11 @@ class HomeController extends FullLifeCycleController {
   bool get haveAddModule => _haveAddModule.value;
   set haveAddModule(v) => _haveAddModule.value = v;
   List middleIcons = [];
-
   String subTitle = "";
-
   dataFormat({bool isHomeData = false}) {
-    if (!AppDefault().loginStatus) {
-      return;
-    }
-
+    if (!AppDefault().loginStatus) return;
     haveNews = homeData["news"] != null && homeData["news"].isNotEmpty;
     myMessages = homeData["news"] ?? [];
-
     if (publicHomeData.isNotEmpty) {
       List tmpBanners = (publicHomeData["appCofig"] ?? {})["topBanner"] ?? [];
       tmpBanners = tmpBanners.where((e) {
@@ -382,8 +370,9 @@ class HomeController extends FullLifeCycleController {
       middleIcons = [];
       if (AppDefault().checkDay) {
         middleIcons = (publicHomeData["appCofig"] ?? {})["middleIcon"] ?? [];
-        //测试
-        // middleIcons = [...middleIcons, ...middleIcons];
+
+        /// 测试
+        /// middleIcons = [...middleIcons, ...middleIcons];
       } else {
         for (var e in tmpMiddle) {
           if (e["id"] != 2082 && e["id"] != 2083) {
@@ -503,32 +492,30 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     return AnnotatedRegion(
-      value: SystemUiOverlayStyle.light,
-      child: Scaffold(
-          body: EasyRefresh.builder(
-        onRefresh: () => ctrl.homeOnRefresh(),
-        childBuilder: (context, physics) {
-          return SingleChildScrollView(
-              physics: physics,
-              child: Column(children: [
-                centClm([
-                  // 轮播图/金刚区
-                  GetBuilder<HomeController>(
-                      init: ctrl,
-                      builder: (_) {
-                        AppDefault().scaleWidth = 1.w;
-                        return topContent();
-                      }),
-                  machineDataView()
-                ]),
-                ghb(14),
-                GetBuilder<HomeController>(builder: (_) {
-                  return AppBottomTips(pData: ctrl.publicHomeData);
-                })
-              ]));
-        },
-      )),
-    );
+        value: SystemUiOverlayStyle.light,
+        child: Scaffold(
+            body: EasyRefresh.builder(
+                onRefresh: () => ctrl.homeOnRefresh(),
+                childBuilder: (context, physics) {
+                  return SingleChildScrollView(
+                      physics: physics,
+                      child: Column(children: [
+                        centClm([
+                          // 轮播图/金刚区
+                          GetBuilder<HomeController>(
+                              init: ctrl,
+                              builder: (_) {
+                                AppDefault().scaleWidth = 1.w;
+                                return topContent();
+                              }),
+                          machineDataView()
+                        ]),
+                        ghb(14),
+                        GetBuilder<HomeController>(builder: (_) {
+                          return AppBottomTips(pData: ctrl.publicHomeData);
+                        })
+                      ]));
+                })));
   }
 
   bannerPress(Map data) async {
@@ -605,18 +592,16 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
         child: Column(
           children: [
             Container(
-              width: 375.w,
-              height: 330.w,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.fill,
-                      image: AssetImage(assetsName("home/bg_top")))),
-              child: Column(
-                children: [
+                width: 375.w,
+                height: 330.w,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: AssetImage(assetsName("home/bg_top")))),
+                child: Column(children: [
                   SizedBox(
-                    height: 210.w,
-                    child: Column(
-                      children: [
+                      height: 210.w,
+                      child: Column(children: [
                         ghb(80),
                         sbRow([
                           getSimpleText("今日团队总交易额", 12, Colors.white),
@@ -624,7 +609,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         ghb(5),
                         sbRow([
                           getSimpleText(
-                              priceFormat(tanNo["soleThisMAmount"] ?? 0),
+                              priceFormat(tanNo["teamThisDAmount"] ?? 0),
                               40,
                               Colors.white,
                               isBold: true),
@@ -639,23 +624,21 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                             WidgetSpan(child: gwb(13)),
                             TextSpan(
                                 text:
-                                    priceFormat(tanNo["soleThisMAmount"] ?? 0),
+                                    priceFormat(tanNo["teamThisMAmount"] ?? 0),
                                 style: TextStyle(
                                     fontSize: 16.sp, color: Colors.white))
                           ]))
                         ], width: 375 - 30 * 2)
-                      ],
-                    ),
-                  ),
+                      ])),
                   Container(
-                    width: 345.w,
-                    height: 105.w,
-                    alignment: Alignment.center,
-                    decoration: getDefaultWhiteDec(radius: 8.w),
-                    child: sbhRow(
-                        List.generate(
-                            4,
-                            (index) => CustomButton(
+                      width: 345.w,
+                      height: 105.w,
+                      alignment: Alignment.center,
+                      decoration: getDefaultWhiteDec(radius: 8.w),
+                      child: sbhRow(
+                          List.generate(
+                              4,
+                              (index) => CustomButton(
                                   onPressed: () async {
                                     if (index == 0) {
                                       await share_invite.loadLibrary();
@@ -692,35 +675,30 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                                     }
                                   },
                                   child: SizedBox(
-                                    width: 345.w / 4,
-                                    child: centClm([
-                                      Image.asset(
-                                        assetsName(
-                                            "home/icon_${index == 0 ? "fxyq" : index == 1 ? "shzc" : index == 2 ? "zdhb" : "cgsc"}"),
-                                        width: 45.w,
-                                        height: 45.w,
-                                        fit: BoxFit.fill,
-                                      ),
-                                      ghb(3),
-                                      getSimpleText(
-                                          index == 0
-                                              ? "分享邀请"
-                                              : index == 1
-                                                  ? "商户注册"
-                                                  : index == 2
-                                                      ? "终端划拨"
-                                                      : "采购商城",
-                                          12,
-                                          AppColor.textBlack),
-                                    ]),
-                                  ),
-                                )),
-                        width: 345,
-                        height: 105),
-                  )
-                ],
-              ),
-            ),
+                                      width: 345.w / 4,
+                                      child: centClm([
+                                        Image.asset(
+                                          assetsName(
+                                              "home/icon_${index == 0 ? "fxyq" : index == 1 ? "shzc" : index == 2 ? "zdhb" : "cgsc"}"),
+                                          width: 45.w,
+                                          height: 45.w,
+                                          fit: BoxFit.fill,
+                                        ),
+                                        ghb(3),
+                                        getSimpleText(
+                                            index == 0
+                                                ? "分享邀请"
+                                                : index == 1
+                                                    ? "商户注册"
+                                                    : index == 2
+                                                        ? "终端划拨"
+                                                        : "采购商城",
+                                            12,
+                                            AppColor.textBlack)
+                                      ])))),
+                          width: 345,
+                          height: 105))
+                ])),
             AppBanner(
               // controller: ctrl.bannerCtrl,
               // isFullScreen: false,
@@ -772,48 +750,47 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       )),
                   //金刚区滑动标记
                   Visibility(
-                    visible: ctrl.btnDatas.length > 1,
-                    child: Padding(
-                        padding: EdgeInsets.only(top: jgTagMarginTop.w),
-                        child: GetX<HomeController>(
-                          builder: (_) {
+                      visible: ctrl.btnDatas.length > 1,
+                      child: Padding(
+                          padding: EdgeInsets.only(top: jgTagMarginTop.w),
+                          child: GetX<HomeController>(builder: (_) {
                             return ClipRRect(
-                              borderRadius: BorderRadius.circular(1.5.w),
-                              child: centRow([
-                                ...ctrl.btnDatas
-                                    .asMap()
-                                    .entries
-                                    .map((e) => Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 0.w),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                ctrl.centerBtnIndex == e.key
-                                                    ? 1.5.w
-                                                    : 0),
-                                            color: ctrl.centerBtnIndex == e.key
-                                                ? AppDefault()
-                                                        .getThemeColor() ??
-                                                    AppColor.theme
-                                                : AppDefault()
-                                                            .getThemeColor() ==
-                                                        null
-                                                    ? const Color(0xFFA9DAFC)
-                                                    : AppDefault()
-                                                        .getThemeColor()!
-                                                        .withOpacity(0.3),
-                                          ),
-                                          width: ctrl.centerBtnIndex == e.key
-                                              ? 11.w
-                                              : 5.w,
-                                          height: 3.w,
-                                        ))
-                                    .toList()
-                              ]),
-                            );
-                          },
-                        )),
-                  ),
+                                borderRadius: BorderRadius.circular(1.5.w),
+                                child: centRow([
+                                  ...ctrl.btnDatas
+                                      .asMap()
+                                      .entries
+                                      .map((e) => Container(
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 0.w),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      ctrl.centerBtnIndex ==
+                                                              e.key
+                                                          ? 1.5.w
+                                                          : 0),
+                                              color: ctrl.centerBtnIndex ==
+                                                      e.key
+                                                  ? AppDefault()
+                                                          .getThemeColor() ??
+                                                      AppColor.theme
+                                                  : AppDefault()
+                                                              .getThemeColor() ==
+                                                          null
+                                                      ? const Color(0xFFA9DAFC)
+                                                      : AppDefault()
+                                                          .getThemeColor()!
+                                                          .withOpacity(0.3),
+                                            ),
+                                            width: ctrl.centerBtnIndex == e.key
+                                                ? 11.w
+                                                : 5.w,
+                                            height: 3.w,
+                                          ))
+                                      .toList()
+                                ]));
+                          }))),
                   ghb(ctrl.btnDatas.length > 1 ? 15 : bottomPadding),
                 ],
               ),

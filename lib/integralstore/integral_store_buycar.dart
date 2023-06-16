@@ -93,19 +93,18 @@ class IntegralStoreBuycarController extends GetxController {
 
   changeCar(Map data) {
     simpleRequest(
-      url: Urls.userModifyCart,
-      params: {
-        "product_ID": data["carId"],
-        "product_Property_List": data["shopPropertyList"] ?? [],
-        "num": data["num"],
-      },
-      success: (success, json) {
-        if (success) {
-          loadList();
-        }
-      },
-      after: () {},
-    );
+        url: Urls.userModifyCart,
+        params: {
+          "product_ID": data["carId"],
+          "product_Property_List": data["shopPropertyList"] ?? [],
+          "num": data["num"]
+        },
+        success: (success, json) {
+          if (success) {
+            loadList();
+          }
+        },
+        after: () {});
   }
 
   deleleCar() {

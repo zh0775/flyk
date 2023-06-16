@@ -1,5 +1,7 @@
 import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/service/urls.dart';
+import 'package:cxhighversion2/statistics/statistics_page/statistics_business_list.dart';
+import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:flutter/material.dart';
@@ -41,11 +43,20 @@ class StatisticsBusinessChangeInfoController extends GetxController {
     simpleRequest(
         url: Urls.userMerchantEdit,
         params: {
-          "id": businessData["tId"],
+          "id": businessData["merchantId"],
           "contact_Recipient": nameInputCtrl.text,
           "contact_Mobile": phoneInputCtrl.text
         },
-        success: (success, json) {},
+        success: (success, json) {
+          if (success) {
+            ShowToast.normal("修改成功");
+            bus.emit("businessListLoadNotify");
+            // Get.find<StatisticsBusinessListController>().loadData();
+            Future.delayed(const Duration(seconds: 1), () {
+              popToUntil();
+            });
+          }
+        },
         after: () {
           submitEnable = true;
         });

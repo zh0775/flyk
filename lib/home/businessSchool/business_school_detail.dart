@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:chewie/chewie.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_empty_view.dart';

@@ -215,12 +215,11 @@ class UserLoginController extends GetxController {
       "phoneKey": dId ?? "",
       "versionInternalNumber": "1.0",
       "version_Origin": AppDefault().versionOrigin,
-      "password": formData["password"] ?? ""
     };
 
-    // if (!loginByAuthCode) {
-    //   params["password"] = formData["password"] ?? "";
-    // }
+    if (!loginByAuthCode) {
+      params["password"] = formData["password"] ?? "";
+    }
 
     if (needAuthCode || loginByAuthCode) {
       if ((formData["sms_Code"] ?? "").isEmpty) {

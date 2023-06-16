@@ -104,7 +104,7 @@ class IntegralstoreDetailController extends GetxController {
       params: {
         // "product_Property_List": getShopPropertyList(),
         "product_ID": productData["productListId"],
-        "num": productNum,
+        "num": productNum
       },
       success: (success, json) {
         if (success) {
@@ -138,7 +138,6 @@ class IntegralstoreDetailController extends GetxController {
       success: (success, json) {
         if (success) {
           productDetailData = json["data"] ?? {};
-
           changeData();
         }
       },
@@ -213,42 +212,39 @@ class IntegralstoreDetail extends GetView<IntegralstoreDetailController> {
             Positioned.fill(
                 bottom: 60.w + paddingSizeBottom(context),
                 child: EasyRefresh(
-                  // header: const ClassicHeader(showMessage: false),
-                  onRefresh: () => controller.loadDetail(),
-                  child: SingleChildScrollView(
-                    child: Column(children: [
+                    // header: const ClassicHeader(showMessage: false),
+                    onRefresh: () => controller.loadDetail(),
+                    child: SingleChildScrollView(
+                        child: Column(children: [
                       pageImageView(),
                       ghb(10),
                       Container(
-                        width: 345.w,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8.w)),
-                        child: Column(
-                          children: [
+                          width: 345.w,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.w)),
+                          child: Column(children: [
                             ghb(11),
                             getWidthText(
-                              "${controller.productData["shopName"] ?? ""}",
-                              18,
-                              AppColor.textBlack,
-                              315,
-                              2,
-                              isBold: true,
-                            ),
+                                "${controller.productData["shopName"] ?? ""}",
+                                18,
+                                AppColor.textBlack,
+                                315,
+                                2,
+                                isBold: true),
                             ghb(8),
                             sbRow([
                               getSimpleText(
                                   "库存:${controller.productData["shopStock"] ?? 0}",
                                   12,
-                                  AppColor.textGrey5),
+                                  AppColor.textGrey5)
                             ], width: 315),
                             sbhRow([
                               centRow([
                                 Image.asset(
-                                  assetsName("integral_store/icon_jf"),
-                                  width: 12.w,
-                                  fit: BoxFit.fitWidth,
-                                ),
+                                    assetsName("integral_store/icon_jf"),
+                                    width: 12.w,
+                                    fit: BoxFit.fitWidth),
                                 gwb(5),
                                 getSimpleText(
                                     priceFormat(
@@ -256,13 +252,12 @@ class IntegralstoreDetail extends GetView<IntegralstoreDetailController> {
                                         savePoint: 0),
                                     24,
                                     const Color(0xFFFFB540),
-                                    isBold: true),
+                                    isBold: true)
                               ]),
                               getSimpleText(
-                                "已兑:${controller.productData["shopBuyCount"] ?? 0}",
-                                12,
-                                AppColor.textGrey5,
-                              ),
+                                  "已兑:${controller.productData["shopBuyCount"] ?? 0}",
+                                  12,
+                                  AppColor.textGrey5)
                             ], width: 315, height: 30.5),
                             // Padding(
                             //   padding:
@@ -300,16 +295,12 @@ class IntegralstoreDetail extends GetView<IntegralstoreDetailController> {
                             //     ])
                             //   ], width: 315),
                             // ),
-                            ghb(10),
-                          ],
-                        ),
-                      ),
+                            ghb(10)
+                          ])),
                       ghb(15),
                       detailInfo(),
-                      ghb(20),
-                    ]),
-                  ),
-                )),
+                      ghb(20)
+                    ])))),
             Positioned(
                 bottom: 0,
                 left: 0,

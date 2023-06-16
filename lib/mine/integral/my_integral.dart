@@ -6,6 +6,7 @@ import 'package:cxhighversion2/integralstore/integral_store.dart';
 import 'package:cxhighversion2/mine/integral/my_integral_history.dart';
 import 'package:cxhighversion2/mine/myWallet/my_wallet_convert.dart';
 import 'package:cxhighversion2/product/product_store/product_store_detail.dart';
+import 'package:cxhighversion2/product/product_store/product_store_list.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
@@ -77,27 +78,30 @@ class MyIntegralController extends GetxController {
   DateTime now = DateTime.now();
   loadIntegralData() {
     simpleRequest(
-      url: Urls.userFinanceIntegralList,
-      params: {"pageSize": isBean ? 3 : 4, "pageNo": 1, "a_No": isBean ? 5 : 4},
-      success: (success, json) {
-        if (success) {
-          Map data = json["data"];
-          integralHistoryList = data["data"] ?? [];
-          thisMonthAmout = 0.0;
-          List financeInOutData = data["financeInOutData"] ?? [];
-          for (var e in financeInOutData) {
-            if ((e["year"] ?? 0) == now.year &&
-                (e["month"] ?? 0) == now.month) {
-              thisMonthAmout = e["inAmount"] ?? 0.0;
-              break;
+        url: Urls.userFinanceIntegralList,
+        params: {
+          "pageSize": isBean ? 3 : 4,
+          "pageNo": 1,
+          "a_No": isBean ? 5 : 4
+        },
+        success: (success, json) {
+          if (success) {
+            Map data = json["data"] ?? {};
+            integralHistoryList = data["data"] ?? [];
+            thisMonthAmout = 0.0;
+            List financeInOutData = data["financeInOutData"] ?? [];
+            for (var e in financeInOutData) {
+              if ((e["year"] ?? 0) == now.year &&
+                  (e["month"] ?? 0) == now.month) {
+                thisMonthAmout = e["inAmount"] ?? 0.0;
+                break;
+              }
             }
           }
-        }
-      },
-      after: () {
-        isFirstLoading = false;
-      },
-    );
+        },
+        after: () {
+          isFirstLoading = false;
+        });
   }
 
   double jfNum = 0.0;
@@ -218,18 +222,18 @@ class MyIntegral extends GetView<MyIntegralController> {
                   children: [
                     ghb(20),
                     Container(
-                      width: 345.w,
-                      height: 170.w,
-                      decoration: BoxDecoration(
-                          image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: AssetImage(assetsName("mine/jf/bg_jf")))),
-                      child: Column(
-                        children: [
+                        width: 345.w,
+                        height: 170.w,
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image:
+                                    AssetImage(assetsName("mine/jf/bg_jf")))),
+                        child: Column(children: [
                           SizedBox(
-                            height: 90.w,
-                            child: Center(
-                              child: sbRow([
+                              height: 90.w,
+                              child: Center(
+                                  child: sbRow([
                                 centClm([
                                   ghb(12),
                                   getSimpleText(
@@ -244,15 +248,13 @@ class MyIntegral extends GetView<MyIntegralController> {
                                       AppColor.textBlack,
                                       isBold: true)
                                 ], crossAxisAlignment: CrossAxisAlignment.start)
-                              ], width: 345 - 25 * 2),
-                            ),
-                          ),
+                              ], width: 345 - 25 * 2))),
                           SizedBox(
-                            width: 285.w,
-                            height: 80.w,
-                            child: centRow(List.generate(
-                                2,
-                                (index) => SizedBox(
+                              width: 285.w,
+                              height: 80.w,
+                              child: centRow(List.generate(
+                                  2,
+                                  (index) => SizedBox(
                                       width: 285.w / 2,
                                       child: centClm([
                                         getSimpleText(
@@ -276,12 +278,8 @@ class MyIntegral extends GetView<MyIntegralController> {
                                               AppColor.textBlack,
                                               isBold: true);
                                         })
-                                      ]),
-                                    ))),
-                          )
-                        ],
-                      ),
-                    ),
+                                      ])))))
+                        ])),
                     controller.isBean
                         ? GetX<MyIntegralController>(
                             builder: (_) {
@@ -294,7 +292,29 @@ class MyIntegral extends GetView<MyIntegralController> {
                                       decoration: getDefaultWhiteDec(radius: 8),
                                       child: Column(
                                         children: [
-                                          myTitle("机具兑换"),
+                                          myTitle("机具兑换",
+                                              rightWidgt: CustomButton(
+                                                onPressed: () {
+                                                  push(const ProductStoreList(),
+                                                      context,
+                                                      binding:
+                                                          ProductStoreListBinding(),
+                                                      arguments: {
+                                                        "levelType": 3
+                                                      });
+                                                },
+                                                child: SizedBox(
+                                                    width: 60.w,
+                                                    height: 42.w,
+                                                    child: Align(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: getSimpleText(
+                                                          "更多",
+                                                          12,
+                                                          AppColor.textGrey5),
+                                                    )),
+                                              )),
                                           controller.isMachineFirstLoading
                                               ? kIsWeb
                                                   ? CustomEmptyView(
@@ -422,42 +442,43 @@ class MyIntegral extends GetView<MyIntegralController> {
                                     );
                             },
                           )
-                        : Container(
-                            margin: EdgeInsets.only(top: 15.w),
-                            width: 345.w,
-                            decoration: getDefaultWhiteDec(radius: 8),
-                            child: Column(
-                              children: [
-                                myTitle("积分兑换"),
-                                sbRow(
-                                    List.generate(
-                                        2,
-                                        (index) => CustomButton(
-                                              onPressed: () {
-                                                push(
-                                                    MyWalletConvert(
-                                                      walletNo:
-                                                          controller.jfAccount[
-                                                                  "a_No"] ??
-                                                              0,
-                                                      isRedPack: index == 0,
-                                                    ),
-                                                    context,
-                                                    binding:
-                                                        MyWalletConvertBinding());
-                                              },
-                                              child: Image.asset(
-                                                  assetsName(
-                                                      "mine/jf/btn_${index == 0 ? "hb" : "jlj"}"),
-                                                  width: 150.w,
-                                                  height: 85.w,
-                                                  fit: BoxFit.fill),
-                                            )),
-                                    width: 315.5),
-                                ghb(10)
-                              ],
-                            ),
-                          ),
+                        : ghb(0),
+                    // : Container(
+                    //     margin: EdgeInsets.only(top: 15.w),
+                    //     width: 345.w,
+                    //     decoration: getDefaultWhiteDec(radius: 8),
+                    //     child: Column(
+                    //       children: [
+                    //         myTitle("积分兑换"),
+                    //         sbRow(
+                    //             List.generate(
+                    //                 2,
+                    //                 (index) => CustomButton(
+                    //                       onPressed: () {
+                    //                         push(
+                    //                             MyWalletConvert(
+                    //                               walletNo:
+                    //                                   controller.jfAccount[
+                    //                                           "a_No"] ??
+                    //                                       0,
+                    //                               isRedPack: index == 0,
+                    //                             ),
+                    //                             context,
+                    //                             binding:
+                    //                                 MyWalletConvertBinding());
+                    //                       },
+                    //                       child: Image.asset(
+                    //                           assetsName(
+                    //                               "mine/jf/btn_${index == 0 ? "hb" : "jlj"}"),
+                    //                           width: 150.w,
+                    //                           height: 85.w,
+                    //                           fit: BoxFit.fill),
+                    //                     )),
+                    //             width: 315.5),
+                    //         ghb(10)
+                    //       ],
+                    //     ),
+                    //   ),
                     Container(
                       margin: EdgeInsets.only(top: 15.w),
                       width: 345.w,

@@ -4,7 +4,9 @@ import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/component/custom_list_empty_view.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/statistics/statistics_page/statistics_business_detail.dart';
+import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
+import 'package:cxhighversion2/util/notify_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/foundation.dart';
@@ -201,13 +203,14 @@ class StatisticsBusinessListController extends GetxController {
       params["tmName"] = searchInputCtrl.text;
     }
     if (filterIdx1 >= 0 && filterTypeList1[filterIdx1]["id"] != -1) {
-      params["tcId"] = "${filterTypeList1[filterIdx1]["id"]}";
+      params["tId"] = int.tryParse("${filterTypeList1[filterIdx1]["id"]}") ?? 0;
     }
 
     if (filterIdx2 >= 0 &&
         filterIdx2 <= filterTypeList2.length - 1 &&
         filterTypeList2[filterIdx2]["id"] != -1) {
-      params["tmStatus"] = "${filterTypeList2[filterIdx2]["id"]}";
+      params["tmStatus"] =
+          int.tryParse("${filterTypeList2[filterIdx2]["id"]}") ?? 0;
     } else {
       params["tmStatus"] = 0;
     }
@@ -249,8 +252,19 @@ class StatisticsBusinessListController extends GetxController {
   }
 
   List brandList = [];
+
+  homeDataNotify(arg) {
+    loadData();
+  }
+
+  loadNotify(arg) {
+    loadData();
+  }
+
   @override
   void onInit() {
+    bus.on(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
+    bus.on("businessListLoadNotify", loadNotify);
     searchInputCtrl.addListener(searchInputListener);
     Map publicHomeData = AppDefault().publicHomeData;
     List terminalBrands = publicHomeData["terminalConfig"] ?? [];
@@ -270,10 +284,12 @@ class StatisticsBusinessListController extends GetxController {
 
   @override
   void onClose() {
+    bus.off(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
+    bus.off("businessListLoadNotify", loadNotify);
     searchInputCtrl.removeListener(searchInputListener);
     searchInputCtrl.dispose();
-    filterCtrl1.dispose();
-    filterCtrl2.dispose();
+    // filterCtrl1.dispose();
+    // filterCtrl2.dispose();
     super.onClose();
   }
 }

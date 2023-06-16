@@ -7,6 +7,7 @@ import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/statistics/statistics_page/statistics_facilitator_detail.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
+import 'package:cxhighversion2/util/notify_default.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/foundation.dart';
@@ -103,7 +104,6 @@ class StatisticsFacilitatorListController extends GetxController {
     if (dataList.isEmpty) {
       isLoading = true;
     }
-
     simpleRequest(
         url: Urls.userTerminalDataList,
         params: params,
@@ -121,6 +121,10 @@ class StatisticsFacilitatorListController extends GetxController {
           isFirstLoading = false;
         },
         useCache: !isLoad);
+  }
+
+  homeDataNotify(arg) {
+    loadData();
   }
 
   @override
@@ -141,6 +145,7 @@ class StatisticsFacilitatorListController extends GetxController {
 
   @override
   void onInit() {
+    bus.on(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
     bus.on("setFacilitatorIdx", setFacilitatorIdxNotify);
     searchInputCtrl.addListener(searchInputListener);
     super.onInit();
@@ -148,6 +153,7 @@ class StatisticsFacilitatorListController extends GetxController {
 
   @override
   void onClose() {
+    bus.off(HOME_DATA_UPDATE_NOTIFY, homeDataNotify);
     bus.off("setFacilitatorIdx", setFacilitatorIdxNotify);
     searchInputCtrl.removeListener(searchInputListener);
     searchInputCtrl.dispose();

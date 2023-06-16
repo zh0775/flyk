@@ -33,27 +33,26 @@ class MachineTransferAdvanceOrderController extends GetxController {
     // }
 
     simpleRequest(
-      url: Urls.terminalTransfer,
-      params: {
-        "uId": userData["uId"],
-        "tIds": tNo
-        // "iuserId": userData["uId"],
-        // "createType": 1,
-        // "content": content,
-        // "customId": 0,
-        // "transferType": 2,
-        // "transferType": isLock ? 3 : 2,
-      },
-      success: (success, json) {
-        if (success) {
-          Get.to(() => const MachineTransferSuccess(isLock: false),
-              binding: MachineTransferSuccessBinding());
-        }
-      },
-      after: () {
-        submitEnable = true;
-      },
-    );
+        url: Urls.terminalTransfer,
+        params: {
+          "uId": userData["uId"],
+          "tIds": tNo
+          // "iuserId": userData["uId"],
+          // "createType": 1,
+          // "content": content,
+          // "customId": 0,
+          // "transferType": 2,
+          // "transferType": isLock ? 3 : 2,
+        },
+        success: (success, json) {
+          if (success) {
+            Get.to(() => const MachineTransferSuccess(isLock: false),
+                binding: MachineTransferSuccessBinding());
+          }
+        },
+        after: () {
+          submitEnable = true;
+        });
   }
 
   bool isFirst = true;
@@ -95,116 +94,99 @@ class MachineTransferAdvanceOrder
   Widget build(BuildContext context) {
     controller.dataInit(userData, machineData, isLock);
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-              child: Container(
-            decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment(0.7, 0),
-                    colors: [
-                  Color(0xFF484E5E),
-                  Color(0xFF292732),
-                ])),
-          )),
-          Positioned(
-              top: paddingSizeTop(context),
-              left: 0,
-              right: 0,
-              height: kToolbarHeight,
-              child: Center(
-                child: getDefaultAppBarTitile("生成订单",
-                    titleStyle: const TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                        fontWeight: AppDefault.fontBold)),
-              )),
-          Positioned(
-              top: paddingSizeTop(context),
-              left: 0,
-              height: kToolbarHeight,
-              child: defaultBackButton(context, color: Colors.white)),
-          Positioned(
-              top: paddingSizeTop(context) + kToolbarHeight + 15.w,
-              left: 15.w,
-              right: 15.w,
-              bottom: 50.w + paddingSizeBottom(context) + 15.5.w + 13.5.w,
-              child: Container(
-                decoration: getDefaultWhiteDec(),
-              )),
-          Positioned(
-              top: paddingSizeTop(context) + kToolbarHeight + 15.w,
-              left: 15.w + 20.w,
-              right: 15.w + 20.w,
-              height: 123.w,
-              child: SizedBox(
-                child: centClm([
-                  getSimpleText(
-                      "接收人：${controller.userData.isNotEmpty && controller.userData["uName"] != null ? controller.userData["uName"] : controller.userData["uMobile"] ?? ""}${controller.userData.isNotEmpty && controller.userData["uMobile"] != null ? "(${controller.userData["uMobile"]})" : ""}",
-                      15,
-                      AppColor.textBlack,
-                      isBold: true),
-                  ghb(12),
-                  getSimpleText("订单类别：划拨订单", 15, AppColor.textBlack,
-                      isBold: true),
-                  ghb(12),
-                  getSimpleText(
-                      "产品名称：${controller.machineDatas.isNotEmpty && controller.machineDatas[0] != null && controller.machineDatas[0]["tbName"] != null ? controller.machineDatas[0]["tbName"] : ""}",
-                      15,
-                      AppColor.textBlack,
-                      isBold: true),
-                ], crossAxisAlignment: CrossAxisAlignment.start),
-              )),
-          Positioned(
-              top: paddingSizeTop(context) + kToolbarHeight + 15.w + 123.w,
-              left: 15.w + 14.5.w,
-              right: 15.w + 14.w,
-              bottom:
-                  50.w + paddingSizeBottom(context) + 15.5.w + 13.5.w + 31.5.w,
-              child: Container(
-                padding: EdgeInsets.fromLTRB(18.5.w, 10.w, 15.5.w, 15.w),
-                decoration: BoxDecoration(
-                    color: AppColor.pageBackgroundColor,
-                    borderRadius: BorderRadius.circular(5.w)),
-                child: Scrollbar(
+        body: Stack(children: [
+      Positioned.fill(
+          child: Container(
+              decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment(0.7, 0),
+                      colors: [Color(0xFF484E5E), Color(0xFF292732)])))),
+      Positioned(
+          top: paddingSizeTop(context),
+          left: 0,
+          right: 0,
+          height: kToolbarHeight,
+          child: Center(
+              child: getDefaultAppBarTitile("生成订单",
+                  titleStyle: const TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                      fontWeight: AppDefault.fontBold)))),
+      Positioned(
+          top: paddingSizeTop(context),
+          left: 0,
+          height: kToolbarHeight,
+          child: defaultBackButton(context, color: Colors.white)),
+      Positioned(
+          top: paddingSizeTop(context) + kToolbarHeight + 15.w,
+          left: 15.w,
+          right: 15.w,
+          bottom: 50.w + paddingSizeBottom(context) + 15.5.w + 13.5.w,
+          child: Container(decoration: getDefaultWhiteDec())),
+      Positioned(
+          top: paddingSizeTop(context) + kToolbarHeight + 15.w,
+          left: 15.w + 20.w,
+          right: 15.w + 20.w,
+          height: 123.w,
+          child: SizedBox(
+              child: centClm([
+            getSimpleText(
+                "接收人：${controller.userData.isNotEmpty && controller.userData["uName"] != null ? controller.userData["uName"] : controller.userData["uMobile"] ?? ""}${controller.userData.isNotEmpty && controller.userData["uMobile"] != null ? "(${controller.userData["uMobile"]})" : ""}",
+                15,
+                AppColor.textBlack,
+                isBold: true),
+            ghb(12),
+            getSimpleText("订单类别：划拨订单", 15, AppColor.textBlack, isBold: true),
+            ghb(12),
+            getSimpleText(
+                "产品名称：${controller.machineDatas.isNotEmpty && controller.machineDatas[0] != null && controller.machineDatas[0]["tbName"] != null ? controller.machineDatas[0]["tbName"] : ""}",
+                15,
+                AppColor.textBlack,
+                isBold: true)
+          ], crossAxisAlignment: CrossAxisAlignment.start))),
+      Positioned(
+          top: paddingSizeTop(context) + kToolbarHeight + 15.w + 123.w,
+          left: 15.w + 14.5.w,
+          right: 15.w + 14.w,
+          bottom: 50.w + paddingSizeBottom(context) + 15.5.w + 13.5.w + 31.5.w,
+          child: Container(
+              padding: EdgeInsets.fromLTRB(18.5.w, 10.w, 15.5.w, 15.w),
+              decoration: BoxDecoration(
+                  color: AppColor.pageBackgroundColor,
+                  borderRadius: BorderRadius.circular(5.w)),
+              child: Scrollbar(
                   child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: controller.machineDatas.isNotEmpty
-                        ? controller.machineDatas.length
-                        : 0,
-                    itemBuilder: (context, index) {
-                      return machineCell(index, controller.machineDatas[index]);
-                    },
-                  ),
-                ),
-              )),
-          Positioned(
-              left: 15.w + 20.5,
-              bottom: 50.w + paddingSizeBottom(context) + 15.5.w + 13.5.w,
-              height: 31.5.w,
-              child: Center(
-                child: getSimpleText("总计：${controller.machineDatas.length}台",
-                    12, const Color(0xFFEB5757),
-                    isBold: true),
-              )),
-          Positioned(
-              bottom: 15.5.w,
-              left: 15.w,
-              right: 15.w,
-              height: 50.w + paddingSizeBottom(context),
-              child: GetX<MachineTransferAdvanceOrderController>(
-                init: controller,
-                builder: (_) {
-                  return getSubmitBtn("确认划拨", () {
-                    controller.submitOrder();
-                  }, enable: controller.submitEnable);
-                },
-              ))
-        ],
-      ),
-    );
+                      padding: EdgeInsets.zero,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: controller.machineDatas.isNotEmpty
+                          ? controller.machineDatas.length
+                          : 0,
+                      itemBuilder: (context, index) {
+                        return machineCell(
+                            index, controller.machineDatas[index]);
+                      })))),
+      Positioned(
+          left: 15.w + 20.5,
+          bottom: 50.w + paddingSizeBottom(context) + 15.5.w + 13.5.w,
+          height: 31.5.w,
+          child: Center(
+              child: getSimpleText("总计：${controller.machineDatas.length}台", 12,
+                  const Color(0xFFEB5757),
+                  isBold: true))),
+      Positioned(
+          bottom: 15.5.w,
+          left: 15.w,
+          right: 15.w,
+          height: 50.w + paddingSizeBottom(context),
+          child: GetX<MachineTransferAdvanceOrderController>(
+              init: controller,
+              builder: (_) {
+                return getSubmitBtn("确认划拨", () {
+                  controller.submitOrder();
+                }, enable: controller.submitEnable);
+              }))
+    ]));
   }
 
   Widget machineCell(int index, Map data) {

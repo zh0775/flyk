@@ -274,7 +274,7 @@ class StatisticsPageController extends GetxController {
   set businessDatas(v) => _businessDatas.value = v;
 
   Map machineData = {};
-  String machineBuildId = "StatisticsPage_machineBuildId";
+  // String machineBuildId = "StatisticsPage_machineBuildId";
 
   /// 终端统计总数
   int totalMachineCount = 0;
@@ -349,7 +349,7 @@ class StatisticsPageController extends GetxController {
                 text: "100%",
                 pointColor: getChartColor(4)));
 
-            update([machineBuildId]);
+            // update([machineBuildId]);
             update();
           }
         },
@@ -685,16 +685,26 @@ class StatisticsPage extends GetView<StatisticsPageController> {
                           ],
                         )),
                     GetX<StatisticsPageController>(builder: (_) {
-                      return centClm([
-                        // 近7日图表视图
-                        controller.selectTopRightType == 0
-                            ? sevenDaysChartView()
-                            : pieWidget(),
-                        // 交易金额统计
-                        controller.selectTopRightType == 0
-                            ? dealView()
-                            : ghb(0),
-                      ]);
+                      return IndexedStack(
+                        index: controller.selectTopRightType,
+                        children: [
+                          centClm([sevenDaysChartView(), dealView()]),
+                          // sevenDaysChartView(),
+                          pieWidget(1),
+                          pieWidget(2)
+                        ],
+                      );
+
+                      // centClm([
+                      //   // 近7日图表视图
+                      //   controller.selectTopRightType == 0
+                      //       ? sevenDaysChartView()
+                      //       : pieWidget(),
+                      //   // 交易金额统计
+                      //   controller.selectTopRightType == 0
+                      //       ? dealView()
+                      //       : ghb(0),
+                      // ]);
                     }),
                     ghb(20)
                   ],
@@ -711,173 +721,164 @@ class StatisticsPage extends GetView<StatisticsPageController> {
 
   // 饼状图
   // 终端设备数据统计 / 服务商人数统计
-  Widget pieWidget() {
+  Widget pieWidget(int selectTopRightType) {
     return GetBuilder<StatisticsPageController>(builder: (_) {
       return Container(
         alignment: Alignment.topCenter,
         margin: EdgeInsets.only(top: 15.w),
         width: 375.w,
         color: Colors.white,
-        child: GetX<StatisticsPageController>(builder: (context) {
-          return Column(
-            children: [
-              ghb(17.5),
-              sbRow([
-                getSimpleText(
-                    controller.selectTopRightType == 1 ? "终端设备数据统计" : "服务商人数统计",
-                    16,
-                    AppColor.textBlack,
-                    isBold: true),
-                CustomButton(
-                  onPressed: () {
-                    showDatePick(controller.selectTopRightType == 1
-                        ? controller.machineSelectDate
-                        : controller.businessSelectDate);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    height: 24.w,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4.w),
-                        border: Border.all(
-                            width: 0.5.w, color: AppColor.lineColor)),
-                    alignment: Alignment.center,
-                    child: centRow([
-                      GetX<StatisticsPageController>(builder: (_) {
-                        return getSimpleText(
-                            controller.selectTopRightType == 1
-                                ? controller.machineSelectDate
-                                : controller.businessSelectDate,
-                            12,
-                            AppColor.textBlack);
-                      }),
-                      gwb(12),
-                      Image.asset(
-                        assetsName("income/btn_down_arrow"),
-                        width: 6.w,
-                        fit: BoxFit.fitWidth,
-                      )
-                    ]),
-                  ),
+        child: Column(
+          children: [
+            ghb(17.5),
+            sbRow([
+              getSimpleText(selectTopRightType == 1 ? "终端设备数据统计" : "服务商人数统计",
+                  16, AppColor.textBlack,
+                  isBold: true),
+              CustomButton(
+                onPressed: () {
+                  showDatePick(selectTopRightType == 1
+                      ? controller.machineSelectDate
+                      : controller.businessSelectDate);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  height: 24.w,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.w),
+                      border:
+                          Border.all(width: 0.5.w, color: AppColor.lineColor)),
+                  alignment: Alignment.center,
+                  child: centRow([
+                    GetX<StatisticsPageController>(builder: (_) {
+                      return getSimpleText(
+                          selectTopRightType == 1
+                              ? controller.machineSelectDate
+                              : controller.businessSelectDate,
+                          12,
+                          AppColor.textBlack);
+                    }),
+                    gwb(12),
+                    Image.asset(
+                      assetsName("income/btn_down_arrow"),
+                      width: 6.w,
+                      fit: BoxFit.fitWidth,
+                    )
+                  ]),
                 ),
-              ], width: 345),
-              ghb(25),
-              SizedBox(
-                  width: 375.w,
-                  height: 210.w,
-                  child: GetX<StatisticsPageController>(builder: (_) {
-                    return SfCircularChart(
-                        // margin: EdgeInsets.zero,
-                        title: ChartTitle(text: ''),
-                        legend: Legend(
-                            isVisible: true,
-                            width: "30%",
-                            // itemPadding: 12.w,
-                            // offset: Offset(100, 0),
-                            alignment: ChartAlignment.center,
-                            legendItemBuilder:
-                                (legendText, series, point, seriesIndex) {
-                              // ChartSampleData pointData = point as ChartSampleData;
-                              return Padding(
-                                  padding: EdgeInsets.only(
-                                      top: seriesIndex == 0 ? 0 : 12.w),
-                                  child: Row(children: [
-                                    Container(
-                                      width: 10.w,
-                                      height: 10.w,
-                                      color: point.pointColor ??
-                                          controller.getChartColor(seriesIndex),
-                                    ),
-                                    gwb(8),
-                                    getSimpleText(
-                                        "${point.x}(${(controller.selectTopRightType == 1 && controller.totalMachineCount == 0) || (controller.selectTopRightType == 2 && controller.totalBusinessCount == 0) ? 0 : point.y}${controller.selectTopRightType == 1 ? "台" : "人"})",
-                                        12,
-                                        AppColor.textBlack)
-                                  ]));
-                            },
-                            overflowMode: LegendItemOverflowMode.scroll),
-                        series: <DoughnutSeries<ChartSampleData, String>>[
-                          DoughnutSeries<ChartSampleData, String>(
-                              radius: '110%',
-                              // explode: true,
-                              // explodeOffset: '20%',
-                              animationDuration: 1000,
-                              dataSource: controller.selectTopRightType == 1
-                                  ? controller.machineDatas
-                                  : controller.businessDatas,
-                              xValueMapper: (ChartSampleData data, _) =>
-                                  data.x as String,
-                              yValueMapper: (ChartSampleData data, _) => data.y,
-                              dataLabelMapper: (ChartSampleData data, _) =>
-                                  data.x as String,
-                              startAngle: 100,
-                              endAngle: 100,
-                              pointRadiusMapper: (ChartSampleData data, _) =>
-                                  data.text,
-                              pointColorMapper: (ChartSampleData data, _) =>
-                                  data.pointColor
-                              // dataLabelSettings: const DataLabelSettings(
-                              //     isVisible: true,
-                              //     labelPosition: ChartDataLabelPosition.outside)
-                              )
-                        ],
-                        // onTooltipRender: (TooltipArgs args) {
-                        //   final NumberFormat format = NumberFormat.decimalPattern();
-                        //   args.text = args.dataPoints![args.pointIndex!.toInt()].x
-                        //           .toString() +
-                        //       ' : ' +
-                        //       format.format(
-                        //           args.dataPoints![args.pointIndex!.toInt()].y);
-                        // },
-                        tooltipBehavior: TooltipBehavior(
-                            enable: true,
-                            duration: 2000,
-                            builder:
-                                (data, point, series, pointIndex, seriesIndex) {
-                              ChartSampleData myPoint = data;
-                              return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: getSimpleText(
-                                      "${myPoint.x}:${(controller.selectTopRightType == 1 && controller.totalMachineCount == 0) || (controller.selectTopRightType == 2 && controller.totalBusinessCount == 0) ? 0 : myPoint.y}${controller.selectTopRightType == 1 ? "台" : "人"}",
-                                      12,
-                                      Colors.white));
-                            }));
-                  })),
-              ghb(30),
-              centRow(List.generate(
-                  controller.selectTopRightType == 1 ? 3 : 2,
-                  (index) => SizedBox(
-                      width:
-                          345.w / (controller.selectTopRightType == 1 ? 3 : 2),
-                      child: Center(
-                          child: centClm([
-                        getSimpleText(
-                            "${controller.selectTopRightType == 1 ? controller.machineData[index == 0 ? "teamTotalBingTerminal" : index == 1 ? "teamTotalActTerminal" : "mineTotalActTerminal"] ?? 0 : controller.selectTopRightType == 2 ? index == 0 ? controller.totalBusinessCount : controller.businessData["soleTotalAddUser"] ?? "" : ""}",
-                            18,
-                            AppColor.textBlack,
-                            isBold: true),
-                        ghb(12),
-                        getSimpleText(
-                            controller.selectTopRightType == 1
-                                ? index == 0
-                                    ? "本月总台数"
-                                    : index == 1
-                                        ? "团队激活"
-                                        : "个人激活"
-                                : controller.selectTopRightType == 2
-                                    ? index == 0
-                                        ? "服务商新增"
-                                        : "我的新增"
-                                    : "",
-                            12,
-                            AppColor.textBlack)
-                      ]))))),
-              ghb(25)
-            ],
-          );
-        }),
+              ),
+            ], width: 345),
+            ghb(25),
+            SizedBox(
+                width: 375.w,
+                height: 210.w,
+                child: pieView(selectTopRightType)),
+            ghb(30),
+            centRow(List.generate(
+                selectTopRightType == 1 ? 3 : 2,
+                (index) => SizedBox(
+                    width: 345.w / (selectTopRightType == 1 ? 3 : 2),
+                    child: Center(
+                        child: centClm([
+                      getSimpleText(
+                          "${selectTopRightType == 1 ? controller.machineData[index == 0 ? "teamTotalBingTerminal" : index == 1 ? "teamTotalActTerminal" : "mineTotalActTerminal"] ?? 0 : selectTopRightType == 2 ? index == 0 ? controller.totalBusinessCount : controller.businessData["soleTotalAddUser"] ?? "" : ""}",
+                          18,
+                          AppColor.textBlack,
+                          isBold: true),
+                      ghb(12),
+                      getSimpleText(
+                          selectTopRightType == 1
+                              ? index == 0
+                                  ? "本月总台数"
+                                  : index == 1
+                                      ? "团队激活"
+                                      : "个人激活"
+                              : selectTopRightType == 2
+                                  ? index == 0
+                                      ? "服务商新增"
+                                      : "我的新增"
+                                  : "",
+                          12,
+                          AppColor.textBlack)
+                    ]))))),
+            ghb(25)
+          ],
+        ),
       );
     });
+  }
+
+  Widget pieView(int pieIndex) {
+    return SfCircularChart(
+        key: ValueKey("pieView_$pieIndex"),
+        // margin: EdgeInsets.zero,
+        title: ChartTitle(text: ''),
+        legend: Legend(
+            isVisible: true,
+            width: "30%",
+            // itemPadding: 12.w,
+            // offset: Offset(100, 0),
+            alignment: ChartAlignment.center,
+            legendItemBuilder: (legendText, series, point, seriesIndex) {
+              // ChartSampleData pointData = point as ChartSampleData;
+              return Padding(
+                  padding: EdgeInsets.only(top: seriesIndex == 0 ? 0 : 12.w),
+                  child: Row(children: [
+                    Container(
+                      width: 10.w,
+                      height: 10.w,
+                      color: point.pointColor ??
+                          controller.getChartColor(seriesIndex),
+                    ),
+                    gwb(8),
+                    getSimpleText(
+                        "${point.x}(${(pieIndex == 1 && controller.totalMachineCount == 0) || (pieIndex == 2 && controller.totalBusinessCount == 0) ? 0 : point.y}${pieIndex == 1 ? "台" : "人"})",
+                        12,
+                        AppColor.textBlack)
+                  ]));
+            },
+            overflowMode: LegendItemOverflowMode.scroll),
+        series: <DoughnutSeries<ChartSampleData, String>>[
+          DoughnutSeries<ChartSampleData, String>(
+              radius: '110%',
+              // explode: true,
+              // explodeOffset: '20%',
+              animationDuration: 1000,
+              dataSource: pieIndex == 1
+                  ? controller.machineDatas
+                  : controller.businessDatas,
+              xValueMapper: (ChartSampleData data, _) => data.x as String,
+              yValueMapper: (ChartSampleData data, _) => data.y,
+              dataLabelMapper: (ChartSampleData data, _) => data.x as String,
+              startAngle: 100,
+              endAngle: 100,
+              pointRadiusMapper: (ChartSampleData data, _) => data.text,
+              pointColorMapper: (ChartSampleData data, _) => data.pointColor
+              // dataLabelSettings: const DataLabelSettings(
+              //     isVisible: true,
+              //     labelPosition: ChartDataLabelPosition.outside)
+              )
+        ],
+        // onTooltipRender: (TooltipArgs args) {
+        //   final NumberFormat format = NumberFormat.decimalPattern();
+        //   args.text = args.dataPoints![args.pointIndex!.toInt()].x
+        //           .toString() +
+        //       ' : ' +
+        //       format.format(
+        //           args.dataPoints![args.pointIndex!.toInt()].y);
+        // },
+        tooltipBehavior: TooltipBehavior(
+            enable: true,
+            duration: 2000,
+            builder: (data, point, series, pointIndex, seriesIndex) {
+              ChartSampleData myPoint = data;
+              return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: getSimpleText(
+                      "${myPoint.x}:${(pieIndex == 1 && controller.totalMachineCount == 0) || (pieIndex == 2 && controller.totalBusinessCount == 0) ? 0 : myPoint.y}${pieIndex == 1 ? "台" : "人"}",
+                      12,
+                      Colors.white));
+            }));
   }
 
   // 近7日图表视图
