@@ -742,6 +742,10 @@ class Urls {
   static const applyExchangeRecord =
       '/api/CrediTticket/User_CrediTticketOrderList';
 
-  // 奖励汇总
+  /// 收入-奖励汇总
   static const userBounsNameByCount = '/api/Finance/User_BounsNameByCount';
+
+  /// 读取商户编辑资料
+  static String userMerchantEditShow(dynamic id) =>
+      '/api/Merchant/UserMerchantEditShow/$id';
 }

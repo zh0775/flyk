@@ -1,6 +1,6 @@
 import 'package:cxhighversion2/component/custom_input.dart';
 import 'package:cxhighversion2/service/urls.dart';
-import 'package:cxhighversion2/statistics/statistics_page/statistics_business_list.dart';
+import 'package:cxhighversion2/statistics/statistics_page/statistics_business_detail.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
@@ -45,15 +45,17 @@ class StatisticsBusinessChangeInfoController extends GetxController {
         params: {
           "id": businessData["merchantId"],
           "contact_Recipient": nameInputCtrl.text,
-          "contact_Mobile": phoneInputCtrl.text
+          "contact_Mobile": phoneInputCtrl.text,
+          "merchants_Name": nameInputCtrl.text,
+          "merchants_Phone": phoneInputCtrl.text
         },
         success: (success, json) {
           if (success) {
             ShowToast.normal("修改成功");
             bus.emit("businessListLoadNotify");
-            // Get.find<StatisticsBusinessListController>().loadData();
+            Get.find<StatisticsBusinessDetailController>().loadData();
             Future.delayed(const Duration(seconds: 1), () {
-              popToUntil();
+              Get.back();
             });
           }
         },
@@ -148,6 +150,7 @@ class StatisticsBusinessChangeInfo
                                       fontSize: 15.sp,
                                       color: AppColor.assisText,
                                       height: 1.3),
+                                  maxLength: index == 0 ? 10 : 11,
                                   keyboardType: index == 0
                                       ? TextInputType.text
                                       : TextInputType.phone,

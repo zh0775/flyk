@@ -20,19 +20,20 @@ class StatisticsBusinessDetailController extends GetxController {
   final dynamic datas;
   StatisticsBusinessDetailController({this.datas});
 
-  // loadData() {
-  //   simpleRequest(
-  //       url: Urls.userMerchantShow(businessData["tId"]),
-  //       params: {},
-  //       success: (success, json) {
-  //         if (success) {
-  //           Map data = json["data"] ?? {};
-  //           businessData = data;
-  //           update();
-  //         }
-  //       },
-  //       after: () {});
-  // }
+  loadData() {
+    simpleRequest(
+        url: Urls.userMerchantEditShow(businessData["merchantId"]),
+        params: {},
+        success: (success, json) {
+          if (success) {
+            Map data = json["data"] ?? {};
+            businessData["merchantName"] = data["merchants_Name"] ?? "";
+            businessData["merchantPhone"] = data["merchants_Phone"] ?? "";
+            update();
+          }
+        },
+        after: () {});
+  }
 
   Map businessData = {};
 
@@ -40,7 +41,7 @@ class StatisticsBusinessDetailController extends GetxController {
 
   @override
   void onReady() {
-    // loadData();
+    loadData();
     super.onReady();
   }
 

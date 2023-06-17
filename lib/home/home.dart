@@ -433,18 +433,17 @@ class HomeController extends FullLifeCycleController {
 
   applyRequest() {
     simpleRequest(
-      url: Urls.approveApply,
-      params: {},
-      success: (success, json) {
-        if (success) {
-          String messages = json["messages"] ?? "";
-          if (messages.isNotEmpty) {
-            ShowToast.normal(messages);
+        url: Urls.approveApply,
+        params: {},
+        success: (success, json) {
+          if (success) {
+            String messages = json["messages"] ?? "";
+            if (messages.isNotEmpty) {
+              ShowToast.normal(messages);
+            }
           }
-        }
-      },
-      after: () {},
-    );
+        },
+        after: () {});
   }
 }
 

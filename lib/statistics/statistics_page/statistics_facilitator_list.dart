@@ -161,13 +161,21 @@ class StatisticsFacilitatorListController extends GetxController {
   }
 }
 
-class StatisticsFacilitatorList extends StatelessWidget {
+class StatisticsFacilitatorList extends StatefulWidget {
   final bool isPage;
-  const StatisticsFacilitatorList({super.key, this.isPage = false});
+  const StatisticsFacilitatorList({Key? key, this.isPage = false})
+      : super(key: key);
+  @override
+  State<StatisticsFacilitatorList> createState() =>
+      _StatisticsFacilitatorListState();
+}
 
+class _StatisticsFacilitatorListState extends State<StatisticsFacilitatorList>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
-    return isPage
+    super.build(context);
+    return widget.isPage
         ? Scaffold(
             appBar: getDefaultAppBar(context, "服务商", action: [
               GetBuilder<StatisticsFacilitatorListController>(
@@ -700,4 +708,7 @@ class StatisticsFacilitatorList extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

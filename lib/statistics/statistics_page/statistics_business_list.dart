@@ -294,13 +294,23 @@ class StatisticsBusinessListController extends GetxController {
   }
 }
 
-class StatisticsBusinessList extends StatelessWidget {
+class StatisticsBusinessList extends StatefulWidget {
   final bool isPage;
-  const StatisticsBusinessList({super.key, this.isPage = false});
+  const StatisticsBusinessList({Key? key, this.isPage = false})
+      : super(key: key);
+  @override
+  State<StatisticsBusinessList> createState() => _StatisticsBusinessListState();
+}
+
+class _StatisticsBusinessListState extends State<StatisticsBusinessList>
+    with AutomaticKeepAliveClientMixin {
+  // final bool isPage;
+  // const StatisticsBusinessList({super.key, this.isPage = false});
 
   @override
   Widget build(BuildContext context) {
-    return isPage
+    super.build(context);
+    return widget.isPage
         ? Scaffold(
             appBar: getDefaultAppBar(context, "商户列表"),
             body: contentView(context))
@@ -600,7 +610,7 @@ class StatisticsBusinessList extends StatelessWidget {
     return Builder(builder: (context) {
       double maxHeight = ScreenUtil().screenHeight -
           (Scaffold.of(context).appBarMaxHeight ?? 0) -
-          (isPage
+          (widget.isPage
               ? 0
               : (kBottomNavigationBarHeight + paddingSizeBottom(context))) -
           106.w -
@@ -724,4 +734,7 @@ class StatisticsBusinessList extends StatelessWidget {
                   fit: BoxFit.fitWidth)
             ])));
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
