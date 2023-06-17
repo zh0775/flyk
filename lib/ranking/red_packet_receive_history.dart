@@ -3,19 +3,18 @@
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/ranking/red_packet_record.dart';
-import 'package:cxhighversion2/service/http.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:get/get.dart';
 
 class RedPacketReceiveHistoryBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<RedPacketReceiveHistoryController>(RedPacketReceiveHistoryController());
+    Get.put<RedPacketReceiveHistoryController>(
+        RedPacketReceiveHistoryController());
   }
 }
 
@@ -51,7 +50,9 @@ class RedPacketReceiveHistoryController extends GetxController {
             receiveTotalMoney = double.parse(jsonData['thisDAmount'] ?? '0.0');
             if (receiveHistoryList.length <= total) {
               List newData = jsonData['data'] ?? [];
-              receiveHistoryList = currentPage == 1 ? newData : [...receiveHistoryList, ...newData];
+              receiveHistoryList = currentPage == 1
+                  ? newData
+                  : [...receiveHistoryList, ...newData];
               update();
             }
           }
@@ -66,7 +67,8 @@ class RedPacketReceiveHistoryController extends GetxController {
   }
 }
 
-class RedPacketReceiveHistory extends GetView<RedPacketReceiveHistoryController> {
+class RedPacketReceiveHistory
+    extends GetView<RedPacketReceiveHistoryController> {
   const RedPacketReceiveHistory({super.key});
 
   @override
@@ -80,7 +82,8 @@ class RedPacketReceiveHistory extends GetView<RedPacketReceiveHistoryController>
       appBar: getDefaultAppBar(context, "已领取记录", action: [
         CustomButton(
           onPressed: () {
-            push(const RedPacketRecordPage(), context, binding: RedPacketRecordBinding());
+            push(const RedPacketRecordPage(), context,
+                binding: RedPacketRecordBinding());
           },
           child: SizedBox(
             height: kToolbarHeight,
@@ -96,7 +99,8 @@ class RedPacketReceiveHistory extends GetView<RedPacketReceiveHistoryController>
           if (controller.receiveHistoryList.isEmpty) {
             return SingleChildScrollView(
               child: Center(
-                child: CustomEmptyView(isLoading: controller.isLoading, bottomSpace: 200.w),
+                child: CustomEmptyView(
+                    isLoading: controller.isLoading, bottomSpace: 200.w),
               ),
             );
           } else {
@@ -126,9 +130,15 @@ class RedPacketReceiveHistory extends GetView<RedPacketReceiveHistoryController>
                 color: Color(0xFF999999),
               ),
               children: [
-                TextSpan(text: "${controller.todayReceiveMoney}", style: const TextStyle(color: Color(0xFFFE4C3B), fontWeight: FontWeight.bold)),
+                TextSpan(
+                    text: "${controller.todayReceiveMoney}",
+                    style: const TextStyle(
+                        color: Color(0xFFFE4C3B), fontWeight: FontWeight.bold)),
                 const TextSpan(text: " 元，累计已领取 "),
-                TextSpan(text: "${controller.receiveTotalMoney}", style: const TextStyle(color: Color(0xFFFE4C3B), fontWeight: FontWeight.bold)),
+                TextSpan(
+                    text: "${controller.receiveTotalMoney}",
+                    style: const TextStyle(
+                        color: Color(0xFFFE4C3B), fontWeight: FontWeight.bold)),
                 const TextSpan(text: " 元"),
               ])),
         );
@@ -145,7 +155,7 @@ class RedPacketReceiveHistory extends GetView<RedPacketReceiveHistoryController>
             height: controller.bodyHeight - 50.w,
             color: Colors.white,
             child: EasyRefresh.builder(
-                onLoad: (controller.receiveHistoryList ?? []).length >= (controller.total ?? 0)
+                onLoad: controller.receiveHistoryList.length >= controller.total
                     ? null
                     : () {
                         controller.currentPage++;
@@ -160,7 +170,8 @@ class RedPacketReceiveHistory extends GetView<RedPacketReceiveHistoryController>
                       physics: physics,
                       itemCount: controller.receiveHistoryList.length,
                       itemBuilder: (context, index) {
-                        Map receiveItem = controller.receiveHistoryList[index] ?? {};
+                        Map receiveItem =
+                            controller.receiveHistoryList[index] ?? {};
                         return receiveHistoryItem(receiveItem);
                       });
                 }));
@@ -199,18 +210,21 @@ class RedPacketReceiveHistory extends GetView<RedPacketReceiveHistoryController>
                         children: [
                           getSimpleText("红包领取", 16.w, Color(0xFF333333)),
                           ghb(11),
-                          getSimpleText("+${item['receiveAmount']}", 18.w, Color(0xFF333333)),
+                          getSimpleText("+${item['receiveAmount']}", 18.w,
+                              Color(0xFF333333)),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          getSimpleText("订单号：${item['order_NO']}", 12.w, Color(0xFF999999)),
+                          getSimpleText("订单号：${item['order_NO']}", 12.w,
+                              Color(0xFF999999)),
                           ghb(10),
                           getSimpleText("已领取", 12.w, Color(0xFF999999)),
                         ],
                       ),
-                      getSimpleText("${item['receiveTime']}", 12, Color(0xFF999999))
+                      getSimpleText(
+                          "${item['receiveTime']}", 12, Color(0xFF999999))
                     ],
                   ),
                 ),

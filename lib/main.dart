@@ -4,6 +4,7 @@ import 'package:blur/blur.dart';
 import 'package:cxhighversion2/app_binding.dart';
 import 'package:cxhighversion2/component/app_launch_splash.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
+import 'package:cxhighversion2/component/custom_deferred.dart';
 import 'package:cxhighversion2/component/splash_view.dart';
 import 'package:cxhighversion2/home/component/deferred_widget.dart';
 import 'package:cxhighversion2/home/home.dart' deferred as home;
@@ -446,15 +447,15 @@ class MainPage extends GetView<MainPageCtrl> {
   }
 
   Widget getIndexPage(int index) {
-    return DeferredWidget(
-        index == 0
+    return CustomDeferredWidgt(
+        loader: index == 0
             ? home.loadLibrary
             : index == 1
                 ? statistics_page.loadLibrary
                 : index == 2
                     ? income_page.loadLibrary
                     : mine_page.loadLibrary,
-        () => index == 0
+        build: () => index == 0
             ? home.Home()
             : index == 1
                 ? statistics_page.StatisticsPage()

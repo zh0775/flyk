@@ -91,7 +91,8 @@ class ShareInviteController extends GetxController {
     publicHomeData = AppDefault().publicHomeData;
 
     if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
-      shareUrl = ((publicHomeData["webSiteInfo"] ?? {})["System_Download_Url"] ?? "");
+      shareUrl =
+          ((publicHomeData["webSiteInfo"] ?? {})["System_Download_Url"] ?? "");
       if (shareUrl.isNotEmpty) {
         String t = shareUrl.substring(shareUrl.length - 1, shareUrl.length);
         if (t == "/") {
@@ -101,7 +102,9 @@ class ShareInviteController extends GetxController {
       // dataList = (publicHomeData["appCofig"] ?? {})["shareBanner"] ?? [];
       dataList = (publicHomeData["appCofig"] ?? {})["shareBanner"] ?? [];
     } else {
-      shareUrl = (((publicHomeData["webSiteInfo"] ?? {})["app"] ?? {})["apP_ExternalReg_Url"] ?? "");
+      shareUrl = (((publicHomeData["webSiteInfo"] ?? {})["app"] ??
+              {})["apP_ExternalReg_Url"] ??
+          "");
       if (shareUrl.isNotEmpty) {
         String t = shareUrl.substring(shareUrl.length - 1, shareUrl.length);
         if (t == "/") {
@@ -133,7 +136,10 @@ class ShareInviteController extends GetxController {
     if (!isFirst) return;
     isFirst = false;
     double appbarHeight = (Scaffold.of(ctx).appBarMaxHeight ?? 0);
-    boxHeight = ScreenUtil().screenHeight - appbarHeight - paddingSizeBottom(ctx) - paddingSizeTop(ctx);
+    boxHeight = ScreenUtil().screenHeight -
+        appbarHeight -
+        paddingSizeBottom(ctx) -
+        paddingSizeTop(ctx);
     ScreenUtil util = ScreenUtil();
     imageHeight = (300.w / util.screenWidth) / pageScale * 540.w;
     double tmpHeight = (300.w / util.screenWidth) * 540.w;
@@ -157,76 +163,75 @@ class ShareInvite extends GetView<ShareInviteController> {
         appBar: getDefaultAppBar(context, "分享邀请"),
         body: Builder(builder: (buildCtx) {
           controller.dataInit(buildCtx);
-          return Stack(
-            children: [
-              Positioned(
-                  top: 15.w,
-                  left: 0,
-                  right: 0,
-                  // height: controller.imageHeight,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: 375.w,
-                        // height: !kIsWeb ? 567.w : 537.w,
+          return Stack(children: [
+            Positioned(
+                top: 15.w,
+                left: 0,
+                right: 0,
+                // height: controller.imageHeight,
+                child: Column(children: [
+                  SizedBox(
+                      width: 375.w,
+                      // height: !kIsWeb ? 567.w : 537.w,
 
-                        height: controller.imageHeight,
-                        child: Swiper(
+                      height: controller.imageHeight,
+                      child: Swiper(
                           itemCount: controller.dataList.length,
                           viewportFraction: 300 / 375,
                           // scale: controller.pageScale,
                           scale: 0.65,
                           itemBuilder: (context, index) {
-                            print("${controller.imageWidth / controller.imageHeight}");
+                            print(
+                                "${controller.imageWidth / controller.imageHeight}");
                             return sharePage(index);
                           },
                           onIndexChanged: (value) {
                             controller.pageIndex = value;
-                          },
-                        ),
-                      ),
-                      ghb(15),
-                      centRow(List.generate(
-                          controller.dataList.length,
-                          (index) => GetX<ShareInviteController>(builder: (_) {
-                                return AnimatedContainer(
-                                  margin: EdgeInsets.only(left: index != 0 ? 5.w : 0),
-                                  duration: const Duration(milliseconds: 300),
-                                  width: controller.pageIndex == index ? 15.w : 5.w,
-                                  height: 5.w,
-                                  decoration: BoxDecoration(color: controller.pageIndex == index ? AppColor.theme : AppColor.theme.withOpacity(0.1), borderRadius: BorderRadius.circular(2.5.w)),
-                                );
-                              })))
-                    ],
-                  )),
-              Positioned(
+                          })),
+                  ghb(15),
+                  centRow(List.generate(
+                      controller.dataList.length,
+                      (index) => GetX<ShareInviteController>(builder: (_) {
+                            return AnimatedContainer(
+                              margin:
+                                  EdgeInsets.only(left: index != 0 ? 5.w : 0),
+                              duration: const Duration(milliseconds: 300),
+                              width: controller.pageIndex == index ? 15.w : 5.w,
+                              height: 5.w,
+                              decoration: BoxDecoration(
+                                  color: controller.pageIndex == index
+                                      ? AppColor.theme
+                                      : AppColor.theme.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(2.5.w)),
+                            );
+                          })))
+                ])),
+            Positioned(
                 bottom: 0,
                 left: 0,
                 right: 0,
                 height: 105.w + paddingSizeBottom(context),
                 child: Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.only(
-                    bottom: paddingSizeBottom(context),
-                  ),
-                  // decoration: BoxDecoration(
-                  //     color: Colors.white,
-                  //     borderRadius:
-                  //         BorderRadius.vertical(top: Radius.circular(8.w)),
-                  //     boxShadow: [
-                  //       BoxShadow(
-                  //           color: const Color(0x26000000), blurRadius: 5.w)
-                  //     ]),
-                  child: centRow(List.generate(
-                      controller.btns.length,
-                      (index) => Padding(
-                            padding: EdgeInsets.only(left: index == 0 ? 0 : 36.w),
-                            child: shareButotn(index, context),
-                          ))),
-                ),
-              ),
-            ],
-          );
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(
+                      bottom: paddingSizeBottom(context),
+                    ),
+                    // decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius:
+                    //         BorderRadius.vertical(top: Radius.circular(8.w)),
+                    //     boxShadow: [
+                    //       BoxShadow(
+                    //           color: const Color(0x26000000), blurRadius: 5.w)
+                    //     ]),
+                    child: centRow(List.generate(
+                        controller.btns.length,
+                        (index) => Padding(
+                              padding:
+                                  EdgeInsets.only(left: index == 0 ? 0 : 36.w),
+                              child: shareButotn(index, context),
+                            )))))
+          ]);
         }));
   }
 
@@ -234,76 +239,63 @@ class ShareInvite extends GetView<ShareInviteController> {
     Map data = controller.dataList[index];
     bool isNetworkImage = ((data["apP_Pic"] ?? "") as String).contains(".");
     return Container(
-      width: controller.imageWidth,
-      height: controller.imageHeight,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        // boxShadow: [
-        //   BoxShadow(
-        //       color: const Color(0x26333333),
-        //       offset: Offset(0, 5.w),
-        //       blurRadius: 15.w)
-        // ]
-      ),
-      child: Stack(
-        children: [
+        width: controller.imageWidth,
+        height: controller.imageHeight,
+        decoration: const BoxDecoration(color: Colors.white
+            // boxShadow: [
+            //   BoxShadow(
+            //       color: const Color(0x26333333),
+            //       offset: Offset(0, 5.w),
+            //       blurRadius: 15.w)
+            // ]
+            ),
+        child: Stack(children: [
           Positioned.fill(
-            child: isNetworkImage
-                ? CustomNetworkImage(
-                    src: AppDefault().imageUrl + (data["apP_Pic"] ?? ""),
-                    width: controller.imageWidth,
-                    // height: !kIsWeb ? 450.w : 443.w,
-                    height: controller.imageHeight,
-                    fit: BoxFit.fill,
-                    alignment: Alignment.topCenter,
-                  )
-                : Image.asset(
-                    assetsName((data["apP_Pic"] ?? "")),
-                    width: controller.imageWidth,
-                    // height: !kIsWeb ? 450.w : 443.w,
-                    height: controller.imageHeight,
-                    fit: BoxFit.fill,
-                    alignment: Alignment.topCenter,
-                  ),
-          ),
+              child: isNetworkImage
+                  ? CustomNetworkImage(
+                      src: AppDefault().imageUrl + (data["apP_Pic"] ?? ""),
+                      width: controller.imageWidth,
+                      // height: !kIsWeb ? 450.w : 443.w,
+                      height: controller.imageHeight,
+                      fit: BoxFit.fill,
+                      alignment: Alignment.topCenter,
+                    )
+                  : Image.asset(assetsName((data["apP_Pic"] ?? "")),
+                      width: controller.imageWidth,
+                      // height: !kIsWeb ? 450.w : 443.w,
+                      height: controller.imageHeight,
+                      fit: BoxFit.fill,
+                      alignment: Alignment.topCenter)),
           Positioned(
               bottom: 15.w,
               right: 20.w,
               child: centClm([
-                GetBuilder<ShareInviteController>(
-                  builder: (_) {
-                    return Container(
+                GetBuilder<ShareInviteController>(builder: (_) {
+                  return Container(
                       color: Colors.white,
                       alignment: Alignment.center,
                       width: 75.w,
                       height: 75.w,
                       // color: Colors.amber,
                       child: QrImageView(
-                        data: controller.shareUrl != null && controller.shareUrl.isNotEmpty ? "${controller.shareUrl}?id=${controller.homeData["u_Number"] ?? ""}" : "",
-                        // size: !kIsWeb ? 66.w : 56.w,
-                        size: 72.w,
-                        padding: EdgeInsets.zero,
-                      ),
-                    );
-                  },
-                ),
-                // ghb(3),
-                // getSimpleText("推荐码", 12, Colors.black),
-                // sbRow(
-                //   [
-
-                //   ],
-                //   width: 345 - 20 * 2,
-                // ),
+                          data: controller.shareUrl != null &&
+                                  controller.shareUrl.isNotEmpty
+                              ? "${controller.shareUrl}?id=${controller.homeData["u_Number"] ?? ""}"
+                              : "",
+                          // size: !kIsWeb ? 66.w : 56.w,
+                          size: 72.w,
+                          padding: EdgeInsets.zero));
+                })
               ])),
           Positioned(
-            left: 23.w,
-            bottom: 20.5.w,
-            child: getSimpleText("邀请码：${controller.homeData["u_Number"] ?? ""}", 15, Colors.white, textHeight: 1.0),
-          )
-        ],
-      ),
-    );
+              left: 23.w,
+              bottom: 20.5.w,
+              child: getSimpleText(
+                  "邀请码：${controller.homeData["u_Number"] ?? ""}",
+                  15,
+                  Colors.white,
+                  textHeight: 1.0))
+        ]));
   }
 
   Widget shareButotn(int idx, BuildContext context) {
@@ -339,7 +331,10 @@ class ShareInvite extends GetView<ShareInviteController> {
         // }
         // Uint8List imageBytes = byteData.buffer.asUint8List();
 
-        Uint8List imageBytes = await ScreenshotController().captureFromWidget(sharePage(controller.pageIndex, shot: true), delay: const Duration(milliseconds: 100), context: context);
+        Uint8List imageBytes = await ScreenshotController().captureFromWidget(
+            sharePage(controller.pageIndex, shot: true),
+            delay: const Duration(milliseconds: 100),
+            context: context);
 
         if (btnData["name"] == "微信好友") {
           AppWechatManager().sharePriendWithFile(imageBytes);
@@ -348,7 +343,8 @@ class ShareInvite extends GetView<ShareInviteController> {
         } else if (btnData["name"] == "保存图片") {
           saveAssetsImg(imageBytes);
         } else if (btnData["name"] == "复制链接") {
-          copyClipboard("${controller.shareUrl}?id=${controller.homeData["u_Number"] ?? ""}");
+          copyClipboard(
+              "${controller.shareUrl}?id=${controller.homeData["u_Number"] ?? ""}");
         }
       },
       child: centClm([
@@ -356,7 +352,9 @@ class ShareInvite extends GetView<ShareInviteController> {
           width: 52.5.w,
           height: 52.5.w,
           alignment: Alignment.center,
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(52.5.w / 2)),
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(52.5.w / 2)),
           child: Image.asset(
             assetsName(btnData["img"] ?? ""),
             // width: 30.5.w,
@@ -381,7 +379,8 @@ class ShareInvite extends GetView<ShareInviteController> {
     if (kIsWeb) {
       if (imageBytes != null) {
         final base64data = base64Encode(imageBytes.toList());
-        final a = html.AnchorElement(href: 'data:image/jpeg;base64,$base64data');
+        final a =
+            html.AnchorElement(href: 'data:image/jpeg;base64,$base64data');
         a.download = "${DateTime.now().millisecondsSinceEpoch}";
         a.click();
         a.remove();
@@ -406,150 +405,13 @@ class ShareInvite extends GetView<ShareInviteController> {
     path.moveTo(0, 0);
     path.lineTo(298.w, 0);
     return CustomPaint(
-      painter: CustomDottedPinePainter(
-          color: AppColor.textGrey,
-          dashSingleWidth: 6,
-          dashSingleGap: 8,
-          strokeWidth: 1,
-          // path: parseSvgPathData('m0,0 l0,${62.5.w} Z')),
-          path: path),
-      size: Size(298.w, 1.w),
-    );
-  }
-
-  Future<Uint8List> captureFromWidget(Widget widget, {Duration delay = const Duration(seconds: 1), double? pixelRatio, BuildContext? context, Size? targetSize, BorderRadiusGeometry? borderRadius}) async {
-    ui.Image image = await widgetToUiImage(widget, delay: delay, pixelRatio: pixelRatio, context: context, targetSize: targetSize, borderRadius: borderRadius);
-    final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    image.dispose();
-
-    return byteData!.buffer.asUint8List();
-  }
-
-  Future<ui.Image> widgetToUiImage(Widget widget, {Duration delay = const Duration(seconds: 1), double? pixelRatio, BuildContext? context, Size? targetSize, BorderRadiusGeometry? borderRadius}) async {
-    int retryCounter = 3;
-    bool isDirty = false;
-
-    Widget child = widget;
-
-    if (context != null) {
-      ///
-      ///Inherit Theme and MediaQuery of app
-      ///
-      ///
-      child = InheritedTheme.captureAll(
-        context,
-        MediaQuery(
-            data: MediaQuery.of(context),
-            child: Material(
-              child: child,
-              color: Colors.transparent,
-              borderRadius: borderRadius,
-            )),
-      );
-    }
-
-    final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
-
-    Size logicalSize = targetSize ?? ui.window.physicalSize / ui.window.devicePixelRatio; // Adapted
-    Size imageSize = targetSize ?? ui.window.physicalSize; // Adapted
-
-    assert(logicalSize.aspectRatio.toStringAsPrecision(5) == imageSize.aspectRatio.toStringAsPrecision(5)); // Adapted (toPrecision was not available)
-
-    final RenderView renderView = RenderView(
-      window: ui.window,
-      child: RenderPositionedBox(alignment: Alignment.center, child: repaintBoundary),
-      configuration: ViewConfiguration(
-        size: logicalSize,
-        devicePixelRatio: pixelRatio ?? 1.0,
-      ),
-    );
-
-    final PipelineOwner pipelineOwner = PipelineOwner();
-    final BuildOwner buildOwner = BuildOwner(
-        focusManager: FocusManager(),
-        onBuildScheduled: () {
-          ///
-          ///current render is dirty, mark it.
-          ///
-          isDirty = true;
-        });
-
-    pipelineOwner.rootNode = renderView;
-    renderView.prepareInitialFrame();
-
-    final RenderObjectToWidgetElement<RenderBox> rootElement = RenderObjectToWidgetAdapter<RenderBox>(
-        container: repaintBoundary,
-        child: ClipRRect(
-          borderRadius: borderRadius,
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: child,
-          ),
-        )).attachToRenderTree(
-      buildOwner,
-    );
-    ////
-    ///Render Widget
-    ///
-    ///
-
-    buildOwner.buildScope(
-      rootElement,
-    );
-    buildOwner.finalizeTree();
-
-    pipelineOwner.flushLayout();
-    pipelineOwner.flushCompositingBits();
-    pipelineOwner.flushPaint();
-
-    ui.Image? image;
-
-    do {
-      ///
-      ///Reset the dirty flag
-      ///
-      ///
-      isDirty = false;
-
-      image = await repaintBoundary.toImage(pixelRatio: pixelRatio ?? (imageSize.width / logicalSize.width));
-
-      ///
-      ///This delay sholud increas with Widget tree Size
-      ///
-
-      await Future.delayed(delay);
-
-      ///
-      ///Check does this require rebuild
-      ///
-      ///
-      // if (isDirty) {
-      //   ///
-      //   ///Previous capture has been updated, re-render again.
-      //   ///
-      //   ///
-      //   buildOwner.buildScope(
-      //     rootElement,
-      //   );
-      //   buildOwner.finalizeTree();
-      //   pipelineOwner.flushLayout();
-      //   pipelineOwner.flushCompositingBits();
-      //   pipelineOwner.flushPaint();
-      // }
-      // retryCounter--;
-
-      ///
-      ///retry untill capture is successfull
-      ///
-    } while (isDirty && retryCounter >= 0);
-    try {
-      /// Dispose All widgets
-      rootElement.visitChildren((Element element) {
-        rootElement.deactivateChild(element);
-      });
-      buildOwner.finalizeTree();
-    } catch (e) {}
-
-    return image; // Adapted to directly return the image and not the Uint8List
+        painter: CustomDottedPinePainter(
+            color: AppColor.textGrey,
+            dashSingleWidth: 6,
+            dashSingleGap: 8,
+            strokeWidth: 1,
+            // path: parseSvgPathData('m0,0 l0,${62.5.w} Z')),
+            path: path),
+        size: Size(298.w, 1.w));
   }
 }

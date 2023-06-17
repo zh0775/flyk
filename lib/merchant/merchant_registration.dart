@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:universal_html/html.dart' as html;
 
 class MerchantRegisterBinding implements Bindings {
@@ -104,7 +105,8 @@ class MerchantRegisterPage extends GetView<MerchantRegisterController> {
             height: 55.w,
             child: topBar(),
           ),
-          Positioned.fill(top: 55.w, left: 0, right: 0, child: merchantBody(context))
+          Positioned.fill(
+              top: 55.w, left: 0, right: 0, child: merchantBody(context))
         ],
         // children: [
         //   Positioned(
@@ -122,54 +124,47 @@ class MerchantRegisterPage extends GetView<MerchantRegisterController> {
 
   // 头部
   Widget topBar() {
-    return GetBuilder<MerchantRegisterController>(
-      builder: (_) {
-        return Container(
+    return GetBuilder<MerchantRegisterController>(builder: (_) {
+      return Container(
           color: Colors.white,
           child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.only(left: 15.w, right: 15.w),
-            child: Stack(
-              children: [
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.only(left: 15.w, right: 15.w),
+              child: Stack(children: [
                 Positioned(
-                  child: SizedBox(
-                    height: 55.w,
-                    child: Row(
-                      children: List.generate((controller.merchantRegistrationData ?? []).length, (index) {
-                        Map item = controller.merchantRegistrationData[index] ?? {};
-                        return Container(
-                          margin: EdgeInsets.only(right: 10.w),
-                          child: CustomButton(
-                            onPressed: () {
-                              controller.topCurrentIndex = index;
-                            },
-                            child: GetX<MerchantRegisterController>(
-                              builder: (_) {
-                                return Column(
-                                  children: [
-                                    ghb(18),
-                                    getSimpleText("${item['title'] ?? ''}", 16, const Color(0xFF999999)),
-                                    ghb(12),
-                                    controller.topCurrentIndex == index
-                                        ? Container(
-                                            width: 15.w,
-                                            height: 3.w,
-                                            decoration: BoxDecoration(
-                                              color: AppColor.theme,
-                                              borderRadius: BorderRadius.circular(3.w / 2),
-                                            ),
-                                          )
-                                        : ghb(0)
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
-                )
+                    child: SizedBox(
+                        height: 55.w,
+                        child: Row(
+                            children: List.generate(
+                                controller.merchantRegistrationData.length,
+                                (index) {
+                          Map item =
+                              controller.merchantRegistrationData[index] ?? {};
+                          return Container(
+                              margin: EdgeInsets.only(right: 10.w),
+                              child: CustomButton(onPressed: () {
+                                controller.topCurrentIndex = index;
+                              }, child: GetX<MerchantRegisterController>(
+                                  builder: (_) {
+                                return Column(children: [
+                                  ghb(18),
+                                  getSimpleText("${item['title'] ?? ''}", 16,
+                                      const Color(0xFF999999)),
+                                  ghb(12),
+                                  controller.topCurrentIndex == index
+                                      ? Container(
+                                          width: 15.w,
+                                          height: 3.w,
+                                          decoration: BoxDecoration(
+                                            color: AppColor.theme,
+                                            borderRadius:
+                                                BorderRadius.circular(3.w / 2),
+                                          ),
+                                        )
+                                      : ghb(0)
+                                ]);
+                              })));
+                        }))))
                 // GetX<MerchantRegisterController>(
                 //   builder: (_) {
                 //     return AnimatedPositioned(
@@ -183,20 +178,25 @@ class MerchantRegisterPage extends GetView<MerchantRegisterController> {
                 //         ));
                 //   },
                 // )
-              ],
-            ),
-          ),
-        );
-      },
-    );
+              ])));
+    });
   }
 
   // swipper
   Widget merchantBody(BuildContext context) {
     return GetBuilder<MerchantRegisterController>(
       builder: (_) {
-        Map item = controller.merchantRegistrationData.isEmpty ? {} : (controller.merchantRegistrationData[controller.topCurrentIndex] ?? {});
-        String userName = controller.isLogin ? (controller.homeData["nickName"] != null && controller.homeData["nickName"].isEmpty ? "请设置昵称" : controller.homeData["nickName"]) : "请登录";
+        Map item = controller.merchantRegistrationData.isEmpty
+            ? {}
+            : (controller
+                    .merchantRegistrationData[controller.topCurrentIndex] ??
+                {});
+        String userName = controller.isLogin
+            ? (controller.homeData["nickName"] != null &&
+                    controller.homeData["nickName"].isEmpty
+                ? "请设置昵称"
+                : controller.homeData["nickName"])
+            : "请登录";
         return Container(
           width: 375.w,
           decoration: BoxDecoration(
@@ -223,16 +223,21 @@ class MerchantRegisterPage extends GetView<MerchantRegisterController> {
                           // mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ghb(61.w),
-                            getSimpleText(userName, 18, const Color(0xFF333333), isBold: true),
+                            getSimpleText(userName, 18, const Color(0xFF333333),
+                                isBold: true),
                             ghb(12.5),
-                            getSimpleText("推荐码：${controller.homeData['u_Number'] ?? ''}", 12, const Color(0xFF999999)),
+                            getSimpleText(
+                                "推荐码：${controller.homeData['u_Number'] ?? ''}",
+                                12,
+                                const Color(0xFF999999)),
                           ],
                         ),
                       ),
                       ghb(30.w),
                       qrWrapper(item),
                       ghb(13.w),
-                      getSimpleText("长按识别二维码根据提示下载平台", 10, const Color(0xFF999999)),
+                      getSimpleText(
+                          "长按识别二维码根据提示下载平台", 10, const Color(0xFF999999)),
                     ],
                   ),
                 ),
@@ -255,7 +260,8 @@ class MerchantRegisterPage extends GetView<MerchantRegisterController> {
                           ? CustomButton(
                               onPressed: () {},
                               child: CustomNetworkImage(
-                                src: "${controller.imageUrl}${controller.homeData["userAvatar"]}",
+                                src:
+                                    "${controller.imageUrl}${controller.homeData["userAvatar"]}",
                                 width: 64.w,
                                 height: 64.w,
                                 fit: BoxFit.cover,
@@ -287,14 +293,19 @@ class MerchantRegisterPage extends GetView<MerchantRegisterController> {
                   bottom: 15.w,
                   child: CustomButton(
                     onPressed: () async {
-                      Uint8List imageBytes = await captureFromWidget(qrWrapper(item), delay: const Duration(milliseconds: 100), context: context, borderRadius: BorderRadius.circular(1.w));
+                      Uint8List imageBytes = await ScreenshotController()
+                          .captureFromWidget(qrWrapper(item),
+                              delay: const Duration(milliseconds: 100),
+                              context: context);
                       saveAssetsImg(imageBytes);
                     },
                     child: Container(
                       width: 375.w - 33.w * 2,
                       height: 45.w,
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(color: const Color(0xFFFD573B), borderRadius: BorderRadius.circular(45.w / 2)),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFFD573B),
+                          borderRadius: BorderRadius.circular(45.w / 2)),
                       child: getSimpleText("保存图片", 16.w, Colors.white),
                     ),
                   ))
@@ -309,7 +320,9 @@ class MerchantRegisterPage extends GetView<MerchantRegisterController> {
     return Container(
         width: 210.w,
         height: 210.w,
-        decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: const Color(0x1A000000), blurRadius: 10.w)]),
+        decoration: BoxDecoration(color: Colors.white, boxShadow: [
+          BoxShadow(color: const Color(0x1A000000), blurRadius: 10.w)
+        ]),
         child: (item['coverImg'] == null)
             ? QrImageView(
                 data: item['url'] ?? '',
@@ -322,105 +335,12 @@ class MerchantRegisterPage extends GetView<MerchantRegisterController> {
               ));
   }
 
-  Future<Uint8List> captureFromWidget(Widget widget, {Duration delay = const Duration(seconds: 1), double? pixelRatio, BuildContext? context, Size? targetSize, BorderRadiusGeometry? borderRadius}) async {
-    ui.Image image = await widgetToUiImage(widget, delay: delay, pixelRatio: pixelRatio, context: context, targetSize: targetSize, borderRadius: borderRadius);
-    final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    image.dispose();
-
-    return byteData!.buffer.asUint8List();
-  }
-
-  Future<ui.Image> widgetToUiImage(Widget widget, {Duration delay = const Duration(seconds: 1), double? pixelRatio, BuildContext? context, Size? targetSize, BorderRadiusGeometry? borderRadius}) async {
-    int retryCounter = 3;
-    bool isDirty = false;
-
-    Widget child = widget;
-
-    if (context != null) {
-      child = InheritedTheme.captureAll(
-        context,
-        MediaQuery(
-            data: MediaQuery.of(context),
-            child: Material(
-              child: child,
-              color: Colors.transparent,
-              borderRadius: borderRadius,
-            )),
-      );
-    }
-
-    final RenderRepaintBoundary repaintBoundary = RenderRepaintBoundary();
-
-    Size logicalSize = targetSize ?? ui.window.physicalSize / ui.window.devicePixelRatio; // Adapted
-    Size imageSize = targetSize ?? ui.window.physicalSize; // Adapted
-
-    assert(logicalSize.aspectRatio.toStringAsPrecision(5) == imageSize.aspectRatio.toStringAsPrecision(5)); // Adapted (toPrecision was not available)
-
-    final RenderView renderView = RenderView(
-      window: ui.window,
-      child: RenderPositionedBox(alignment: Alignment.center, child: repaintBoundary),
-      configuration: ViewConfiguration(
-        size: logicalSize,
-        devicePixelRatio: pixelRatio ?? 1.0,
-      ),
-    );
-
-    final PipelineOwner pipelineOwner = PipelineOwner();
-    final BuildOwner buildOwner = BuildOwner(
-        focusManager: FocusManager(),
-        onBuildScheduled: () {
-          isDirty = true;
-        });
-
-    pipelineOwner.rootNode = renderView;
-    renderView.prepareInitialFrame();
-
-    final RenderObjectToWidgetElement<RenderBox> rootElement = RenderObjectToWidgetAdapter<RenderBox>(
-        container: repaintBoundary,
-        child: ClipRRect(
-          borderRadius: borderRadius,
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: child,
-          ),
-        )).attachToRenderTree(
-      buildOwner,
-    );
-
-    buildOwner.buildScope(
-      rootElement,
-    );
-    buildOwner.finalizeTree();
-
-    pipelineOwner.flushLayout();
-    pipelineOwner.flushCompositingBits();
-    pipelineOwner.flushPaint();
-
-    ui.Image? image;
-
-    do {
-      isDirty = false;
-
-      image = await repaintBoundary.toImage(pixelRatio: pixelRatio ?? (imageSize.width / logicalSize.width));
-
-      await Future.delayed(delay);
-    } while (isDirty && retryCounter >= 0);
-    try {
-      /// Dispose All widgets
-      rootElement.visitChildren((Element element) {
-        rootElement.deactivateChild(element);
-      });
-      buildOwner.finalizeTree();
-    } catch (e) {}
-
-    return image; // Adapted to directly return the image and not the Uint8List
-  }
-
   saveAssetsImg(Uint8List? imageBytes) async {
     if (kIsWeb) {
       if (imageBytes != null) {
         final base64data = base64Encode(imageBytes.toList());
-        final a = html.AnchorElement(href: 'data:image/jpeg;base64,$base64data');
+        final a =
+            html.AnchorElement(href: 'data:image/jpeg;base64,$base64data');
         a.download = "${DateTime.now().millisecondsSinceEpoch}";
         a.click();
         a.remove();

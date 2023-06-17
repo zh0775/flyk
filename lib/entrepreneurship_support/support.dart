@@ -3,7 +3,6 @@
 import 'package:cxhighversion2/component/bottom_paypassword.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/entrepreneurship_support/apply_record.dart';
-import 'package:cxhighversion2/service/http.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
@@ -112,18 +111,24 @@ class SupportPage extends GetView<SupportController> {
                 top: 225.w,
                 child: CustomButton(
                   onPressed: () {
-                    push(const SupportApplyRecordPage(), null, binding: SupportApplyRecordBinding());
+                    push(const SupportApplyRecordPage(), null,
+                        binding: SupportApplyRecordBinding());
                   },
                   child: Container(
                       width: 25.w,
                       // height: 75.w,
                       padding: EdgeInsets.fromLTRB(5.w, 10.w, 5.w, 10.w),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(12.w), bottomLeft: Radius.circular(12.w)),
-                          gradient: const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
-                            Color(0xFFFD573B),
-                            Color(0xFFFF3A3A),
-                          ])),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12.w),
+                              bottomLeft: Radius.circular(12.w)),
+                          gradient: const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color(0xFFFD573B),
+                                Color(0xFFFF3A3A),
+                              ])),
                       child: Text(
                         '申请记录',
                         style: TextStyle(
@@ -158,7 +163,8 @@ class SupportPage extends GetView<SupportController> {
             child: Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(left: 15.w),
-              child: Image.asset(width: 18.w, height: 18.w, assetsName('support/icon_left')),
+              child: Image.asset(
+                  width: 18.w, height: 18.w, assetsName('support/icon_left')),
             ),
           ),
           ghb(44),
@@ -192,9 +198,10 @@ class SupportPage extends GetView<SupportController> {
       builder: (_) {
         return Container(
             width: 375.w,
-            padding: EdgeInsets.only(top: controller.supportData.isNotEmpty ? 15.w : 120.w + 15.w),
+            padding: EdgeInsets.only(
+                top: controller.supportData.isNotEmpty ? 15.w : 120.w + 15.w),
             child: Column(
-                children: List.generate((controller.supportData ?? []).length, (index) {
+                children: List.generate(controller.supportData.length, (index) {
               Map data = controller.supportData[index] ?? {};
               return supportItem(data, index);
             })));
@@ -207,7 +214,8 @@ class SupportPage extends GetView<SupportController> {
       width: 375.w - 15.w * 2,
       height: 120.w,
       margin: EdgeInsets.only(bottom: 15.w),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.w), color: Colors.white),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.w), color: Colors.white),
       child: Column(
         children: [
           Container(
@@ -215,7 +223,8 @@ class SupportPage extends GetView<SupportController> {
             height: 45.w,
             padding: EdgeInsets.only(left: 15.w),
             decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8), topRight: Radius.circular(8)),
                 gradient: LinearGradient(colors: [
                   Color(0xFFFFEBE0),
                   Color(0xFFFFFFFF),
@@ -229,7 +238,8 @@ class SupportPage extends GetView<SupportController> {
                   fit: BoxFit.fill,
                 ),
                 gwb(12.5),
-                getSimpleText("${item['cT_Title'] ?? ''}", 16, const Color(0xFF333333)),
+                getSimpleText(
+                    "${item['cT_Title'] ?? ''}", 16, const Color(0xFF333333)),
                 // Container(
                 //   padding: EdgeInsets.fromLTRB(5.w, 3.w, 5.w, 3.w),
                 //   margin: EdgeInsets.only(left: 7.w),
@@ -247,7 +257,10 @@ class SupportPage extends GetView<SupportController> {
                           color: const Color(0x10FE4D3B),
                           borderRadius: BorderRadius.circular(2.w),
                         ),
-                        child: getSimpleText("兑换周期  ${item['cT_Period'] ?? 0}个月", 12, const Color(0xFFFE4D3B)),
+                        child: getSimpleText(
+                            "兑换周期  ${item['cT_Period'] ?? 0}个月",
+                            12,
+                            const Color(0xFFFE4D3B)),
                       )
                     : gwb(0)
               ],
@@ -262,10 +275,20 @@ class SupportPage extends GetView<SupportController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
-                  children: [getSimpleText("${item['cT_BeginLoans'] ?? 0}", 18, const Color(0xFF333333), isBold: true), getSimpleText('最小额度(元)', 12, const Color(0xFF999999))],
+                  children: [
+                    getSimpleText("${item['cT_BeginLoans'] ?? 0}", 18,
+                        const Color(0xFF333333),
+                        isBold: true),
+                    getSimpleText('最小额度(元)', 12, const Color(0xFF999999))
+                  ],
                 ),
                 Column(
-                  children: [getSimpleText("${item['cT_EndLoans'] ?? 0}", 18, const Color(0xFF333333), isBold: true), getSimpleText('最大额度(元)', 12, const Color(0xFF999999))],
+                  children: [
+                    getSimpleText("${item['cT_EndLoans'] ?? 0}", 18,
+                        const Color(0xFF333333),
+                        isBold: true),
+                    getSimpleText('最大额度(元)', 12, const Color(0xFF999999))
+                  ],
                 ),
                 CustomButton(
                   onPressed: () {
@@ -279,7 +302,8 @@ class SupportPage extends GetView<SupportController> {
                       title: "温馨提示",
                       cancelText: "我再想想",
                       confirmBtnColor: Colors.white,
-                      confirmStyle: TextStyle(fontSize: 16.sp, color: AppColor.theme),
+                      confirmStyle:
+                          TextStyle(fontSize: 16.sp, color: AppColor.theme),
                       confirmOnPressed: () {
                         Get.back();
                         controller.bottomPayPassword.show();
@@ -290,7 +314,9 @@ class SupportPage extends GetView<SupportController> {
                     alignment: Alignment.center,
                     width: 70.w,
                     height: 30.w,
-                    decoration: BoxDecoration(color: const Color(0xFFFF3A3A), borderRadius: BorderRadius.circular(30.w / 2)),
+                    decoration: BoxDecoration(
+                        color: const Color(0xFFFF3A3A),
+                        borderRadius: BorderRadius.circular(30.w / 2)),
                     child: getSimpleText('去申请', 14, Colors.white, isBold: true),
                   ),
                 )
