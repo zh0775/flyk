@@ -4,7 +4,6 @@ import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_empty_view.dart';
 import 'package:cxhighversion2/component/custom_network_image.dart';
 import 'package:cxhighversion2/mine/mineStoreOrder/mine_store_order_detail.dart';
-import 'package:cxhighversion2/product/product_pay_result_page.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
@@ -13,7 +12,7 @@ import 'package:cxhighversion2/util/toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -86,10 +85,7 @@ class MineStoreOrderListController extends GetxController {
       return;
     }
     topAnimation = true;
-    pageCtrl
-        .animateToPage(index,
-            duration: const Duration(milliseconds: 300), curve: Curves.linear)
-        .then((value) {
+    pageCtrl.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.linear).then((value) {
       topAnimation = false;
     });
   }
@@ -335,8 +331,7 @@ class MineStoreOrderListController extends GetxController {
     //   urls = Urls.userLevelGiftDelOrder(
     //       getOrderId(index: index, status: status, key: "id"));
     // }
-    urls = Urls.userLevelGiftDelOrder(
-        getOrderId(index: index, status: status, key: "id"));
+    urls = Urls.userLevelGiftDelOrder(getOrderId(index: index, status: status, key: "id"));
 
     showAlert(
       Global.navigatorKey.currentContext!,
@@ -365,9 +360,7 @@ class MineStoreOrderListController extends GetxController {
       index: index,
       status: status,
     );
-    if ((homeData["u_3rd_password"] == null ||
-            homeData["u_3rd_password"].isEmpty) &&
-        payOrder["paymentMethodType"] == 2) {
+    if ((homeData["u_3rd_password"] == null || homeData["u_3rd_password"].isEmpty) && payOrder["paymentMethodType"] == 2) {
       showPayPwdWarn(
         haveClose: true,
         popToRoot: false,
@@ -401,9 +394,7 @@ class MineStoreOrderListController extends GetxController {
         "u_3nd_Pad": pwd,
       },
       success: (success, json) async {
-        if (json != null &&
-            json["data"] != null &&
-            json["data"]["aliData"] != null) {
+        if (json != null && json["data"] != null && json["data"]["aliData"] != null) {
           Map result = await CustomAlipay().payAction(
             json["data"]["aliData"],
             payBack: () {
@@ -431,8 +422,7 @@ class MineStoreOrderListController extends GetxController {
   cancelOrderAction(int index, int status) {
     String urls = "";
 
-    urls = Urls.userLevelGiftOrderCancel(
-        getOrderId(index: index, status: status, key: "id"));
+    urls = Urls.userLevelGiftOrderCancel(getOrderId(index: index, status: status, key: "id"));
 
     showAlert(
       Global.navigatorKey.currentContext!,
@@ -456,8 +446,7 @@ class MineStoreOrderListController extends GetxController {
     );
   }
 
-  int getOrderId(
-      {required int index, required int status, required String key}) {
+  int getOrderId({required int index, required int status, required String key}) {
     int id = 0;
     switch (status) {
       case 0:
@@ -506,8 +495,7 @@ class MineStoreOrderListController extends GetxController {
   confirmOrderAction(int index, int status) {
     String urls = "";
 
-    urls = Urls.userLevelGiftOrderConfirm(
-        getOrderId(index: index, status: status, key: "id"));
+    urls = Urls.userLevelGiftOrderConfirm(getOrderId(index: index, status: status, key: "id"));
     showAlert(
       Global.navigatorKey.currentContext!,
       "确定要确认收货吗",
@@ -681,11 +669,9 @@ class MineStoreOrderListController extends GetxController {
     loadState();
     homeData = AppDefault().homeData;
     bus.on(HOME_DATA_UPDATE_NOTIFY, getHomeDataNotify);
-    bottomPayPassword = BottomPayPassword.init(
-      confirmClick: (payPwd) {
-        payAction(payPwd);
-      },
-    );
+    bottomPayPassword = BottomPayPassword.init(confirmClick: (payPwd) {
+      payAction(payPwd);
+    });
     super.onInit();
   }
 
@@ -757,9 +743,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                                     getSimpleText(
                                       e.value,
                                       16,
-                                      controller.topIndex != e.key
-                                          ? const Color(0xFFBCC0C9)
-                                          : const Color(0xFF2469F2),
+                                      controller.topIndex != e.key ? const Color(0xFFBCC0C9) : const Color(0xFF2469F2),
                                     ),
                                     ghb(controller.topIndex == e.key ? 3 : 0),
                                     controller.topIndex != e.key
@@ -767,10 +751,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                                         : Container(
                                             width: 30.w,
                                             height: 2.w,
-                                            decoration: BoxDecoration(
-                                                color: const Color(0xFF2469F2),
-                                                borderRadius:
-                                                    BorderRadius.circular(2.w)),
+                                            decoration: BoxDecoration(color: const Color(0xFF2469F2), borderRadius: BorderRadius.circular(2.w)),
                                           )
                                   ]);
                                 },
@@ -798,11 +779,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                   id: controller.allListId,
                   init: controller,
                   builder: (_) {
-                    return orderList(
-                        controller.allOrderList,
-                        controller.allCount,
-                        0,
-                        controller.allPullCtrl, () async {
+                    return orderList(controller.allOrderList, controller.allCount, 0, controller.allPullCtrl, () async {
                       controller.onRefresh(0);
                     }, () async {
                       controller.onLoad(0);
@@ -813,11 +790,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                   id: controller.payListId,
                   init: controller,
                   builder: (_) {
-                    return orderList(
-                        controller.payDataList,
-                        controller.payPageCount,
-                        1,
-                        controller.payPullCtrl, () async {
+                    return orderList(controller.payDataList, controller.payPageCount, 1, controller.payPullCtrl, () async {
                       controller.onRefresh(1);
                     }, () async {
                       controller.onLoad(1);
@@ -828,11 +801,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                   id: controller.waitListId,
                   init: controller,
                   builder: (_) {
-                    return orderList(
-                        controller.waitDataList,
-                        controller.waitPageCount,
-                        2,
-                        controller.waitPullCtrl, () async {
+                    return orderList(controller.waitDataList, controller.waitPageCount, 2, controller.waitPullCtrl, () async {
                       controller.onRefresh(2);
                     }, () async {
                       controller.onLoad(2);
@@ -843,11 +812,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                   id: controller.receiListId,
                   init: controller,
                   builder: (_) {
-                    return orderList(
-                        controller.receiDataList,
-                        controller.receiPageCount,
-                        3,
-                        controller.receiPullCtrl, () async {
+                    return orderList(controller.receiDataList, controller.receiPageCount, 3, controller.receiPullCtrl, () async {
                       controller.onRefresh(3);
                     }, () async {
                       controller.onLoad(3);
@@ -858,11 +823,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                   id: controller.completeListId,
                   init: controller,
                   builder: (_) {
-                    return orderList(
-                        controller.completeDataList,
-                        controller.completePageCount,
-                        4,
-                        controller.completePullCtrl, () async {
+                    return orderList(controller.completeDataList, controller.completePageCount, 4, controller.completePullCtrl, () async {
                       controller.onRefresh(4);
                     }, () async {
                       controller.onLoad(4);
@@ -877,13 +838,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
     );
   }
 
-  Widget orderList(
-      List datas,
-      int count,
-      int listIndex,
-      RefreshController pullCtrl,
-      Function()? onRefresh,
-      Function()? onLoading) {
+  Widget orderList(List datas, int count, int listIndex, RefreshController pullCtrl, Function()? onRefresh, Function()? onLoading) {
     return SmartRefresher(
         controller: pullCtrl,
         onRefresh: onRefresh,
@@ -901,9 +856,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
               )
             : ListView.builder(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.only(
-                    bottom: 15.w +
-                        paddingSizeBottom(Global.navigatorKey.currentContext!)),
+                padding: EdgeInsets.only(bottom: 15.w + paddingSizeBottom(Global.navigatorKey.currentContext!)),
                 itemCount: datas.isEmpty ? 0 : datas.length,
                 itemBuilder: (context, index) {
                   return orderCell(datas[index], index, context, listIndex);
@@ -1014,8 +967,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(10.w),
                                     child: CustomNetworkImage(
-                                      src:
-                                          "${AppDefault().imageUrl}${e["shopImg"] ?? ""}",
+                                      src: "${AppDefault().imageUrl}${e["shopImg"] ?? ""}",
                                       width: 116.w,
                                       height: 116.w,
                                       fit: BoxFit.fitWidth,
@@ -1024,25 +976,15 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                                   SizedBox(
                                     height: 116.w,
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         centClm([
-                                          getWidthText(e["shopName"], 14,
-                                              AppColor.textBlack3, 189, 2),
+                                          getWidthText(e["shopName"], 14, AppColor.textBlack3, 189, 2),
                                           ghb(5),
-                                          getWidthText(e["shopName"], 14,
-                                              AppColor.textBlack3, 189, 2),
+                                          getWidthText(e["shopName"], 14, AppColor.textBlack3, 189, 2),
                                         ]),
-                                        getRichText(
-                                            "￥",
-                                            priceFormat(e["nowPrice"] ?? 0),
-                                            13,
-                                            const Color(0xFFFF5A5F),
-                                            18,
-                                            const Color(0xFFFF5A5F)),
+                                        getRichText("￥", priceFormat(e["nowPrice"] ?? 0), 13, const Color(0xFFFF5A5F), 18, const Color(0xFFFF5A5F)),
                                       ],
                                     ),
                                   )
@@ -1092,40 +1034,18 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           centClm([
-                            getWidthText(data["levelName"] ?? "", 14,
-                                AppColor.textBlack3, 189, 2),
+                            getWidthText(data["levelName"] ?? "", 14, AppColor.textBlack3, 189, 2),
                             // ghb(5),
                             // getWidthText(data["shopName"], 14,
                             //     AppColor.textBlack3, 189, 2),
                           ]),
                           sbRow([
-                            getRichText(
-                                "￥",
-                                priceFormat(data["totalPrice"] ?? 0),
-                                13,
-                                const Color(0xFFFF5A5F),
-                                18,
-                                const Color(0xFFFF5A5F)),
-                            data["orderState"] == 1 ||
-                                    data["orderState"] == 2 ||
-                                    data["orderState"] == 3
+                            getRichText("￥", priceFormat(data["totalPrice"] ?? 0), 13, const Color(0xFFFF5A5F), 18, const Color(0xFFFF5A5F)),
+                            data["orderState"] == 1 || data["orderState"] == 2 || data["orderState"] == 3
                                 ? Text.rich(TextSpan(children: [
-                                    TextSpan(
-                                        text: "实付款",
-                                        style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: AppColor.color40)),
-                                    TextSpan(
-                                        text: "￥",
-                                        style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: AppColor.color20)),
-                                    TextSpan(
-                                        text: priceFormat(
-                                            data["totalPrice"] ?? 0),
-                                        style: TextStyle(
-                                            fontSize: 18.sp,
-                                            color: AppColor.color20)),
+                                    TextSpan(text: "实付款", style: TextStyle(fontSize: 12.sp, color: AppColor.color40)),
+                                    TextSpan(text: "￥", style: TextStyle(fontSize: 12.sp, color: AppColor.color20)),
+                                    TextSpan(text: priceFormat(data["totalPrice"] ?? 0), style: TextStyle(fontSize: 18.sp, color: AppColor.color20)),
                                   ]))
                                 : gwb(0)
                           ], width: 189)
@@ -1185,8 +1105,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                 ? sbhRow([
                     bottomLeftView(data),
                     centRow([
-                      ...statusButtons(data, context,
-                          index: index, status: listIndex),
+                      ...statusButtons(data, context, index: index, status: listIndex),
                     ])
                   ], width: 345 - 15 * 2, height: 56.5)
                 : centClm([
@@ -1207,10 +1126,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
     switch ((data["orderState"] ?? -1)) {
       case 0:
         DateTime now = DateTime.now();
-        Duration duration = controller.dateFormat
-            .parse(data["addTime"])
-            .add(const Duration(minutes: 30))
-            .difference(now);
+        Duration duration = controller.dateFormat.parse(data["addTime"]).add(const Duration(minutes: 30)).difference(now);
         if (duration.inMilliseconds < 0) {
           title = "订单支付超时";
           break;
@@ -1218,8 +1134,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
           return centClm([
             getSimpleText("实付款", 12, AppColor.color40),
             ghb(2),
-            getRichText("￥", priceFormat(data["totalPrice"] ?? 0), 12,
-                AppColor.color40, 18, AppColor.color40),
+            getRichText("￥", priceFormat(data["totalPrice"] ?? 0), 12, AppColor.color40, 18, AppColor.color40),
           ], crossAxisAlignment: CrossAxisAlignment.start);
         }
       case 1:
@@ -1253,8 +1168,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
     return gwb(0);
   }
 
-  List<Widget> statusButtons(Map data, BuildContext context,
-      {required int index, required int status}) {
+  List<Widget> statusButtons(Map data, BuildContext context, {required int index, required int status}) {
     List<Widget> l = [];
     // if (controller.stateDataList.isEmpty) {
     //   return l;
@@ -1263,10 +1177,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
       bool timeOut = false;
       if (data["orderState"] == 0) {
         DateTime now = DateTime.now();
-        Duration duration = controller.dateFormat
-            .parse(data["addTime"])
-            .add(const Duration(minutes: 30))
-            .difference(now);
+        Duration duration = controller.dateFormat.parse(data["addTime"]).add(const Duration(minutes: 30)).difference(now);
         timeOut = (duration.inMilliseconds < 0);
       }
       l.addAll([
@@ -1339,9 +1250,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
           },
         ),
       ]);
-    } else if (data["orderState"] == 3 ||
-        data["orderState"] == 4 ||
-        data["orderState"] == 5) {
+    } else if (data["orderState"] == 3 || data["orderState"] == 4 || data["orderState"] == 5) {
       l.addAll([
         // statusButton(
         //   "删除订单",
@@ -1353,9 +1262,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
         // ),
         // gwb(13.5),
       ]);
-    } else if (data["orderState"] == 6 ||
-        data["orderState"] == 7 ||
-        data["orderState"] == 8) {
+    } else if (data["orderState"] == 6 || data["orderState"] == 7 || data["orderState"] == 8) {
       l.addAll([
         statusButton(
           "删除订单",
@@ -1383,10 +1290,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
       child: Container(
         width: 90.w,
         height: 32.w,
-        decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(4.w),
-            border: Border.all(width: 1.w, color: borderColor)),
+        decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(4.w), border: Border.all(width: 1.w, color: borderColor)),
         child: Center(
           child: getSimpleText(t1, 14, textColor),
         ),
@@ -1422,14 +1326,11 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                   Container(
                     width: 345.w,
                     height: 116.w,
-                    decoration: BoxDecoration(
-                        color: AppColor.lineColor,
-                        borderRadius: BorderRadius.circular(5.w)),
+                    decoration: BoxDecoration(color: AppColor.lineColor, borderRadius: BorderRadius.circular(5.w)),
                     child: Column(
                       children: [
                         ghb(25),
-                        getSimpleText("点击快递编号即可复制查询", 15, AppColor.textBlack,
-                            isBold: true),
+                        getSimpleText("点击快递编号即可复制查询", 15, AppColor.textBlack, isBold: true),
                         ghb(13.5),
                         CustomButton(
                           onPressed: () {
@@ -1440,10 +1341,7 @@ class MineStoreOrderList extends GetView<MineStoreOrderListController> {
                             width: 270.w,
                             height: 35.w,
                             decoration: getDefaultWhiteDec(),
-                            child: Center(
-                                child: getSimpleText(
-                                    expressNo, 20, AppColor.textBlack,
-                                    isBold: true)),
+                            child: Center(child: getSimpleText(expressNo, 20, AppColor.textBlack, isBold: true)),
                           ),
                         )
                       ],

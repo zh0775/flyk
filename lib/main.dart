@@ -1,24 +1,18 @@
-import 'dart:async';
-
 import 'package:blur/blur.dart';
 import 'package:cxhighversion2/app_binding.dart';
 import 'package:cxhighversion2/component/app_launch_splash.dart';
 import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_deferred.dart';
 import 'package:cxhighversion2/component/splash_view.dart';
-import 'package:cxhighversion2/home/component/deferred_widget.dart';
 import 'package:cxhighversion2/home/home.dart' deferred as home;
 import 'package:cxhighversion2/income/income_page.dart' deferred as income_page;
 import 'package:cxhighversion2/login/user_login.dart';
 import 'package:cxhighversion2/mine/mine_page.dart' deferred as mine_page;
 import 'package:cxhighversion2/routers/app_pages.dart';
-import 'package:cxhighversion2/statistics/statistics_page/statistics_page.dart'
-    deferred as statistics_page;
+import 'package:cxhighversion2/statistics/statistics_page/statistics_page.dart' deferred as statistics_page;
 import 'package:cxhighversion2/util/EventBus.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/notify_default.dart';
-import 'package:cxhighversion2/util/storage_default.dart';
-import 'package:cxhighversion2/util/user_default.dart';
 import 'package:easy_refresh/easy_refresh.dart' as er;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -65,10 +59,22 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // debugProfileBuildsEnabled = true;
   // if (!kIsWeb) ScreenUtil.ensureScreenSize();
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-  ));
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   if (!kIsWeb) {
+    // await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(true);
+
+    // var swAvailable = await AndroidWebViewFeature.isFeatureSupported(AndroidWebViewFeature.SERVICE_WORKER_BASIC_USAGE);
+    // var swInterceptAvailable = await AndroidWebViewFeature.isFeatureSupported(AndroidWebViewFeature.SERVICE_WORKER_SHOULD_INTERCEPT_REQUEST);
+
+    // if (swAvailable && swInterceptAvailable) {
+    //   AndroidServiceWorkerController serviceWorkerController = AndroidServiceWorkerController.instance();
+    //   await serviceWorkerController.setServiceWorkerClient(AndroidServiceWorkerClient(
+    //     shouldInterceptRequest: (request) async {
+    //       return null;
+    //     },
+    //   ));
+    // }
+
     await Hive.initFlutter();
   }
   runApp(const MainApp());
@@ -82,7 +88,7 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   // final GlobalKey<NavigatorState>? navigatorKey = GlobalKey<NavigatorState>();
-  bool? spashEnble;
+  // bool? spashEnble;
   late SplashView splashView;
 
   Uint8List? qrByte;
@@ -97,35 +103,7 @@ class _MainAppState extends State<MainApp> {
     }
 
     er.EasyRefresh.defaultFooterBuilder = () => const er.CupertinoFooter();
-    if (kIsWeb) {
-      spashEnble = false;
-      AppDefault.firstLaunchApp = false;
-    } else {
-      splashView = SplashView(
-        closeSplash: () {
-          UserDefault.saveBool(APP_SPLASH_ENABLE, false);
-          setState(() {
-            spashEnble = false;
-          });
-        },
-      );
-      UserDefault.get(APP_SPLASH_ENABLE).then((value) {
-        setState(() {
-          spashEnble = (value == null || value == true);
-          // spashEnble = true;
-          if (spashEnble ?? false) {
-            AppDefault.firstLaunchApp = true;
-          }
-          // if (!spashEnble!) {
-          //   if (mounted) {
-          //     Future.delayed(Duration(seconds: 3), () {
-          //       showLaunchSpash();
-          //     });
-          //   }
-          // }
-        });
-      });
-    }
+    AppDefault.firstLaunchApp = false;
     super.initState();
   }
 
@@ -135,15 +113,8 @@ class _MainAppState extends State<MainApp> {
         debugShowCheckedModeBanner: false,
         builder: (context, child) {
           return empty
-              ? Container(
-                  color: Colors.white,
-                )
-              : Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.fill,
-                          image:
-                              AssetImage(assetsName("common/launch_image")))));
+              ? Container(color: Colors.white)
+              : Container(decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill, image: AssetImage(assetsName("common/launch_image")))));
         },
         home: empty
             ? Container(
@@ -152,27 +123,20 @@ class _MainAppState extends State<MainApp> {
             : SizedBox(
                 width: double.infinity,
                 height: height,
-                child: Image.asset(
-                  assetsName("common/launch_image"),
-                  width: double.infinity,
-                  height: height,
-                  fit: BoxFit.fill,
-                ),
-              ));
+                child: Image.asset(assetsName("common/launch_image"), width: double.infinity, height: height, fit: BoxFit.fill)));
   }
 
   ThemeData getThemeData({bool isDart = false}) {
     return ThemeData(
-      primaryColor: AppColor.theme,
-      // splashFactory: NoSplashFactory(),
-      primarySwatch: AppColor.mTheme,
-      splashColor: Colors.transparent,
-      scaffoldBackgroundColor: AppColor.pageBackgroundColor,
-      textTheme: TextTheme(
-          bodyLarge: TextStyle(color: AppColor.text, fontSize: 15.sp),
-          bodyMedium: TextStyle(color: AppColor.text2, fontSize: 15.sp),
-          bodySmall: TextStyle(color: AppColor.text2, fontSize: 15.sp)),
-    );
+        primaryColor: AppColor.theme,
+        // splashFactory: NoSplashFactory(),
+        primarySwatch: AppColor.mTheme,
+        splashColor: Colors.transparent,
+        scaffoldBackgroundColor: AppColor.pageBackgroundColor,
+        textTheme: TextTheme(
+            bodyLarge: TextStyle(color: AppColor.text, fontSize: 15.sp),
+            bodyMedium: TextStyle(color: AppColor.text2, fontSize: 15.sp),
+            bodySmall: TextStyle(color: AppColor.text2, fontSize: 15.sp)));
   }
 
   @override
@@ -189,58 +153,45 @@ class _MainAppState extends State<MainApp> {
         designSize: const Size(375, 812),
         builder: (BuildContext buildContext, Widget? child) {
           return OKToast(
-              child: spashEnble == null
-                  ? fakeLaunch(ctx: buildContext)
-                  : spashEnble!
-                      ? MaterialApp(
-                          title: AppDefault.projectName,
-                          home: Scaffold(body: splashView),
-                          debugShowCheckedModeBanner: false,
-                        )
-                      : pullRefresh(
-                          child: GetMaterialApp(
-                          darkTheme: getThemeData(),
-                          theme: getThemeData(),
-                          navigatorKey: Global.navigatorKey,
-                          initialRoute: AppDefault.firstLaunchApp
-                              ? Routes.main
-                              : Routes.splash,
-                          debugShowCheckedModeBanner: false,
-                          defaultTransition: Transition.rightToLeft,
-                          getPages: [
-                            GetPage(
-                              name: Routes.main,
-                              page: () => const MainPage(),
-                              binding: MainPageBinding(),
-                            ),
-                            GetPage(
-                              name: Routes.splash,
-                              page: () => const AppLaunchSplash(),
-                              binding: AppLaunchSplashBinding(),
-                            ),
-                          ],
-                          initialBinding: AppBinding(),
-                          useInheritedMediaQuery: false,
-                          enableLog: true,
+              child: pullRefresh(
+                  child: GetMaterialApp(
+            darkTheme: getThemeData(),
+            theme: getThemeData(),
+            navigatorKey: Global.navigatorKey,
+            initialRoute: AppDefault.firstLaunchApp ? Routes.main : Routes.splash,
+            debugShowCheckedModeBanner: false,
+            defaultTransition: Transition.rightToLeft,
+            getPages: [
+              GetPage(
+                name: Routes.main,
+                page: () => const MainPage(),
+                binding: MainPageBinding(),
+              ),
+              GetPage(
+                name: Routes.splash,
+                page: () => const AppLaunchSplash(),
+                binding: AppLaunchSplashBinding(),
+              ),
+            ],
+            initialBinding: AppBinding(),
+            useInheritedMediaQuery: false,
+            enableLog: true,
 
-                          title: AppDefault.projectName,
-                          // home: MainPage(),
-                          localizationsDelegates: const [
-                            RefreshLocalizations.delegate,
-                            GlobalMaterialLocalizations.delegate,
-                            GlobalCupertinoLocalizations.delegate,
-                            GlobalWidgetsLocalizations.delegate
-                          ],
-                          supportedLocales: const [Locale("en"), Locale("zh")],
+            title: AppDefault.projectName,
+            // home: MainPage(),
+            localizationsDelegates: const [
+              RefreshLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate
+            ],
+            supportedLocales: const [Locale("en"), Locale("zh")],
 
-                          builder: (getCtx, materialAppChild) {
-                            return MediaQuery(
-                                data: MediaQuery.of(getCtx).copyWith(
-                                    textScaleFactor: 1.0, boldText: false),
-                                child: materialAppChild!);
-                          },
-                          navigatorObservers: [GLObserver()],
-                        )));
+            builder: (getCtx, materialAppChild) {
+              return MediaQuery(data: MediaQuery.of(getCtx).copyWith(textScaleFactor: 1.0, boldText: false), child: materialAppChild!);
+            },
+            navigatorObservers: [GLObserver()],
+          )));
         },
       ),
     );
@@ -254,14 +205,10 @@ class _MainAppState extends State<MainApp> {
       ), // 配置默认头部指示器,假如你每个页面的头部指示器都一样的话,你需要设置这个
       footerBuilder: () => const ClassicFooter(), // 配置默认底部指示器
       headerTriggerDistance: 80.0.w, // 头部触发刷新的越界距离
-      springDescription: SpringDescription(
-          stiffness: 170.w,
-          damping: 16,
-          mass: 1.9), // 自定义回弹动画,三个属性值意义请查询flutter api
+      springDescription: SpringDescription(stiffness: 170.w, damping: 16, mass: 1.9), // 自定义回弹动画,三个属性值意义请查询flutter api
       maxOverScrollExtent: 100, //头部最大可以拖动的范围,如果发生冲出视图范围区域,请设置这个属性
       maxUnderScrollExtent: 0, // 底部最大可以拖动的范围
-      enableScrollWhenRefreshCompleted:
-          true, //这个属性不兼容PageView和TabBarView,如果你特别需要TabBarView左右滑动,你需要把它设置为true
+      enableScrollWhenRefreshCompleted: true, //这个属性不兼容PageView和TabBarView,如果你特别需要TabBarView左右滑动,你需要把它设置为true
       enableLoadingWhenFailed: true, //在加载失败的状态下,用户仍然可以通过手势上拉来触发加载更多
       hideFooterWhenNotFull: false, // Viewport不满一屏时,禁用上拉加载更多功能
       enableBallisticLoad: true, // 可以通过惯性滑动触发加载更多
@@ -317,7 +264,7 @@ class MainPageCtrl extends GetxController {
   get startScrollIndex => _startScrollIndex.value;
   set startScrollIndex(value) => _startScrollIndex.value = value;
 
-  Timer? _timer;
+  // Timer? _timer;
   double timerCount = 0.5;
   double labelWidth = (375 - 30 * 2).w / (AppDefault().checkDay ? 5 : 4);
   bool isLeft = true;
@@ -403,46 +350,46 @@ class MainPage extends GetView<MainPageCtrl> {
   @override
   Widget build(BuildContext context) {
     controller.dataInit(context);
-    return GetBuilder<MainPageCtrl>(
-      builder: (_) {
-        return Scaffold(
-          body: GetX<MainPageCtrl>(
-            builder: (_) {
-              return LazyIndexedStack(
-                index: controller.tabbarIndex,
-                children: [
-                  getIndexPage(0),
-                  getIndexPage(1),
-                  getIndexPage(2),
-                  getIndexPage(3),
-                ],
-              );
-            },
-          ),
-          bottomNavigationBar: Container(
-            height: 60.w + paddingSizeBottom(context),
-            width: 375.w,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: GetBuilder<MainPageCtrl>(
+        builder: (_) {
+          return Scaffold(
+            body: GetX<MainPageCtrl>(
+              builder: (_) {
+                return LazyIndexedStack(
+                  index: controller.tabbarIndex,
+                  children: [getIndexPage(0), getIndexPage(1), getIndexPage(2), getIndexPage(3)],
+                );
+              },
             ),
-          ).blurred(
-            colorOpacity: 0.1,
-            blur: 20,
-            // blurColor: const Color.fromRGBO(255, 255, 255, 0.1),
-            overlay: Padding(
-              padding: EdgeInsets.only(bottom: paddingSizeBottom(context)),
-              child: GetX<MainPageCtrl>(
-                initState: (_) {},
-                builder: (_) {
-                  return Row(
-                    children: List.generate(4, (index) => getTab(index)),
-                  );
-                },
+            bottomNavigationBar: Container(
+              height: 60.w + paddingSizeBottom(context),
+              width: 375.w,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+              ),
+            ).blurred(
+              colorOpacity: 0.1,
+              blur: 20,
+              // blurColor: const Color.fromRGBO(255, 255, 255, 0.1),
+              overlay: Padding(
+                padding: EdgeInsets.only(bottom: paddingSizeBottom(context)),
+                child: GetX<MainPageCtrl>(
+                  initState: (_) {},
+                  builder: (_) {
+                    return Row(
+                      children: List.generate(4, (index) => getTab(index)),
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -508,19 +455,14 @@ class MainPage extends GetView<MainPageCtrl> {
                               : Colors.white,
                       BlendMode.modulate),
                   child: Image.asset(
-                    assetsName(
-                        "common/tabbar/btn_tabbar_$img${(controller.tabbarIndex == index ? "selected" : "normal")}"),
+                    assetsName("common/tabbar/btn_tabbar_$img${(controller.tabbarIndex == index ? "selected" : "normal")}"),
                     height: 30.w,
                     fit: BoxFit.fitHeight,
                   ),
                 ),
                 // ghb(1),
                 getSimpleText(
-                    title,
-                    kIsWeb ? 11.5 : 10,
-                    controller.tabbarIndex == index
-                        ? (AppDefault().getThemeColor() ?? AppColor.theme)
-                        : AppColor.textGrey,
+                    title, kIsWeb ? 11.5 : 10, controller.tabbarIndex == index ? (AppDefault().getThemeColor() ?? AppColor.theme) : AppColor.textGrey,
                     isBold: controller.tabbarIndex == index)
               ]),
             ),

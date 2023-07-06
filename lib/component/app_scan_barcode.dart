@@ -1,7 +1,7 @@
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+// import 'package:mobile_scanner/mobile_scanner.dart';
 
 class AppScanBarcodeBinding implements Bindings {
   @override
@@ -11,11 +11,11 @@ class AppScanBarcodeBinding implements Bindings {
 }
 
 class AppScanBarcodeController extends GetxController {
-  MobileScannerController cameraController = MobileScannerController();
+  // MobileScannerController cameraController = MobileScannerController();
   bool isPop = false;
   @override
   void dispose() {
-    cameraController.dispose();
+    // cameraController.dispose();
     super.dispose();
   }
 }
@@ -27,44 +27,48 @@ class AppScanBarcode extends GetView<AppScanBarcodeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: getDefaultAppBar(context, "扫描条形码", action: [
-          IconButton(
-            color: Colors.white,
-            icon: ValueListenableBuilder(
-              valueListenable: controller.cameraController.torchState,
-              builder: (context, state, child) {
-                switch (state as TorchState) {
-                  case TorchState.off:
-                    return const Icon(Icons.flash_off, color: Colors.grey);
-                  case TorchState.on:
-                    return const Icon(Icons.flash_on, color: Colors.yellow);
-                }
-              },
-            ),
-            iconSize: 32.0,
-            onPressed: () => controller.cameraController.toggleTorch(),
-          ),
-        ]),
-        body: MobileScanner(
-            allowDuplicates: false,
-            controller: controller.cameraController,
-            onDetect: (barcode, args) {
-              print("barcode == $barcode");
-              if (barcode.rawValue == null) {
-                // debugPrint('Failed to scan Barcode');
-              } else {
-                final String code = barcode.rawValue!;
-                // debugPrint('Barcode found! $code');
-                if (barcodeCallBack != null) {
-                  barcodeCallBack!(code);
-                }
+      appBar: getDefaultAppBar(
+        context, "扫描条形码",
+        // action: [
+        //   IconButton(
+        //     color: Colors.white,
+        //     icon: ValueListenableBuilder(
+        //       valueListenable: controller.cameraController.torchState,
+        //       builder: (context, state, child) {
+        //         switch (state as TorchState) {
+        //           case TorchState.off:
+        //             return const Icon(Icons.flash_off, color: Colors.grey);
+        //           case TorchState.on:
+        //             return const Icon(Icons.flash_on, color: Colors.yellow);
+        //         }
+        //       },
+        //     ),
+        //     iconSize: 32.0,
+        //     onPressed: () => controller.cameraController.toggleTorch(),
+        //   ),
+        // ]
+      ),
+      // body: MobileScanner(
+      //     allowDuplicates: false,
+      //     controller: controller.cameraController,
+      //     onDetect: (barcode, args) {
+      //       print("barcode == $barcode");
+      //       if (barcode.rawValue == null) {
+      //         // debugPrint('Failed to scan Barcode');
+      //       } else {
+      //         final String code = barcode.rawValue!;
+      //         // debugPrint('Barcode found! $code');
+      //         if (barcodeCallBack != null) {
+      //           barcodeCallBack!(code);
+      //         }
 
-                // Navigator.pop(context);
-                if (!controller.isPop) {
-                  Get.back();
-                  controller.isPop = true;
-                }
-              }
-            }));
+      //         // Navigator.pop(context);
+      //         if (!controller.isPop) {
+      //           Get.back();
+      //           controller.isPop = true;
+      //         }
+      //       }
+      //     })
+    );
   }
 }

@@ -49,9 +49,7 @@ class TerminalBackSelectController extends GetxController {
   set isAllSelected(v) => _isAllSelected.value = v;
 
   checkTids(Map data) {
-    data["selected"]
-        ? selecedTIds.add(data["tId"])
-        : selecedTIds.remove(data["tId"]);
+    data["selected"] ? selecedTIds.add(data["tId"]) : selecedTIds.remove(data["tId"]);
   }
 
   selectTerminal(Map data) {
@@ -204,8 +202,7 @@ class TerminalBackSelectController extends GetxController {
 
 class TerminalBackSelect extends GetView<TerminalBackSelectController> {
   final Map userData;
-  const TerminalBackSelect({Key? key, required this.userData})
-      : super(key: key);
+  const TerminalBackSelect({Key? key, required this.userData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -231,25 +228,23 @@ class TerminalBackSelect extends GetView<TerminalBackSelectController> {
                           alignment: Alignment.centerLeft,
                           child: Row(
                             children: [
-                              gwb(15),
-                              CustomButton(
-                                onPressed: () {
-                                  toScanBarCode((barCode) => controller
-                                      .searchInputCtrl.text = barCode);
-                                },
-                                child: assetsSizeImage(
-                                    "home/machinemanage/tiaoxingma", 24, 24),
-                              ),
-                              gwb(15),
+                              AppDefault().appHideScan()
+                                  ? gwb(54)
+                                  : centRow([
+                                      gwb(15),
+                                      CustomButton(
+                                          onPressed: () {
+                                            toScanBarCode((barCode) => controller.searchInputCtrl.text = barCode);
+                                          },
+                                          child: assetsSizeImage("home/machinemanage/tiaoxingma", 24, 24)),
+                                      gwb(15)
+                                    ]),
                               CustomInput(
-                                width: 214.w,
-                                heigth: 50.w,
-                                textEditCtrl: controller.searchInputCtrl,
-                                placeholder: "请输入机具SN号进行搜索",
-                                placeholderStyle: TextStyle(
-                                    color: const Color(0xFFCCCCCC),
-                                    fontSize: 15.sp),
-                              ),
+                                  width: 214.w,
+                                  heigth: 50.w,
+                                  textEditCtrl: controller.searchInputCtrl,
+                                  placeholder: "请输入机具SN号进行搜索",
+                                  placeholderStyle: TextStyle(color: const Color(0xFFCCCCCC), fontSize: 15.sp)),
                               CustomButton(
                                 onPressed: () {
                                   controller.isSearch = true;
@@ -259,12 +254,9 @@ class TerminalBackSelect extends GetView<TerminalBackSelectController> {
                                 child: Container(
                                     width: 64.w,
                                     height: 30.w,
-                                    decoration: BoxDecoration(
-                                        color: AppColor.textBlack,
-                                        borderRadius: BorderRadius.circular(5)),
+                                    decoration: BoxDecoration(color: AppColor.textBlack, borderRadius: BorderRadius.circular(5)),
                                     child: Center(
-                                      child:
-                                          getSimpleText("搜索", 15, Colors.white),
+                                      child: getSimpleText("搜索", 15, Colors.white),
                                     )),
                               )
                             ],
@@ -297,10 +289,8 @@ class TerminalBackSelect extends GetView<TerminalBackSelectController> {
                               controller: controller.pullCtrl,
                               onLoading: controller.onLoad,
                               onRefresh: controller.onRefresh,
-                              enablePullUp: controller.count >
-                                  controller.terminalList.length,
-                              child: controller.terminalList == null ||
-                                      controller.terminalList.isEmpty
+                              enablePullUp: controller.count > controller.terminalList.length,
+                              child: controller.terminalList == null || controller.terminalList.isEmpty
                                   ? GetX<TerminalBackSelectController>(
                                       builder: (controller) {
                                         return CustomEmptyView(
@@ -317,42 +307,23 @@ class TerminalBackSelect extends GetView<TerminalBackSelectController> {
                                             height: 50.w,
                                             decoration: BoxDecoration(
                                                 color: Colors.white,
-                                                border: Border(
-                                                    bottom: BorderSide(
-                                                        width: 0.5.w,
-                                                        color: const Color(
-                                                            0xFFEBEBEB)))),
+                                                border: Border(bottom: BorderSide(width: 0.5.w, color: const Color(0xFFEBEBEB)))),
                                             child: Center(
                                                 child: sbRow([
-                                              getSimpleText("机具编号（SN号）", 14,
-                                                  const Color(0xFF808080)),
+                                              getSimpleText("机具编号（SN号）", 14, const Color(0xFF808080)),
                                               CustomButton(
                                                 onPressed: () {
-                                                  controller.allSelect(
-                                                      !controller
-                                                          .isAllSelected);
+                                                  controller.allSelect(!controller.isAllSelected);
                                                 },
                                                 child: SizedBox(
                                                   height: 50.w,
                                                   child: Center(
-                                                      child: getSimpleText(
-                                                          controller
-                                                                  .isAllSelected
-                                                              ? "反选"
-                                                              : "全选",
-                                                          14,
-                                                          const Color(
-                                                              0xFF5290F2))),
+                                                      child: getSimpleText(controller.isAllSelected ? "反选" : "全选", 14, const Color(0xFF5290F2))),
                                                 ),
                                               )
                                             ], width: 375 - 15 * 2)),
                                           ),
-                                          ...controller.terminalList
-                                              .asMap()
-                                              .entries
-                                              .map((e) =>
-                                                  terminalCell(e.value, e.key))
-                                              .toList()
+                                          ...controller.terminalList.asMap().entries.map((e) => terminalCell(e.value, e.key)).toList()
                                         ],
                                       ),
                                     ),
@@ -375,18 +346,13 @@ class TerminalBackSelect extends GetView<TerminalBackSelectController> {
       child: Container(
         width: 375.w,
         height: 60.w,
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            border: Border(
-                bottom: BorderSide(width: 0.5, color: Color(0xFFEBEBEB)))),
+        decoration: const BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(width: 0.5, color: Color(0xFFEBEBEB)))),
         child: Align(
           child: sbhRow([
             getSimpleText(snNoFormat(data["tNo"]), 13, AppColor.textBlack),
             Image.asset(
               assetsName(
-                data["selected"]
-                    ? "common/btn_checkbox_selected"
-                    : "common/btn_checkbox_normal",
+                data["selected"] ? "common/btn_checkbox_selected" : "common/btn_checkbox_normal",
               ),
               width: 22.w,
               height: 22.w,

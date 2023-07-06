@@ -71,12 +71,7 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
                 getSimpleText("结算卡", 18, AppColor.text, isBold: true),
                 CustomButton(
                   onPressed: () {
-                    push(
-                        const DebitCardAdd(
-                          isAdd: false,
-                        ),
-                        context,
-                        binding: DebitCardAddBinding());
+                    push(const DebitCardAdd(isAdd: false), context, binding: DebitCardAddBinding());
                   },
                   child: SizedBox(
                     height: 52.5.w,
@@ -98,15 +93,9 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
               ], width: 375 - 16 * 2))),
           Positioned.fill(
               top: 52.5.w,
-              child: GetBuilder<DebitCardInfoController>(
-                builder: (_) {
-                  return Column(
-                    children: [
-                      cardCell(0, controller.authData),
-                    ],
-                  );
-                },
-              )),
+              child: GetBuilder<DebitCardInfoController>(builder: (_) {
+                return Column(children: [cardCell(0, controller.authData)]);
+              })),
           GetBuilder<DebitCardInfoController>(builder: (_) {
             return controller.isBindCard
                 ? gemp()
@@ -119,20 +108,13 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
                         ghb(15),
                         CustomButton(
                           onPressed: () {
-                            push(
-                                const DebitCardAdd(
-                                  isAdd: true,
-                                ),
-                                context,
-                                binding: DebitCardAddBinding());
+                            push(const DebitCardAdd(isAdd: true), context, binding: DebitCardAddBinding());
                           },
                           child: Container(
                             width: 345.w,
                             height: 45.w,
                             alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                                color: AppColor.theme,
-                                borderRadius: BorderRadius.circular(45.w / 2)),
+                            decoration: BoxDecoration(color: AppColor.theme, borderRadius: BorderRadius.circular(45.w / 2)),
                             child: centRow([
                               Image.asset(
                                 assetsName("mine/wallet/icon_white_add"),
@@ -154,16 +136,13 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
   }
 
   Widget cardCell(int index, Map data) {
-    dynamic colorData =
-        controller.cardColors[index % controller.cardColors.length];
+    dynamic colorData = controller.cardColors[index % controller.cardColors.length];
     Color lColor = AppColor.theme.withOpacity(0.5);
     Color rColor = AppColor.theme;
     if (colorData is Map && colorData.isNotEmpty) {
       lColor = Color(int.parse(colorData["l"]));
       rColor = Color(int.parse(colorData["r"]));
-    } else if (colorData is String &&
-        colorData.isNotEmpty &&
-        int.tryParse(colorData) != null) {
+    } else if (colorData is String && colorData.isNotEmpty && int.tryParse(colorData) != null) {
       int colorInt = int.parse(colorData);
       lColor = Color(colorInt).withOpacity(0.7);
       rColor = Color(colorInt);
@@ -187,8 +166,7 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
               ghb(16),
               gwb(345),
               sbhRow([
-                getSimpleText(data["bank_AccountName"] ?? "", 18, Colors.white,
-                    isBold: true),
+                getSimpleText(data["bank_AccountName"] ?? "", 18, Colors.white, isBold: true),
                 Image.asset(
                   assetsName("mine/wallet/icon_card_ic"),
                   width: 31.w,
@@ -199,8 +177,7 @@ class DebitCardInfo extends GetView<DebitCardInfoController> {
             centClm([
               sbRow([
                 getSimpleText(
-                    data["bank_AccountNumber"] != null &&
-                            data["bank_AccountNumber"].length > 4
+                    data["bank_AccountNumber"] != null && data["bank_AccountNumber"].length > 4
                         ? "****  ****  ****  ${(data["bank_AccountNumber"] as String).substring(data["bank_AccountNumber"].length - 4, data["bank_AccountNumber"].length)}"
                         : data["bank_AccountNumber"] ?? "",
                     24,

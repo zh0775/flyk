@@ -21,13 +21,8 @@ class AppImagePicker {
   final bool multiple;
   final AppImageUploadType type;
   AppImagePicker(
-      {this.imgCallback,
-      this.imgsCallback,
-      this.multiple = false,
-      this.count = 9,
-      this.imageQuality = 30,
-      this.type = AppImageUploadType.image});
-  List<XFile>? _imageFileList;
+      {this.imgCallback, this.imgsCallback, this.multiple = false, this.count = 9, this.imageQuality = 30, this.type = AppImageUploadType.image});
+  // List<XFile>? _imageFileList;
   // Pick an image
 
   double height = 200;
@@ -65,8 +60,7 @@ class AppImagePicker {
                         );
                       }
                     }
-                    if (status.isGranted ||
-                        await Permission.camera.request().isGranted) {
+                    if (status.isGranted || await Permission.camera.request().isGranted) {
                       loadAssets(false, imgCount: imgCount);
                     }
                   }
@@ -120,8 +114,7 @@ class AppImagePicker {
         if (file != null) {
           // if (result != null) {
           // image = XFile.fromData(result);
-          File result =
-              await FlutterNativeImage.compressImage(file.path, quality: 30);
+          File result = await FlutterNativeImage.compressImage(file.path, quality: 30);
           final XFile image = XFile(result.path);
           if (imgCallback != null) {
             imgCallback!(image);
@@ -133,9 +126,7 @@ class AppImagePicker {
       if (multiple && !isCamera) {
         if (kIsWeb) {
           final List<XFile> pickedFiles = await _picker.pickMultiImage();
-          if (pickedFiles != null &&
-              imgsCallback != null &&
-              imgsCallback != null) {
+          if (imgsCallback != null && imgsCallback != null) {
             imgsCallback!(pickedFiles);
           }
         } else {
@@ -143,9 +134,7 @@ class AppImagePicker {
             Global.navigatorKey.currentContext!,
             pickerConfig: AssetPickerConfig(
                 maxAssets: imgCount ?? count,
-                specialPickerType: (imgCount ?? count) > 1
-                    ? null
-                    : SpecialPickerType.noPreview,
+                specialPickerType: (imgCount ?? count) > 1 ? null : SpecialPickerType.noPreview,
                 textDelegate: const AssetPickerTextDelegate(),
                 requestType: type == AppImageUploadType.image
                     ? RequestType.image
@@ -159,8 +148,7 @@ class AppImagePicker {
             for (AssetEntity e in images) {
               File? file = await e.file;
               if (file != null) {
-                File result = await FlutterNativeImage.compressImage(file.path,
-                    quality: 30);
+                File result = await FlutterNativeImage.compressImage(file.path, quality: 30);
                 final XFile image = XFile(result.path);
                 xImages.add(image);
               }
@@ -171,10 +159,9 @@ class AppImagePicker {
           }
         }
       } else {
-        final XFile? pickedFile = await _picker.pickImage(
-          source: isCamera ? ImageSource.camera : ImageSource.gallery,
-          // imageQuality:imageQuality,
-        );
+        final XFile? pickedFile = await _picker.pickImage(source: isCamera ? ImageSource.camera : ImageSource.gallery
+            // imageQuality:imageQuality,
+            );
         if (pickedFile != null && imgCallback != null && imgCallback != null) {
           imgCallback!(pickedFile);
         }

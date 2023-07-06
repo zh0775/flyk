@@ -21,8 +21,7 @@ import 'dart:math' as math;
 class ProductStoreListBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<ProductStoreListController>(
-        ProductStoreListController(datas: Get.arguments));
+    Get.put<ProductStoreListController>(ProductStoreListController(datas: Get.arguments));
   }
 }
 
@@ -103,9 +102,7 @@ class ProductStoreListController extends GetxController {
   changeTagPosition() {
     //延迟50毫秒
     Future.delayed(const Duration(milliseconds: 50), () {
-      final RenderBox box = keyList[brandSelectIdx]
-          .currentContext!
-          .findRenderObject()! as RenderBox;
+      final RenderBox box = keyList[brandSelectIdx].currentContext!.findRenderObject()! as RenderBox;
       final Offset tapPos = box.localToGlobal(Offset.zero);
       tagX = tapPos.dx + ((box.size.width / 2) - (18.w / 2)) + 7.5.w;
     });
@@ -183,11 +180,7 @@ class ProductStoreListController extends GetxController {
   loadData({bool isLoad = false}) {
     isLoad ? pageNo++ : pageNo = 1;
 
-    Map<String, dynamic> params = {
-      "pageNo": pageNo,
-      "pageSize": pageSize,
-      "level_Type": "$levelType"
-    };
+    Map<String, dynamic> params = {"pageNo": pageNo, "pageSize": pageSize, "level_Type": "$levelType"};
     // if (brandSelectIdx > 0) {
     //   params["tbId"] = "${brandList[brandSelectIdx]["enumValue"]}";
     // }
@@ -236,19 +229,14 @@ class ProductStoreListController extends GetxController {
       keyList.add(GlobalKey());
     }
     List terminalConfigs = publicHomeData["terminalConfig"] ?? [];
-    terminalConfigs = terminalConfigs
-        .where((element) => (element["terninal_Type"] ?? 0) == 2)
-        .toList();
+    terminalConfigs = terminalConfigs.where((element) => (element["terninal_Type"] ?? 0) == 2).toList();
     if (terminalConfigs.isNotEmpty) {
       typeList = terminalConfigs.map((e) => {...e, "selected": false}).toList();
     }
 
     if (typeList.isNotEmpty) {
       int lineCount = (typeList.length / 5.0).ceil();
-      typesViewHeight = lineCount * 70.w +
-          (lineCount > 1 ? (lineCount - 1) * 12.w : 0) +
-          19.w +
-          15.w;
+      typesViewHeight = lineCount * 70.w + (lineCount > 1 ? (lineCount - 1) * 12.w : 0) + 19.w + 15.w;
     }
     // List terminalMods = publicHomeData["terminalMod"] ?? [];
     // if (terminalMods.isNotEmpty) {
@@ -271,13 +259,7 @@ class ProductStoreListController extends GetxController {
       title = "${levelType == 1 ? "礼包" : levelType == 2 ? "采购" : "兑换"}商城";
     }
     // 首次加载时获取tagX坐标
-    tagX = (calculateTextSize("全部", 16, AppDefault.fontBold, double.infinity, 1,
-                    Global.navigatorKey.currentContext!)
-                .width) /
-            2 -
-        9.w +
-        15.w +
-        15.w;
+    tagX = (calculateTextSize("全部", 16, AppDefault.fontBold, double.infinity, 1, Global.navigatorKey.currentContext!).width) / 2 - 9.w + 15.w + 15.w;
     searchInputCtrl.addListener(searchInputListener);
     dateFormat();
     super.onInit();
@@ -324,8 +306,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                         width: 56.w,
                         height: kToolbarHeight,
                         child: centClm([
-                          Image.asset(assetsName("product_store/btn_to_order"),
-                              width: 15.w, height: 15.w, fit: BoxFit.fill),
+                          Image.asset(assetsName("product_store/btn_to_order"), width: 15.w, height: 15.w, fit: BoxFit.fill),
                           getSimpleText("订单", 10, AppColor.textBlack)
                         ]),
                       ),
@@ -357,31 +338,17 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                               return Container(
                                 width: 300.w,
                                 height: 40.w,
-                                decoration: BoxDecoration(
-                                    color: AppColor.pageBackgroundColor,
-                                    borderRadius: BorderRadius.circular(20.w)),
+                                decoration: BoxDecoration(color: AppColor.pageBackgroundColor, borderRadius: BorderRadius.circular(20.w)),
                                 child: Row(
                                   children: [
                                     gwb(15),
                                     CustomInput(
                                       textEditCtrl: controller.searchInputCtrl,
-                                      width: (300 -
-                                              15 -
-                                              36 -
-                                              1 -
-                                              0.1 -
-                                              (controller.needCleanInput
-                                                  ? 40
-                                                  : 0))
-                                          .w,
+                                      width: (300 - 15 - 36 - 1 - 0.1 - (controller.needCleanInput ? 40 : 0)).w,
                                       heigth: 40.w,
                                       placeholder: "请输入想要搜索的产品名称",
-                                      placeholderStyle: TextStyle(
-                                          fontSize: 12.sp,
-                                          color: AppColor.assisText),
-                                      style: TextStyle(
-                                          fontSize: 12.sp,
-                                          color: AppColor.text),
+                                      placeholderStyle: TextStyle(fontSize: 12.sp, color: AppColor.assisText),
+                                      style: TextStyle(fontSize: 12.sp, color: AppColor.text),
                                       onSubmitted: (p0) {
                                         takeBackKeyboard(context);
                                         controller.loadData();
@@ -390,16 +357,14 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                                     controller.needCleanInput
                                         ? CustomButton(
                                             onPressed: () {
-                                              controller.searchInputCtrl
-                                                  .clear();
+                                              controller.searchInputCtrl.clear();
                                             },
                                             child: SizedBox(
                                               width: 40.w,
                                               height: 40.w,
                                               child: Center(
                                                 child: Image.asset(
-                                                  assetsName(
-                                                      "statistics/machine/icon_phone_delete"),
+                                                  assetsName("statistics/machine/icon_phone_delete"),
                                                   width: 15.w,
                                                   height: 15.w,
                                                   fit: BoxFit.fill,
@@ -442,13 +407,9 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                                 height: 40.w,
                                 child: Align(
                                     alignment: const Alignment(0.2, 0),
-                                    child: GetX<ProductStoreListController>(
-                                        builder: (_) {
-                                      return Image.asset(
-                                          assetsName(
-                                              "product_store/btn_cell_${controller.isList ? "wrap" : "list"}"),
-                                          width: 18.w,
-                                          fit: BoxFit.fitWidth);
+                                    child: GetX<ProductStoreListController>(builder: (_) {
+                                      return Image.asset(assetsName("product_store/btn_cell_${controller.isList ? "wrap" : "list"}"),
+                                          width: 18.w, fit: BoxFit.fitWidth);
                                     })),
                               ),
                             ),
@@ -468,25 +429,17 @@ class ProductStoreList extends GetView<ProductStoreListController> {
               builder: (_) {
                 bool isShowFilter = controller.isShowFilter;
                 return AnimatedPositioned(
-                    top: controller.levelType == 1
-                        ? 0
-                        : 106.w +
-                            (isShowFilter
-                                ? controller.typesViewHeight + 5.w
-                                : 0),
+                    top: controller.levelType == 1 ? 0 : 106.w + (isShowFilter ? controller.typesViewHeight + 5.w : 0),
                     left: 0,
                     right: 0,
                     bottom: 0,
                     duration: const Duration(milliseconds: 300),
                     child: GetBuilder<ProductStoreListController>(builder: (_) {
                       return EasyRefresh.builder(
-                          onLoad: controller.dataList.length >= controller.count
-                              ? null
-                              : () => controller.loadData(isLoad: true),
+                          onLoad: controller.dataList.length >= controller.count ? null : () => controller.loadData(isLoad: true),
                           onRefresh: () => controller.loadData(),
                           childBuilder: (context, physics) {
-                            return GetX<ProductStoreListController>(
-                                builder: (_) {
+                            return GetX<ProductStoreListController>(builder: (_) {
                               return controller.isFirstLoading
                                   ? Shimmer.fromColors(
                                       baseColor: Colors.grey.shade300,
@@ -495,8 +448,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                                       child: Column(
                                         children: [
                                           Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 15.w, left: 15.w),
+                                            padding: EdgeInsets.only(top: 15.w, left: 15.w),
                                             child: SizedBox(
                                               width: 345.w,
                                               child: Wrap(
@@ -505,17 +457,8 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                                                 children: List.generate(
                                                     4,
                                                     (index) => Container(
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.white,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        6.w)),
-                                                        width:
-                                                            (375 - 15 * 2 - 10)
-                                                                        .w /
-                                                                    2 -
-                                                                0.1.w,
+                                                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6.w)),
+                                                        width: (375 - 15 * 2 - 10).w / 2 - 0.1.w,
                                                         height: 255.w)),
                                               ),
                                             ),
@@ -524,21 +467,13 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                                       ),
                                     )
                                   : controller.dataList.isEmpty
-                                      ? CustomListEmptyView(
-                                          physics: physics,
-                                          isLoading: controller.isLoading)
+                                      ? CustomListEmptyView(physics: physics, isLoading: controller.isLoading)
                                       : ListView.builder(
                                           physics: physics,
-                                          padding:
-                                              EdgeInsets.only(bottom: 20.w),
-                                          itemCount: controller.isList
-                                              ? controller.dataList.length
-                                              : (controller.dataList.length / 2)
-                                                  .ceil(),
+                                          padding: EdgeInsets.only(bottom: 20.w),
+                                          itemCount: controller.isList ? controller.dataList.length : (controller.dataList.length / 2).ceil(),
                                           itemBuilder: (context, index) {
-                                            return controller.isList
-                                                ? listCell(index)
-                                                : wrapCell(index);
+                                            return controller.isList ? listCell(index) : wrapCell(index);
                                           });
                             });
                           });
@@ -570,16 +505,13 @@ class ProductStoreList extends GetView<ProductStoreListController> {
 
     return CustomButton(
       onPressed: () {
-        push(const ProductStoreDetail(), null,
-            binding: ProductStoreDetailBinding(),
-            arguments: {"data": data, "levelType": controller.levelType});
+        push(const ProductStoreDetail(), null, binding: ProductStoreDetailBinding(), arguments: {"data": data, "levelType": controller.levelType});
       },
       child: Center(
         child: Container(
           width: 345.w,
           margin: EdgeInsets.only(top: 15.w),
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(5.w)),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.w)),
           child: centClm([
             ghb(10),
             sbRow([
@@ -597,13 +529,9 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                 gwb(10),
                 sbClm([
                   centClm([
-                    getWidthText(data["levelName"] ?? "", 15,
-                        AppColor.textBlack, 325 - 10 - imageWidth, 1,
-                        isBold: true),
+                    getWidthText(data["levelName"] ?? "", 15, AppColor.textBlack, 325 - 10 - imageWidth, 1, isBold: true),
                     ghb(3),
-                    getWidthText(data["levelDescribe"] ?? "", 13,
-                        const Color(0xFF808080), 325 - 10 - imageWidth, 1,
-                        isBold: true),
+                    getWidthText(data["levelDescribe"] ?? "", 13, const Color(0xFF808080), 325 - 10 - imageWidth, 1, isBold: true),
                   ]),
                   sbRow([
                     isBean
@@ -629,9 +557,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                             //     const Color(0xFFFFB540),
                             //     isBold: true),
                           ])
-                        : getSimpleText(
-                            "${isReal ? "￥" : ""}${priceFormat(data["nowPrice"] ?? 0, tenThousand: true)}${isReal ? "" : unit}起",
-                            18,
+                        : getSimpleText("${isReal ? "￥" : ""}${priceFormat(data["nowPrice"] ?? 0, tenThousand: true)}${isReal ? "" : unit}起", 18,
                             const Color(0xFFF13030),
                             isBold: true),
                     Container(
@@ -639,15 +565,10 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                         height: 24.w,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  AppDefault().getThemeColor(index: 0) ??
-                                      const Color(0xFFFD573B),
-                                  AppDefault().getThemeColor(index: 2) ??
-                                      const Color(0xFFFF3A3A),
-                                ]),
+                            gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [
+                              AppDefault().getThemeColor(index: 0) ?? const Color(0xFFFD573B),
+                              AppDefault().getThemeColor(index: 2) ?? const Color(0xFFFF3A3A),
+                            ]),
                             borderRadius: BorderRadius.circular(12.w)),
                         child: getSimpleText(
                             controller.levelType == 1
@@ -680,9 +601,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                 data = controller.dataList[index * 2 + cellIdx];
               }
 
-              List payTypes = (data["levelGiftPaymentMethod"] ?? "").isEmpty
-                  ? []
-                  : convert.jsonDecode(data["levelGiftPaymentMethod"] ?? "");
+              List payTypes = (data["levelGiftPaymentMethod"] ?? "").isEmpty ? [] : convert.jsonDecode(data["levelGiftPaymentMethod"] ?? "");
 
               bool isReal = true;
               bool isBean = false;
@@ -698,18 +617,12 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                   : CustomButton(
                       onPressed: () {
                         push(const ProductStoreDetail(), null,
-                            binding: ProductStoreDetailBinding(),
-                            arguments: {
-                              "data": data,
-                              "levelType": controller.levelType
-                            });
+                            binding: ProductStoreDetailBinding(), arguments: {"data": data, "levelType": controller.levelType});
                       },
                       child: Container(
                         alignment: Alignment.center,
                         width: 168.w,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5.w)),
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.w)),
                         child: Column(
                           children: [
                             SizedBox(
@@ -719,15 +632,13 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                                 children: [
                                   Positioned.fill(
                                     child: ClipRRect(
-                                        borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(5.w)),
+                                        borderRadius: BorderRadius.vertical(top: Radius.circular(5.w)),
                                         child: Container(
                                           color: const Color(0xFFF0F0F0),
                                           width: 168.w,
                                           height: 168.w,
                                           child: CustomNetworkImage(
-                                            src: AppDefault().imageUrl +
-                                                (data["levelGiftImg"] ?? ""),
+                                            src: AppDefault().imageUrl + (data["levelGiftImg"] ?? ""),
                                             width: 168.w,
                                             height: 168.w,
                                             alignment: Alignment.center,
@@ -762,9 +673,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                             //   1,
                             // ),
                             ghb(5),
-                            getWidthText(data["levelName"] ?? "", 16,
-                                AppColor.textBlack, 168 - 8 * 2, 1,
-                                isBold: true),
+                            getWidthText(data["levelName"] ?? "", 16, AppColor.textBlack, 168 - 8 * 2, 1, isBold: true),
                             ghb(5),
                             // getWidthText(
                             //   cellData["levelSubhead"] ?? "",
@@ -776,13 +685,8 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                             ghb(15),
                             SizedBox(
                               width: (168 - 8 * 2).w,
-                              child: getRichText(
-                                  "${isReal ? "￥" : ""}${priceFormat(data["nowPrice"] ?? 0, tenThousand: true)}${isReal ? "" : unit}",
-                                  "起",
-                                  18,
-                                  AppColor.integralTextRed,
-                                  12,
-                                  AppColor.integralTextRed,
+                              child: getRichText("${isReal ? "￥" : ""}${priceFormat(data["nowPrice"] ?? 0, tenThousand: true)}${isReal ? "" : unit}",
+                                  "起", 18, AppColor.integralTextRed, 12, AppColor.integralTextRed,
                                   fw: AppDefault.fontBold),
                             ),
                             ghb(10),
@@ -799,12 +703,10 @@ class ProductStoreList extends GetView<ProductStoreListController> {
   Widget dropView() {
     return GetX<ProductStoreListController>(builder: (_) {
       return AnimatedPositioned(
-          top: 105.w -
-              (controller.isShowFilter ? 0 : controller.typesViewHeight + 5.w),
+          top: 105.w - (controller.isShowFilter ? 0 : controller.typesViewHeight + 5.w),
           left: 0,
           right: 0,
-          height:
-              controller.isShowFilter ? controller.typesViewHeight + 5.w : 0,
+          height: controller.isShowFilter ? controller.typesViewHeight + 5.w : 0,
           duration: const Duration(milliseconds: 300),
           child: typesFilterView());
     });
@@ -829,8 +731,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                       width: 375.w - 8.w * 2,
                       child: Wrap(
                         runSpacing: 12.w,
-                        children:
-                            List.generate(controller.typeList.length, (index) {
+                        children: List.generate(controller.typeList.length, (index) {
                           Map data = controller.typeList[index];
                           return CustomButton(
                             onPressed: () {
@@ -846,20 +747,13 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                                     height: 50.w,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 1.w,
-                                            color: controller.typeSelectIdx ==
-                                                    index
-                                                ? AppColor.theme
-                                                : Colors.transparent),
-                                        borderRadius:
-                                            BorderRadius.circular(25.w)),
+                                        border:
+                                            Border.all(width: 1.w, color: controller.typeSelectIdx == index ? AppColor.theme : Colors.transparent),
+                                        borderRadius: BorderRadius.circular(25.w)),
                                     child: ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.circular(49.w / 2),
+                                      borderRadius: BorderRadius.circular(49.w / 2),
                                       child: CustomNetworkImage(
-                                        src: AppDefault().imageUrl +
-                                            (data["terninal_Pic"] ?? ""),
+                                        src: AppDefault().imageUrl + (data["terninal_Pic"] ?? ""),
                                         width: 49.w,
                                         height: 49.w,
                                         fit: BoxFit.cover,
@@ -867,11 +761,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                                     ),
                                   ),
                                   getSimpleText(
-                                      data["terninal_Name"] ?? "",
-                                      10,
-                                      controller.typeSelectIdx == index
-                                          ? AppColor.theme
-                                          : AppColor.textGrey5)
+                                      data["terninal_Name"] ?? "", 10, controller.typeSelectIdx == index ? AppColor.theme : AppColor.textGrey5)
                                 ], height: 70),
                               ),
                             ),
@@ -917,15 +807,9 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                             ghb(3),
                             Padding(
                               padding: EdgeInsets.only(left: 15.w),
-                              child: GetX<ProductStoreListController>(
-                                  builder: (_) {
-                                return getSimpleText(
-                                    controller.brandList[index]["enumName"] ??
-                                        "",
-                                    16,
-                                    controller.brandSelectIdx == index
-                                        ? AppColor.textBlack
-                                        : AppColor.textGrey5,
+                              child: GetX<ProductStoreListController>(builder: (_) {
+                                return getSimpleText(controller.brandList[index]["enumName"] ?? "", 16,
+                                    controller.brandSelectIdx == index ? AppColor.textBlack : AppColor.textGrey5,
                                     isBold: controller.brandSelectIdx == index);
                               }),
                             ),
@@ -947,14 +831,9 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                       AnimatedRotation(
                         duration: const Duration(milliseconds: 200),
                         turns: controller.isShowFilter ? 0.5 : 1,
-                        child: Image.asset(
-                            assetsName("product_store/btn_select_arrow"),
-                            width: 18.w,
-                            fit: BoxFit.fitWidth),
+                        child: Image.asset(assetsName("product_store/btn_select_arrow"), width: 18.w, fit: BoxFit.fitWidth),
                       ),
-                      getSimpleText(controller.isShowFilter ? "收回" : "展开", 10,
-                          AppColor.textGrey5,
-                          textHeight: 1.0)
+                      getSimpleText(controller.isShowFilter ? "收回" : "展开", 10, AppColor.textGrey5, textHeight: 1.0)
                     ]);
                   }),
                 ),
@@ -975,9 +854,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                   left: controller.tagX,
                   duration: const Duration(milliseconds: 200),
                   child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(1.5.w),
-                        color: AppColor.theme),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(1.5.w), color: AppColor.theme),
                   ));
             })
           ],
@@ -997,22 +874,13 @@ class ProductStoreList extends GetView<ProductStoreListController> {
           child: SizedBox(
               width: width,
               height: 55.w,
-              child:
-                  Center(child: GetX<ProductStoreListController>(builder: (_) {
+              child: Center(child: GetX<ProductStoreListController>(builder: (_) {
                 return sbClm([
                   ghb(3),
-                  getSimpleText(
-                      "综合",
-                      controller.exchangeTopBtnIdx == 0 ? 16 : 15,
-                      AppColor.textBlack,
-                      isBold: controller.exchangeTopBtnIdx == 0),
+                  getSimpleText("综合", controller.exchangeTopBtnIdx == 0 ? 16 : 15, AppColor.textBlack, isBold: controller.exchangeTopBtnIdx == 0),
                   controller.exchangeTopBtnIdx == 0
                       ? Container(
-                          width: 18.w,
-                          height: 3.w,
-                          decoration: BoxDecoration(
-                              color: AppColor.theme,
-                              borderRadius: BorderRadius.circular(1.5.w)))
+                          width: 18.w, height: 3.w, decoration: BoxDecoration(color: AppColor.theme, borderRadius: BorderRadius.circular(1.5.w)))
                       : ghb(3)
                 ], height: 55);
               })))),
@@ -1030,19 +898,12 @@ class ProductStoreList extends GetView<ProductStoreListController> {
             height: 55.w,
             child: GetX<ProductStoreListController>(builder: (_) {
               return centRow([
-                getSimpleText(
-                    "兑换量",
-                    controller.exchangeTopBtnIdx == 1 ? 16 : 15,
-                    AppColor.textBlack,
-                    isBold: controller.exchangeTopBtnIdx == 1),
+                getSimpleText("兑换量", controller.exchangeTopBtnIdx == 1 ? 16 : 15, AppColor.textBlack, isBold: controller.exchangeTopBtnIdx == 1),
                 gwb(3),
                 Transform.rotate(
                   angle: controller.exchangeSortIdx == 1 ? 0 : math.pi / 1,
-                  child: Image.asset(
-                      assetsName(
-                          "product_store/icon_${controller.exchangeSortIdx == 0 ? "un" : ""}sort"),
-                      width: 6.w,
-                      fit: BoxFit.fitWidth),
+                  child: Image.asset(assetsName("product_store/icon_${controller.exchangeSortIdx == 0 ? "un" : ""}sort"),
+                      width: 6.w, fit: BoxFit.fitWidth),
                 )
               ]);
             })),
@@ -1057,8 +918,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
           child: centRow([
             getSimpleText("筛选", 15, AppColor.textBlack),
             gwb(3),
-            Image.asset(assetsName("product_store/icon_filter"),
-                width: 10.5.w, fit: BoxFit.fitWidth)
+            Image.asset(assetsName("product_store/icon_filter"), width: 10.5.w, fit: BoxFit.fitWidth)
           ]),
         ),
       )
@@ -1073,9 +933,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
         UnconstrainedBox(
             child: Container(
           width: 375.w,
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(8.w))),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(8.w))),
           child: Column(
             children: [
               sbhRow([
@@ -1088,11 +946,7 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                   child: SizedBox(
                       width: 42.w,
                       height: 53.w,
-                      child: Center(
-                          child: Image.asset(
-                              assetsName("common/btn_model_close2"),
-                              width: 14.w,
-                              fit: BoxFit.fitWidth))),
+                      child: Center(child: Image.asset(assetsName("common/btn_model_close2"), width: 14.w, fit: BoxFit.fitWidth))),
                 )
               ], width: 375, height: 53),
               gline(375, 1),
@@ -1112,44 +966,24 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                                 } else {
                                   controller.brandFilterSelectIdx = index;
                                 }
-                              }, child: GetX<ProductStoreListController>(
-                                  builder: (context) {
+                              }, child: GetX<ProductStoreListController>(builder: (context) {
                                 return Container(
                                     width: 105.w,
                                     height: 30.w,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(4.w),
-                                        color:
-                                            controller
-                                                        .brandFilterSelectIdx ==
-                                                    index
-                                                ? null
-                                                : const Color(0xFFFAFAFA),
-                                        gradient: controller
-                                                    .brandFilterSelectIdx ==
-                                                index
+                                        borderRadius: BorderRadius.circular(4.w),
+                                        color: controller.brandFilterSelectIdx == index ? null : const Color(0xFFFAFAFA),
+                                        gradient: controller.brandFilterSelectIdx == index
                                             ? const LinearGradient(
-                                                colors: [
-                                                    Color(0xFFFD573B),
-                                                    Color(0xFFFF3A3A)
-                                                  ],
+                                                colors: [Color(0xFFFD573B), Color(0xFFFF3A3A)],
                                                 begin: Alignment.topCenter,
                                                 end: Alignment.bottomCenter)
                                             : null),
-                                    child: getSimpleText(
-                                        controller.brandList[index]
-                                                ["enumName"] ??
-                                            "",
-                                        12,
-                                        controller.brandFilterSelectIdx == index
-                                            ? Colors.white
-                                            : AppColor.textBlack));
+                                    child: getSimpleText(controller.brandList[index]["enumName"] ?? "", 12,
+                                        controller.brandFilterSelectIdx == index ? Colors.white : AppColor.textBlack));
                               }))))),
-              sbhRow(
-                  [getSimpleText("机具型号", 15, AppColor.textBlack, isBold: true)],
-                  width: 345, height: 57),
+              sbhRow([getSimpleText("机具型号", 15, AppColor.textBlack, isBold: true)], width: 345, height: 57),
               SizedBox(
                   width: 345.w,
                   child: Wrap(
@@ -1163,39 +997,22 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                                 } else {
                                   controller.xhFilterSelectIdx = index;
                                 }
-                              }, child: GetX<ProductStoreListController>(
-                                  builder: (context) {
+                              }, child: GetX<ProductStoreListController>(builder: (context) {
                                 return Container(
                                     width: 105.w,
                                     height: 30.w,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(4
-                                            .w),
-                                        color: controller
-                                                    .xhFilterSelectIdx ==
-                                                index
-                                            ? null
-                                            : const Color(0xFFFAFAFA),
-                                        gradient: controller
-                                                    .xhFilterSelectIdx ==
-                                                index
+                                        borderRadius: BorderRadius.circular(4.w),
+                                        color: controller.xhFilterSelectIdx == index ? null : const Color(0xFFFAFAFA),
+                                        gradient: controller.xhFilterSelectIdx == index
                                             ? const LinearGradient(
-                                                colors: [
-                                                    Color(0xFFFD573B),
-                                                    Color(0xFFFF3A3A)
-                                                  ],
+                                                colors: [Color(0xFFFD573B), Color(0xFFFF3A3A)],
                                                 begin: Alignment.topCenter,
                                                 end: Alignment.bottomCenter)
                                             : null),
-                                    child: getSimpleText(
-                                        controller.typeList[index]
-                                                ["terninal_Name"] ??
-                                            "",
-                                        12,
-                                        controller.xhFilterSelectIdx == index
-                                            ? Colors.white
-                                            : AppColor.textBlack));
+                                    child: getSimpleText(controller.typeList[index]["terninal_Name"] ?? "", 12,
+                                        controller.xhFilterSelectIdx == index ? Colors.white : AppColor.textBlack));
                               }))))),
               ghb(24),
               centRow(List.generate(
@@ -1206,36 +1023,24 @@ class ProductStoreList extends GetView<ProductStoreListController> {
                             controller.brandFilterSelectIdx = -1;
                             controller.xhFilterSelectIdx = -1;
                           } else {
-                            controller.brandRealFilterSelectIdx =
-                                controller.brandFilterSelectIdx;
-                            controller.xhRealFilterSelectIdx =
-                                controller.xhFilterSelectIdx;
+                            controller.brandRealFilterSelectIdx = controller.brandFilterSelectIdx;
+                            controller.xhRealFilterSelectIdx = controller.xhFilterSelectIdx;
                             controller.loadData();
                             Get.back();
                           }
                         },
                         child: Container(
                           alignment: Alignment.center,
-                          margin: EdgeInsets.only(
-                              bottom: paddingSizeBottom(
-                                  Global.navigatorKey.currentContext!)),
+                          margin: EdgeInsets.only(bottom: paddingSizeBottom(Global.navigatorKey.currentContext!)),
                           width: 375.w / 2,
                           height: 55.w,
                           decoration: BoxDecoration(
-                              color: index == 0
-                                  ? AppColor.theme.withOpacity(0.1)
-                                  : null,
+                              color: index == 0 ? AppColor.theme.withOpacity(0.1) : null,
                               gradient: index == 0
                                   ? null
                                   : const LinearGradient(
-                                      colors: [
-                                          Color(0xFFFD573B),
-                                          Color(0xFFFF3A3A)
-                                        ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter)),
-                          child: getSimpleText(index == 0 ? "重置" : "确定", 15,
-                              index == 0 ? AppColor.theme : Colors.white),
+                                      colors: [Color(0xFFFD573B), Color(0xFFFF3A3A)], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+                          child: getSimpleText(index == 0 ? "重置" : "确定", 15, index == 0 ? AppColor.theme : Colors.white),
                         ),
                       )))
             ],

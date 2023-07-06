@@ -14,8 +14,7 @@ import 'package:get/get.dart';
 class StatisticsMachineEquitiesAddBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<StatisticsMachineEquitiesAddController>(
-        StatisticsMachineEquitiesAddController(datas: Get.arguments));
+    Get.put<StatisticsMachineEquitiesAddController>(StatisticsMachineEquitiesAddController(datas: Get.arguments));
   }
 }
 
@@ -72,11 +71,9 @@ class StatisticsMachineEquitiesAddController extends GetxController {
                             children: [
                               centClm([
                                 ghb(37.5),
-                                getSimpleText("添加成功", 18, AppColor.text2,
-                                    isBold: true),
+                                getSimpleText("添加成功", 18, AppColor.text2, isBold: true),
                                 ghb(15),
-                                getWidthText("设备已添加到该商户名下，您可在“添加设备-操作记录”中查看",
-                                    12, AppColor.textGrey5, 222, 2)
+                                getWidthText("设备已添加到该商户名下，您可在“添加设备-操作记录”中查看", 12, AppColor.textGrey5, 222, 2)
                               ]),
                               centClm([
                                 gline(300, 1),
@@ -88,8 +85,7 @@ class StatisticsMachineEquitiesAddController extends GetxController {
                                     width: 300.w,
                                     height: 54.w,
                                     child: Center(
-                                      child: getSimpleText(
-                                          "知道了", 16, AppColor.theme),
+                                      child: getSimpleText("知道了", 16, AppColor.theme),
                                     ),
                                   ),
                                 )
@@ -107,15 +103,8 @@ class StatisticsMachineEquitiesAddController extends GetxController {
                                 width: 75.w,
                                 height: 75.w,
                                 alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius:
-                                        BorderRadius.circular(37.5.w)),
-                                child: Image.asset(
-                                    assetsName("machine/icon_result_success"),
-                                    width: 57.w,
-                                    height: 57.w,
-                                    fit: BoxFit.fill))))
+                                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(37.5.w)),
+                                child: Image.asset(assetsName("machine/icon_result_success"), width: 57.w, height: 57.w, fit: BoxFit.fill))))
                   ]))),
         );
       },
@@ -136,8 +125,7 @@ class StatisticsMachineEquitiesAddController extends GetxController {
       return;
     }
 
-    if (AppDefault().homeData["u_3rd_password"] == null ||
-        AppDefault().homeData["u_3rd_password"].isEmpty) {
+    if (AppDefault().homeData["u_3rd_password"] == null || AppDefault().homeData["u_3rd_password"].isEmpty) {
       showPayPwdWarn(
         haveClose: true,
         popToRoot: false,
@@ -166,28 +154,23 @@ class StatisticsMachineEquitiesAddController extends GetxController {
     // return;
 
     simpleRequest(
-      url: Urls.userTerminalAssociate,
-      params: {
-        "content": content,
-        "u_3nd_Pad": pwd,
-        "user_ID": selectUserData["uId"],
-      },
-      success: (success, json) {
-        if (success) {
-          // ShowToast.normal("恭喜您，添加权益设备成功！");
-          // Get.find<StatisticsMachineEquitiesController>().loadData();
-          // Get.find<HomeController>().refreshHomeData();
-          // Future.delayed(const Duration(seconds: 1), () {
-          //   Get.back();
-          // });
-          showAddSuccModel();
-          selectMachines.clear();
-        }
-      },
-      after: () {
-        submitEnable = true;
-      },
-    );
+        url: Urls.userTerminalAssociate2,
+        params: {"content": content, "u_3nd_Pad": pwd, "user_ID": selectUserData["uId"]},
+        success: (success, json) {
+          if (success) {
+            // ShowToast.normal("恭喜您，添加权益设备成功！");
+            // Get.find<StatisticsMachineEquitiesController>().loadData();
+            // Get.find<HomeController>().refreshHomeData();
+            // Future.delayed(const Duration(seconds: 1), () {
+            //   Get.back();
+            // });
+            showAddSuccModel();
+            selectMachines.clear();
+          }
+        },
+        after: () {
+          submitEnable = true;
+        });
   }
 
   addMachines(List addMachines) {
@@ -230,8 +213,7 @@ class StatisticsMachineEquitiesAddController extends GetxController {
   }
 }
 
-class StatisticsMachineEquitiesAdd
-    extends GetView<StatisticsMachineEquitiesAddController> {
+class StatisticsMachineEquitiesAdd extends GetView<StatisticsMachineEquitiesAddController> {
   const StatisticsMachineEquitiesAdd({super.key});
 
   @override
@@ -240,8 +222,7 @@ class StatisticsMachineEquitiesAdd
       appBar: getDefaultAppBar(context, "添加设备", action: [
         CustomButton(
           onPressed: () {
-            push(const StatisticsMachineEquitiesHistory(), context,
-                binding: StatisticsMachineEquitiesHistoryBinding());
+            push(const StatisticsMachineEquitiesHistory(), context, binding: StatisticsMachineEquitiesHistoryBinding());
           },
           child: SizedBox(
             height: kToolbarHeight,
@@ -258,30 +239,23 @@ class StatisticsMachineEquitiesAdd
           children: [
             gwb(375),
             ghb(7),
-            sbhRow([getSimpleText("选择指定添加对象", 12, AppColor.textGrey)],
-                width: 375 - 15.5 * 2, height: 38.5),
+            sbhRow([getSimpleText("选择指定添加对象", 12, AppColor.textGrey)], width: 375 - 15.5 * 2, height: 38.5),
             GetX<StatisticsMachineEquitiesAddController>(
               init: controller,
               builder: (_) {
                 return transferSection(
                     ClipRRect(
                       borderRadius: BorderRadius.circular(22.5.w),
-                      child: controller.selectUserData["uAvatar"] != null &&
-                              controller.selectUserData["uAvatar"].isNotEmpty
+                      child: controller.selectUserData["uAvatar"] != null && controller.selectUserData["uAvatar"].isNotEmpty
                           ? CustomNetworkImage(
-                              src:
-                                  "${AppDefault().imageUrl}${controller.selectUserData["uAvatar"]}",
+                              src: "${AppDefault().imageUrl}${controller.selectUserData["uAvatar"]}",
                               width: 45.w,
                               height: 45.w,
                               fit: BoxFit.cover,
                             )
-                          : Image.asset(assetsName("common/default_head"),
-                              width: 45.w, height: 45.w, fit: BoxFit.fill),
+                          : Image.asset(assetsName("common/default_head"), width: 45.w, height: 45.w, fit: BoxFit.fill),
                     ),
-                    controller.selectUserData.isNotEmpty
-                        ? controller.selectUserData["uName"] ??
-                            (controller.selectUserData["uMobile"] ?? "")
-                        : "请选择",
+                    controller.selectUserData.isNotEmpty ? controller.selectUserData["uName"] ?? (controller.selectUserData["uMobile"] ?? "") : "请选择",
                     controller.selectUserData.isNotEmpty
                         ? "${controller.selectUserData["uNumber"] ?? ""}|${controller.selectUserData["uMobile"] ?? ""}"
                         : "未选择",
@@ -306,8 +280,7 @@ class StatisticsMachineEquitiesAdd
               },
             ),
             ghb(7),
-            sbhRow([getSimpleText("选择要添加的设备", 12, AppColor.textGrey)],
-                width: 375 - 15.5 * 2, height: 38.5),
+            sbhRow([getSimpleText("选择要添加的设备", 12, AppColor.textGrey)], width: 375 - 15.5 * 2, height: 38.5),
             GetX<StatisticsMachineEquitiesAddController>(
               builder: (_) {
                 return controller.util.getOrSetMachineList(
@@ -329,11 +302,7 @@ class StatisticsMachineEquitiesAdd
               builder: (_) {
                 return getSubmitBtn("确认添加", () {
                   controller.submitAction();
-                },
-                    enable: controller.submitEnable,
-                    width: 345,
-                    height: 45,
-                    color: AppColor.theme);
+                }, enable: controller.submitEnable, width: 345, height: 45, color: AppColor.theme);
               },
             ),
             ghb(20),
@@ -343,8 +312,7 @@ class StatisticsMachineEquitiesAdd
     );
   }
 
-  Widget transferSection(
-      Widget img, String t1, String t2, Color t2Color, Function() toNextPage) {
+  Widget transferSection(Widget img, String t1, String t2, Color t2Color, Function() toNextPage) {
     return CustomButton(
       onPressed: toNextPage,
       child: Container(
@@ -358,11 +326,9 @@ class StatisticsMachineEquitiesAdd
                 img,
                 gwb(18.5),
                 centClm([
-                  getWidthText(t1, 15, AppColor.textBlack, 159.5, 1,
-                      isBold: true, textAlign: TextAlign.left),
+                  getWidthText(t1, 15, AppColor.textBlack, 159.5, 1, isBold: true, textAlign: TextAlign.left),
                   ghb(6),
-                  getWidthText(t2, 12, t2Color, 159.5, 1,
-                      textAlign: TextAlign.left),
+                  getWidthText(t2, 12, t2Color, 159.5, 1, textAlign: TextAlign.left),
                 ], crossAxisAlignment: CrossAxisAlignment.start)
               ]),
               centRow([

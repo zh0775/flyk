@@ -15,8 +15,7 @@ import 'package:get/get.dart';
 class MachineShipSelectBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<MachineShipSelectController>(
-        MachineShipSelectController(datas: Get.arguments));
+    Get.put<MachineShipSelectController>(MachineShipSelectController(datas: Get.arguments));
   }
 }
 
@@ -151,8 +150,7 @@ class MachineShipSelectController extends GetxController {
   int pageSize = 20;
   int pageNo = 1;
 
-  loadMachines(
-      {bool isLoad = false, String? start, String? end, int? loadIdx}) {
+  loadMachines({bool isLoad = false, String? start, String? end, int? loadIdx}) {
     isLoad ? pageNo++ : pageNo = 1;
     if (machines.isEmpty) {
       isLoading = true;
@@ -286,8 +284,7 @@ class MachineShipSelectController extends GetxController {
       addMachines = datas["addMachines"];
       // maxCount = datas["maxCount"] ?? 2;
       bool haveData = datas["machines"] != null && datas["machines"].isNotEmpty;
-      commodityList =
-          haveData ? datas["machines"] : orderData["commodity"] ?? [];
+      commodityList = haveData ? datas["machines"] : orderData["commodity"] ?? [];
       maxCount = 0;
       topSelectIdx = 0;
       if (haveData) {
@@ -303,11 +300,7 @@ class MachineShipSelectController extends GetxController {
       commodityList = List.generate(commodityList.length, (index) {
         Map e = commodityList[index];
         maxCount += (e["num"] ?? 1) as int;
-        return {
-          ...e,
-          "selected": index == topSelectIdx,
-          "selectMachines": e["selectMachines"] ?? []
-        };
+        return {...e, "selected": index == topSelectIdx, "selectMachines": e["selectMachines"] ?? []};
       });
 
       filterHeight = 0.5 + 40 + commodityList.length * 25 + 10;
@@ -364,8 +357,7 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
               height: 45.w,
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border(
-                      top: BorderSide(width: 1.w, color: AppColor.lineColor)),
+                  border: Border(top: BorderSide(width: 1.w, color: AppColor.lineColor)),
                   color: Colors.white,
                   // boxShadow: [
                   //   BoxShadow(
@@ -387,8 +379,7 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: centRow([
-                                getSimpleText(controller.isFrap ? "展开" : "收回",
-                                    12, AppColor.text3),
+                                getSimpleText(controller.isFrap ? "展开" : "收回", 12, AppColor.text3),
                                 gwb(3),
                                 AnimatedRotation(
                                   turns: controller.isFrap ? 0.5 : 1,
@@ -415,9 +406,7 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
               height: 55.w + paddingSizeBottom(context),
               child: Container(
                 padding: EdgeInsets.only(bottom: paddingSizeBottom(context)),
-                decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                  BoxShadow(color: const Color(0x0D000000), blurRadius: 5.w)
-                ]),
+                decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: const Color(0x0D000000), blurRadius: 5.w)]),
                 child: Center(
                   child: sbhRow([
                     CustomButton(
@@ -430,16 +419,12 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                             builder: (_) {
                               return centRow([
                                 Image.asset(
-                                  assetsName(
-                                      "machine/checkbox_${controller.allselect ? "selected" : "normal"}"),
+                                  assetsName("machine/checkbox_${controller.allselect ? "selected" : "normal"}"),
                                   width: 16.w,
                                   fit: BoxFit.fitWidth,
                                 ),
                                 gwb(15),
-                                getSimpleText(
-                                    controller.allselect ? "反选" : "全选",
-                                    14,
-                                    AppColor.text),
+                                getSimpleText(controller.allselect ? "反选" : "全选", 14, AppColor.text),
                               ]);
                             },
                           )),
@@ -453,10 +438,7 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                       gwb(4),
                       GetX<MachineShipSelectController>(
                         builder: (_) {
-                          return getSimpleText(
-                              "已选${controller.selectCount}/${controller.maxCount}",
-                              12,
-                              AppColor.text);
+                          return getSimpleText("已选${controller.selectCount}/${controller.maxCount}", 12, AppColor.text);
                         },
                       ),
                       gwb(10),
@@ -472,12 +454,8 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                             width: 90.w,
                             height: 30.w,
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.w),
-                                color: controller.btnEnable
-                                    ? AppColor.theme
-                                    : const Color(0xFFDBDBDB)),
-                            child: Center(
-                                child: getSimpleText("确认", 14, Colors.white)),
+                                borderRadius: BorderRadius.circular(15.w), color: controller.btnEnable ? AppColor.theme : const Color(0xFFDBDBDB)),
+                            child: Center(child: getSimpleText("确认", 14, Colors.white)),
                           );
                         },
                       ))
@@ -491,17 +469,13 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                   duration: const Duration(milliseconds: 300),
                   left: 0,
                   right: 0,
-                  top: 45.w +
-                      (controller.isFrap ? 0 : controller.filterHeight.w),
+                  top: 45.w + (controller.isFrap ? 0 : controller.filterHeight.w),
                   bottom: 55.w + paddingSizeBottom(context),
                   child: GetBuilder<MachineShipSelectController>(
                     builder: (_) {
                       return EasyRefresh(
                           onRefresh: () => controller.loadMachines(),
-                          onLoad:
-                              controller.machines.length >= controller.dataCount
-                                  ? null
-                                  : () => controller.loadMachines(isLoad: true),
+                          onLoad: controller.machines.length >= controller.dataCount ? null : () => controller.loadMachines(isLoad: true),
                           child: controller.machines.isEmpty
                               ? GetX<MachineShipSelectController>(
                                   builder: (_) {
@@ -522,8 +496,7 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                                   itemCount: controller.machines.length,
                                   padding: EdgeInsets.only(bottom: 20.w),
                                   itemBuilder: (context, index) {
-                                    return machineCell(
-                                        index, controller.machines[index]);
+                                    return machineCell(index, controller.machines[index]);
                                   },
                                 ));
                     },
@@ -570,18 +543,11 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                             sbhRow([
                               GetBuilder<MachineShipSelectController>(
                                 builder: (_) {
-                                  return getRichText(
-                                      "全部设备",
-                                      "(共${controller.dataCount}台)",
-                                      14,
-                                      AppColor.text,
-                                      14,
-                                      AppColor.text3);
+                                  return getRichText("全部设备", "(共${controller.dataCount}台)", 14, AppColor.text, 14, AppColor.text3);
                                 },
                               )
                             ], height: 40, width: 375 - 15.5 * 2),
-                            ...List.generate(controller.commodityList.length,
-                                (int index) {
+                            ...List.generate(controller.commodityList.length, (int index) {
                               Map data = controller.commodityList[index];
                               return sbhRow([
                                 CustomButton(
@@ -616,18 +582,9 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                                     height: 20.w,
                                     width: 50.w,
                                     alignment: Alignment.center,
-                                    decoration: data["selected"]
-                                        ? BoxDecoration(
-                                            color: AppColor.theme,
-                                            borderRadius:
-                                                BorderRadius.circular(2.w))
-                                        : null,
-                                    child: getSimpleText(
-                                        "只选TA",
-                                        12,
-                                        data["selected"]
-                                            ? Colors.white
-                                            : AppColor.theme),
+                                    decoration:
+                                        data["selected"] ? BoxDecoration(color: AppColor.theme, borderRadius: BorderRadius.circular(2.w)) : null,
+                                    child: getSimpleText("只选TA", 12, data["selected"] ? Colors.white : AppColor.theme),
                                   ),
                                 )
                               ], width: 375 - 15.5 * 2, height: 25);
@@ -741,8 +698,7 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
         width: 345.w,
         height: 75.w,
         margin: EdgeInsets.only(top: 15.w),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(3.w)),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3.w)),
         child: Center(
           child: sbhRow([
             centRow([
@@ -753,12 +709,10 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8.w),
                           color: AppColor.pageBackgroundColor,
-                          border:
-                              Border.all(width: 1.w, color: AppColor.text3)),
+                          border: Border.all(width: 1.w, color: AppColor.text3)),
                     )
                   : Image.asset(
-                      assetsName(
-                          "machine/checkbox_${(data["selected"] ?? false) ? "selected" : "normal"}"),
+                      assetsName("machine/checkbox_${(data["selected"] ?? false) ? "selected" : "normal"}"),
                       width: 16.w,
                       fit: BoxFit.fitWidth,
                     ),
@@ -771,8 +725,7 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
               ),
               gwb(10),
               centClm([
-                getSimpleText(data["tbName"] ?? "", 15, AppColor.text,
-                    isBold: true),
+                getSimpleText(data["tbName"] ?? "", 15, AppColor.text, isBold: true),
                 ghb(5),
                 getSimpleText("设备编号：${data["tNo"] ?? ""}", 12, AppColor.text),
               ], crossAxisAlignment: CrossAxisAlignment.start),
@@ -781,10 +734,8 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
               Container(
                 width: 7.5.w,
                 height: 7.5.w,
-                decoration: BoxDecoration(
-                    color:
-                        isActive ? AppColor.assisText : const Color(0xFF3AD3D2),
-                    borderRadius: BorderRadius.circular(7.5.w / 2)),
+                decoration:
+                    BoxDecoration(color: isActive ? AppColor.assisText : const Color(0xFF3AD3D2), borderRadius: BorderRadius.circular(7.5.w / 2)),
               ),
               gwb(5),
               getSimpleText(data["tStatus"] ?? "", 12, AppColor.text2)
@@ -805,8 +756,7 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
         children: [
           centClm([
             gwb(375),
-            sbhRow([getSimpleText("搜索区间", 15, AppColor.text, isBold: true)],
-                height: 55, width: 375 - 15 * 2),
+            sbhRow([getSimpleText("搜索区间", 15, AppColor.text, isBold: true)], height: 55, width: 375 - 15 * 2),
             ...List.generate(2, (int index) {
               return Container(
                 width: 345.w,
@@ -822,17 +772,14 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                   children: [
                     gwb(15),
                     CustomInput(
-                      textEditCtrl: index == 0
-                          ? controller.startInputCtrl
-                          : controller.endInputCtrl,
+                      textEditCtrl: index == 0 ? controller.startInputCtrl : controller.endInputCtrl,
                       width: (345 - 15 - 50 - 0.1 - 1).w,
                       heigth: 40.w,
                       placeholder: "请输入${index == 0 ? "开始" : "结束"}设备编号",
                       style: TextStyle(fontSize: 12.sp, color: AppColor.text),
-                      placeholderStyle:
-                          TextStyle(fontSize: 12.sp, color: AppColor.assisText),
+                      placeholderStyle: TextStyle(fontSize: 12.sp, color: AppColor.assisText),
                     ),
-                    kIsWeb
+                    AppDefault().appHideScan()
                         ? gwb(0)
                         : CustomButton(
                             onPressed: () {
@@ -875,12 +822,9 @@ class MachineShipSelect extends GetView<MachineShipSelectController> {
                       child: Container(
                         width: 375.w / 2 - 0.1.w,
                         height: 55.w,
-                        color: index == 0
-                            ? AppColor.theme.withOpacity(0.1)
-                            : AppColor.theme,
+                        color: index == 0 ? AppColor.theme.withOpacity(0.1) : AppColor.theme,
                         child: Center(
-                          child: getSimpleText(index == 0 ? "重置" : "确定", 15,
-                              index == 0 ? AppColor.theme : Colors.white),
+                          child: getSimpleText(index == 0 ? "重置" : "确定", 15, index == 0 ? AppColor.theme : Colors.white),
                         ),
                       ),
                     )),

@@ -15,16 +15,9 @@ class AuthCodeButton extends StatefulWidget {
   final int customStyle;
 
   final int? count;
-  const AuthCodeButton({
-    Key? key,
-    this.sendCodeAction,
-    this.count = 60,
-    this.buttonState,
-    this.width,
-    this.height,
-    this.countDownFinish,
-    this.customStyle = 0,
-  }) : super(key: key);
+  const AuthCodeButton(
+      {Key? key, this.sendCodeAction, this.count = 60, this.buttonState, this.width, this.height, this.countDownFinish, this.customStyle = 0})
+      : super(key: key);
 
   @override
   State<AuthCodeButton> createState() => _AuthCodeButtonState();
@@ -59,8 +52,7 @@ class _AuthCodeButtonState extends State<AuthCodeButton> {
     }
 
     return CustomButton(
-      onPressed: widget.buttonState == AuthCodeButtonState.countDown ||
-              widget.buttonState == AuthCodeButtonState.sendAndWait
+      onPressed: widget.buttonState == AuthCodeButtonState.countDown || widget.buttonState == AuthCodeButtonState.sendAndWait
           ? null
           : () {
               if (widget.sendCodeAction != null) {
@@ -106,32 +98,14 @@ class _AuthCodeButtonState extends State<AuthCodeButton> {
       switch (widget.buttonState!) {
         case AuthCodeButtonState.sendAndWait:
         case AuthCodeButtonState.countDown:
-          return TextStyle(
-              color: widget.customStyle == 0
-                  ? const Color(0xFFBBBBBB)
-                  : AppColor.theme,
-              fontSize: 16.sp);
+          return TextStyle(color: widget.customStyle == 0 ? const Color(0xFFBBBBBB) : AppColor.theme, fontSize: 16.sp);
         case AuthCodeButtonState.again:
-          return TextStyle(
-              color: widget.customStyle == 0
-                  ? const Color(0xFF4A4A4A)
-                  : AppColor.theme,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500);
+          return TextStyle(color: widget.customStyle == 0 ? const Color(0xFF4A4A4A) : AppColor.theme, fontSize: 16.sp, fontWeight: FontWeight.w500);
         case AuthCodeButtonState.first:
-          return TextStyle(
-              color: widget.customStyle == 0
-                  ? const Color(0xFF4A4A4A)
-                  : AppColor.theme,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500);
+          return TextStyle(color: widget.customStyle == 0 ? const Color(0xFF4A4A4A) : AppColor.theme, fontSize: 16.sp, fontWeight: FontWeight.w500);
       }
     } else {
-      return TextStyle(
-          color: widget.customStyle == 0
-              ? const Color(0xFF4A4A4A)
-              : AppColor.theme,
-          fontSize: 16.sp);
+      return TextStyle(color: widget.customStyle == 0 ? const Color(0xFF4A4A4A) : AppColor.theme, fontSize: 16.sp);
     }
   }
 

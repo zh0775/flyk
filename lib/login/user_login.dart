@@ -3,8 +3,7 @@ import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/component/custom_login_input.dart';
 import 'package:cxhighversion2/home/home.dart';
 import 'package:cxhighversion2/login/forgetpwd.dart' deferred as forgetpwd;
-import 'package:cxhighversion2/login/user_agreement_view.dart'
-    deferred as user_agreement_view;
+import 'package:cxhighversion2/login/user_agreement_view.dart' deferred as user_agreement_view;
 import 'package:cxhighversion2/login/user_error_status_view.dart';
 import 'package:cxhighversion2/login/user_regist.dart' deferred as user_regist;
 import 'package:cxhighversion2/service/http.dart';
@@ -74,28 +73,26 @@ class UserLoginController extends GetxController {
 
   loadAgreement(int t) {
     simpleRequest(
-      url: Urls.agreementListByID(t),
-      params: {},
-      success: (success, json) {
-        if (success) {
-          userAgreement = json["data"] ?? {};
-        }
-      },
-      after: () {},
-    );
+        url: Urls.agreementListByID(t),
+        params: {},
+        success: (success, json) {
+          if (success) {
+            userAgreement = json["data"] ?? {};
+          }
+        },
+        after: () {});
   }
 
   loadPrivacy() {
     simpleRequest(
-      url: Urls.agreementListByID(5),
-      params: {},
-      success: (success, json) {
-        if (success) {
-          privacyAgreement = json["data"] ?? {};
-        }
-      },
-      after: () {},
-    );
+        url: Urls.agreementListByID(5),
+        params: {},
+        success: (success, json) {
+          if (success) {
+            privacyAgreement = json["data"] ?? {};
+          }
+        },
+        after: () {});
   }
 
   String appInfobuildId = "userLogin_appInfobuildId";
@@ -142,25 +139,20 @@ class UserLoginController extends GetxController {
 
   sendAuthCode(Map<String, dynamic> params, Function(bool success)? success) {
     sendButtonType(AuthCodeButtonState.sendAndWait);
-    Http().doPost(
-      Urls.sendCode,
-      params,
-      success: (json) {
-        if (json["messages"] != null && json["messages"].isNotEmpty) {
-          ShowToast.normal(json["messages"]);
-        }
-        sendButtonType(AuthCodeButtonState.countDown);
-        if (success != null) {
-          success(true);
-        }
-      },
-      fail: (reason, code, json) {
-        sendButtonType(AuthCodeButtonState.again);
-        if (success != null) {
-          success(false);
-        }
-      },
-    );
+    Http().doPost(Urls.sendCode, params, success: (json) {
+      if (json["messages"] != null && json["messages"].isNotEmpty) {
+        ShowToast.normal(json["messages"]);
+      }
+      sendButtonType(AuthCodeButtonState.countDown);
+      if (success != null) {
+        success(true);
+      }
+    }, fail: (reason, code, json) {
+      sendButtonType(AuthCodeButtonState.again);
+      if (success != null) {
+        success(false);
+      }
+    });
   }
 
   Map formData = {
@@ -191,8 +183,7 @@ class UserLoginController extends GetxController {
       } else {
         pwdInputCtrl.errorValue = "";
       }
-      if ((formData["password"] ?? "").length < 8 ||
-          (formData["password"] ?? "").length > 20) {
+      if ((formData["password"] ?? "").length < 8 || (formData["password"] ?? "").length > 20) {
         // ShowToast.normal("密码长度要求8到20位");
         pwdInputCtrl.errorValue = "密码长度要求8到20位";
         return;
@@ -214,7 +205,7 @@ class UserLoginController extends GetxController {
       "u_Type": 1,
       "phoneKey": dId ?? "",
       "versionInternalNumber": "1.0",
-      "version_Origin": AppDefault().versionOrigin,
+      "version_Origin": AppDefault().versionOrigin
     };
 
     if (!loginByAuthCode) {
@@ -231,41 +222,35 @@ class UserLoginController extends GetxController {
     }
 
     buttonEnable = false;
+    takeBackKeyboard(null);
     simpleRequest(
-      url: Urls.login,
-      params: params,
-      success: (success, json) {
-        if (success) {
-          UserDefault.saveStr(
-              USER_LOGIN_PHONE_STORAGE, formData["loginID"] ?? "");
-          AppDefault().deviceId = dId ?? "";
-          Map data = json["data"] ?? {};
-          setUserDataFormat(true, data["homeData"], data["publicHomeData"],
-                  data["loginData"],
-                  sendNotification: true)
-              .then((value) {
-            bus.emit(HOME_DATA_UPDATE_NOTIFY);
-            // saveQRImage();
+        url: Urls.login,
+        params: params,
+        success: (success, json) {
+          if (success) {
+            UserDefault.saveStr(USER_LOGIN_PHONE_STORAGE, formData["loginID"] ?? "");
+            AppDefault().deviceId = dId ?? "";
+            Map data = json["data"] ?? {};
+            setUserDataFormat(true, data["homeData"], data["publicHomeData"], data["loginData"], sendNotification: true).then((value) {
+              bus.emit(HOME_DATA_UPDATE_NOTIFY);
+              // saveQRImage();
 
-            AppDefault().firstAlertFromLogin = true;
-            ShowToast.normal("登录成功");
-            Future.delayed(const Duration(seconds: 1), () {
-              popToUntil();
+              AppDefault().firstAlertFromLogin = true;
+              ShowToast.normal("登录成功");
+              Future.delayed(const Duration(seconds: 1), () {
+                popToUntil();
+              });
             });
-          });
-        } else {
-          if (json != null &&
-              json is Map &&
-              (json["value"] ?? "") == "phoneKeyError") {
-            // ShowToast.normal("超出错误次数，请使用验证码登录");
-            loginByAuthCode = true;
+          } else {
+            if (json != null && json is Map && (json["value"] ?? "") == "phoneKeyError") {
+              // ShowToast.normal("超出错误次数，请使用验证码登录");
+              loginByAuthCode = true;
+            }
           }
-        }
-      },
-      after: () {
-        buttonEnable = true;
-      },
-    );
+        },
+        after: () {
+          buttonEnable = true;
+        });
   }
 
   // String? deviceId = "";
@@ -301,7 +286,7 @@ class UserLoginController extends GetxController {
   @override
   void onInit() {
     loadPhoneCache();
-    confirmProtocol = AppDefault.isDebug;
+    confirmProtocol = !AppDefault.uploadPT;
     bus.on(HOME_PUBLIC_DATA_UPDATE_NOTIFY, getPublicHomeData);
     // getDeviceID();
     loadPublicHomeData();
@@ -334,375 +319,263 @@ class UserLogin extends GetView<UserLoginController> {
   final bool allowBack;
   final int errorCode;
   final bool isErrorStatus;
-  const UserLogin(
-      {Key? key,
-      this.allowBack = false,
-      this.isErrorStatus = false,
-      this.errorCode = 0})
-      : super(key: key);
+  const UserLogin({Key? key, this.allowBack = false, this.isErrorStatus = false, this.errorCode = 0}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     controller.stateInit(isErrorStatus);
     return GestureDetector(
-      onTap: () => takeBackKeyboard(context),
-      child: WillPopScope(
-        onWillPop: () async {
-          return allowBack;
-        },
-        child: AnnotatedRegion(
-          value: SystemUiOverlayStyle.dark,
-          child: Scaffold(
-              backgroundColor: Colors.white,
-              body: GetX<UserLoginController>(
-                builder: (_) {
-                  return getInputBodyNoBtn(
-                    context,
-                    buttonHeight: 0,
-                    contentColor: Colors.transparent,
-                    build: controller.isErrorStatus
-                        ? (boxHeight, context) {
-                            return UserErrorStatusView(
-                              boxHeight: boxHeight,
-                              errorCode: errorCode,
-                              toLogin: () {
-                                controller.isErrorStatus = false;
-                              },
-                            );
-                          }
-                        : (boxHeight, context) {
-                            if (controller.isFirst) {
-                              double policySpace = boxHeight -
-                                  paddingSizeTop(context) -
-                                  paddingSizeBottom(context) -
-                                  kToolbarHeight -
-                                  (22 +
-                                          35 +
-                                          25.5 +
-                                          55 +
-                                          20 +
-                                          // 0.5 +
-                                          55 +
-                                          (controller.needAuthCode
-                                              ? 55 + 20
-                                              : 0) +
-                                          10 +
-                                          79 +
-                                          45 +
-                                          22.5 +
-                                          // 50 +
-                                          44.5)
-                                      .w;
-                              controller.dataInit(policySpace);
-                            }
-                            return SizedBox(
-                              width: 375.w,
-                              height: boxHeight,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: paddingSizeTop(context),
-                                    ),
-                                    sbRow([
-                                      allowBack
-                                          ? defaultBackButton(context)
-                                          : const SizedBox(
-                                              height: kToolbarHeight,
-                                            ),
-                                      CustomButton(
-                                        onPressed: () async {
-                                          await user_regist.loadLibrary();
-                                          push(
-                                              user_regist.UserRegist(
-                                                userAgreement:
-                                                    controller.userAgreement,
-                                                privacyAgreement:
-                                                    controller.privacyAgreement,
-                                              ),
-                                              null,
-                                              binding: user_regist
-                                                  .UserRegistBinding());
-                                        },
-                                        child: SizedBox(
-                                          width: 60.w,
-                                          height: kToolbarHeight,
-                                          child: Center(
-                                            child: getSimpleText(
-                                              "注册",
-                                              14,
-                                              AppDefault().getThemeColor() ??
-                                                  AppColor.text2,
-                                            ),
-                                          ),
+        onTap: () => takeBackKeyboard(context),
+        child: WillPopScope(
+            onWillPop: () async {
+              return allowBack;
+            },
+            child: AnnotatedRegion(
+                value: SystemUiOverlayStyle.dark,
+                child: Scaffold(
+                    backgroundColor: Colors.white,
+                    body: GetX<UserLoginController>(builder: (_) {
+                      return getInputBodyNoBtn(context,
+                          buttonHeight: 0,
+                          contentColor: Colors.transparent,
+                          build: controller.isErrorStatus
+                              ? (boxHeight, context) {
+                                  return UserErrorStatusView(
+                                      boxHeight: boxHeight,
+                                      errorCode: errorCode,
+                                      toLogin: () {
+                                        controller.isErrorStatus = false;
+                                      });
+                                }
+                              : (boxHeight, context) {
+                                  if (controller.isFirst) {
+                                    double policySpace = boxHeight -
+                                        paddingSizeTop(context) -
+                                        paddingSizeBottom(context) -
+                                        kToolbarHeight -
+                                        (22 +
+                                                35 +
+                                                25.5 +
+                                                55 +
+                                                20 +
+                                                // 0.5 +
+                                                55 +
+                                                (controller.needAuthCode ? 55 + 20 : 0) +
+                                                10 +
+                                                79 +
+                                                45 +
+                                                22.5 +
+                                                // 50 +
+                                                44.5)
+                                            .w;
+                                    controller.dataInit(policySpace);
+                                  }
+                                  return SizedBox(
+                                      width: 375.w,
+                                      height: boxHeight,
+                                      child: SingleChildScrollView(
+                                          child: Column(children: [
+                                        SizedBox(
+                                          height: paddingSizeTop(context),
                                         ),
-                                      ),
-                                    ], width: 375),
-                                    ghb(22),
-                                    sbhRow([
-                                      getSimpleText("欢迎登录", 24, AppColor.text,
-                                          isBold: true),
-                                    ], width: 375 - 20.5 * 2, height: 35),
+                                        sbRow([
+                                          allowBack
+                                              ? defaultBackButton(context)
+                                              : const SizedBox(
+                                                  height: kToolbarHeight,
+                                                ),
+                                          CustomButton(
+                                              onPressed: () async {
+                                                await user_regist.loadLibrary();
+                                                push(
+                                                    user_regist.UserRegist(
+                                                      userAgreement: controller.userAgreement,
+                                                      privacyAgreement: controller.privacyAgreement,
+                                                    ),
+                                                    null,
+                                                    binding: user_regist.UserRegistBinding());
+                                              },
+                                              child: SizedBox(
+                                                  width: 60.w,
+                                                  height: kToolbarHeight,
+                                                  child: Center(child: getSimpleText("注册", 14, AppDefault().getThemeColor() ?? AppColor.text2))))
+                                        ], width: 375),
+                                        ghb(22),
+                                        sbhRow([
+                                          getSimpleText("欢迎登录", 24, AppColor.text, isBold: true),
+                                        ], width: 375 - 20.5 * 2, height: 35),
 
-                                    ghb(25.5),
+                                        ghb(25.5),
 
-                                    GetBuilder<UserLoginController>(
-                                      id: controller.phoneBuildId,
-                                      builder: (_) {
-                                        return CustomLoginInput(
-                                          controller: controller.phoneInputCtrl,
-                                          source: controller.formData,
-                                          defalutValue:
-                                              controller.formData["loginID"] ??
-                                                  "",
-                                          placeholder: "请输入手机号",
-                                          maxLength: 11,
-                                          type: CustomLoginInputType.userName,
-                                          textInputType: TextInputType.phone,
-                                          arg: "loginID",
-                                          customStyle: 1,
-                                        );
-                                      },
-                                    ),
-                                    // CustomInput(
-                                    //   width: (375 - 24 * 2).w,
-                                    //   heigth: 50.w,
-                                    //   textEditCtrl: controller.phoneCtrl,
-                                    //   keyboardType: TextInputType.phone,
-                                    //   maxLength: 11,
-                                    //   placeholder: "请输入手机号",
-                                    // ),
-                                    // gline(375 - 20 * 2, 0.5),
-                                    ghb(20),
-                                    GetX<UserLoginController>(
-                                      builder: (_) {
-                                        return Visibility(
-                                          visible: !controller.loginByAuthCode,
-                                          child: CustomLoginInput(
-                                            controller: controller.pwdInputCtrl,
-                                            source: controller.formData,
-                                            placeholder: "请输入密码",
-                                            // maxLength: 11,
-                                            type: CustomLoginInputType.password,
-                                            textInputType: TextInputType.text,
-                                            arg: "password",
-                                            customStyle: 1,
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    GetX<UserLoginController>(
-                                      init: controller,
-                                      builder: (_) {
-                                        return Visibility(
-                                          visible: controller.needAuthCode ||
-                                              controller.loginByAuthCode,
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                top: controller.needAuthCode
-                                                    ? 20.w
-                                                    : 0),
-                                            child: CustomLoginInput(
-                                              controller:
-                                                  controller.sendCodeInputCtrl,
-                                              source: controller.formData,
-                                              placeholder: "请输入验证码",
-                                              // maxLength: 11,
-                                              type:
-                                                  CustomLoginInputType.sendCode,
-                                              textInputType:
-                                                  TextInputType.number,
-                                              arg: "sms_Code",
-                                              customStyle: 1,
-                                              rightWidget: centRow([
-                                                GetX<UserLoginController>(
-                                                  init: controller,
-                                                  builder: (_) {
-                                                    return AuthCodeButton(
-                                                      customStyle: 1,
-                                                      buttonState: controller
-                                                          .sendButtonType.value,
-                                                      countDownFinish: () {
-                                                        controller
-                                                                .sendButtonType
-                                                                .value =
-                                                            AuthCodeButtonState
-                                                                .again;
-                                                      },
-                                                      sendCodeAction: () {
-                                                        controller
-                                                            .sendCodeAction();
-                                                      },
-                                                    );
-                                                  },
-                                                )
-                                              ]),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-
-                                    ghb(76),
-                                    GetX<UserLoginController>(
-                                      init: controller,
-                                      builder: (_) {
-                                        return getLoginBtn("登录", () {
-                                          controller.loginRequest();
-                                        }, enable: controller.buttonEnable);
-                                      },
-                                    ),
-                                    ghb(10),
-                                    sbhRow([
-                                      CustomButton(
-                                        onPressed: () {
-                                          controller.loginByAuthCode =
-                                              !controller.loginByAuthCode;
-                                        },
-                                        child: centRow([
-                                          GetX<UserLoginController>(
+                                        GetBuilder<UserLoginController>(
+                                            id: controller.phoneBuildId,
                                             builder: (_) {
-                                              return getSimpleText(
-                                                  "${!controller.loginByAuthCode ? "验证码" : "密码"}登录",
-                                                  14,
-                                                  AppColor.text2,
-                                                  textHeight: 1.1);
-                                            },
-                                          ),
-                                          gwb(4),
-                                          Image.asset(
-                                            assetsName(
-                                                "statistics/icon_arrow_right_gray"),
-                                            width: 12.5.w,
-                                            fit: BoxFit.fitWidth,
-                                          )
-                                        ]),
-                                      ),
-                                      CustomButton(
-                                        onPressed: () async {
-                                          await forgetpwd.loadLibrary();
-                                          push(forgetpwd.ForgetPwd(), null,
-                                              binding:
-                                                  forgetpwd.ForgetPwdBinding());
-                                        },
-                                        child: getSimpleText(
-                                          "忘记密码",
-                                          14,
-                                          AppDefault().getThemeColor() ??
-                                              const Color(0xFFBCC2CB),
-                                        ),
-                                      ),
-                                    ], width: 375 - 23 * 2, height: 44.5),
+                                              return CustomLoginInput(
+                                                  controller: controller.phoneInputCtrl,
+                                                  source: controller.formData,
+                                                  defalutValue: controller.formData["loginID"] ?? "",
+                                                  placeholder: "请输入手机号",
+                                                  maxLength: 11,
+                                                  type: CustomLoginInputType.userName,
+                                                  textInputType: TextInputType.phone,
+                                                  arg: "loginID",
+                                                  customStyle: 1);
+                                            }),
+                                        // CustomInput(
+                                        //   width: (375 - 24 * 2).w,
+                                        //   heigth: 50.w,
+                                        //   textEditCtrl: controller.phoneCtrl,
+                                        //   keyboardType: TextInputType.phone,
+                                        //   maxLength: 11,
+                                        //   placeholder: "请输入手机号",
+                                        // ),
+                                        // gline(375 - 20 * 2, 0.5),
+                                        ghb(20),
+                                        GetX<UserLoginController>(builder: (_) {
+                                          return Visibility(
+                                              visible: !controller.loginByAuthCode,
+                                              child: CustomLoginInput(
+                                                  controller: controller.pwdInputCtrl,
+                                                  source: controller.formData,
+                                                  placeholder: "请输入密码",
+                                                  // maxLength: 11,
+                                                  type: CustomLoginInputType.password,
+                                                  textInputType: TextInputType.text,
+                                                  arg: "password",
+                                                  customStyle: 1));
+                                        }),
+                                        GetX<UserLoginController>(
+                                            init: controller,
+                                            builder: (_) {
+                                              return Visibility(
+                                                  visible: controller.needAuthCode || controller.loginByAuthCode,
+                                                  child: Padding(
+                                                      padding: EdgeInsets.only(top: controller.needAuthCode ? 20.w : 0),
+                                                      child: CustomLoginInput(
+                                                          controller: controller.sendCodeInputCtrl,
+                                                          source: controller.formData,
+                                                          placeholder: "请输入验证码",
+                                                          // maxLength: 11,
+                                                          type: CustomLoginInputType.sendCode,
+                                                          textInputType: TextInputType.number,
+                                                          arg: "sms_Code",
+                                                          customStyle: 1,
+                                                          rightWidget: centRow([
+                                                            GetX<UserLoginController>(
+                                                                init: controller,
+                                                                builder: (_) {
+                                                                  return AuthCodeButton(
+                                                                      customStyle: 1,
+                                                                      buttonState: controller.sendButtonType.value,
+                                                                      countDownFinish: () {
+                                                                        controller.sendButtonType.value = AuthCodeButtonState.again;
+                                                                      },
+                                                                      sendCodeAction: () {
+                                                                        controller.sendCodeAction();
+                                                                      });
+                                                                })
+                                                          ]))));
+                                            }),
 
-                                    GetX<UserLoginController>(
-                                      init: controller,
-                                      initState: (_) {},
-                                      builder: (_) {
-                                        return SizedBox(
-                                            height: controller.policySpace < 0
-                                                ? 0
-                                                : controller.policySpace -
-                                                    25.w);
-                                      },
-                                    ),
-                                    policyView(context)
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                  );
-                },
-              )),
-        ),
-      ),
-    );
+                                        ghb(76),
+                                        GetX<UserLoginController>(
+                                            init: controller,
+                                            builder: (_) {
+                                              return getLoginBtn("登录", () {
+                                                controller.loginRequest();
+                                              }, enable: controller.buttonEnable);
+                                            }),
+                                        ghb(10),
+                                        sbRow([
+                                          CustomButton(
+                                              onPressed: () {
+                                                controller.loginByAuthCode = !controller.loginByAuthCode;
+                                              },
+                                              child: centRow([
+                                                GetX<UserLoginController>(builder: (_) {
+                                                  return getSimpleText("${!controller.loginByAuthCode ? "验证码" : "密码"}登录", 14, AppColor.text2,
+                                                      textHeight: 1.1);
+                                                }),
+                                                ghb(44.5),
+                                                gwb(4),
+                                                Image.asset(assetsName("statistics/icon_arrow_right_gray"), width: 12.5.w, fit: BoxFit.fitWidth)
+                                              ])),
+                                          CustomButton(
+                                              onPressed: () async {
+                                                await forgetpwd.loadLibrary();
+                                                push(forgetpwd.ForgetPwd(), null, binding: forgetpwd.ForgetPwdBinding());
+                                              },
+                                              child: SizedBox(
+                                                  height: 44.5.w,
+                                                  child: Center(
+                                                      child: getSimpleText("忘记密码", 14, AppDefault().getThemeColor() ?? const Color(0xFFBCC2CB))))),
+                                        ], width: 375 - 23 * 2),
+
+                                        GetX<UserLoginController>(
+                                            init: controller,
+                                            initState: (_) {},
+                                            builder: (_) {
+                                              return SizedBox(height: controller.policySpace < 0 ? 0 : controller.policySpace - 25.w);
+                                            }),
+                                        policyView(context)
+                                      ])));
+                                });
+                    })))));
   }
 
   Widget policyView(BuildContext context) {
     return GetBuilder<UserLoginController>(
-      id: controller.appInfobuildId,
-      initState: (_) {},
-      builder: (_) {
-        Map appInfo = {};
-        if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
-          appInfo = controller.publicHomeData["webSiteInfo"] ?? {};
-        } else {
-          Map info =
-              (controller.publicHomeData["webSiteInfo"] ?? {})["app"] ?? {};
-          appInfo = {"System_Home_Name": info["apP_Name"] ?? ""};
-        }
+        id: controller.appInfobuildId,
+        initState: (_) {},
+        builder: (_) {
+          Map appInfo = {};
+          if (HttpConfig.baseUrl.contains(AppDefault.oldSystem)) {
+            appInfo = controller.publicHomeData["webSiteInfo"] ?? {};
+          } else {
+            Map info = (controller.publicHomeData["webSiteInfo"] ?? {})["app"] ?? {};
+            appInfo = {"System_Home_Name": info["apP_Name"] ?? ""};
+          }
 
-        return CustomButton(
-          onPressed: () {
-            controller.confirmProtocol = !controller.confirmProtocol;
-          },
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GetX<UserLoginController>(
-                builder: (_) {
+          return CustomButton(
+              onPressed: () {
+                controller.confirmProtocol = !controller.confirmProtocol;
+              },
+              child: Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.center, children: [
+                GetX<UserLoginController>(builder: (_) {
                   return ColorFiltered(
-                    colorFilter: ColorFilter.mode(
-                        AppDefault().getThemeColor() ?? Colors.white,
-                        BlendMode.modulate),
-                    child: Image.asset(
-                      // assetsName(
-                      //     "login/btn_checkbox_policy_${controller.confirmProtocol ? "selected" : "normal"}"),
-                      assetsName(
-                          "business/mall/checkbox_orange_${controller.confirmProtocol ? "selected" : "normal"}"),
-                      width: 14.w,
-                      height: 14.w,
-                      fit: BoxFit.fill,
-                    ),
-                  );
-                },
-              ),
-              gwb(5),
-              getSimpleText("登录即代表同意${appInfo["System_Home_Name"] ?? ""}的", 13,
-                  AppColor.textGrey,
-                  textHeight: 1.1),
-              CustomButton(
-                onPressed: () {
-                  if (controller.userAgreement == null ||
-                      controller.userAgreement.isEmpty) {
-                    ShowToast.normal("请稍等，正在接收数据");
-                    return;
-                  }
-                  pushAg(false, controller.userAgreement["name"] ?? "",
-                      controller.userAgreement["content"] ?? "");
-                },
-                child: getSimpleText("《用户协议》", 13,
-                    AppDefault().getThemeColor() ?? AppColor.theme,
-                    textHeight: 1.1),
-              ),
-              getSimpleText("和", 13, AppColor.textGrey, textHeight: 1.1),
-              CustomButton(
-                onPressed: () {
-                  pushAg(false, "隐私协议",
-                      controller.privacyAgreement["content"] ?? "");
-                },
-                child: getSimpleText("《隐私政策》", 13,
-                    AppDefault().getThemeColor() ?? AppColor.theme,
-                    textHeight: 1.1),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                      colorFilter: ColorFilter.mode(AppDefault().getThemeColor() ?? Colors.white, BlendMode.modulate),
+                      child: Image.asset(
+                          // assetsName(
+                          //     "login/btn_checkbox_policy_${controller.confirmProtocol ? "selected" : "normal"}"),
+                          assetsName("business/mall/checkbox_orange_${controller.confirmProtocol ? "selected" : "normal"}"),
+                          width: 14.w,
+                          height: 14.w,
+                          fit: BoxFit.fill));
+                }),
+                gwb(5),
+                getSimpleText("登录即代表同意${appInfo["System_Home_Name"] ?? ""}的", 13, AppColor.textGrey, textHeight: 1.1),
+                CustomButton(
+                    onPressed: () {
+                      if (controller.userAgreement == null || controller.userAgreement.isEmpty) {
+                        ShowToast.normal("请稍等，正在接收数据");
+                        return;
+                      }
+                      pushAg(false, controller.userAgreement["name"] ?? "", controller.userAgreement["content"] ?? "");
+                    },
+                    child: getSimpleText("《用户协议》", 13, AppDefault().getThemeColor() ?? AppColor.theme, textHeight: 1.1)),
+                getSimpleText("和", 13, AppColor.textGrey, textHeight: 1.1),
+                CustomButton(
+                    onPressed: () {
+                      pushAg(false, "隐私协议", controller.privacyAgreement["content"] ?? "");
+                    },
+                    child: getSimpleText("《隐私政策》", 13, AppDefault().getThemeColor() ?? AppColor.theme, textHeight: 1.1))
+              ]));
+        });
   }
 
   void pushAg(bool isP, String t, String u) async {
     await user_agreement_view.loadLibrary();
-    push(
-        () => user_agreement_view.UserAgreementView(
-              isPrivacy: isP,
-              title: t,
-              url: u,
-            ),
-        null,
+    push(() => user_agreement_view.UserAgreementView(isPrivacy: isP, title: t, url: u), null,
         binding: user_agreement_view.UserAgreementViewBinding());
   }
 }

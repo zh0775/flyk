@@ -97,10 +97,7 @@ class ProductStoreOrderListController extends GetxController {
       return;
     }
     topAnimation = true;
-    pageCtrl
-        .animateToPage(index,
-            duration: const Duration(milliseconds: 300), curve: Curves.linear)
-        .then((value) {
+    pageCtrl.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.linear).then((value) {
       topAnimation = false;
     });
   }
@@ -157,11 +154,9 @@ class ProductStoreOrderListController extends GetxController {
   deleteOrderAction(int index, int status) {
     String urls = "";
 
-    urls = Urls.userLevelGiftDelOrder(
-        getOrderId(index: index, status: status, key: "id"));
+    urls = Urls.userLevelGiftDelOrder(getOrderId(index: index, status: status, key: "id"));
 
-    showAlert(Global.navigatorKey.currentContext!, "确定要删除该订单吗",
-        cancelOnPressed: () {
+    showAlert(Global.navigatorKey.currentContext!, "确定要删除该订单吗", cancelOnPressed: () {
       Get.back();
     }, confirmOnPressed: () {
       simpleRequest(
@@ -183,9 +178,7 @@ class ProductStoreOrderListController extends GetxController {
       index: index,
       status: status,
     );
-    if ((homeData["u_3rd_password"] == null ||
-            homeData["u_3rd_password"].isEmpty) &&
-        payOrder["paymentMethodType"] == 2) {
+    if ((homeData["u_3rd_password"] == null || homeData["u_3rd_password"].isEmpty) && payOrder["paymentMethodType"] == 2) {
       showPayPwdWarn(
         haveClose: true,
         popToRoot: false,
@@ -213,9 +206,7 @@ class ProductStoreOrderListController extends GetxController {
         "u_3nd_Pad": pwd,
       },
       success: (success, json) async {
-        if (json != null &&
-            json["data"] != null &&
-            json["data"]["aliData"] != null) {
+        if (json != null && json["data"] != null && json["data"]["aliData"] != null) {
           Map result = await CustomAlipay().payAction(
             json["data"]["aliData"],
             payBack: () {
@@ -242,8 +233,7 @@ class ProductStoreOrderListController extends GetxController {
 
   cancelOrderAction(int index, int status) {
     String urls = "";
-    urls = Urls.userLevelGiftOrderCancel(
-        getOrderId(index: index, status: status, key: "id"));
+    urls = Urls.userLevelGiftOrderCancel(getOrderId(index: index, status: status, key: "id"));
 
     showAlert(
       Global.navigatorKey.currentContext!,
@@ -267,8 +257,7 @@ class ProductStoreOrderListController extends GetxController {
     );
   }
 
-  int getOrderId(
-      {required int index, required int status, required String key}) {
+  int getOrderId({required int index, required int status, required String key}) {
     // int id = 0;
     return dataLists[status][index][key];
   }
@@ -281,8 +270,7 @@ class ProductStoreOrderListController extends GetxController {
   confirmOrderAction(int index, int status) {
     String urls = "";
 
-    urls = Urls.userLevelGiftOrderConfirm(
-        getOrderId(index: index, status: status, key: "id"));
+    urls = Urls.userLevelGiftOrderConfirm(getOrderId(index: index, status: status, key: "id"));
     showAlert(
       Global.navigatorKey.currentContext!,
       "确定要确认收货吗",
@@ -365,11 +353,11 @@ class ProductStoreOrderListController extends GetxController {
     int myLevelIdx = listLevelType ?? naviIndex;
     isLoad ? pageNos[myLoadIdx]++ : pageNos[myLoadIdx] = 1;
     Map<String, dynamic> params = {
-      "order_Type": isBuyAndVip
+      "orderType": isBuyAndVip
           ? myLevelIdx == 0
               ? 2
               : 1
-          : levelType,
+          : levelType
     };
     params["orderState"] = statusList[myLoadIdx]["id"];
     params["pageSize"] = pageSizes[myLoadIdx];
@@ -394,12 +382,10 @@ class ProductStoreOrderListController extends GetxController {
           List list = data["data"] ?? [];
           counts[myLoadIdx] = data["count"] ?? 0;
           if (myLevelIdx == 0) {
-            normalDataLists[myLoadIdx] =
-                isLoad ? [...normalDataLists[myLoadIdx], ...list] : list;
+            normalDataLists[myLoadIdx] = isLoad ? [...normalDataLists[myLoadIdx], ...list] : list;
             dataLists = normalDataLists;
           } else {
-            integralDataLists[myLoadIdx] =
-                isLoad ? [...integralDataLists[myLoadIdx], ...list] : list;
+            integralDataLists[myLoadIdx] = isLoad ? [...integralDataLists[myLoadIdx], ...list] : list;
             dataLists = integralDataLists;
           }
           update(["$listBuildId${myLevelIdx}_$myLoadIdx"]);
@@ -416,16 +402,15 @@ class ProductStoreOrderListController extends GetxController {
   // String statusBuildId = "MineStoreOrderList_statusBuildId";
   loadState() {
     simpleRequest(
-      url: Urls.getOrderStatusList,
-      params: {},
-      success: (success, json) {
-        if (success) {
-          stateDataList = json["data"];
-        }
-      },
-      after: () {},
-      useCache: true,
-    );
+        url: Urls.getOrderStatusList,
+        params: {},
+        success: (success, json) {
+          if (success) {
+            stateDataList = json["data"];
+          }
+        },
+        after: () {},
+        useCache: true);
   }
 
   bool isBuyAndVip = false;
@@ -480,9 +465,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
   final int index;
   final int levelType;
   final bool isBuyAndVip;
-  const ProductStoreOrderList(
-      {Key? key, this.index = 0, this.levelType = 0, this.isBuyAndVip = false})
-      : super(key: key);
+  const ProductStoreOrderList({Key? key, this.index = 0, this.levelType = 0, this.isBuyAndVip = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -510,20 +493,13 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                                     onPressed: () {
                                       controller.naviIndex = index;
                                     },
-                                    child:
-                                        GetX<ProductStoreOrderListController>(
-                                            builder: (_) {
+                                    child: GetX<ProductStoreOrderListController>(builder: (_) {
                                       return SizedBox(
                                         height: kToolbarHeight,
                                         child: Center(
-                                          child: getSimpleText(
-                                              index == 0 ? "采购订单" : "礼包订单",
-                                              18,
-                                              controller.naviIndex == index
-                                                  ? AppColor.textBlack
-                                                  : AppColor.textGrey,
-                                              isBold: controller.naviIndex ==
-                                                  index),
+                                          child: getSimpleText(index == 0 ? "采购订单" : "礼包订单", 18,
+                                              controller.naviIndex == index ? AppColor.textBlack : AppColor.textGrey,
+                                              isBold: controller.naviIndex == index),
                                         ),
                                       );
                                     }),
@@ -553,25 +529,20 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                         left: 0,
                         right: 0,
                         height: 20.w,
-                        child:
-                            GetX<ProductStoreOrderListController>(builder: (_) {
+                        child: GetX<ProductStoreOrderListController>(builder: (_) {
                           return Row(
-                            children: List.generate(
-                                controller.statusList.length, (index) {
+                            children: List.generate(controller.statusList.length, (index) {
                               return CustomButton(
                                 onPressed: () {
                                   controller.topIndex = index;
                                 },
                                 child: SizedBox(
-                                  width: 375.w / controller.statusList.length -
-                                      0.1.w,
+                                  width: 375.w / controller.statusList.length - 0.1.w,
                                   child: Center(
                                     child: getSimpleText(
                                       controller.statusList[index]["name"],
                                       15,
-                                      controller.topIndex == index
-                                          ? AppColor.theme
-                                          : AppColor.textBlack,
+                                      controller.topIndex == index ? AppColor.theme : AppColor.textBlack,
                                       isBold: controller.topIndex == index,
                                     ),
                                   ),
@@ -587,13 +558,8 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                             curve: Curves.easeInOut,
                             top: 53.w,
                             width: 15.w,
-                            left: controller.topIndex *
-                                    (375.w / controller.statusList.length -
-                                        0.1.w) +
-                                ((375.w / controller.statusList.length -
-                                            0.1.w) -
-                                        15.w) /
-                                    2,
+                            left: controller.topIndex * (375.w / controller.statusList.length - 0.1.w) +
+                                ((375.w / controller.statusList.length - 0.1.w) - 15.w) / 2,
                             height: 2.w,
                             child: Container(
                               color: AppColor.theme,
@@ -631,15 +597,10 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
         id: "${controller.listBuildId}${levelIdx}_$listIndex",
         builder: (_) {
           return EasyRefresh(
-              onRefresh: () => controller.loadList(
-                  listIndex: listIndex, listLevelType: levelIdx),
-              onLoad: controller.dataLists[listIndex].length >=
-                      controller.counts[listIndex]
+              onRefresh: () => controller.loadList(listIndex: listIndex, listLevelType: levelIdx),
+              onLoad: controller.dataLists[listIndex].length >= controller.counts[listIndex]
                   ? null
-                  : () => controller.loadList(
-                      isLoad: true,
-                      listIndex: listIndex,
-                      listLevelType: levelIdx),
+                  : () => controller.loadList(isLoad: true, listIndex: listIndex, listLevelType: levelIdx),
               child: controller.dataLists[listIndex].isEmpty
                   ? controller.isFirstLoading && !kIsWeb
                       ? SkeletonListView(
@@ -648,8 +609,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                               ghb(15),
                               SkeletonParagraph(
                                 style: SkeletonParagraphStyle(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 8.w, horizontal: 15.w),
+                                    padding: EdgeInsets.symmetric(vertical: 8.w, horizontal: 15.w),
                                     lines: 1,
                                     spacing: 10.w,
                                     lineStyle: SkeletonLineStyle(
@@ -659,15 +619,11 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                                     )),
                               ),
                               SkeletonAvatar(
-                                style: SkeletonAvatarStyle(
-                                    shape: BoxShape.rectangle,
-                                    width: 315.w,
-                                    height: 75.w),
+                                style: SkeletonAvatarStyle(shape: BoxShape.rectangle, width: 315.w, height: 75.w),
                               ),
                               SkeletonParagraph(
                                 style: SkeletonParagraphStyle(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 8.w, horizontal: 15.w),
+                                    padding: EdgeInsets.symmetric(vertical: 8.w, horizontal: 15.w),
                                     lines: 2,
                                     spacing: 10.w,
                                     lineStyle: SkeletonLineStyle(
@@ -690,14 +646,10 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                           },
                         )
                   : ListView.builder(
-                      padding: EdgeInsets.only(
-                          bottom: 15.w +
-                              paddingSizeBottom(
-                                  Global.navigatorKey.currentContext!)),
+                      padding: EdgeInsets.only(bottom: 15.w + paddingSizeBottom(Global.navigatorKey.currentContext!)),
                       itemCount: controller.dataLists[listIndex].length,
                       itemBuilder: (context, index) {
-                        return orderCell(controller.dataLists[listIndex][index],
-                            index, context, listIndex);
+                        return orderCell(controller.dataLists[listIndex][index], index, context, listIndex);
 
                         // levelIdx == 0
                         //     ? orderCell(controller.dataLists[listIndex][index],
@@ -755,19 +707,13 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
         margin: EdgeInsets.only(top: 15.w),
         width: 345.w,
         // height: 165.w,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.w), color: Colors.white),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.w), color: Colors.white),
         // decoration: getDefaultWhiteDec2(),
         child: Column(
           children: [
             sbhRow([
-              getSimpleText(
-                  "订单编号：${data["orderNo"] ?? ""}", 10, AppColor.textGrey),
-              getSimpleText(
-                  data["orderStateStr"] ??
-                      getOrderStatustStr(data["orderState"] ?? -1),
-                  12,
-                  AppColor.textBlack)
+              getSimpleText("订单编号：${data["orderNo"] ?? ""}", 10, AppColor.textGrey),
+              getSimpleText(data["orderStateStr"] ?? getOrderStatustStr(data["orderState"] ?? -1), 12, AppColor.textBlack)
             ], height: 40, width: 315),
             Container(
               width: 315.w,
@@ -790,16 +736,11 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                   ),
                   gwb(11),
                   sbClm([
-                    getWidthText(
-                        data["levelName"] ?? "", 12, AppColor.textBlack, 218, 2,
-                        isBold: true),
+                    getWidthText(data["levelName"] ?? "", 12, AppColor.textBlack, 218, 2, isBold: true),
                     sbRow([
-                      getSimpleText(
-                          "${isReal ? "￥" : ""}${priceFormat(data["totalPrice"] ?? 0, savePoint: isReal ? 2 : 0)}${isReal ? "" : unit}",
-                          12,
+                      getSimpleText("${isReal ? "￥" : ""}${priceFormat(data["totalPrice"] ?? 0, savePoint: isReal ? 2 : 0)}${isReal ? "" : unit}", 12,
                           AppColor.textBlack),
-                      getSimpleText(
-                          "x${data["num"] ?? 1}", 12, AppColor.textGrey)
+                      getSimpleText("x${data["num"] ?? 1}", 12, AppColor.textGrey)
                     ], width: 295 - 60 - 11)
                   ], height: 55, crossAxisAlignment: CrossAxisAlignment.start)
                 ])
@@ -807,13 +748,8 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
             ),
             sbhRow([
               gwb(0),
-              getRichText(
-                  "总计：",
-                  "${isReal ? "￥" : ""}${priceFormat(data["totalPrice"] ?? 0, savePoint: isReal ? 2 : 0)}${isReal ? "" : unit}",
-                  12,
-                  AppColor.textBlack,
-                  12,
-                  const Color(0xFFFFB540))
+              getRichText("总计：", "${isReal ? "￥" : ""}${priceFormat(data["totalPrice"] ?? 0, savePoint: isReal ? 2 : 0)}${isReal ? "" : unit}", 12,
+                  AppColor.textBlack, 12, const Color(0xFFFFB540))
             ], height: 40, width: 315),
             haveBottom(data)
                 ? centClm([
@@ -821,8 +757,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                       gwb(0),
                       // bottomLeftView(data),
                       centRow([
-                        ...statusButtons(data, context,
-                            index: index, status: listIndex),
+                        ...statusButtons(data, context, index: index, status: listIndex),
                       ])
                     ], width: 345 - 15 * 2, height: 25),
                     ghb(15),
@@ -839,10 +774,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
     switch ((data["orderState"] ?? -1)) {
       case 0:
         DateTime now = DateTime.now();
-        Duration duration = controller.dateFormat
-            .parse(data["addTime"])
-            .add(const Duration(minutes: 30))
-            .difference(now);
+        Duration duration = controller.dateFormat.parse(data["addTime"]).add(const Duration(minutes: 30)).difference(now);
         if (duration.inMilliseconds < 0) {
           title = "订单支付超时";
           break;
@@ -850,8 +782,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
           return centClm([
             getSimpleText("实付款", 12, AppColor.color40),
             ghb(2),
-            getRichText("￥", priceFormat(data["totalPrice"] ?? 0), 12,
-                AppColor.color40, 18, AppColor.color40),
+            getRichText("￥", priceFormat(data["totalPrice"] ?? 0), 12, AppColor.color40, 18, AppColor.color40),
           ], crossAxisAlignment: CrossAxisAlignment.start);
         }
       case 1:
@@ -885,8 +816,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
     return gwb(0);
   }
 
-  List<Widget> statusButtons(Map data, BuildContext context,
-      {required int index, required int status}) {
+  List<Widget> statusButtons(Map data, BuildContext context, {required int index, required int status}) {
     List<Widget> l = [];
     // if (controller.stateDataList.isEmpty) {
     //   return l;
@@ -910,8 +840,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
         //     controller.cancelOrderAction(index, status);
         //   },
         // ),
-        statusButton("删除订单", AppColor.textBlack, const Color(0xFFB3B3B3),
-            onPressed: () {
+        statusButton("删除订单", AppColor.textBlack, const Color(0xFFB3B3B3), onPressed: () {
           controller.deleteOrderAction(index, status);
           // controller.checkLogisticsAction(index, status);
         }),
@@ -976,9 +905,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
           },
         ),
       ]);
-    } else if (data["orderState"] == 3 ||
-        data["orderState"] == 4 ||
-        data["orderState"] == 5) {
+    } else if (data["orderState"] == 3 || data["orderState"] == 4 || data["orderState"] == 5) {
       l.addAll([
         // statusButton(
         //   "删除订单",
@@ -990,9 +917,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
         // ),
         // gwb(13.5),
       ]);
-    } else if (data["orderState"] == 6 ||
-        data["orderState"] == 7 ||
-        data["orderState"] == 8) {
+    } else if (data["orderState"] == 6 || data["orderState"] == 7 || data["orderState"] == 8) {
       l.addAll([
         statusButton(
           "删除订单",
@@ -1020,10 +945,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
       child: Container(
         width: 65.w,
         height: 25.w,
-        decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(4.w),
-            border: Border.all(width: 1.w, color: borderColor)),
+        decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(4.w), border: Border.all(width: 1.w, color: borderColor)),
         child: Center(
           child: getSimpleText(t1, 12, textColor),
         ),
@@ -1059,14 +981,11 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                   Container(
                     width: 345.w,
                     height: 116.w,
-                    decoration: BoxDecoration(
-                        color: AppColor.lineColor,
-                        borderRadius: BorderRadius.circular(5.w)),
+                    decoration: BoxDecoration(color: AppColor.lineColor, borderRadius: BorderRadius.circular(5.w)),
                     child: Column(
                       children: [
                         ghb(25),
-                        getSimpleText("点击快递编号即可复制查询", 15, AppColor.textBlack,
-                            isBold: true),
+                        getSimpleText("点击快递编号即可复制查询", 15, AppColor.textBlack, isBold: true),
                         ghb(13.5),
                         CustomButton(
                           onPressed: () {
@@ -1077,10 +996,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                             width: 270.w,
                             height: 35.w,
                             decoration: getDefaultWhiteDec(),
-                            child: Center(
-                                child: getSimpleText(
-                                    expressNo, 20, AppColor.textBlack,
-                                    isBold: true)),
+                            child: Center(child: getSimpleText(expressNo, 20, AppColor.textBlack, isBold: true)),
                           ),
                         )
                       ],
@@ -1099,17 +1015,14 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
     return Container(
       width: 375.w - 15.w * 2,
       margin: EdgeInsets.all(15.w),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(8.w)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8.w)),
       padding: EdgeInsets.all(15.w),
       child: Column(
         children: [
           SizedBox(
             child: sbRow([
-              getSimpleText(
-                  "订单编号：${data['orderNo'] ?? ""}", 10, const Color(0xFF999999)),
-              getSimpleText(
-                  "${data['orderStateStr'] ?? ""}", 12, AppColor.textBlack),
+              getSimpleText("订单编号：${data['orderNo'] ?? ""}", 10, const Color(0xFF999999)),
+              getSimpleText("${data['orderStateStr'] ?? ""}", 12, AppColor.textBlack),
             ], width: 345.w),
           ),
           ghb(14),
@@ -1127,8 +1040,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                 ),
                 padding: EdgeInsets.fromLTRB(10.w, 7.5.w, 10.w, 7.5.w),
                 child: Column(
-                  children:
-                      List.generate((data["commodity"] ?? []).length, (cIdx) {
+                  children: List.generate((data["commodity"] ?? []).length, (cIdx) {
                     Map cData = (data["commodity"] ?? [])[cIdx];
                     return Padding(
                       padding: EdgeInsets.only(top: cIdx == 0 ? 0 : 10.w),
@@ -1145,17 +1057,11 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              getWidthText(cData["shopName"] ?? "", 12,
-                                  AppColor.textBlack, 218, 1),
-                              getSimpleText("已选：${cData['shopModel'] ?? ""}",
-                                  10, AppColor.textGrey5),
+                              getWidthText(cData["shopName"] ?? "", 12, AppColor.textBlack, 218, 1),
+                              getSimpleText("已选：${cData['shopModel'] ?? ""}", 10, AppColor.textGrey5),
                               sbRow([
-                                getSimpleText(
-                                    "${priceFormat(cData['nowPrice'] ?? 0, savePoint: 0)}积分",
-                                    10,
-                                    const Color(0xFF333333)),
-                                getSimpleText("x${cData['num']}", 12,
-                                    const Color(0xFF999999)),
+                                getSimpleText("${priceFormat(cData['nowPrice'] ?? 0, savePoint: 0)}积分", 10, const Color(0xFF333333)),
+                                getSimpleText("x${cData['num']}", 12, const Color(0xFF999999)),
                               ])
                             ],
                           ),
@@ -1170,10 +1076,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               getSimpleText("总计：", 10.w, const Color(0xFF333333)),
-              getSimpleText(
-                  "${priceFormat(data['totalPrice'] ?? 0, savePoint: 0)}积分",
-                  12.w,
-                  const Color(0xFFFF6231)),
+              getSimpleText("${priceFormat(data['totalPrice'] ?? 0, savePoint: 0)}积分", 12.w, const Color(0xFFFF6231)),
             ],
           ),
           ghb(13),
@@ -1241,8 +1144,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
     );
   }
 
-  Widget borderButton(String buttonTitle,
-      {Function()? onPressed, int type = 0}) {
+  Widget borderButton(String buttonTitle, {Function()? onPressed, int type = 0}) {
     return GestureDetector(
       onTap: () {
         if (onPressed != null) {
@@ -1262,9 +1164,7 @@ class ProductStoreOrderList extends GetView<ProductStoreOrderListController> {
             color: type == 0 ? AppColor.textGrey5 : AppColor.theme,
           ),
         ),
-        child: getSimpleText(
-            buttonTitle, 12.w, type == 0 ? AppColor.textBlack : AppColor.theme,
-            textHeight: 1.1),
+        child: getSimpleText(buttonTitle, 12.w, type == 0 ? AppColor.textBlack : AppColor.theme, textHeight: 1.1),
       ),
     );
   }

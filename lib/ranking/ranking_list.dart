@@ -2,13 +2,13 @@
 
 import 'dart:async';
 
+import 'package:cxhighversion2/component/custom_button.dart';
 import 'package:cxhighversion2/ranking/red_packet_receive_history.dart';
 import 'package:cxhighversion2/service/urls.dart';
 import 'package:cxhighversion2/util/app_default.dart';
 import 'package:cxhighversion2/util/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:cxhighversion2/component/custom_button.dart';
-import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 
@@ -29,6 +29,7 @@ class RankListController extends GetxController {
   // 红包获取规则
   String redPackageRuleHtml = "";
   // 今日是否可领取红包
+  // final _userTodayReceiveStatus = 1.obs;
   final _userTodayReceiveStatus = 0.obs;
   int get userTodayReceiveStatus => _userTodayReceiveStatus.value;
   set userTodayReceiveStatus(v) => _userTodayReceiveStatus.value = v;
@@ -116,6 +117,7 @@ class RankListController extends GetxController {
             // 今日领取金额
             userTodayHasReceiveMoney = double.parse(json['value'] ?? '0.0');
             userTodayReceiveStatus = 0;
+            // userTodayReceiveStatus = 1;
             handleRedPacketPopup(fn);
             update();
           }
@@ -173,11 +175,7 @@ class RankListPage extends GetView<RankListController> {
       width: 375.w,
       height: 430.w,
       decoration: BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage(
-              assetsName('ranking/draw_bg'),
-            ),
-            fit: BoxFit.fill),
+        image: DecorationImage(image: AssetImage(assetsName('ranking/draw_bg')), fit: BoxFit.fill),
       ),
       child: GetBuilder<RankListController>(
         builder: (_) {
@@ -191,59 +189,44 @@ class RankListPage extends GetView<RankListController> {
                     Container(
                       width: 215.w,
                       height: 30.w,
-                      decoration: BoxDecoration(
-                        color: const Color(0x50000000),
-                        borderRadius: BorderRadius.circular(15.w),
-                      ),
-                      child: Row(
-                        children: [
-                          gwb(11.w),
-                          Image(
-                            width: 18.w,
-                            height: 18.w,
-                            image: AssetImage(
-                              assetsName('ranking/icon_notice'),
-                            ),
-                          ),
-                          gwb(16.w),
-                          SizedBox(
+                      decoration: BoxDecoration(color: const Color(0x50000000), borderRadius: BorderRadius.circular(15.w)),
+                      child: Row(children: [
+                        gwb(11.w),
+                        Image(width: 18.w, height: 18.w, image: AssetImage(assetsName('ranking/icon_notice'))),
+                        gwb(16.w),
+                        SizedBox(
                             width: 150.w,
                             height: 30.w,
                             child: ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              itemCount: controller.noticeList.length,
-                              controller: controller._scrollController,
-                              itemExtent: 30.w,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                Map noticeItem = controller.noticeList[index] ?? {};
-                                return Text.rich(
-                                  TextSpan(
+                                scrollDirection: Axis.vertical,
+                                itemCount: controller.noticeList.length,
+                                controller: controller._scrollController,
+                                itemExtent: 30.w,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  Map noticeItem = controller.noticeList[index] ?? {};
+                                  return Text.rich(TextSpan(
                                       text: "${noticeItem['u_Name']}已领取奖励金",
-                                      style: TextStyle(
-                                        height: 2.w,
-                                        color: Colors.white,
-                                        fontSize: 12.w,
-                                      ),
+                                      style: TextStyle(height: 2.w, color: Colors.white, fontSize: 12.w),
                                       children: [
-                                        TextSpan(text: noticeItem['receiveAmount'].toStringAsFixed(2), style: const TextStyle(color: Color(0xFFFFF53E))),
-                                        const TextSpan(text: ' 元'),
-                                      ]),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                                        TextSpan(
+                                            text: noticeItem['receiveAmount'].toStringAsFixed(2), style: const TextStyle(color: Color(0xFFFFF53E))),
+                                        const TextSpan(text: ' 元')
+                                      ]));
+                                }))
+                      ]),
                     ),
                     ghb(45.5),
                     getSimpleText('今日可领取金额', 12, const Color(0xFFFE4F3B)),
                     ghb(6.w),
                     SizedBox(
                       child: Text.rich(
-                        TextSpan(text: "${controller.userTodayReceiveMoney}", style: TextStyle(color: const Color(0xFFFE4F3B), fontSize: 45.w, fontWeight: FontWeight.w500), children: [
-                          TextSpan(text: '元', style: TextStyle(fontSize: 18.w)),
-                        ]),
+                        TextSpan(
+                            text: "${controller.userTodayReceiveMoney}",
+                            style: TextStyle(color: const Color(0xFFFE4F3B), fontSize: 45.w, fontWeight: FontWeight.w500),
+                            children: [
+                              TextSpan(text: '元', style: TextStyle(fontSize: 18.w)),
+                            ]),
                       ),
                     ),
                     ghb(40),
@@ -269,9 +252,11 @@ class RankListPage extends GetView<RankListController> {
                       decoration: BoxDecoration(
                           image: DecorationImage(
                         fit: BoxFit.fill,
+                        // image: AssetImage(assetsName(controller.userTodayReceiveStatus == 0 ? 'ranking/claim_btn' : 'ranking/ban_btn')),
                         image: AssetImage(assetsName(controller.userTodayReceiveStatus == 1 ? 'ranking/claim_btn' : 'ranking/ban_btn')),
                       )),
                       child: getSimpleButton(() {
+                        // if (controller.userTodayReceiveStatus == 0) {
                         if (controller.userTodayReceiveStatus == 1) {
                           // 请求接口
                           controller.userReceiveRedPackageApi(redPacketPopupView);
@@ -279,7 +264,11 @@ class RankListPage extends GetView<RankListController> {
                           ShowToast.normal("今日已领取");
                         }
                         // controller.handleRedPacketPopup(redPacketPopupView());
-                      }, getSimpleText(controller.userTodayReceiveStatus == 1 ? "立即领取" : "今日已领取", 18, controller.userTodayReceiveStatus == 1 ? const Color(0xFFFE4F3B) : Colors.white)),
+                      },
+                          getSimpleText(controller.userTodayReceiveStatus == 1 ? "立即领取" : "今日已领取", 18,
+                              controller.userTodayReceiveStatus == 1 ? const Color(0xFFFE4F3B) : Colors.white)),
+                      // getSimpleText(controller.userTodayReceiveStatus == 0 ? "立即领取" : "今日已领取", 18,
+                      //     controller.userTodayReceiveStatus == 0 ? const Color(0xFFFE4F3B) : Colors.white)),
                     )
                   ],
                 ),

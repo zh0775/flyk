@@ -139,7 +139,7 @@
       document.getElementById("app_splash")?.remove();
       try {
         navigator.serviceWorker.register('flutter_service_worker.js');
-      } catch (error) {}
+      } catch (error) { }
     });
   </script>
   <!-- This script adds the flutter initialization JS code -->
@@ -286,7 +286,19 @@
         return engineInitializer.initializeEngine();
       }).then(function (appRunner) {
         return appRunner.runApp();
+      }).then(function (_) {
+        const flutterRoot = document.getElementsByTagName("flt-glass-pane").item(0);
+        flutterRoot.addEventListener("touchstart", (e) => {
+          if (e.pageX > 24 && e.pageX < window.innerWidth - 24) return;
+          e.preventDefault();
+        });
       });
+      document.querySelector('app-root').addEventListener('touchstart', (e) => {});
+    });
+    window.addEventListener("scroll", function (e) {
+      if (document.documentElement.scrollTop > 1) {
+        document.documentElement.scrollTop = 100;
+      }
     });
   </script>
 </body>

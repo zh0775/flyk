@@ -77,6 +77,7 @@ class BottomPayPassword {
     // pwdCtrl = TextEditingController();
     // dispos();
     // initCtrl();
+    takeBackKeyboard(null);
     showGeneralDialog(
       context: Global.navigatorKey.currentContext!,
       barrierLabel: "",
@@ -88,9 +89,7 @@ class BottomPayPassword {
             child: Container(
               width: 330.w,
               height: 255.w,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.w)),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8.w)),
               child: Column(
                 children: [
                   gwb(330),
@@ -147,11 +146,7 @@ class BottomPayPassword {
                       }
                       Navigator.pop(context);
                     }
-                  },
-                      width: 300,
-                      height: 40,
-                      color: AppColor.theme,
-                      fontSize: 15),
+                  }, width: 300, height: 40, color: AppColor.theme, fontSize: 15),
                 ],
               ),
             ),
@@ -271,9 +266,7 @@ class BottomPayPassword {
     return Container(
       width: 40.w,
       height: 40.w,
-      decoration: BoxDecoration(
-          color: const Color(0xFFF2F2F2),
-          borderRadius: BorderRadius.circular(6.w)),
+      decoration: BoxDecoration(color: const Color(0xFFF2F2F2), borderRadius: BorderRadius.circular(6.w)),
       child: Center(
         child: CustomInput(
           width: 40.w,

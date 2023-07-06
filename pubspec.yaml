@@ -18,12 +18,12 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # android
-version: 1.0.9+25
+version: 1.1.4+130
 # ios
 # version: 1.0.0+2
 
 environment:
-  sdk: '>=2.19.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -41,19 +41,20 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   dio: ^4.0.6
-  intl: ^0.17.0
+  intl: ^0.18.0
   url_launcher: ^6.1.11
   get: ^4.6.5
   shared_preferences: ^2.0.15
-  flutter_screenutil: ^5.6.0
+  flutter_screenutil: ^5.8.4
   blur: ^3.1.0
-  image_picker: ^0.8.6
+  image_picker: ^1.0.0
+  image_picker_for_web: ^2.2.0
   oktoast: ^3.3.1
   platform_device_id: ^1.0.1
   pull_to_refresh: ^2.0.0
   permission_handler: ^10.0.0
   app_settings: 4.1.6
-  package_info_plus: ^1.4.2
+  package_info_plus: ^4.0.2
   # image_gallery_saver: ^1.7.1
   gallery_saver: ^2.3.2
   photo_view: ^0.14.0
@@ -67,14 +68,14 @@ dependencies:
   flutter_keyboard_visibility: ^5.3.0
   just_audio: ^0.9.31
   # audioplayers: ^3.0.0
-  video_player: ^2.6.0
-  chewie: ^1.4.0
+  # video_player: ^2.6.0
+  # chewie: ^1.4.0
   uni_links: ^0.5.1
   sticky_and_expandable_list: ^1.1.2
   tobias: ^2.4.1
   dropdown_button2: ^1.8.0
   flutter_swipe_action_cell: ^3.0.4
-  flutter_slidable: ^2.0.0
+  flutter_slidable: ^3.0.0
   # cached_network_image: ^3.2.0
   # flutter_html: ^3.0.0-alpha.6
   flutter_widget_from_html: ^0.10.1
@@ -84,14 +85,14 @@ dependencies:
   shimmer: ^3.0.0
   fl_chart: ^0.55.2
   syncfusion_flutter_charts: ^21.1.39
-  flutter_inappwebview: ^5.7.1
-  mobile_scanner: ^2.0.0
+  flutter_inappwebview: ^5.7.2+3
+  barcode_scan2: ^4.2.4
   # wechat_kit: ^4.0.3
   # dynamic_icon_flutter: 
   #   path: /Users/zhanghan/Documents/workspace/flutterPlugin/dynamic_icon_flutter-0.0.7
   fluwx: ^3.9.2
   qr_flutter: ^4.1.0
-  screenshot: ^1.2.3
+  screenshot: ^2.1.0
   card_swiper: ^2.0.4
   path_provider: ^2.0.11
   ota_update: ^4.0.3
@@ -115,7 +116,7 @@ dependencies:
   crop_your_image: ^0.7.4
 
   # 3.7.6
-  month_picker_dialog: ^1.2.0
+  month_picker_dialog: ^2.0.2
   # month_picker_dialog: ^2.0.2
 
   flutter_lazy_indexed_stack: ^0.0.5
@@ -146,7 +147,6 @@ flutter:
   assets:
     - assets/images/pay/
     - assets/images/pay/earndetail/
-    - assets/images/splash/
     - assets/images/login/
     - assets/images/rank/
     - assets/images/home/
@@ -178,9 +178,6 @@ flutter:
     - assets/images/business/mall/user/
     - assets/images/business/sale/
     - assets/images/business/tabbar/
-    - assets/images/business/finance/
-    - assets/images/business/redemption/
-    - assets/images/business/redemption/
     - assets/images/message_notify/
     - assets/images/income/
     - assets/images/statistics_page/

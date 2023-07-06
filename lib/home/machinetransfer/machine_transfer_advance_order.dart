@@ -8,8 +8,7 @@ import 'package:get/get.dart';
 class MachineTransferAdvanceOrderBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put<MachineTransferAdvanceOrderController>(
-        MachineTransferAdvanceOrderController());
+    Get.put<MachineTransferAdvanceOrderController>(MachineTransferAdvanceOrderController());
   }
 }
 
@@ -23,7 +22,7 @@ class MachineTransferAdvanceOrderController extends GetxController {
     String tNo = "";
     for (var i = 0; i < machineDatas.length; i++) {
       Map item = machineDatas[i];
-      tNo += (i == 0 ? "${item["tNo"]}" : ",${item["tNo"]}");
+      tNo += (i == 0 ? "${item["tId"]}" : ",${item["tId"]}");
     }
     // List content = [];
     // for (var i = 0; i < machineDatas.length; i++) {
@@ -46,8 +45,7 @@ class MachineTransferAdvanceOrderController extends GetxController {
         },
         success: (success, json) {
           if (success) {
-            Get.to(() => const MachineTransferSuccess(isLock: false),
-                binding: MachineTransferSuccessBinding());
+            Get.to(() => const MachineTransferSuccess(isLock: false), binding: MachineTransferSuccessBinding());
           }
         },
         after: () {
@@ -78,17 +76,11 @@ class MachineTransferAdvanceOrderController extends GetxController {
   }
 }
 
-class MachineTransferAdvanceOrder
-    extends GetView<MachineTransferAdvanceOrderController> {
+class MachineTransferAdvanceOrder extends GetView<MachineTransferAdvanceOrderController> {
   final List machineData;
   final Map userData;
   final bool isLock;
-  const MachineTransferAdvanceOrder(
-      {Key? key,
-      required this.machineData,
-      required this.userData,
-      this.isLock = false})
-      : super(key: key);
+  const MachineTransferAdvanceOrder({Key? key, required this.machineData, required this.userData, this.isLock = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -98,26 +90,16 @@ class MachineTransferAdvanceOrder
       Positioned.fill(
           child: Container(
               decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment(0.7, 0),
-                      colors: [Color(0xFF484E5E), Color(0xFF292732)])))),
+                  gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment(0.7, 0), colors: [Color(0xFF484E5E), Color(0xFF292732)])))),
       Positioned(
           top: paddingSizeTop(context),
           left: 0,
           right: 0,
           height: kToolbarHeight,
           child: Center(
-              child: getDefaultAppBarTitile("生成订单",
-                  titleStyle: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: AppDefault.fontBold)))),
-      Positioned(
-          top: paddingSizeTop(context),
-          left: 0,
-          height: kToolbarHeight,
-          child: defaultBackButton(context, color: Colors.white)),
+              child:
+                  getDefaultAppBarTitile("生成订单", titleStyle: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: AppDefault.fontBold)))),
+      Positioned(top: paddingSizeTop(context), left: 0, height: kToolbarHeight, child: defaultBackButton(context, color: Colors.white)),
       Positioned(
           top: paddingSizeTop(context) + kToolbarHeight + 15.w,
           left: 15.w,
@@ -152,28 +134,20 @@ class MachineTransferAdvanceOrder
           bottom: 50.w + paddingSizeBottom(context) + 15.5.w + 13.5.w + 31.5.w,
           child: Container(
               padding: EdgeInsets.fromLTRB(18.5.w, 10.w, 15.5.w, 15.w),
-              decoration: BoxDecoration(
-                  color: AppColor.pageBackgroundColor,
-                  borderRadius: BorderRadius.circular(5.w)),
+              decoration: BoxDecoration(color: AppColor.pageBackgroundColor, borderRadius: BorderRadius.circular(5.w)),
               child: Scrollbar(
                   child: ListView.builder(
                       padding: EdgeInsets.zero,
                       physics: const BouncingScrollPhysics(),
-                      itemCount: controller.machineDatas.isNotEmpty
-                          ? controller.machineDatas.length
-                          : 0,
+                      itemCount: controller.machineDatas.isNotEmpty ? controller.machineDatas.length : 0,
                       itemBuilder: (context, index) {
-                        return machineCell(
-                            index, controller.machineDatas[index]);
+                        return machineCell(index, controller.machineDatas[index]);
                       })))),
       Positioned(
           left: 15.w + 20.5,
           bottom: 50.w + paddingSizeBottom(context) + 15.5.w + 13.5.w,
           height: 31.5.w,
-          child: Center(
-              child: getSimpleText("总计：${controller.machineDatas.length}台", 12,
-                  const Color(0xFFEB5757),
-                  isBold: true))),
+          child: Center(child: getSimpleText("总计：${controller.machineDatas.length}台", 12, const Color(0xFFEB5757), isBold: true))),
       Positioned(
           bottom: 15.5.w,
           left: 15.w,
@@ -198,14 +172,8 @@ class MachineTransferAdvanceOrder
         ghb(12),
         getTerminalNoText(
           data.isNotEmpty && data["tNo"] != null ? data["tNo"] : "",
-          highlightStyle: TextStyle(
-              color: AppColor.textBlack,
-              fontSize: 16.sp,
-              fontWeight: AppDefault.fontBold),
-          style: TextStyle(
-              color: AppColor.textBlack,
-              fontSize: 16.sp,
-              fontWeight: AppDefault.fontBold),
+          highlightStyle: TextStyle(color: AppColor.textBlack, fontSize: 16.sp, fontWeight: AppDefault.fontBold),
+          style: TextStyle(color: AppColor.textBlack, fontSize: 16.sp, fontWeight: AppDefault.fontBold),
         ),
       ], crossAxisAlignment: CrossAxisAlignment.start),
     );

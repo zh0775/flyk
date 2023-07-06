@@ -16,8 +16,7 @@ import 'package:skeletons/skeletons.dart';
 class PromotionSkillsBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<PromotionSkillsController>(
-        PromotionSkillsController(datas: Get.arguments));
+    Get.put<PromotionSkillsController>(PromotionSkillsController(datas: Get.arguments));
   }
 }
 
@@ -77,9 +76,7 @@ class PromotionSkills extends GetView<PromotionSkillsController> {
               // controller: controller.pullCtrls[listIdx],
               // onLoading: () => controller.onLoad(listIdx),
               onRefresh: () => controller.loadData(),
-              onLoad: controller.dataList.length >= controller.count
-                  ? null
-                  : () => controller.loadData(isLoad: true),
+              onLoad: controller.dataList.length >= controller.count ? null : () => controller.loadData(isLoad: true),
               // enablePullUp: controller.counts[listIdx] >
               // controller.dataLists[listIdx].length,
               childBuilder: (context, physics) {
@@ -101,16 +98,10 @@ class PromotionSkills extends GetView<PromotionSkillsController> {
                                       style: SkeletonParagraphStyle(
                                           lines: 2,
                                           // spacing: 10.w,
-                                          lineStyle: SkeletonLineStyle(
-                                              randomLength: true,
-                                              height: 20.w,
-                                              borderRadius:
-                                                  BorderRadius.circular(8))))
+                                          lineStyle: SkeletonLineStyle(randomLength: true, height: 20.w, borderRadius: BorderRadius.circular(8))))
                                 ])
                               ])))
-                            : CustomListEmptyView(
-                                physics: physics,
-                                isLoading: controller.isLoading);
+                            : CustomListEmptyView(physics: physics, isLoading: controller.isLoading);
                       })
                     : ListView.builder(
                         physics: physics,
@@ -126,75 +117,47 @@ class PromotionSkills extends GetView<PromotionSkillsController> {
   Widget cell2(int index, Map data) {
     return CustomButton(
       onPressed: () {
-        push(BusinessSchoolDetail(id: data["id"]), null,
-            binding: BusinessSchoolDetailBinding(),
-            arguments: {"needSave": true});
+        push(BusinessSchoolDetail(id: data["id"]), null, binding: BusinessSchoolDetailBinding(), arguments: {"needSave": true});
       },
       child: Container(
           width: 375.w,
           height: 250.w,
           margin: EdgeInsets.only(top: index == 0 ? 6.w : 0),
           color: Colors.transparent,
-          child: Column(
-            children: [
-              ghb(15),
-              SizedBox(
+          child: Column(children: [
+            ghb(15),
+            SizedBox(
                 width: 345.w,
                 height: 171.w,
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                        child: ClipRRect(
-                            borderRadius: BorderRadius.circular(4.w),
-                            child: CustomNetworkImage(
-                                src: AppDefault().imageUrl +
-                                    (data["coverImg"] ?? ""),
-                                width: 345.w,
-                                height: 171.w,
-                                fit: BoxFit.cover))),
-                    Positioned(
-                        left: 13.5.w,
-                        bottom: 6.w,
-                        child: centRow([
-                          Image.asset(
-                            assetsName("common/icon_lookcount"),
-                            width: 18.w,
-                          ),
-                          gwb(2),
-                          getWidthText(
-                              "${data["view"] ?? 0}", 12, Colors.white, 35, 1,
-                              textHeight: 1.25)
-                        ])),
-                    data["audio"] != null && data["audio"].isNotEmpty
-                        ? Align(
-                            alignment: Alignment.center,
-                            child: Image.asset(
-                              assetsName("common/btn_video_play"),
-                              width: 26.w,
-                              fit: BoxFit.fitWidth,
-                            ),
-                          )
-                        : gemp(),
-                  ],
-                ),
-              ),
-              ghb(13),
-              getWidthText(data["title"] ?? "", 15, AppColor.text2, 345, 2,
-                  isBold: true),
-              ghb(8),
-              sbRow([
-                centRow([
-                  Image.asset(
-                    assetsName("common/icon_addtime"),
-                    width: 18.w,
-                  ),
-                  gwb(2),
-                  getSimpleText(data["addTime"] ?? "", 12, AppColor.text3,
-                      textHeight: 1.25)
-                ])
-              ], width: 345)
-            ],
-          )),
+                child: Stack(children: [
+                  Positioned.fill(
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4.w),
+                          child: CustomNetworkImage(
+                              src: AppDefault().imageUrl + (data["coverImg"] ?? ""), width: 345.w, height: 171.w, fit: BoxFit.cover))),
+                  Positioned(
+                      left: 13.5.w,
+                      bottom: 6.w,
+                      child: centRow([
+                        Image.asset(assetsName("common/icon_lookcount"), width: 18.w),
+                        gwb(2),
+                        getWidthText("${data["view"] ?? 0}", 12, Colors.white, 35, 1, textHeight: 1.25)
+                      ])),
+                  data["audio"] != null && data["audio"].isNotEmpty
+                      ? Align(alignment: Alignment.center, child: Image.asset(assetsName("common/btn_video_play"), width: 26.w, fit: BoxFit.fitWidth))
+                      : gemp()
+                ])),
+            ghb(13),
+            getWidthText(data["title"] ?? "", 15, AppColor.text2, 345, 2, isBold: true),
+            ghb(8),
+            sbRow([
+              centRow([
+                Image.asset(assetsName("common/icon_addtime"), width: 18.w),
+                gwb(2),
+                getSimpleText(data["addTime"] ?? "", 12, AppColor.text3, textHeight: 1.25)
+              ])
+            ], width: 345)
+          ])),
     );
   }
 }

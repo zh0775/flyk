@@ -15,8 +15,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class MachineTransferMachineListBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put<MachineTransferMachineListController>(
-        MachineTransferMachineListController());
+    Get.put<MachineTransferMachineListController>(MachineTransferMachineListController());
   }
 }
 
@@ -148,8 +147,7 @@ class MachineTransferMachineListController extends GetxController {
     bool t = true;
     int count = 0;
     for (var e in machineList) {
-      if (!e["selected"] &&
-          (e["checkStatus"] == null || (e["checkStatus"] ?? "") != "nocheck")) {
+      if (!e["selected"] && (e["checkStatus"] == null || (e["checkStatus"] ?? "") != "nocheck")) {
         t = false;
       } else {
         count++;
@@ -253,8 +251,7 @@ class MachineTransferMachineListController extends GetxController {
   }
 
   quickCountSelectionToEnd() {
-    quickCountTextCtrl.selection = TextSelection.fromPosition(
-        TextPosition(offset: quickCountTextCtrl.text.length));
+    quickCountTextCtrl.selection = TextSelection.fromPosition(TextPosition(offset: quickCountTextCtrl.text.length));
   }
 
   quickCountTextCtrlListener() {
@@ -294,11 +291,9 @@ class MachineTransferMachineListController extends GetxController {
   }
 }
 
-class MachineTransferMachineList
-    extends GetView<MachineTransferMachineListController> {
+class MachineTransferMachineList extends GetView<MachineTransferMachineListController> {
   final Map? brandData;
-  const MachineTransferMachineList({Key? key, this.brandData})
-      : super(key: key);
+  const MachineTransferMachineList({Key? key, this.brandData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -314,9 +309,7 @@ class MachineTransferMachineList
             title: Container(
               width: 170.w,
               height: 34.w,
-              decoration: BoxDecoration(
-                  color: AppColor.pageBackgroundColor,
-                  borderRadius: BorderRadius.circular(6.w)),
+              decoration: BoxDecoration(color: AppColor.pageBackgroundColor, borderRadius: BorderRadius.circular(6.w)),
               child: Center(
                 child: GetX<MachineTransferMachineListController>(
                   init: controller,
@@ -381,10 +374,8 @@ class MachineTransferMachineList
                   );
                 } else {
                   Get.until((route) {
-                    if ((route as GetPageRoute).binding
-                        is MachineTransferBinding) {
-                      Get.find<MachineTransferController>().selectMachineData =
-                          machines;
+                    if ((route as GetPageRoute).binding is MachineTransferBinding) {
+                      Get.find<MachineTransferController>().selectMachineData = machines;
                       return true;
                     }
                     return false;
@@ -411,10 +402,8 @@ class MachineTransferMachineList
                   );
                 } else {
                   Get.until((route) {
-                    if ((route as GetPageRoute).binding
-                        is MachineTransferBinding) {
-                      Get.find<MachineTransferController>().selectMachineData =
-                          controller.searchMachineList;
+                    if ((route as GetPageRoute).binding is MachineTransferBinding) {
+                      Get.find<MachineTransferController>().selectMachineData = controller.searchMachineList;
                       return true;
                     }
                     return false;
@@ -448,37 +437,21 @@ class MachineTransferMachineList
                                               ...controller.statusList
                                                   .asMap()
                                                   .entries
-                                                  .map((e) => GetX<
-                                                          MachineTransferMachineListController>(
+                                                  .map((e) => GetX<MachineTransferMachineListController>(
                                                         init: controller,
                                                         builder: (controller) {
                                                           return CustomButton(
                                                             onPressed: () {
-                                                              controller
-                                                                      .statusIndex =
-                                                                  e.key;
-                                                              controller
-                                                                  .status = controller
-                                                                      .statusList[
-                                                                  e.key]["id"];
-                                                              controller
-                                                                  .getMachineList();
+                                                              controller.statusIndex = e.key;
+                                                              controller.status = controller.statusList[e.key]["id"];
+                                                              controller.getMachineList();
                                                             },
                                                             child: SizedBox(
                                                               width: 68.75.w,
                                                               height: 50.w,
                                                               child: Center(
-                                                                child: getSimpleText(
-                                                                    e.value[
-                                                                        "name"],
-                                                                    15,
-                                                                    controller.statusIndex ==
-                                                                            e
-                                                                                .key
-                                                                        ? AppColor
-                                                                            .theme
-                                                                        : const Color(
-                                                                            0xFFB3B3B3)),
+                                                                child: getSimpleText(e.value["name"], 15,
+                                                                    controller.statusIndex == e.key ? AppColor.theme : const Color(0xFFB3B3B3)),
                                                               ),
                                                             ),
                                                           );
@@ -486,12 +459,7 @@ class MachineTransferMachineList
                                                       ))
                                                   .toList()
                                               // ], width: 375, height: 50),
-                                            ],
-                                                width: 68.75 *
-                                                        controller
-                                                            .statusList.length +
-                                                    0.1,
-                                                height: 50),
+                                            ], width: 68.75 * controller.statusList.length + 0.1, height: 50),
                                           ),
                                         )),
                                     Positioned(
@@ -511,26 +479,12 @@ class MachineTransferMachineList
                                                     Text.rich(TextSpan(
                                                         text:
                                                             "${(controller.brandData["enumName"] ?? "") + (controller.brandData["terninal_Name"] ?? "")}-${controller.statusList[controller.statusIndex]["name"]}库存：",
-                                                        style: TextStyle(
-                                                            fontSize: 15.sp,
-                                                            color: AppColor
-                                                                .textBlack),
+                                                        style: TextStyle(fontSize: 15.sp, color: AppColor.textBlack),
                                                         children: [
                                                           TextSpan(
-                                                              text:
-                                                                  "${controller.currentCount}",
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      15.sp,
-                                                                  color: const Color(
-                                                                      0xFFEB5757))),
-                                                          TextSpan(
-                                                              text: "台",
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      15.sp,
-                                                                  color: AppColor
-                                                                      .textBlack)),
+                                                              text: "${controller.currentCount}",
+                                                              style: TextStyle(fontSize: 15.sp, color: const Color(0xFFEB5757))),
+                                                          TextSpan(text: "台", style: TextStyle(fontSize: 15.sp, color: AppColor.textBlack)),
                                                         ]))
                                                   ], width: 375 - 14.5 * 2),
                                                 )),
@@ -539,73 +493,42 @@ class MachineTransferMachineList
                                                 left: 0,
                                                 right: 0,
                                                 bottom: 0,
-                                                child: controller
-                                                            .currentCount ==
-                                                        0
-                                                    ? GetX<
-                                                        MachineTransferMachineListController>(
+                                                child: controller.currentCount == 0
+                                                    ? GetX<MachineTransferMachineListController>(
                                                         builder: (controller) {
                                                           return CustomEmptyView(
-                                                            isLoading:
-                                                                controller
-                                                                    .isLoading,
+                                                            isLoading: controller.isLoading,
                                                           );
                                                         },
                                                       )
-                                                    : GetX<
-                                                        MachineTransferMachineListController>(
+                                                    : GetX<MachineTransferMachineListController>(
                                                         init: controller,
                                                         initState: (_) {},
                                                         builder: (_) {
                                                           return SmartRefresher(
-                                                            physics:
-                                                                const BouncingScrollPhysics(),
-                                                            controller:
-                                                                controller
-                                                                    .pullCtrl,
-                                                            enablePullDown:
-                                                                true,
-                                                            enablePullUp: controller
-                                                                    .machineList
-                                                                    .length <
-                                                                controller
-                                                                    .currentCount,
-                                                            onRefresh:
-                                                                controller
-                                                                    .onRefresh,
-                                                            onLoading:
-                                                                controller
-                                                                    .onLoad,
-                                                            child: ListView
-                                                                .builder(
-                                                              itemCount: controller
-                                                                      .machineList
-                                                                      .isNotEmpty
-                                                                  ? controller
-                                                                          .machineList
-                                                                          .length +
-                                                                      1
-                                                                  : 1,
-                                                              itemBuilder:
-                                                                  (context,
-                                                                      index) {
-                                                                return index ==
-                                                                        0
+                                                            physics: const BouncingScrollPhysics(),
+                                                            controller: controller.pullCtrl,
+                                                            enablePullDown: true,
+                                                            enablePullUp: controller.machineList.length < controller.currentCount,
+                                                            onRefresh: controller.onRefresh,
+                                                            onLoading: controller.onLoad,
+                                                            child: ListView.builder(
+                                                              itemCount: controller.machineList.isNotEmpty ? controller.machineList.length + 1 : 1,
+                                                              itemBuilder: (context, index) {
+                                                                return index == 0
                                                                     ? Container(
-                                                                        height:
-                                                                            45.w,
+                                                                        height: 45.w,
                                                                         decoration: BoxDecoration(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            border: Border(bottom: BorderSide(width: 0.5.w, color: const Color(0xFFEBEBEB)))),
-                                                                        child:
-                                                                            Center(
-                                                                          child:
-                                                                              Row(
+                                                                            color: Colors.white,
+                                                                            border: Border(
+                                                                                bottom: BorderSide(width: 0.5.w, color: const Color(0xFFEBEBEB)))),
+                                                                        child: Center(
+                                                                          child: Row(
                                                                             children: [
                                                                               gwb(15),
                                                                               SizedBox(
-                                                                                width: 252.w + (controller.statusIndex == 3 ? (375 - 15 - 252 - 66).w : 0),
+                                                                                width: 252.w +
+                                                                                    (controller.statusIndex == 3 ? (375 - 15 - 252 - 66).w : 0),
                                                                                 child: Align(
                                                                                   alignment: Alignment.centerLeft,
                                                                                   child: getSimpleText("机具编号（SN号）", 14, const Color(0xFF808080)),
@@ -625,13 +548,17 @@ class MachineTransferMachineList
                                                                                       ? const SizedBox()
                                                                                       : CustomButton(
                                                                                           onPressed: () {
-                                                                                            controller.selectedAndUnSelectedAll(!controller.isAllSelected);
+                                                                                            controller
+                                                                                                .selectedAndUnSelectedAll(!controller.isAllSelected);
                                                                                           },
                                                                                           child: SizedBox(
                                                                                             width: (375 - 15 - 252 - 66).w,
                                                                                             child: Align(
                                                                                               alignment: Alignment.centerLeft,
-                                                                                              child: getSimpleText(controller.isAllSelected ? "反选" : "全选", 14, AppColor.theme),
+                                                                                              child: getSimpleText(
+                                                                                                  controller.isAllSelected ? "反选" : "全选",
+                                                                                                  14,
+                                                                                                  AppColor.theme),
                                                                                             ),
                                                                                           ),
                                                                                         );
@@ -642,29 +569,32 @@ class MachineTransferMachineList
                                                                         ),
                                                                       )
                                                                     : Container(
-                                                                        width:
-                                                                            375.w,
-                                                                        height:
-                                                                            60.w,
+                                                                        width: 375.w,
+                                                                        height: 60.w,
                                                                         decoration: BoxDecoration(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            border: Border(bottom: BorderSide(width: 0.5.w, color: const Color(0xFFEBEBEB)))),
-                                                                        child:
-                                                                            Center(
-                                                                          child:
-                                                                              Row(
+                                                                            color: Colors.white,
+                                                                            border: Border(
+                                                                                bottom: BorderSide(width: 0.5.w, color: const Color(0xFFEBEBEB)))),
+                                                                        child: Center(
+                                                                          child: Row(
                                                                             children: [
                                                                               gwb(15),
                                                                               CustomButton(
                                                                                 onPressed: () {
-                                                                                  showSnNoModel(context, controller.machineList[index - 1]["tNo"] ?? "");
+                                                                                  showSnNoModel(
+                                                                                      context, controller.machineList[index - 1]["tNo"] ?? "");
                                                                                 },
                                                                                 child: SizedBox(
-                                                                                  width: 252.w + (controller.statusIndex == 3 ? (375 - 15 - 252 - 66).w : 0),
+                                                                                  width: 252.w +
+                                                                                      (controller.statusIndex == 3 ? (375 - 15 - 252 - 66).w : 0),
                                                                                   child: Align(
                                                                                     alignment: Alignment.centerLeft,
-                                                                                    child: getSimpleText(controller.machineList[index - 1]["tNo"] != null ? snNoFormat(controller.machineList[index - 1]["tNo"]) : "", 14, const Color(0xFF808080)),
+                                                                                    child: getSimpleText(
+                                                                                        controller.machineList[index - 1]["tNo"] != null
+                                                                                            ? snNoFormat(controller.machineList[index - 1]["tNo"])
+                                                                                            : "",
+                                                                                        14,
+                                                                                        const Color(0xFF808080)),
                                                                                   ),
                                                                                 ),
                                                                               ),
@@ -672,7 +602,8 @@ class MachineTransferMachineList
                                                                                 width: 66.w,
                                                                                 child: Align(
                                                                                   alignment: Alignment.centerLeft,
-                                                                                  child: getSimpleText(controller.machineList[index - 1]["tStatus"], 14, const Color(0xFF808080)),
+                                                                                  child: getSimpleText(controller.machineList[index - 1]["tStatus"],
+                                                                                      14, const Color(0xFF808080)),
                                                                                 ),
                                                                               ),
                                                                               GetBuilder<MachineTransferMachineListController>(
@@ -692,11 +623,19 @@ class MachineTransferMachineList
                                                                                           },
                                                                                           child: SizedBox(
                                                                                             width: (375 - 15 - 252 - 66).w,
-                                                                                            child: (controller.machineList[index - 1]["checkStatus"] ?? "") == "nocheck"
+                                                                                            child: (controller.machineList[index - 1]
+                                                                                                            ["checkStatus"] ??
+                                                                                                        "") ==
+                                                                                                    "nocheck"
                                                                                                 ? gemp()
                                                                                                 : Align(
                                                                                                     alignment: Alignment.centerLeft,
-                                                                                                    child: assetsSizeImage(controller.machineList[index - 1]["selected"] ? "common/btn_checkbox_selected" : "common/btn_checkbox_normal", 22, 22),
+                                                                                                    child: assetsSizeImage(
+                                                                                                        controller.machineList[index - 1]["selected"]
+                                                                                                            ? "common/btn_checkbox_selected"
+                                                                                                            : "common/btn_checkbox_normal",
+                                                                                                        22,
+                                                                                                        22),
                                                                                                   ),
                                                                                           ),
                                                                                         );
@@ -738,13 +677,8 @@ class MachineTransferMachineList
                                               controller.quickSearchTextCtrl,
                                               scanSnClick: () {
                                                 toScanBarCode(((barCode) {
-                                                  controller.quickSearchTextCtrl
-                                                      .text = barCode;
-                                                  Future.delayed(
-                                                      const Duration(
-                                                          milliseconds: 500),
-                                                      (() => showQuickBottom(
-                                                          context)));
+                                                  controller.quickSearchTextCtrl.text = barCode;
+                                                  Future.delayed(const Duration(milliseconds: 500), (() => showQuickBottom(context)));
                                                 }));
                                               },
                                               isText: true,
@@ -761,9 +695,7 @@ class MachineTransferMachineList
                                             ),
                                             ghb(42),
                                             sbRow([
-                                              getSimpleText("批量连号划拨台数", 17,
-                                                  AppColor.textBlack,
-                                                  isBold: true),
+                                              getSimpleText("批量连号划拨台数", 17, AppColor.textBlack, isBold: true),
                                             ], width: 375 - 15 * 2),
                                             ghb(25),
                                             sbRow([
@@ -774,12 +706,7 @@ class MachineTransferMachineList
                                                 child: Container(
                                                   width: 80.w,
                                                   height: 55.w,
-                                                  decoration: BoxDecoration(
-                                                      color: const Color(
-                                                          0xFFEDEDED),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5.w)),
+                                                  decoration: BoxDecoration(color: const Color(0xFFEDEDED), borderRadius: BorderRadius.circular(5.w)),
                                                   child: Center(
                                                     child: Icon(
                                                       Icons.add_rounded,
@@ -791,28 +718,17 @@ class MachineTransferMachineList
                                               Container(
                                                 width: 160.w,
                                                 height: 55.w,
-                                                decoration:
-                                                    getDefaultWhiteDec(),
+                                                decoration: getDefaultWhiteDec(),
                                                 child: CustomInput(
                                                   width: 150.w,
                                                   heigth: 55.w,
-                                                  focusNode: controller
-                                                      .quickCountTextNode,
-                                                  keyboardType:
-                                                      TextInputType.number,
+                                                  focusNode: controller.quickCountTextNode,
+                                                  keyboardType: TextInputType.number,
                                                   placeholder: "请输入数量",
-                                                  textEditCtrl: controller
-                                                      .quickCountTextCtrl,
-                                                  style: TextStyle(
-                                                      fontSize: 25.sp,
-                                                      color: AppColor.textBlack,
-                                                      fontWeight:
-                                                          AppDefault.fontBold),
-                                                  placeholderStyle: TextStyle(
-                                                      fontSize: 25.sp,
-                                                      color: AppColor.textGrey,
-                                                      fontWeight:
-                                                          AppDefault.fontBold),
+                                                  textEditCtrl: controller.quickCountTextCtrl,
+                                                  style: TextStyle(fontSize: 25.sp, color: AppColor.textBlack, fontWeight: AppDefault.fontBold),
+                                                  placeholderStyle:
+                                                      TextStyle(fontSize: 25.sp, color: AppColor.textGrey, fontWeight: AppDefault.fontBold),
                                                   textAlign: TextAlign.center,
                                                   onSubmitted: (str) {
                                                     takeBackKeyboard(context);
@@ -826,12 +742,7 @@ class MachineTransferMachineList
                                                 child: Container(
                                                   width: 80.w,
                                                   height: 55.w,
-                                                  decoration: BoxDecoration(
-                                                      color: const Color(
-                                                          0xFFEDEDED),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5.w)),
+                                                  decoration: BoxDecoration(color: const Color(0xFFEDEDED), borderRadius: BorderRadius.circular(5.w)),
                                                   child: Center(
                                                     child: Icon(
                                                       Icons.remove_rounded,
@@ -844,10 +755,7 @@ class MachineTransferMachineList
                                             ghb(25),
                                             SizedBox(
                                               width: 345.w,
-                                              child: getSimpleText(
-                                                  "*输入机具号后，填写数量，系统将默认按顺序排列选定,输入完 数字之后点击确认即可",
-                                                  12,
-                                                  AppColor.textGrey),
+                                              child: getSimpleText("*输入机具号后，填写数量，系统将默认按顺序排列选定,输入完 数字之后点击确认即可", 12, AppColor.textGrey),
                                             )
                                           ],
                                         )),
@@ -1412,21 +1320,12 @@ class MachineTransferMachineList
           width: 83.w,
           height: 30.w,
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    idx == controller.topIdx
-                        ? AppColor.theme
-                        : Colors.transparent,
-                    idx == controller.topIdx
-                        ? AppColor.theme.withOpacity(0.7)
-                        : Colors.transparent,
-                  ]),
+              gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                idx == controller.topIdx ? AppColor.theme : Colors.transparent,
+                idx == controller.topIdx ? AppColor.theme.withOpacity(0.7) : Colors.transparent,
+              ]),
               borderRadius: BorderRadius.circular(6.w)),
-          child: Center(
-              child: getSimpleText(idx == 0 ? "机具划拨" : "快速划拨", 14,
-                  idx == controller.topIdx ? Colors.white : AppColor.textGrey)),
+          child: Center(child: getSimpleText(idx == 0 ? "机具划拨" : "快速划拨", 14, idx == controller.topIdx ? Colors.white : AppColor.textGrey)),
         ),
       ),
     );
@@ -1450,22 +1349,15 @@ class MachineTransferMachineList
                   .map((e) => CustomButton(
                         onPressed: () {
                           controller.policyIndex = e.key;
-                          controller.policy =
-                              controller.policyList[e.key]["id"];
+                          controller.policy = controller.policyList[e.key]["id"];
                           Navigator.pop(context);
                         },
                         child: Container(
                           width: 375.w,
                           height: 60.w,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border(
-                                  bottom: BorderSide(
-                                      width: 0.5.w,
-                                      color: AppColor.lineColor))),
+                          decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(width: 0.5.w, color: AppColor.lineColor))),
                           child: Center(
-                            child: getSimpleText(
-                                e.value["name"], 16, AppColor.textBlack),
+                            child: getSimpleText(e.value["name"], 16, AppColor.textBlack),
                           ),
                         ),
                       ))
@@ -1473,12 +1365,7 @@ class MachineTransferMachineList
               ghb(7),
               CustomButton(
                 onPressed: () => Navigator.pop(context),
-                child: Container(
-                    width: 375.w,
-                    height: 61.w,
-                    color: Colors.white,
-                    child: Center(
-                        child: getSimpleText("取消", 16, AppColor.textBlack))),
+                child: Container(width: 375.w, height: 61.w, color: Colors.white, child: Center(child: getSimpleText("取消", 16, AppColor.textBlack))),
               )
             ],
           ),
@@ -1492,162 +1379,137 @@ class MachineTransferMachineList
       GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
           child: SizedBox(
-            width: 375.w,
-            height: 374.w,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  sbRow([
-                    ghb(0),
-                    CustomButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      child: Image.asset(
-                        assetsName(
-                          "common/btn_model_close",
-                        ),
-                        width: 37.w,
-                        height: 56.5.w,
-                        fit: BoxFit.fill,
+              width: 375.w,
+              height: 374.w,
+              child: SingleChildScrollView(
+                  child: Column(children: [
+                sbRow([
+                  ghb(0),
+                  CustomButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: Image.asset(
+                      assetsName(
+                        "common/btn_model_close",
                       ),
-                    ),
-                  ], width: 375 - 24 * 2),
-                  Container(
-                    width: 375.w,
-                    height: 317.w,
-                    decoration: BoxDecoration(
-                        color: AppColor.lineColor,
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(10.w))),
-                    child: Column(
-                      children: [
-                        sbRow([
-                          CustomButton(
-                            onPressed: () {
-                              controller.searchButtonIdx = 0;
-                            },
-                            child: SizedBox(
-                              width: (375 - 1).w / 2,
-                              height: 50.w,
-                              child: Center(child:
-                                  GetX<MachineTransferMachineListController>(
-                                builder: (_) {
-                                  return getSimpleText(
-                                    "普通搜索",
-                                    16,
-                                    controller.searchButtonIdx == 0
-                                        ? AppColor.theme
-                                        : const Color(0xFF808080),
-                                  );
-                                },
-                              )),
-                            ),
-                          ),
-                          gline(1, 15, color: const Color(0xFFE0E0E0)),
-                          CustomButton(
-                            onPressed: () {
-                              controller.searchButtonIdx = 1;
-                            },
-                            child: SizedBox(
-                              width: (375 - 1).w / 2,
-                              height: 50.w,
-                              child: Center(child:
-                                  GetX<MachineTransferMachineListController>(
-                                builder: (_) {
-                                  return getSimpleText(
-                                    "连号搜索",
-                                    16,
-                                    controller.searchButtonIdx == 1
-                                        ? AppColor.theme
-                                        : const Color(0xFF808080),
-                                  );
-                                },
-                              )),
-                            ),
-                          )
-                        ], width: 375),
-                        gline(345, 0.5, color: const Color(0xFFE0E0E0)),
-                        ghb(16),
-                        GetX<MachineTransferMachineListController>(
-                          builder: (_) {
-                            return controller.searchButtonIdx == 0
-                                ? centClm([
-                                    ghb(5.5),
-                                    sbRow([
-                                      getSimpleText(
-                                          "普通搜索", 25, AppColor.textBlack,
-                                          isBold: true),
-                                    ], width: 375 - 25 * 2),
-                                    ghb(10),
-                                    sbRow([
-                                      getSimpleText("输入SN号或者扫描SN号", 14,
-                                          AppColor.textGrey),
-                                    ], width: 375 - 25 * 2),
-                                    ghb(10),
-                                    getSearchInput(
-                                      "请输入机具SN号查询",
-                                      controller.normalSearchTextCtrl,
-                                      scanSnClick: () {
-                                        toScanBarCode(((barCode) => controller
-                                            .normalSearchTextCtrl
-                                            .text = barCode));
-                                      },
-                                    ),
-                                  ])
-                                : centClm([
-                                    getSearchInput(
-                                      "请输入起始机具号",
-                                      controller.startSearchTextCtrl,
-                                      scanSnClick: () {
-                                        toScanBarCode(((barCode) => controller
-                                            .startSearchTextCtrl
-                                            .text = barCode));
-                                      },
-                                    ),
-                                    ghb(12),
-                                    getSearchInput(
-                                      "请输入终点机具号",
-                                      controller.endSearchTextCtrl,
-                                      scanSnClick: () {
-                                        toScanBarCode(((barCode) => controller
-                                            .endSearchTextCtrl.text = barCode));
-                                      },
-                                    ),
-                                  ]);
-                          },
-                        ),
-                        ghb(20.5),
-                        getSubmitBtn("快速搜索", () {
-                          // if (controller.searchButtonIdx == 0) {
-                          //   if (controller
-                          //       .normalSearchTextCtrl.text.isNotEmpty) {
-                          //     controller.terminalNo =
-                          //         controller.normalSearchTextCtrl.text;
-                          //   }
-                          // } else {
-                          //   if (controller
-                          //       .startSearchTextCtrl.text.isNotEmpty) {
-                          //     controller.terminal_Start =
-                          //         controller.startSearchTextCtrl.text;
-                          //   }
-                          //   if (controller
-                          //       .endSearchTextCtrl.text.isNotEmpty) {
-                          //     controller.terminal_End =
-                          //         controller.endSearchTextCtrl.text;
-                          //   }
-                          // }
-
-                          controller.getMachineList();
-                          Navigator.pop(context);
-                        }),
-                      ],
+                      width: 37.w,
+                      height: 56.5.w,
+                      fit: BoxFit.fill,
                     ),
                   ),
-                ],
-              ),
-            ),
-          )),
+                ], width: 375 - 24 * 2),
+                Container(
+                    width: 375.w,
+                    height: 317.w,
+                    decoration: BoxDecoration(color: AppColor.lineColor, borderRadius: BorderRadius.vertical(top: Radius.circular(10.w))),
+                    child: Column(children: [
+                      sbRow([
+                        CustomButton(
+                          onPressed: () {
+                            controller.searchButtonIdx = 0;
+                          },
+                          child: SizedBox(
+                            width: (375 - 1).w / 2,
+                            height: 50.w,
+                            child: Center(child: GetX<MachineTransferMachineListController>(
+                              builder: (_) {
+                                return getSimpleText(
+                                  "普通搜索",
+                                  16,
+                                  controller.searchButtonIdx == 0 ? AppColor.theme : const Color(0xFF808080),
+                                );
+                              },
+                            )),
+                          ),
+                        ),
+                        gline(1, 15, color: const Color(0xFFE0E0E0)),
+                        CustomButton(
+                          onPressed: () {
+                            controller.searchButtonIdx = 1;
+                          },
+                          child: SizedBox(
+                            width: (375 - 1).w / 2,
+                            height: 50.w,
+                            child: Center(child: GetX<MachineTransferMachineListController>(
+                              builder: (_) {
+                                return getSimpleText(
+                                  "连号搜索",
+                                  16,
+                                  controller.searchButtonIdx == 1 ? AppColor.theme : const Color(0xFF808080),
+                                );
+                              },
+                            )),
+                          ),
+                        )
+                      ], width: 375),
+                      gline(345, 0.5, color: const Color(0xFFE0E0E0)),
+                      ghb(16),
+                      GetX<MachineTransferMachineListController>(
+                        builder: (_) {
+                          return controller.searchButtonIdx == 0
+                              ? centClm([
+                                  ghb(5.5),
+                                  sbRow([
+                                    getSimpleText("普通搜索", 25, AppColor.textBlack, isBold: true),
+                                  ], width: 375 - 25 * 2),
+                                  ghb(10),
+                                  sbRow([
+                                    getSimpleText("输入SN号或者扫描SN号", 14, AppColor.textGrey),
+                                  ], width: 375 - 25 * 2),
+                                  ghb(10),
+                                  getSearchInput(
+                                    "请输入机具SN号查询",
+                                    controller.normalSearchTextCtrl,
+                                    scanSnClick: () {
+                                      toScanBarCode(((barCode) => controller.normalSearchTextCtrl.text = barCode));
+                                    },
+                                  ),
+                                ])
+                              : centClm([
+                                  getSearchInput(
+                                    "请输入起始机具号",
+                                    controller.startSearchTextCtrl,
+                                    scanSnClick: () {
+                                      toScanBarCode(((barCode) => controller.startSearchTextCtrl.text = barCode));
+                                    },
+                                  ),
+                                  ghb(12),
+                                  getSearchInput(
+                                    "请输入终点机具号",
+                                    controller.endSearchTextCtrl,
+                                    scanSnClick: () {
+                                      toScanBarCode(((barCode) => controller.endSearchTextCtrl.text = barCode));
+                                    },
+                                  ),
+                                ]);
+                        },
+                      ),
+                      ghb(20.5),
+                      getSubmitBtn("快速搜索", () {
+                        // if (controller.searchButtonIdx == 0) {
+                        //   if (controller
+                        //       .normalSearchTextCtrl.text.isNotEmpty) {
+                        //     controller.terminalNo =
+                        //         controller.normalSearchTextCtrl.text;
+                        //   }
+                        // } else {
+                        //   if (controller
+                        //       .startSearchTextCtrl.text.isNotEmpty) {
+                        //     controller.terminal_Start =
+                        //         controller.startSearchTextCtrl.text;
+                        //   }
+                        //   if (controller
+                        //       .endSearchTextCtrl.text.isNotEmpty) {
+                        //     controller.terminal_End =
+                        //         controller.endSearchTextCtrl.text;
+                        //   }
+                        // }
+                        controller.getMachineList();
+                        Navigator.pop(context);
+                      })
+                    ]))
+              ])))),
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
     ).then((value) {
@@ -1657,77 +1519,51 @@ class MachineTransferMachineList
     });
   }
 
-  Widget getSearchInput(
-    String placeholder,
-    TextEditingController ctrl, {
-    int? maxLength,
-    Function(String str)? onSubmitted,
-    Function()? scanSnClick,
-    Function()? onPressed,
-    bool isText = false,
-  }) {
+  Widget getSearchInput(String placeholder, TextEditingController ctrl,
+      {int? maxLength, Function(String str)? onSubmitted, Function()? scanSnClick, Function()? onPressed, bool isText = false}) {
     return CustomButton(
-      onPressed: onPressed != null
-          ? () {
-              onPressed();
-            }
-          : null,
-      child: Container(
-        width: 345.w,
-        height: 70.w,
-        decoration: getDefaultWhiteDec(),
-        child: Center(
-          child: sbhRow([
-            isText
-                ? SizedBox(
-                    width: 266.w,
-                    height: 70.w,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: getSimpleText(
-                          "请输入机具SN号查询", 15, const Color(0xFFCCCCCC)),
-                    ),
-                  )
-                : CustomInput(
-                    width: 266.w,
-                    heigth: 70.w,
-                    onSubmitted: (str) {
-                      if (onSubmitted != null) {
-                        onSubmitted(str);
-                      }
-                      takeBackKeyboard(Global.navigatorKey.currentContext!);
-                    },
-                    placeholder: placeholder,
-                    textEditCtrl: ctrl,
-                    maxLength: maxLength,
-                    keyboardType: TextInputType.text,
-                    placeholderStyle:
-                        TextStyle(fontSize: 15.sp, color: AppColor.textGrey),
-                    style:
-                        TextStyle(fontSize: 15.sp, color: AppColor.textBlack),
-                  ),
-            AppDefault().appHideScan()
-                ? gwb(345 - 18.5 * 2 - 266)
-                : CustomButton(
-                    onPressed: scanSnClick,
-                    child: SizedBox(
-                      width: (345 - 18.5 * 2 - 266).w,
+        onPressed: onPressed != null
+            ? () {
+                onPressed();
+              }
+            : null,
+        child: Container(
+            width: 345.w,
+            height: 70.w,
+            decoration: getDefaultWhiteDec(),
+            child: Center(
+                child: sbhRow([
+              isText
+                  ? SizedBox(
+                      width: 266.w,
                       height: 70.w,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Image.asset(
-                          assetsName("home/machinemanage/tiaoxingma"),
-                          width: 24.w,
-                          height: 24.w,
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-                  ),
-          ], height: 70, width: 345 - 18.5 * 2),
-        ),
-      ),
-    );
+                      child: Align(alignment: Alignment.centerLeft, child: getSimpleText("请输入机具SN号查询", 15, const Color(0xFFCCCCCC))))
+                  : CustomInput(
+                      width: 266.w,
+                      heigth: 70.w,
+                      onSubmitted: (str) {
+                        if (onSubmitted != null) {
+                          onSubmitted(str);
+                        }
+                        takeBackKeyboard(Global.navigatorKey.currentContext!);
+                      },
+                      placeholder: placeholder,
+                      textEditCtrl: ctrl,
+                      maxLength: maxLength,
+                      keyboardType: TextInputType.text,
+                      placeholderStyle: TextStyle(fontSize: 15.sp, color: AppColor.textGrey),
+                      style: TextStyle(fontSize: 15.sp, color: AppColor.textBlack)),
+              AppDefault().appHideScan()
+                  ? gwb(345 - 18.5 * 2 - 266)
+                  : CustomButton(
+                      onPressed: scanSnClick,
+                      child: SizedBox(
+                          width: (345 - 18.5 * 2 - 266).w,
+                          height: 70.w,
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Image.asset(assetsName("home/machinemanage/tiaoxingma"), width: 24.w, height: 24.w, fit: BoxFit.fill))))
+            ], height: 70, width: 345 - 18.5 * 2))));
   }
 
   showSnNoModel(BuildContext context, String sn) {
@@ -1758,14 +1594,11 @@ class MachineTransferMachineList
                   Container(
                     width: 345.w,
                     height: 116.w,
-                    decoration: BoxDecoration(
-                        color: AppColor.lineColor,
-                        borderRadius: BorderRadius.circular(5.w)),
+                    decoration: BoxDecoration(color: AppColor.lineColor, borderRadius: BorderRadius.circular(5.w)),
                     child: Column(
                       children: [
                         ghb(25),
-                        getSimpleText("点击机具编号即可复制", 15, AppColor.textBlack,
-                            isBold: true),
+                        getSimpleText("点击机具编号即可复制", 15, AppColor.textBlack, isBold: true),
                         ghb(13.5),
                         CustomButton(
                           onPressed: () {
@@ -1776,9 +1609,7 @@ class MachineTransferMachineList
                             width: 270.w,
                             height: 35.w,
                             decoration: getDefaultWhiteDec(),
-                            child: Center(
-                                child: getSimpleText(sn, 20, AppColor.textBlack,
-                                    isBold: true)),
+                            child: Center(child: getSimpleText(sn, 20, AppColor.textBlack, isBold: true)),
                           ),
                         )
                       ],
@@ -1820,10 +1651,7 @@ class MachineTransferMachineList
               Container(
                 width: 375.w,
                 height: 100.w,
-                decoration: BoxDecoration(
-                    color: const Color(0xFFEBEBEB),
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(10.w))),
+                decoration: BoxDecoration(color: const Color(0xFFEBEBEB), borderRadius: BorderRadius.vertical(top: Radius.circular(10.w))),
                 child: Center(
                   child: Container(
                     width: 345.w,
@@ -1848,16 +1676,13 @@ class MachineTransferMachineList
                           onPressed: () {
                             // controller.terminalNo =
                             //     controller.quickSearchTextCtrl.text;
-                            controller.getMachineList(
-                                dataSize: controller.quickSearchCount);
+                            controller.getMachineList(dataSize: controller.quickSearchCount);
                             takeBackKeyboard(context);
                           },
                           child: Container(
                             width: 64.w,
                             height: 30,
-                            decoration: BoxDecoration(
-                                color: AppColor.textBlack,
-                                borderRadius: BorderRadius.circular(5)),
+                            decoration: BoxDecoration(color: AppColor.textBlack, borderRadius: BorderRadius.circular(5)),
                             child: Center(
                               child: getSimpleText("搜索", 15, Colors.white),
                             ),
@@ -1878,25 +1703,15 @@ class MachineTransferMachineList
                   builder: (_) {
                     return ListView.builder(
                       physics: const BouncingScrollPhysics(),
-                      itemCount: controller.searchMachineList.isNotEmpty
-                          ? controller.searchMachineList.length
-                          : 0,
+                      itemCount: controller.searchMachineList.isNotEmpty ? controller.searchMachineList.length : 0,
                       itemBuilder: (context, index) {
                         return Container(
                           width: 375.w,
                           height: 55.w,
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      width: 0.5.w,
-                                      color: AppColor.lineColor))),
+                          decoration: BoxDecoration(border: Border(bottom: BorderSide(width: 0.5.w, color: AppColor.lineColor))),
                           child: Align(
                               alignment: const Alignment(-0.89, 0),
-                              child: getSimpleText(
-                                  controller.searchMachineList[index]["tNo"] ??
-                                      "",
-                                  15,
-                                  AppColor.textBlack)),
+                              child: getSimpleText(controller.searchMachineList[index]["tNo"] ?? "", 15, AppColor.textBlack)),
                         );
                       },
                     );

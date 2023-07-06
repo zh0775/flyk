@@ -24,14 +24,7 @@ class AppLaunchSplashController extends GetxController {
         builder: (context) => Positioned(
               width: ScreenUtil().screenWidth,
               height: ScreenUtil().screenHeight,
-              child: Material(
-                  elevation: 0.0,
-                  child: SpWidget(
-                    imageData: qrByte,
-                    number: shareNum,
-                    logoUrl: logoUrl,
-                    colseAction: hideLaunchSpash,
-                  )),
+              child: Material(elevation: 0.0, child: SpWidget(imageData: qrByte, number: shareNum, logoUrl: logoUrl, colseAction: hideLaunchSpash)),
             ));
   }
 
@@ -43,12 +36,12 @@ class AppLaunchSplashController extends GetxController {
   bool showLaunchSpash(BuildContext context, Function()? safePop) {
     OverlayState? state = Overlay.of(context);
     overlayEntry = createOverlayEntry(context);
-    if (state == null) {
-      if (safePop != null) {
-        safePop();
-      }
-      return false;
-    }
+    // if (state == null) {
+    //   if (safePop != null) {
+    //     safePop();
+    //   }
+    //   return false;
+    // }
     if (overlayEntry != null) {
       state.insert(overlayEntry!);
       if (safePop != null) {
@@ -105,13 +98,11 @@ class AppLaunchSplashController extends GetxController {
       Future.delayed(Duration.zero, () {
         Get.offUntil(
             GetPageRoute(
-              settings: const RouteSettings(name: "MainPage"),
-              page: () => const MainPage(),
-              binding: MainPageBinding(),
-              transition: Transition.noTransition,
-            ), (route) {
-          if (route.settings.name == Routes.splash ||
-              route.settings.name == "showUpdateEventAlert") {
+                settings: const RouteSettings(name: "MainPage"),
+                page: () => const MainPage(),
+                binding: MainPageBinding(),
+                transition: Transition.noTransition), (route) {
+          if (route.settings.name == Routes.splash || route.settings.name == "showUpdateEventAlert") {
             return false;
           }
           return true;
@@ -145,11 +136,7 @@ class AppLaunchSplash extends GetView<AppLaunchSplashController> {
   Widget build(BuildContext context) {
     controller.dataInit(context);
     return Scaffold(
-        body: Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage(assetsName("common/launch_image"))))));
+        body: Container(decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.fill, image: AssetImage(assetsName("common/launch_image"))))));
   }
 }
 
@@ -158,12 +145,7 @@ class SpWidget extends StatefulWidget {
   final Uint8List? imageData;
   final String number;
   final String logoUrl;
-  const SpWidget(
-      {super.key,
-      this.colseAction,
-      this.imageData,
-      this.number = "",
-      this.logoUrl = ""});
+  const SpWidget({super.key, this.colseAction, this.imageData, this.number = "", this.logoUrl = ""});
 
   @override
   State<SpWidget> createState() => _SpWidgetState();
@@ -249,9 +231,7 @@ class _SpWidgetState extends State<SpWidget> {
                   // width: 52.5.w,
                   height: 24.w,
                   padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4.w),
-                      color: Colors.black.withOpacity(0.1)),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(4.w), color: Colors.black.withOpacity(0.1)),
                   child: Center(
                     child: getSimpleText("跳过 ${count}S", 14, Colors.white),
                   ),

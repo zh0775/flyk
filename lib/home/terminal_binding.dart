@@ -46,9 +46,7 @@ class _TerminalBindingState extends State<TerminalBinding> {
         "terminal_No": snTextCtrl.text,
       },
       success: (success, json) {
-        if (success &&
-            json["messages"] != null &&
-            json["messages"].isNotEmpty) {
+        if (success && json["messages"] != null && json["messages"].isNotEmpty) {
           ShowToast.normal(json["messages"]);
         }
       },
@@ -69,9 +67,7 @@ class _TerminalBindingState extends State<TerminalBinding> {
     if (widget.machineData.isNotEmpty) {
       Map homeData = AppDefault().homeData;
       Map authentication = homeData["authentication"] ?? {};
-      nameTextCtrl.text = (authentication["isCertified"] ?? false)
-          ? authentication["u_Name"]
-          : homeData["u_Mobile"] ?? "";
+      nameTextCtrl.text = (authentication["isCertified"] ?? false) ? authentication["u_Name"] : homeData["u_Mobile"] ?? "";
       snTextCtrl.text = widget.machineData["tNo"] ?? "";
     }
     bottomPayPassword = BottomPayPassword.init(
@@ -120,11 +116,7 @@ class _TerminalBindingState extends State<TerminalBinding> {
                 ghb(50),
                 getSubmitBtn("开始关联", () {
                   bindingAction();
-                },
-                    enable: submitEnable,
-                    height: 45,
-                    color: AppColor.theme,
-                    fontSize: 15),
+                }, enable: submitEnable, height: 45, color: AppColor.theme, fontSize: 15),
               ],
             )),
       ),
@@ -134,21 +126,19 @@ class _TerminalBindingState extends State<TerminalBinding> {
   Widget input(int type) {
     double width = (345 - 10 * 2).w;
     return SizedBox(
-      width: width,
-      child: centClm([
-        SizedBox(
-          height: 50.w,
-          child: Center(
-            child: getSimpleText(type == 0 ? "填写代理姓名/手机号" : "填写SN号/扫描SN号", 13,
-                AppColor.textBlack),
-          ),
-        ),
-        Container(
-            width: width,
+        width: width,
+        child: centClm([
+          SizedBox(
             height: 50.w,
-            decoration: BoxDecoration(color: AppColor.pageBackgroundColor),
-            child: Row(
-              children: [
+            child: Center(
+              child: getSimpleText(type == 0 ? "填写代理姓名/手机号" : "填写SN号/扫描SN号", 13, AppColor.textBlack),
+            ),
+          ),
+          Container(
+              width: width,
+              height: 50.w,
+              decoration: BoxDecoration(color: AppColor.pageBackgroundColor),
+              child: Row(children: [
                 gwb(15),
                 CustomInput(
                   textEditCtrl: type == 0 ? nameTextCtrl : snTextCtrl,
@@ -159,27 +149,20 @@ class _TerminalBindingState extends State<TerminalBinding> {
                 gwb(10),
                 type == 0
                     ? gwb(0)
-                    : centRow([
-                        gline(1, 30),
-                        CustomButton(
-                          onPressed: () => scanSnAction(),
-                          child: SizedBox(
-                            width: 50.w,
-                            height: 50.w,
-                            child: Center(
-                              child: Image.asset(
-                                assetsName("home/machinemanage/tiaoxingma"),
-                                width: 20.w,
-                                fit: BoxFit.fitWidth,
-                              ),
-                            ),
-                          ),
-                        )
-                      ])
-              ],
-            ))
-        //
-      ]),
-    );
+                    : AppDefault().appHideScan()
+                        ? gwb(51)
+                        : centRow([
+                            gline(1, 30),
+                            CustomButton(
+                                onPressed: () => scanSnAction(),
+                                child: SizedBox(
+                                    width: 50.w,
+                                    height: 50.w,
+                                    child:
+                                        Center(child: Image.asset(assetsName("home/machinemanage/tiaoxingma"), width: 20.w, fit: BoxFit.fitWidth))))
+                          ])
+              ]))
+          //
+        ]));
   }
 }

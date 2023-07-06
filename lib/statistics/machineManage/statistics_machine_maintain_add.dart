@@ -14,8 +14,7 @@ import 'package:get/get.dart';
 class StatisticsMachineMaintainAddBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<StatisticsMachineMaintainAddController>(
-        StatisticsMachineMaintainAddController());
+    Get.put<StatisticsMachineMaintainAddController>(StatisticsMachineMaintainAddController());
   }
 }
 
@@ -76,11 +75,7 @@ class StatisticsMachineMaintainAddController extends GetxController {
       imgStr += "${index != 0 ? "," : ""}${imageUrls[index]}";
     });
 
-    Map<String, dynamic> params = {
-      "oldTerminalNo": noInputCtrl.text,
-      "cause": descriptionInputCtrl.text,
-      "certificate": imgStr
-    };
+    Map<String, dynamic> params = {"oldTerminalNo": noInputCtrl.text, "cause": descriptionInputCtrl.text, "certificate": imgStr};
 
     simpleRequest(
       url: Urls.userMaintaineApply,
@@ -109,8 +104,7 @@ class StatisticsMachineMaintainAddController extends GetxController {
   }
 }
 
-class StatisticsMachineMaintainAdd
-    extends GetView<StatisticsMachineMaintainAddController> {
+class StatisticsMachineMaintainAdd extends GetView<StatisticsMachineMaintainAddController> {
   const StatisticsMachineMaintainAdd({super.key});
 
   @override
@@ -126,9 +120,7 @@ class StatisticsMachineMaintainAdd
             ghb(15),
             Container(
               width: 345.w,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8.w)),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8.w)),
               child: Column(
                 children: [
                   sbhRow([
@@ -140,11 +132,10 @@ class StatisticsMachineMaintainAdd
                         heigth: 46.w,
                         placeholder: "请输入故障设备编号",
                         style: TextStyle(fontSize: 14.w, color: AppColor.text),
-                        placeholderStyle: TextStyle(
-                            fontSize: 14.w, color: AppColor.assisText),
+                        placeholderStyle: TextStyle(fontSize: 14.w, color: AppColor.assisText),
                       ),
                     ]),
-                    kIsWeb
+                    AppDefault().appHideScan()
                         ? gwb(0)
                         : CustomButton(
                             onPressed: () {
@@ -245,12 +236,8 @@ class StatisticsMachineMaintainAdd
                       width: (315 - 90).w,
                       heigth: 138.5.w,
                       placeholder: "描述一下设备故障问题吧...",
-                      style: TextStyle(
-                          fontSize: 14.w, color: AppColor.text, height: 1.5),
-                      placeholderStyle: TextStyle(
-                          fontSize: 14.w,
-                          color: AppColor.assisText,
-                          height: 1.5),
+                      style: TextStyle(fontSize: 14.w, color: AppColor.text, height: 1.5),
+                      placeholderStyle: TextStyle(fontSize: 14.w, color: AppColor.assisText, height: 1.5),
                       textAlignVertical: TextAlignVertical.top,
                       textAlign: TextAlign.start,
                       maxLines: 100,
@@ -274,11 +261,7 @@ class StatisticsMachineMaintainAdd
               builder: (_) {
                 return getSubmitBtn("提交", () {
                   controller.submitAction();
-                },
-                    width: 345,
-                    height: 45,
-                    color: AppColor.theme,
-                    enable: controller.submitEnable);
+                }, width: 345, height: 45, color: AppColor.theme, enable: controller.submitEnable);
               },
             ),
             ghb(20)
@@ -293,9 +276,7 @@ class StatisticsMachineMaintainAdd
     Get.bottomSheet(Container(
       height: height.w,
       width: 375.w,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(6.w))),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.vertical(top: Radius.circular(6.w))),
       child: Column(
         children: [
           sbhRow(
@@ -312,8 +293,7 @@ class StatisticsMachineMaintainAdd
                           width: 65.w,
                           height: 52.w,
                           child: Center(
-                            child: getSimpleText(index == 0 ? "取消" : "确定", 14,
-                                index == 0 ? AppColor.text3 : AppColor.text),
+                            child: getSimpleText(index == 0 ? "取消" : "确定", 14, index == 0 ? AppColor.text3 : AppColor.text),
                           ),
                         ),
                       )),
@@ -324,8 +304,7 @@ class StatisticsMachineMaintainAdd
             width: 375.w,
             height: height.w - 52.w - 1.w,
             child: CupertinoPicker.builder(
-              scrollController: FixedExtentScrollController(
-                  initialItem: controller.faultIndex),
+              scrollController: FixedExtentScrollController(initialItem: controller.faultIndex),
               itemExtent: 40.w,
               childCount: controller.faultList.length,
               onSelectedItemChanged: (value) {
@@ -335,11 +314,8 @@ class StatisticsMachineMaintainAdd
                 return Center(
                   child: GetX<StatisticsMachineMaintainAddController>(
                     builder: (_) {
-                      return getSimpleText(controller.faultList[index]["name"],
-                          15, AppColor.text,
-                          fw: controller.faultIndex == index
-                              ? FontWeight.w500
-                              : FontWeight.normal);
+                      return getSimpleText(controller.faultList[index]["name"], 15, AppColor.text,
+                          fw: controller.faultIndex == index ? FontWeight.w500 : FontWeight.normal);
                     },
                   ),
                 );

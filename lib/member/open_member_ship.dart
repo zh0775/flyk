@@ -85,9 +85,7 @@ class OpenMemberShipController extends GetxController {
             Map data = json['data'] ?? {};
             superVipData = data['data'] ?? [];
             // 默认选数组中的第一个
-            payTypeList = convert.jsonDecode(
-                    superVipData[0]["levelGiftPaymentMethod"] ?? "") ??
-                [];
+            payTypeList = convert.jsonDecode(superVipData[0]["levelGiftPaymentMethod"] ?? "") ?? [];
             update();
           }
         },
@@ -105,8 +103,13 @@ class OpenMemberShipController extends GetxController {
       "purchase_Type": 1,
       "delivery_Method": 2,
       "pay_Method": payTypeList[0]["value"],
-      "orderContent": [
-        {"id": superVipData[currentVipIndex]["levelGiftId"] ?? -1, "num": 1}
+      "product_Type": 2,
+      "orderProduct": [
+        {
+          "productId": superVipData[currentVipIndex]["levelGiftId"] ?? -1,
+          "productListId": superVipData[currentVipIndex]["levelGiftId"] ?? -1,
+          "num": 1
+        }
       ]
     };
 
@@ -208,18 +211,10 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
       backgroundColor: AppColor.pageBackgroundColor,
       appBar: getDefaultAppBar(context, "开通超级会员", action: [
         CustomButton(
-          onPressed: () {
-            push(const PurchaseHistoryPage(), context,
-                binding: PurchaseHistoryBinding());
-          },
-          child: SizedBox(
-            height: kToolbarHeight,
-            width: 80.w,
-            child: Center(
-              child: getSimpleText("购买记录", 14, AppColor.textBlack),
-            ),
-          ),
-        )
+            onPressed: () {
+              push(const PurchaseHistoryPage(), context, binding: PurchaseHistoryBinding());
+            },
+            child: SizedBox(height: kToolbarHeight, width: 80.w, child: Center(child: getSimpleText("购买记录", 14, AppColor.textBlack))))
       ]),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -234,10 +229,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                     alignment: Alignment.topCenter,
                     child: svipHeaderBox(),
                   ),
-                  Positioned(
-                    top: 260.w,
-                    child: vipSwipe(),
-                  )
+                  Positioned(top: 260.w, child: vipSwipe())
                 ],
               ),
             ),
@@ -298,8 +290,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             getSimpleText('尊敬的付利优客', 16, Colors.white),
-                            getSimpleText(
-                                '您当前还不是SVIP，请购买会员套餐', 12, Colors.white38),
+                            getSimpleText('您当前还不是SVIP，请购买会员套餐', 12, Colors.white38),
                           ],
                         )
                       ],
@@ -347,10 +338,8 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                           ),
                           child: centClm([
                             ghb(15),
-                            getSimpleText(
-                                '刷卡费率低至 0.60', 14, const Color(0xFF7D3E04)),
-                            getSimpleText(
-                                '扫码费率低至 0.38', 14, const Color(0xFF7D3E04)),
+                            getSimpleText('刷卡费率低至 0.60', 14, const Color(0xFF7D3E04)),
+                            getSimpleText('扫码费率低至 0.38', 14, const Color(0xFF7D3E04)),
                           ]),
                         ),
                       ),
@@ -416,8 +405,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                     children: [
                                       Align(
                                         alignment: Alignment.bottomCenter,
-                                        child: controller.currentVipIndex ==
-                                                index
+                                        child: controller.currentVipIndex == index
                                             ? Image.asset(
                                                 assetsName('member/vip-bg'),
                                                 width: 120.w,
@@ -428,23 +416,18 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                                 width: 120.w,
                                                 height: 160.w,
                                                 decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0xFFFFFCF3),
+                                                  color: const Color(0xFFFFFCF3),
                                                   border: Border.all(
-                                                    color:
-                                                        const Color(0xFFFFE9B1),
+                                                    color: const Color(0xFFFFE9B1),
                                                   ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15.w),
+                                                  borderRadius: BorderRadius.circular(15.w),
                                                 ),
                                               ),
                                       ),
                                       Positioned.fill(
                                           child: centClm([
                                         ghb(25.5),
-                                        getSimpleText("${item['levelName']}",
-                                            14, const Color(0xFF804E13)),
+                                        getSimpleText("${item['levelName']}", 14, const Color(0xFF804E13)),
                                         ghb(12),
                                         Text.rich(
                                           TextSpan(
@@ -452,16 +435,14 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                               TextSpan(
                                                 text: '¥',
                                                 style: TextStyle(
-                                                  color:
-                                                      const Color(0xFF804E13),
+                                                  color: const Color(0xFF804E13),
                                                   fontSize: 24.w,
                                                 ),
                                               ),
                                               TextSpan(
                                                 text: "${item['nowPrice']}",
                                                 style: TextStyle(
-                                                  color:
-                                                      const Color(0xFF804E13),
+                                                  color: const Color(0xFF804E13),
                                                   fontSize: 36.w,
                                                 ),
                                               )
@@ -474,8 +455,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                           style: const TextStyle(
                                             color: Color(0xFF804E13),
                                             fontSize: 12,
-                                            decoration:
-                                                TextDecoration.lineThrough,
+                                            decoration: TextDecoration.lineThrough,
                                           ),
                                         ),
                                         ghb(20.w),
@@ -503,26 +483,16 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                                 height: 24.w,
                                                 alignment: Alignment.center,
                                                 decoration: BoxDecoration(
-                                                  gradient:
-                                                      const LinearGradient(
-                                                          colors: [
-                                                        Color(0xFFFE5E00),
-                                                        Color(0xFFFB7600),
-                                                      ],
-                                                          begin: Alignment
-                                                              .centerLeft,
-                                                          end: Alignment
-                                                              .centerRight),
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(4.w),
-                                                    bottomRight:
-                                                        Radius.circular(8.w),
+                                                  gradient: const LinearGradient(colors: [
+                                                    Color(0xFFFE5E00),
+                                                    Color(0xFFFB7600),
+                                                  ], begin: Alignment.centerLeft, end: Alignment.centerRight),
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(4.w),
+                                                    bottomRight: Radius.circular(8.w),
                                                   ),
                                                 ),
-                                                child: getSimpleText(
-                                                    "限时福利价", 12, Colors.white),
+                                                child: getSimpleText("限时福利价", 12, Colors.white),
                                               ),
                                             )
                                           : gwb(0)
@@ -683,8 +653,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                     CustomButton(
                       onPressed: () {
                         // print('确认协议并支付');
-                        controller.openMemberPopup(openMemberPopupBox(controller
-                            .superVipData[controller.currentVipIndex]));
+                        controller.openMemberPopup(openMemberPopupBox(controller.superVipData[controller.currentVipIndex]));
                         // controller.createdVipOrderId();
                       },
                       child: Container(
@@ -702,19 +671,12 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                           borderRadius: BorderRadius.circular(45.w / 2),
                         ),
                         child: centClm([
-                          getSimpleText(
-                              "确认协议并支付 ￥${controller.superVipData[controller.currentVipIndex]['nowPrice'] ?? 0} ",
-                              15,
-                              Colors.white),
+                          getSimpleText("确认协议并支付 ￥${controller.superVipData[controller.currentVipIndex]['nowPrice'] ?? 0} ", 15, Colors.white),
                         ]),
                       ),
                     ),
                     ghb(12),
-                    centRow([
-                      getSimpleText('开通前请阅读', 12, const Color(0xFF999999)),
-                      getSimpleText(
-                          '《SVIP会员服务协议及续费声明》', 12, const Color(0xFFFE4F3B))
-                    ])
+                    centRow([getSimpleText('开通前请阅读', 12, const Color(0xFF999999)), getSimpleText('《SVIP会员服务协议及续费声明》', 12, const Color(0xFFFE4F3B))])
                   ],
                 ),
               );
@@ -731,8 +693,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
       color: Colors.white,
       child: Column(
         children: [
-          sbRow([getSimpleText("超级会员权益", 16, AppColor.text, isBold: true)],
-              width: 375 - 15.5 * 2),
+          sbRow([getSimpleText("超级会员权益", 16, AppColor.text, isBold: true)], width: 375 - 15.5 * 2),
           ghb(18.5),
           SizedBox(
             child: Wrap(
@@ -741,9 +702,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                 Container(
                   width: 80.w,
                   height: 90.w,
-                  decoration: BoxDecoration(
-                      color: const Color(0xFFFFF5E4),
-                      borderRadius: BorderRadius.circular(5.w)),
+                  decoration: BoxDecoration(color: const Color(0xFFFFF5E4), borderRadius: BorderRadius.circular(5.w)),
                   // color: Color(0xFFFFF5E4),
                   child: centClm(
                     [
@@ -754,8 +713,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                         fit: BoxFit.fill,
                       ),
                       ghb(8),
-                      getSimpleText('超低', 14, const Color(0xFF804E13),
-                          isBold: true),
+                      getSimpleText('超低', 14, const Color(0xFF804E13), isBold: true),
                       ghb(6.5),
                       getSimpleText('商户费率', 12, const Color(0xFFC6AE94))
                     ],
@@ -764,9 +722,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                 Container(
                   width: 80.w,
                   height: 90.w,
-                  decoration: BoxDecoration(
-                      color: const Color(0xFFFFF5E4),
-                      borderRadius: BorderRadius.circular(5.w)),
+                  decoration: BoxDecoration(color: const Color(0xFFFFF5E4), borderRadius: BorderRadius.circular(5.w)),
                   // color: Color(0xFFFFF5E4),
                   child: centClm(
                     [
@@ -777,8 +733,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                         fit: BoxFit.fill,
                       ),
                       ghb(8),
-                      getSimpleText('免费', 14, const Color(0xFF804E13),
-                          isBold: true),
+                      getSimpleText('免费', 14, const Color(0xFF804E13), isBold: true),
                       ghb(6.5),
                       getSimpleText('售后换新', 12, const Color(0xFFC6AE94))
                     ],
@@ -787,9 +742,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                 Container(
                   width: 80.w,
                   height: 90.w,
-                  decoration: BoxDecoration(
-                      color: const Color(0xFFFFF5E4),
-                      borderRadius: BorderRadius.circular(5.w)),
+                  decoration: BoxDecoration(color: const Color(0xFFFFF5E4), borderRadius: BorderRadius.circular(5.w)),
                   // color: Color(0xFFFFF5E4),
                   child: centClm(
                     [
@@ -800,8 +753,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                         fit: BoxFit.fill,
                       ),
                       ghb(8),
-                      getSimpleText('专属', 14, const Color(0xFF804E13),
-                          isBold: true),
+                      getSimpleText('专属', 14, const Color(0xFF804E13), isBold: true),
                       ghb(6.5),
                       getSimpleText('优质商户', 12, const Color(0xFFC6AE94))
                     ],
@@ -810,9 +762,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                 Container(
                   width: 80.w,
                   height: 90.w,
-                  decoration: BoxDecoration(
-                      color: const Color(0xFFFFF5E4),
-                      borderRadius: BorderRadius.circular(5.w)),
+                  decoration: BoxDecoration(color: const Color(0xFFFFF5E4), borderRadius: BorderRadius.circular(5.w)),
                   // color: Color(0xFFFFF5E4),
                   child: centClm(
                     [
@@ -823,8 +773,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                         fit: BoxFit.fill,
                       ),
                       ghb(8),
-                      getSimpleText('尊享', 14, const Color(0xFF804E13),
-                          isBold: true),
+                      getSimpleText('尊享', 14, const Color(0xFF804E13), isBold: true),
                       ghb(6.5),
                       getSimpleText('身份标识', 12, const Color(0xFFC6AE94))
                     ],
@@ -877,13 +826,10 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                       height: 24.w,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFFE5E00),
-                              Color(0xFFFB7600),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight),
+                        gradient: const LinearGradient(colors: [
+                          Color(0xFFFE5E00),
+                          Color(0xFFFB7600),
+                        ], begin: Alignment.centerLeft, end: Alignment.centerRight),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(4.w),
                           bottomRight: Radius.circular(8.w),
@@ -896,22 +842,19 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                       child: Column(
                     children: [
                       ghb(19.5),
-                      getSimpleText("超值${vipItem['levelName']}", 18,
-                          const Color(0xFFFFDBA2)),
+                      getSimpleText("超值${vipItem['levelName']}", 18, const Color(0xFFFFDBA2)),
                       // controller
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           getSimpleText('¥', 14, const Color(0xFFFFDBA2)),
-                          getSimpleText("${vipItem['nowPrice']}", 24,
-                              const Color(0xFFFFDBA2)),
+                          getSimpleText("${vipItem['nowPrice']}", 24, const Color(0xFFFFDBA2)),
                           gwb(15),
                           getSimpleText('开通超级会员', 24, const Color(0xFFFFDBA2)),
                         ],
                       ),
                       ghb(40.5),
-                      getSimpleText('- 会员专享特权 -', 18, const Color(0xFF804E13),
-                          isBold: true),
+                      getSimpleText('- 会员专享特权 -', 18, const Color(0xFF804E13), isBold: true),
                       ghb(19.5),
                       SizedBox(
                         child: Wrap(
@@ -920,9 +863,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                             Container(
                               width: 56.w,
                               height: 63.w,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5.w)),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.w)),
                               // color: Color(0xFFFFF5E4),
                               child: centClm(
                                 [
@@ -932,20 +873,15 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                     height: 21.w,
                                     fit: BoxFit.fill,
                                   ),
-                                  getSimpleText(
-                                      '超低', 12, const Color(0xFF804E13),
-                                      isBold: true),
-                                  getSimpleText(
-                                      '商户费率', 10, const Color(0xFFC6AE94))
+                                  getSimpleText('超低', 12, const Color(0xFF804E13), isBold: true),
+                                  getSimpleText('商户费率', 10, const Color(0xFFC6AE94))
                                 ],
                               ),
                             ),
                             Container(
                               width: 56.w,
                               height: 63.w,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5.w)),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.w)),
                               // color: Color(0xFFFFF5E4),
                               child: centClm(
                                 [
@@ -955,20 +891,15 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                     height: 21.w,
                                     fit: BoxFit.fill,
                                   ),
-                                  getSimpleText(
-                                      '免费', 12, const Color(0xFF804E13),
-                                      isBold: true),
-                                  getSimpleText(
-                                      '售后换新', 10, const Color(0xFFC6AE94))
+                                  getSimpleText('免费', 12, const Color(0xFF804E13), isBold: true),
+                                  getSimpleText('售后换新', 10, const Color(0xFFC6AE94))
                                 ],
                               ),
                             ),
                             Container(
                               width: 56.w,
                               height: 63.w,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5.w)),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.w)),
                               // color: Color(0xFFFFF5E4),
                               child: centClm(
                                 [
@@ -978,20 +909,15 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                     height: 21.w,
                                     fit: BoxFit.fill,
                                   ),
-                                  getSimpleText(
-                                      '专属', 12, const Color(0xFF804E13),
-                                      isBold: true),
-                                  getSimpleText(
-                                      '优质商户', 10, const Color(0xFFC6AE94))
+                                  getSimpleText('专属', 12, const Color(0xFF804E13), isBold: true),
+                                  getSimpleText('优质商户', 10, const Color(0xFFC6AE94))
                                 ],
                               ),
                             ),
                             Container(
                               width: 56.w,
                               height: 63.w,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5.w)),
+                              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(5.w)),
                               // color: Color(0xFFFFF5E4),
                               child: centClm(
                                 [
@@ -1001,11 +927,8 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                     height: 21.w,
                                     fit: BoxFit.fill,
                                   ),
-                                  getSimpleText(
-                                      '尊享', 12, const Color(0xFF804E13),
-                                      isBold: true),
-                                  getSimpleText(
-                                      '身份标识', 10, const Color(0xFFC6AE94))
+                                  getSimpleText('尊享', 12, const Color(0xFF804E13), isBold: true),
+                                  getSimpleText('身份标识', 10, const Color(0xFFC6AE94))
                                 ],
                               ),
                             )
@@ -1016,10 +939,8 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          getSimpleText(
-                              '尊享多种会员特权，开通预计可省', 12, const Color(0xFF804E13)),
-                          getSimpleText('￥4800', 16, const Color(0xFFFE493B),
-                              isBold: true),
+                          getSimpleText('尊享多种会员特权，开通预计可省', 12, const Color(0xFF804E13)),
+                          getSimpleText('￥4800', 16, const Color(0xFFFE493B), isBold: true),
                         ],
                       ),
                       ghb(24),
@@ -1029,12 +950,10 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                           CustomButton(
                             onPressed: () {
                               // Get.back();
-                              Navigator.pop(
-                                  Global.navigatorKey.currentContext!);
+                              Navigator.pop(Global.navigatorKey.currentContext!);
                             },
                             child: Container(
-                              padding:
-                                  EdgeInsets.fromLTRB(33.w, 15.w, 33.w, 15.w),
+                              padding: EdgeInsets.fromLTRB(33.w, 15.w, 33.w, 15.w),
                               decoration: BoxDecoration(
                                 border: Border.all(
                                   color: const Color(0xFF261D1C),
@@ -1042,18 +961,15 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                 ),
                                 borderRadius: BorderRadius.circular(22.5.w),
                               ),
-                              child: getSimpleText(
-                                  '暂不需要', 15, const Color(0xFF261D1C)),
+                              child: getSimpleText('暂不需要', 15, const Color(0xFF261D1C)),
                             ),
                           ),
                           CustomButton(
                             onPressed: () {
-                              Navigator.pop(
-                                  Global.navigatorKey.currentContext!);
+                              Navigator.pop(Global.navigatorKey.currentContext!);
                             },
                             child: Container(
-                              padding:
-                                  EdgeInsets.fromLTRB(33.w, 15.w, 33.w, 15.w),
+                              padding: EdgeInsets.fromLTRB(33.w, 15.w, 33.w, 15.w),
                               decoration: BoxDecoration(
                                 color: const Color(0xFF261D1C),
                                 border: Border.all(
@@ -1064,18 +980,14 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                               ),
                               child: CustomButton(
                                   onPressed: () {
-                                    controller.payTypeList = convert.jsonDecode(
-                                        vipItem['levelGiftPaymentMethod'] ??
-                                            '');
-                                    Navigator.pop(
-                                        Global.navigatorKey.currentContext!);
+                                    controller.payTypeList = convert.jsonDecode(vipItem['levelGiftPaymentMethod'] ?? '');
+                                    Navigator.pop(Global.navigatorKey.currentContext!);
                                     controller.createdVipOrderId(vipPaySuccess);
 
                                     // controller.openIsPaySuccessPopup(vipPaySuccess());
                                     // controller.update();
                                   },
-                                  child:
-                                      getSimpleText('马上开通', 15, Colors.white)),
+                                  child: getSimpleText('马上开通', 15, Colors.white)),
                             ),
                           )
                         ],
@@ -1130,8 +1042,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   getSimpleText(
                                       "${controller.getSuperSwitchMonth(controller.superVipData[controller.currentVipIndex]['levelDescribe'])}个月超级会员卡",
@@ -1140,8 +1051,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                   Image(
                                     width: 46.5.w,
                                     height: 14.w,
-                                    image:
-                                        AssetImage(assetsName('member/svip')),
+                                    image: AssetImage(assetsName('member/svip')),
                                     fit: BoxFit.fill,
                                   )
                                 ],
@@ -1159,8 +1069,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                                               fontSize: 14.w,
                                             )),
                                         TextSpan(
-                                            text:
-                                                "${controller.superVipData[controller.currentVipIndex]['nowPrice'].toInt()}",
+                                            text: "${controller.superVipData[controller.currentVipIndex]['nowPrice'].toInt()}",
                                             style: TextStyle(
                                               color: const Color(0xFFFFDCA2),
                                               fontSize: 24.w,
@@ -1182,8 +1091,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                           ),
                         ),
                         ghb(18),
-                        getSimpleText('购买成功！', 18, const Color(0xFF333333),
-                            isBold: true),
+                        getSimpleText('购买成功！', 18, const Color(0xFF333333), isBold: true),
                         ghb(18),
                         getSimpleText(
                             "您已成功开通${controller.getSuperSwitchMonth(controller.superVipData[controller.currentVipIndex]['levelDescribe'])}个月超级会员",
@@ -1202,10 +1110,7 @@ class OpenMemberShipPage extends GetView<OpenMemberShipController> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.w),
                               color: const Color(0xFFFD573B),
-                              gradient: const LinearGradient(colors: [
-                                Color(0xFFFD573B),
-                                Color(0xFFFF3A3A)
-                              ]),
+                              gradient: const LinearGradient(colors: [Color(0xFFFD573B), Color(0xFFFF3A3A)]),
                             ),
                             child: getSimpleText('立即体验', 15, Colors.white),
                           ),

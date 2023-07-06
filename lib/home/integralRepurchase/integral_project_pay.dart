@@ -20,8 +20,7 @@ import 'package:get/get.dart';
 class IntegralProjectPayBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<IntegralProjectPayController>(
-        IntegralProjectPayController(datas: Get.arguments));
+    Get.put<IntegralProjectPayController>(IntegralProjectPayController(datas: Get.arguments));
   }
 }
 
@@ -90,8 +89,7 @@ class IntegralProjectPayController extends GetxController {
                   AppSuccessResult(
                     success: aliData["resultStatus"] == "9000",
                     title: "支付结果",
-                    contentTitle:
-                        aliData["resultStatus"] == "9000" ? "支付成功" : "支付失败",
+                    contentTitle: aliData["resultStatus"] == "9000" ? "支付成功" : "支付失败",
                     buttonTitles: const ["查看订单", "继续购买"],
                     backPressed: () {
                       popToUntil();
@@ -115,11 +113,9 @@ class IntegralProjectPayController extends GetxController {
                             GetPageRoute(
                                 page: () => const IntegralRepurchase(),
                                 binding: IntegralRepurchaseBinding(),
-                                settings: const RouteSettings(
-                                    name: "IntegralRepurchase",
-                                    arguments: {
-                                      "isRepurchase": true,
-                                    })),
+                                settings: const RouteSettings(name: "IntegralRepurchase", arguments: {
+                                  "isRepurchase": true,
+                                })),
                             (route) => route is GetPageRoute
                                 ? route.binding is MainPageBinding
                                     ? true
@@ -174,11 +170,9 @@ class IntegralProjectPayController extends GetxController {
                         GetPageRoute(
                             page: () => const IntegralRepurchase(),
                             binding: IntegralRepurchaseBinding(),
-                            settings: const RouteSettings(
-                                name: "IntegralRepurchase",
-                                arguments: {
-                                  "isRepurchase": false,
-                                })),
+                            settings: const RouteSettings(name: "IntegralRepurchase", arguments: {
+                              "isRepurchase": false,
+                            })),
                         (route) => route is GetPageRoute
                             ? route.binding is MainPageBinding
                                 ? true
@@ -235,103 +229,80 @@ class IntegralProjectPay extends GetView<IntegralProjectPayController> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return true;
-      },
-      child: Scaffold(
-        appBar: getDefaultAppBar(context, "支付订单"),
-        body: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: 375.w,
-                  height: 141.w,
-                  child: Center(
-                    child: centClm([
-                      getSimpleText("实付金额", 12, AppColor.text3),
-                      ghb(5),
-                      getSimpleText(
-                          controller.isRepurchase
-                              ? "￥${priceFormat((controller.integralData["price2"] ?? 0) * (controller.integralData["num"] ?? 1))}"
-                              : "${priceFormat((controller.integralData["price"] ?? 0) * (controller.integralData["num"] ?? 1), savePoint: 0)}积分",
-                          30,
-                          AppColor.text,
-                          isBold: true),
-                      ghb(5),
-                      GetBuilder<IntegralProjectPayController>(
-                        id: controller.timeBuildId,
-                        builder: (_) {
-                          return getSimpleText(
-                              "剩余支付时间 ${controller.hours} : ${controller.minutes} : ${controller.seconds}",
-                              12,
-                              AppColor.text3);
-                        },
+        onWillPop: () async {
+          return true;
+        },
+        child: Scaffold(
+            appBar: getDefaultAppBar(context, "支付订单"),
+            body: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(children: [
+                  SizedBox(
+                    width: 375.w,
+                    height: 141.w,
+                    child: Center(
+                      child: centClm([
+                        getSimpleText("实付金额", 12, AppColor.text3),
+                        ghb(5),
+                        getSimpleText(
+                            controller.isRepurchase
+                                ? "￥${priceFormat((controller.integralData["price2"] ?? 0) * (controller.integralData["num"] ?? 1))}"
+                                : "${priceFormat((controller.integralData["price"] ?? 0) * (controller.integralData["num"] ?? 1), savePoint: 0)}积分",
+                            30,
+                            AppColor.text,
+                            isBold: true),
+                        ghb(5),
+                        GetBuilder<IntegralProjectPayController>(
+                          id: controller.timeBuildId,
+                          builder: (_) {
+                            return getSimpleText("剩余支付时间 ${controller.hours} : ${controller.minutes} : ${controller.seconds}", 12, AppColor.text3);
+                          },
+                        ),
+                      ]),
+                    ),
+                  ),
+                  Container(
+                      width: 345.w,
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: 5.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4.w),
                       ),
-                    ]),
-                  ),
-                ),
-                Container(
-                  width: 345.w,
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.symmetric(vertical: 5.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(4.w),
-                  ),
-                  child: Column(
-                    children: List.generate(1, (index) {
-                      return CustomButton(
-                        onPressed: () {
-                          controller.payIndex = index;
-                        },
-                        child: sbhRow([
-                          centRow([
-                            Image.asset(
-                              assetsName(controller.isRepurchase
-                                  ? "home/integralRepurchase/icon_${index == 0 ? "alipay" : "wx"}"
-                                  : "mine/jf/icon_jf"),
-                              width: controller.isRepurchase ? 24.w : 21.w,
-                              fit: BoxFit.fitWidth,
-                            ),
-                            gwb(6),
-                            getSimpleText(
-                                "${controller.isRepurchase ? index == 0 ? "支付宝" : "微信" : "积分钱包"}支付",
-                                14,
-                                AppColor.text2),
-                          ]),
-                          GetX<IntegralProjectPayController>(
-                            builder: (_) {
-                              return Image.asset(
-                                assetsName(
-                                    "machine/checkbox_${controller.payIndex == index ? "selected" : "normal"}"),
-                                width: 21.w,
-                                fit: BoxFit.fitWidth,
-                              );
+                      child: Column(
+                          children: List.generate(1, (index) {
+                        return CustomButton(
+                            onPressed: () {
+                              controller.payIndex = index;
                             },
-                          ),
-                        ], width: 345 - 15 * 2, height: 50),
-                      );
-                    }),
-                  ),
-                ),
-                ghb(30),
-                getSubmitBtn("确认支付", () {
-                  if (AppDefault().homeData["u_3rd_password"] == null ||
-                      AppDefault().homeData["u_3rd_password"].isEmpty) {
-                    showPayPwdWarn(
-                      haveClose: true,
-                      popToRoot: false,
-                      untilToRoot: false,
-                      setSuccess: () {},
-                    );
-                    return;
-                  }
-                  controller.bottomPayPassword.show();
-                }, height: 45, color: AppColor.theme)
-              ],
-            )),
-      ),
-    );
+                            child: sbhRow([
+                              centRow([
+                                Image.asset(
+                                  assetsName(
+                                      controller.isRepurchase ? "home/integralRepurchase/icon_${index == 0 ? "alipay" : "wx"}" : "mine/jf/icon_jf"),
+                                  width: controller.isRepurchase ? 24.w : 21.w,
+                                  fit: BoxFit.fitWidth,
+                                ),
+                                gwb(6),
+                                getSimpleText(
+                                    "${controller.isRepurchase ? index == 0 ? "支付宝" : "微信" : "积分钱包"}支付",
+                                    14,
+                                    AppColor.text2)
+                              ]),
+                              GetX<IntegralProjectPayController>(builder: (_) {
+                                return Image.asset(assetsName("machine/checkbox_${controller.payIndex == index ? "selected" : "normal"}"),
+                                    width: 21.w, fit: BoxFit.fitWidth);
+                              })
+                            ], width: 345 - 15 * 2, height: 50));
+                      }))),
+                  ghb(30),
+                  getSubmitBtn("确认支付", () {
+                    if (AppDefault().homeData["u_3rd_password"] == null || AppDefault().homeData["u_3rd_password"].isEmpty) {
+                      showPayPwdWarn(haveClose: true, popToRoot: false, untilToRoot: false, setSuccess: () {});
+                      return;
+                    }
+                    controller.bottomPayPassword.show();
+                  }, height: 45, color: AppColor.theme)
+                ]))));
   }
 }

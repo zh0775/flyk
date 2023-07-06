@@ -78,9 +78,7 @@ class UserRegistController extends GetxController {
     } else {
       tjInputCtrl.errorValue = "";
     }
-    sendAuthCode(
-        {"sendType": 3, "sendNumber": phone, "spNumber": sponsorNumber},
-        (success) => null);
+    sendAuthCode({"sendType": 3, "sendNumber": phone, "spNumber": sponsorNumber}, (success) => null);
   }
 
   sendAuthCode(Map<String, dynamic> params, Function(bool success)? success) {
@@ -352,10 +350,10 @@ class UserRegistController extends GetxController {
     isFirst = false;
     userAgreement = uData;
     privacyAgreement = pData;
-    if (userAgreement == null || userAgreement.isEmpty) {
+    if (userAgreement.isEmpty) {
       loadAgreement(1);
     }
-    if (privacyAgreement == null || privacyAgreement.isEmpty) {
+    if (privacyAgreement.isEmpty) {
       loadAgreement(5);
     }
   }
@@ -371,7 +369,7 @@ class UserRegistController extends GetxController {
   @override
   void onInit() {
     // getDeviceID();
-    policySelected = AppDefault.isDebug;
+    policySelected = !AppDefault.uploadPT;
     super.onInit();
   }
 }
@@ -379,11 +377,7 @@ class UserRegistController extends GetxController {
 class UserRegist extends GetView<UserRegistController> {
   final Map userAgreement;
   final Map privacyAgreement;
-  const UserRegist(
-      {Key? key,
-      this.userAgreement = const {},
-      this.privacyAgreement = const {}})
-      : super(key: key);
+  const UserRegist({Key? key, this.userAgreement = const {}, this.privacyAgreement = const {}}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -392,8 +386,7 @@ class UserRegist extends GetView<UserRegistController> {
         onTap: () => takeBackKeyboard(context),
         child: Scaffold(
             backgroundColor: Colors.white,
-            body: getInputBodyNoBtn(context,
-                buttonHeight: 0, contentColor: Colors.transparent, build: (
+            body: getInputBodyNoBtn(context, buttonHeight: 0, contentColor: Colors.transparent, build: (
               boxHeight,
               context,
             ) {
@@ -427,8 +420,7 @@ class UserRegist extends GetView<UserRegistController> {
                                   child: getSimpleText(
                                     "切换登录",
                                     14,
-                                    AppDefault().getThemeColor() ??
-                                        AppColor.text2,
+                                    AppDefault().getThemeColor() ?? AppColor.text2,
                                   ),
                                 ),
                               ),
@@ -481,12 +473,10 @@ class UserRegist extends GetView<UserRegistController> {
                                   init: controller,
                                   builder: (_) {
                                     return AuthCodeButton(
-                                      buttonState:
-                                          controller.sendButtonType.value,
+                                      buttonState: controller.sendButtonType.value,
                                       customStyle: 1,
                                       countDownFinish: () {
-                                        controller.sendButtonType.value =
-                                            AuthCodeButtonState.again;
+                                        controller.sendButtonType.value = AuthCodeButtonState.again;
                                       },
                                       sendCodeAction: () {
                                         controller.sendCodeAction();
@@ -530,8 +520,7 @@ class UserRegist extends GetView<UserRegistController> {
                         init: controller,
                         builder: (ctrl) {
                           return Padding(
-                            padding: EdgeInsets.only(
-                                bottom: paddingSizeBottom(context) + 25.w),
+                            padding: EdgeInsets.only(bottom: paddingSizeBottom(context) + 25.w),
                             child: sbRow([
                               CustomButton(
                                 onPressed: () {
@@ -543,57 +532,29 @@ class UserRegist extends GetView<UserRegistController> {
                                     Image.asset(
                                       // assetsName(
                                       //     "login/btn_checkbox_policy_${controller.policySelected ? "selected" : "normal"}"),
-                                      assetsName(
-                                          "business/mall/checkbox_orange_${controller.policySelected ? "selected" : "normal"}"),
+                                      assetsName("business/mall/checkbox_orange_${controller.policySelected ? "selected" : "normal"}"),
                                       width: 14.w,
                                       height: 14.w,
                                       fit: BoxFit.fill,
                                     ),
                                     gwb(7.5),
-                                    getSimpleText(
-                                        "请阅读并同意", 13, AppColor.textGrey,
-                                        textHeight: 1.1),
+                                    getSimpleText("请阅读并同意", 13, AppColor.textGrey, textHeight: 1.1),
                                     CustomButton(
                                       onPressed: () {
-                                        if (controller.userAgreement == null ||
-                                            controller.userAgreement.isEmpty) {
+                                        if (controller.userAgreement.isEmpty) {
                                           ShowToast.normal("请稍等，正在接收数据");
                                           return;
                                         }
-                                        pushAg(
-                                            false,
-                                            controller.userAgreement["name"] ??
-                                                "",
-                                            controller
-                                                    .userAgreement["content"] ??
-                                                "");
+                                        pushAg(false, controller.userAgreement["name"] ?? "", controller.userAgreement["content"] ?? "");
                                       },
-                                      child: getSimpleText(
-                                          "《用户协议》",
-                                          13,
-                                          AppDefault().getThemeColor() ??
-                                              AppColor.theme,
-                                          textHeight: 1.1),
+                                      child: getSimpleText("《用户协议》", 13, AppDefault().getThemeColor() ?? AppColor.theme, textHeight: 1.1),
                                     ),
-                                    getSimpleText("和", 13, AppColor.textGrey,
-                                        textHeight: 1.1),
+                                    getSimpleText("和", 13, AppColor.textGrey, textHeight: 1.1),
                                     CustomButton(
                                       onPressed: () {
-                                        pushAg(
-                                            false,
-                                            controller
-                                                    .privacyAgreement["name"] ??
-                                                "",
-                                            controller.privacyAgreement[
-                                                    "content"] ??
-                                                "");
+                                        pushAg(false, controller.privacyAgreement["name"] ?? "", controller.privacyAgreement["content"] ?? "");
                                       },
-                                      child: getSimpleText(
-                                          "《隐私政策》",
-                                          13,
-                                          AppDefault().getThemeColor() ??
-                                              AppColor.theme,
-                                          textHeight: 1.1),
+                                      child: getSimpleText("《隐私政策》", 13, AppDefault().getThemeColor() ?? AppColor.theme, textHeight: 1.1),
                                     ),
                                   ],
                                 ),

@@ -11,102 +11,22 @@ class MyMachineUnbindController extends GetxController {
   TextEditingController snInputCtrl = TextEditingController();
 
   final _machineDatas = [
-    {
-      "id": 0,
-      "sn": "0000 1102C 831993 79123",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 1,
-      "sn": "0000 1102C 831993 79124",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 2,
-      "sn": "0000 1102C 831993 79125",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 3,
-      "sn": "0000 1102C 831993 79126",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 4,
-      "sn": "0000 1102C 831993 79127",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 5,
-      "sn": "0000 1102C 831993 79128",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 6,
-      "sn": "0000 1102C 831993 79129",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 7,
-      "sn": "0000 1102C 831993 79130",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 8,
-      "sn": "0000 1102C 831993 79131",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 9,
-      "sn": "0000 1102C 831993 79132",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 10,
-      "sn": "0000 1102C 831993 79133",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 11,
-      "sn": "0000 1102C 831993 79134",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 12,
-      "sn": "0000 1102C 831993 79135",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 13,
-      "sn": "0000 1102C 831993 79136",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 14,
-      "sn": "0000 1102C 831993 79137",
-      "ulock": false,
-      "selected": false
-    },
-    {
-      "id": 15,
-      "sn": "0000 1102C 831993 79138",
-      "ulock": false,
-      "selected": false
-    },
+    {"id": 0, "sn": "0000 1102C 831993 79123", "ulock": false, "selected": false},
+    {"id": 1, "sn": "0000 1102C 831993 79124", "ulock": false, "selected": false},
+    {"id": 2, "sn": "0000 1102C 831993 79125", "ulock": false, "selected": false},
+    {"id": 3, "sn": "0000 1102C 831993 79126", "ulock": false, "selected": false},
+    {"id": 4, "sn": "0000 1102C 831993 79127", "ulock": false, "selected": false},
+    {"id": 5, "sn": "0000 1102C 831993 79128", "ulock": false, "selected": false},
+    {"id": 6, "sn": "0000 1102C 831993 79129", "ulock": false, "selected": false},
+    {"id": 7, "sn": "0000 1102C 831993 79130", "ulock": false, "selected": false},
+    {"id": 8, "sn": "0000 1102C 831993 79131", "ulock": false, "selected": false},
+    {"id": 9, "sn": "0000 1102C 831993 79132", "ulock": false, "selected": false},
+    {"id": 10, "sn": "0000 1102C 831993 79133", "ulock": false, "selected": false},
+    {"id": 11, "sn": "0000 1102C 831993 79134", "ulock": false, "selected": false},
+    {"id": 12, "sn": "0000 1102C 831993 79135", "ulock": false, "selected": false},
+    {"id": 13, "sn": "0000 1102C 831993 79136", "ulock": false, "selected": false},
+    {"id": 14, "sn": "0000 1102C 831993 79137", "ulock": false, "selected": false},
+    {"id": 15, "sn": "0000 1102C 831993 79138", "ulock": false, "selected": false},
   ].obs;
 
   get machineDatas => _machineDatas.value;
@@ -211,31 +131,30 @@ class MyMachineUnbind extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Row(
                     children: [
-                      gwb(15),
-                      CustomButton(
-                          onPressed: () {
-                            toScanBarCode(
-                                ((barCode) => ctrl.snInputCtrl.text = barCode));
-                          },
-                          child: assetsSizeImage(
-                              "home/machinemanage/tiaoxingma", 24, 24)),
-                      gwb(15),
+                      AppDefault().appHideScan()
+                          ? gwb(54)
+                          : centRow([
+                              gwb(15),
+                              CustomButton(
+                                  onPressed: () {
+                                    toScanBarCode(((barCode) => ctrl.snInputCtrl.text = barCode));
+                                  },
+                                  child: assetsSizeImage("home/machinemanage/tiaoxingma", 24, 24)),
+                              gwb(15)
+                            ]),
                       CustomInput(
                         width: 214.w,
                         heigth: 50,
                         textEditCtrl: ctrl.snInputCtrl,
                         placeholder: "请输入机具SN号进行搜索",
-                        placeholderStyle: TextStyle(
-                            color: const Color(0xFFCCCCCC), fontSize: 15.sp),
+                        placeholderStyle: TextStyle(color: const Color(0xFFCCCCCC), fontSize: 15.sp),
                       ),
                       CustomButton(
                         onPressed: () {},
                         child: Container(
                             width: 64.w,
                             height: 30,
-                            decoration: BoxDecoration(
-                                color: AppColor.textBlack,
-                                borderRadius: BorderRadius.circular(5)),
+                            decoration: BoxDecoration(color: AppColor.textBlack, borderRadius: BorderRadius.circular(5)),
                             child: Center(
                               child: getSimpleText("搜索", 15, Colors.white),
                             )),
@@ -258,8 +177,7 @@ class MyMachineUnbind extends StatelessWidget {
                     child: Row(
                       children: [
                         getSimpleText("可选择绑定机具：", 15, AppColor.textBlack),
-                        getSimpleText("${ctrl.machineDatas.length}", 15,
-                            const Color(0xFFEB5757)),
+                        getSimpleText("${ctrl.machineDatas.length}", 15, const Color(0xFFEB5757)),
                         getSimpleText("台", 15, AppColor.textBlack),
                       ],
                     ),
@@ -268,11 +186,7 @@ class MyMachineUnbind extends StatelessWidget {
                 Container(
                   width: 375.w,
                   height: 50,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      border: Border(
-                          bottom: BorderSide(
-                              width: 0.5, color: Color(0xFFEBEBEB)))),
+                  decoration: const BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(width: 0.5, color: Color(0xFFEBEBEB)))),
                   child: Center(
                       child: sbRow([
                     getSimpleText("机具编号（SN号）", 14, const Color(0xFF808080)),
@@ -286,11 +200,7 @@ class MyMachineUnbind extends StatelessWidget {
                           },
                           child: SizedBox(
                             height: 50,
-                            child: Center(
-                                child: getSimpleText(
-                                    ctrl.allSelected ? "反选" : "全选",
-                                    14,
-                                    const Color(0xFF5290F2))),
+                            child: Center(child: getSimpleText(ctrl.allSelected ? "反选" : "全选", 14, const Color(0xFF5290F2))),
                           ),
                         );
                       },
@@ -310,8 +220,7 @@ class MyMachineUnbind extends StatelessWidget {
               initState: (_) {},
               builder: (_) {
                 return ListView.builder(
-                  itemCount:
-                      ctrl.machineDatas != null ? ctrl.machineDatas.length : 0,
+                  itemCount: ctrl.machineDatas != null ? ctrl.machineDatas.length : 0,
                   itemBuilder: (context, index) {
                     return unbindCell(ctrl.machineDatas[index], index);
                   },
@@ -355,18 +264,13 @@ class MyMachineUnbind extends StatelessWidget {
       child: Container(
         width: 375,
         height: 60,
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            border: Border(
-                bottom: BorderSide(width: 0.5, color: Color(0xFFEBEBEB)))),
+        decoration: const BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(width: 0.5, color: Color(0xFFEBEBEB)))),
         child: Align(
           child: sbhRow([
             getSimpleText(data["sn"], 13, AppColor.textBlack),
             Image.asset(
               assetsName(
-                data["selected"]
-                    ? "common/btn_checkbox_selected"
-                    : "common/btn_checkbox_normal",
+                data["selected"] ? "common/btn_checkbox_selected" : "common/btn_checkbox_normal",
               ),
               width: 22.w,
               height: 22.w,
@@ -403,10 +307,7 @@ class MyMachineUnbind extends StatelessWidget {
                       height: 50,
                       color: Colors.white,
                       child: Align(
-                        child: sbhRow([
-                          getSimpleText("已选SN", 15, AppColor.textBlack,
-                              isBold: true)
-                        ], width: 375 - 15 * 2, height: 50),
+                        child: sbhRow([getSimpleText("已选SN", 15, AppColor.textBlack, isBold: true)], width: 375 - 15 * 2, height: 50),
                       ),
                     ),
                   ),
@@ -417,14 +318,11 @@ class MyMachineUnbind extends StatelessWidget {
                       bottom: 50 + paddingSizeBottom(context),
                       child: ListView.builder(
                         padding: const EdgeInsets.only(top: 10),
-                        itemCount: ctrl.selectedList != null
-                            ? ctrl.selectedList.length
-                            : 0,
+                        itemCount: ctrl.selectedList != null ? ctrl.selectedList.length : 0,
                         itemBuilder: (context, index) {
                           return Align(
                             child: sbhRow([
-                              getSimpleText(ctrl.selectedList[index]["sn"], 15,
-                                  AppColor.textBlack),
+                              getSimpleText(ctrl.selectedList[index]["sn"], 15, AppColor.textBlack),
                               CustomButton(
                                 onPressed: () {
                                   ctrl.deleteData(ctrl.selectedList[index]);
@@ -461,15 +359,13 @@ class MyMachineUnbind extends StatelessWidget {
                                   width: 110.w,
                                   height: 50,
                                   child: Center(
-                                    child: getSimpleText(
-                                        "重选", 16, AppColor.textBlack),
+                                    child: getSimpleText("重选", 16, AppColor.textBlack),
                                   ),
                                 ),
                               ),
                               CustomButton(
                                 onPressed: () {
-                                  if (ctrl.selectedList == null ||
-                                      ctrl.selectedList.length == 0) {
+                                  if (ctrl.selectedList == null || ctrl.selectedList.length == 0) {
                                     ShowToast.normal("没有选择解绑的机具");
                                     return;
                                   }
@@ -480,16 +376,12 @@ class MyMachineUnbind extends StatelessWidget {
                                   width: 265.w,
                                   height: 50,
                                   decoration: const BoxDecoration(
-                                      gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: [
-                                        Color(0xFF4282EB),
-                                        Color(0xFF5BA3F7),
-                                      ])),
+                                      gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [
+                                    Color(0xFF4282EB),
+                                    Color(0xFF5BA3F7),
+                                  ])),
                                   child: Center(
-                                    child:
-                                        getSimpleText("确定解绑", 16, Colors.white),
+                                    child: getSimpleText("确定解绑", 16, Colors.white),
                                   ),
                                 ),
                               )
@@ -515,12 +407,7 @@ class MyMachineUnbindSuccess extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColor.pageBackgroundColor,
       body: Stack(children: [
-        Positioned(
-            top: 0 + paddingSizeTop(context),
-            left: 0,
-            height: 50,
-            width: 50.w,
-            child: defaultBackButton(context)),
+        Positioned(top: 0 + paddingSizeTop(context), left: 0, height: 50, width: 50.w, child: defaultBackButton(context)),
         Positioned(
             top: 0 + paddingSizeTop(context) + 80,
             left: 0,

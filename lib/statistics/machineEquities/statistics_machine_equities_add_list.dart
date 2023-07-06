@@ -15,8 +15,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class StatisticsMachineEquitiesAddListBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put<StatisticsMachineEquitiesAddListController>(
-        StatisticsMachineEquitiesAddListController(datas: Get.arguments));
+    Get.put<StatisticsMachineEquitiesAddListController>(StatisticsMachineEquitiesAddListController(datas: Get.arguments));
   }
 }
 
@@ -168,9 +167,7 @@ class StatisticsMachineEquitiesAddListController extends GetxController {
       loadMachines();
       return;
     }
-    idx == 0
-        ? filterCtrl.show(stackKey, headKey)
-        : filterCtrl2.show(stackKey, headKey);
+    idx == 0 ? filterCtrl.show(stackKey, headKey) : filterCtrl2.show(stackKey, headKey);
   }
 
   int maxCount = 100000;
@@ -309,17 +306,12 @@ class StatisticsMachineEquitiesAddListController extends GetxController {
       {"id": -1, "name": "全部", "terninal_Type": 2}
     ];
     Map publicHomeData = AppDefault().publicHomeData;
-    if (publicHomeData.isNotEmpty &&
-        publicHomeData["terminalConfig"].isNotEmpty &&
-        publicHomeData["terminalConfig"] is List) {
+    if (publicHomeData.isNotEmpty && publicHomeData["terminalConfig"].isNotEmpty && publicHomeData["terminalConfig"] is List) {
       List.generate((publicHomeData["terminalConfig"] as List).length, (index) {
         Map e = (publicHomeData["terminalConfig"] as List)[index];
-        machineTypes
-            .add({"id": e["id"] ?? -1, "name": e["terninal_Name"] ?? "", ...e});
+        machineTypes.add({"id": e["id"] ?? -1, "name": e["terninal_Name"] ?? "", ...e});
       });
-      machineTypes = machineTypes
-          .where((element) => (element["terninal_Type"] ?? 0) == 2)
-          .toList();
+      machineTypes = machineTypes.where((element) => (element["terninal_Type"] ?? 0) == 2).toList();
     }
 
     if (toChange) {
@@ -344,8 +336,7 @@ class StatisticsMachineEquitiesAddListController extends GetxController {
   }
 }
 
-class StatisticsMachineEquitiesAddList
-    extends GetView<StatisticsMachineEquitiesAddListController> {
+class StatisticsMachineEquitiesAddList extends GetView<StatisticsMachineEquitiesAddListController> {
   const StatisticsMachineEquitiesAddList({super.key});
 
   @override
@@ -397,14 +388,9 @@ class StatisticsMachineEquitiesAddList
                             GetX<StatisticsMachineEquitiesAddListController>(
                               builder: (_) {
                                 return getSimpleText(
-                                    controller.realMachineTypesIdx == -1
-                                        ? "按设备类型"
-                                        : controller.machineTypes[controller
-                                            .realMachineTypesIdx]["name"],
+                                    controller.realMachineTypesIdx == -1 ? "按设备类型" : controller.machineTypes[controller.realMachineTypesIdx]["name"],
                                     15,
-                                    controller.realMachineTypesIdx != -1
-                                        ? AppColor.text2
-                                        : AppColor.text3,
+                                    controller.realMachineTypesIdx != -1 ? AppColor.text2 : AppColor.text3,
                                     isBold: true);
                               },
                             ),
@@ -433,14 +419,9 @@ class StatisticsMachineEquitiesAddList
                             GetX<StatisticsMachineEquitiesAddListController>(
                               builder: (_) {
                                 return getSimpleText(
-                                    controller.realCurrentTypesIdx == -1
-                                        ? "按设备状态"
-                                        : controller.currentTypes[controller
-                                            .realCurrentTypesIdx]["name"],
+                                    controller.realCurrentTypesIdx == -1 ? "按设备状态" : controller.currentTypes[controller.realCurrentTypesIdx]["name"],
                                     15,
-                                    controller.realCurrentTypesIdx != -1
-                                        ? AppColor.text2
-                                        : AppColor.text3,
+                                    controller.realCurrentTypesIdx != -1 ? AppColor.text2 : AppColor.text3,
                                     isBold: true);
                               },
                             ),
@@ -467,9 +448,7 @@ class StatisticsMachineEquitiesAddList
               height: 55.w + paddingSizeBottom(context),
               child: Container(
                 padding: EdgeInsets.only(bottom: paddingSizeBottom(context)),
-                decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                  BoxShadow(color: const Color(0x0D000000), blurRadius: 5.w)
-                ]),
+                decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: const Color(0x0D000000), blurRadius: 5.w)]),
                 child: Center(
                   child: controller.toChange
                       ? getSubmitBtn("确认", () {
@@ -482,21 +461,16 @@ class StatisticsMachineEquitiesAddList
                             },
                             child: SizedBox(
                                 height: 55.w,
-                                child: GetX<
-                                    StatisticsMachineEquitiesAddListController>(
+                                child: GetX<StatisticsMachineEquitiesAddListController>(
                                   builder: (_) {
                                     return centRow([
                                       Image.asset(
-                                        assetsName(
-                                            "machine/checkbox_${controller.allselect ? "selected" : "normal"}"),
+                                        assetsName("machine/checkbox_${controller.allselect ? "selected" : "normal"}"),
                                         width: 16.w,
                                         fit: BoxFit.fitWidth,
                                       ),
                                       gwb(15),
-                                      getSimpleText(
-                                          controller.allselect ? "反选" : "全选",
-                                          14,
-                                          AppColor.text),
+                                      getSimpleText(controller.allselect ? "反选" : "全选", 14, AppColor.text),
                                     ]);
                                   },
                                 )),
@@ -519,22 +493,15 @@ class StatisticsMachineEquitiesAddList
                             // gwb(10),
                             CustomButton(onPressed: () {
                               controller.confirmAction();
-                            }, child: GetX<
-                                StatisticsMachineEquitiesAddListController>(
+                            }, child: GetX<StatisticsMachineEquitiesAddListController>(
                               builder: (_) {
-                                bool enable = controller.selectCount <=
-                                    controller.maxCount;
+                                bool enable = controller.selectCount <= controller.maxCount;
                                 return Container(
                                   width: 90.w,
                                   height: 30.w,
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15.w),
-                                      color: enable
-                                          ? AppColor.theme
-                                          : const Color(0xFFDBDBDB)),
-                                  child: Center(
-                                      child: getSimpleText(
-                                          "确认", 14, Colors.white)),
+                                      borderRadius: BorderRadius.circular(15.w), color: enable ? AppColor.theme : const Color(0xFFDBDBDB)),
+                                  child: Center(child: getSimpleText("确认", 14, Colors.white)),
                                 );
                               },
                             ))
@@ -566,8 +533,7 @@ class StatisticsMachineEquitiesAddList
                             padding: EdgeInsets.only(bottom: 20.w),
                             itemCount: controller.machines.length,
                             itemBuilder: (context, index) {
-                              return machineCell(
-                                  index, controller.machines[index]);
+                              return machineCell(index, controller.machines[index]);
                             },
                           ),
                   );
@@ -583,9 +549,7 @@ class StatisticsMachineEquitiesAddList
                       width: 375.w,
                       height: controller.filterHeight.w,
                       color: Colors.white,
-                      child: SingleChildScrollView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          child: selfFilterView(0)),
+                      child: SingleChildScrollView(physics: const NeverScrollableScrollPhysics(), child: selfFilterView(0)),
                     ));
               }),
           GetBuilder<StatisticsMachineEquitiesAddListController>(
@@ -598,9 +562,7 @@ class StatisticsMachineEquitiesAddList
                       width: 375.w,
                       height: controller.filterHeight2.w,
                       color: Colors.white,
-                      child: SingleChildScrollView(
-                          physics: const NeverScrollableScrollPhysics(),
-                          child: selfFilterView(1)),
+                      child: SingleChildScrollView(physics: const NeverScrollableScrollPhysics(), child: selfFilterView(1)),
                     ));
               }),
         ],
@@ -630,14 +592,12 @@ class StatisticsMachineEquitiesAddList
         width: 345.w,
         height: 75.w,
         margin: EdgeInsets.only(top: 15.w),
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(3.w)),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(3.w)),
         child: Center(
           child: sbhRow([
             centRow([
               Image.asset(
-                assetsName(
-                    "machine/checkbox_${(data["selected"] ?? false) ? "selected" : "normal"}"),
+                assetsName("machine/checkbox_${(data["selected"] ?? false) ? "selected" : "normal"}"),
                 width: 16.w,
                 fit: BoxFit.fitWidth,
               ),
@@ -650,8 +610,7 @@ class StatisticsMachineEquitiesAddList
               ),
               gwb(10),
               centClm([
-                getSimpleText(data["tbName"] ?? "", 15, AppColor.text,
-                    isBold: true),
+                getSimpleText(data["tbName"] ?? "", 15, AppColor.text, isBold: true),
                 ghb(5),
                 getSimpleText("设备编号：${data["tNo"] ?? ""}", 12, AppColor.text),
               ], crossAxisAlignment: CrossAxisAlignment.start),
@@ -660,9 +619,7 @@ class StatisticsMachineEquitiesAddList
               Container(
                 width: 7.5.w,
                 height: 7.5.w,
-                decoration: BoxDecoration(
-                    color: const Color(0xFF3AD3D2),
-                    borderRadius: BorderRadius.circular(7.5.w / 2)),
+                decoration: BoxDecoration(color: const Color(0xFF3AD3D2), borderRadius: BorderRadius.circular(7.5.w / 2)),
               ),
               gwb(5),
               getSimpleText("${data["tStatus"] ?? ""}", 12, AppColor.text2)
@@ -683,8 +640,7 @@ class StatisticsMachineEquitiesAddList
           children: [
             centClm([
               gwb(375),
-              sbhRow([getSimpleText("搜索机具号", 15, AppColor.text, isBold: true)],
-                  height: 55, width: 375 - 15 * 2),
+              sbhRow([getSimpleText("搜索机具号", 15, AppColor.text, isBold: true)], height: 55, width: 375 - 15 * 2),
               ...List.generate(1, (int index) {
                 return Container(
                   width: 345.w,
@@ -700,18 +656,15 @@ class StatisticsMachineEquitiesAddList
                     children: [
                       gwb(15),
                       CustomInput(
-                        textEditCtrl: index == 0
-                            ? controller.startInputCtrl
-                            : controller.endInputCtrl,
+                        textEditCtrl: index == 0 ? controller.startInputCtrl : controller.endInputCtrl,
                         width: (345 - 15 - 50 - 0.1 - 1).w,
                         heigth: 40.w,
                         // placeholder: "请输入${index == 0 ? "开始" : "结束"}设备编号",
                         placeholder: "请输入设备编号",
                         style: TextStyle(fontSize: 12.sp, color: AppColor.text),
-                        placeholderStyle: TextStyle(
-                            fontSize: 12.sp, color: AppColor.assisText),
+                        placeholderStyle: TextStyle(fontSize: 12.sp, color: AppColor.assisText),
                       ),
-                      kIsWeb
+                      AppDefault().appHideScan()
                           ? gwb(0)
                           : CustomButton(
                               onPressed: () {
@@ -756,19 +709,15 @@ class StatisticsMachineEquitiesAddList
                           child: Container(
                             width: 375.w / 2 - 0.1.w,
                             height: 55.w,
-                            color: index == 0
-                                ? AppColor.theme.withOpacity(0.1)
-                                : AppColor.theme,
+                            color: index == 0 ? AppColor.theme.withOpacity(0.1) : AppColor.theme,
                             child: Center(
-                              child: getSimpleText(index == 0 ? "重置" : "确定", 15,
-                                  index == 0 ? AppColor.theme : Colors.white),
+                              child: getSimpleText(index == 0 ? "重置" : "确定", 15, index == 0 ? AppColor.theme : Colors.white),
                             ),
                           ),
                         )),
               ),
             ),
-            SizedBox(
-                height: paddingSizeBottom(Global.navigatorKey.currentContext!))
+            SizedBox(height: paddingSizeBottom(Global.navigatorKey.currentContext!))
           ],
         ),
       ),

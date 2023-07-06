@@ -110,8 +110,7 @@ class DebitCardAddController extends GetxController {
       ShowToast.normal("请输入正确的预留手机号");
       return;
     }
-    if ((homeData["u_3rd_password"] == null ||
-        homeData["u_3rd_password"].isEmpty)) {
+    if ((homeData["u_3rd_password"] == null || homeData["u_3rd_password"].isEmpty)) {
       showPayPwdWarn(
         haveClose: true,
         popToRoot: false,
@@ -147,10 +146,7 @@ class DebitCardAddController extends GetxController {
       success: (success, json) {
         if (success) {
           Map data = json ?? "";
-          if (data["validated"] != null &&
-              data["validated"] &&
-              data["bank"] != null &&
-              data["bank"].isNotEmpty) {
+          if (data["validated"] != null && data["validated"] && data["bank"] != null && data["bank"].isNotEmpty) {
             String bankName = BankList.bankList[data["bank"]] ?? "";
             if (bankName.isNotEmpty) {
               bankNameInputCtrl.text = bankName;
@@ -212,9 +208,7 @@ class DebitCardAddController extends GetxController {
           Get.find<HomeController>().refreshHomeData();
           Future.delayed(const Duration(seconds: 1), () {
             Get.offUntil(
-                GetPageRoute(
-                    page: () => const DebitCardInfo(),
-                    binding: DebitCardInfoBinding()),
+                GetPageRoute(page: () => const DebitCardInfo(), binding: DebitCardInfoBinding()),
                 (route) => route is GetPageRoute
                     ? route.binding is ReceiptSettingBinding
                         ? true
@@ -326,179 +320,155 @@ class DebitCardAdd extends GetView<DebitCardAddController> {
           context,
           isAdd ? "添加银行卡" : "修改银行卡",
         ),
-        body: getInputBodyNoBtn(
-          context,
-          marginTop: 0.w,
-          contentColor: Colors.transparent,
-          children: [
-            sbhRow([getSimpleText("请确认绑定的支付宝账号与实名信息一致", 12, AppColor.text3)],
-                width: 375 - 15 * 2, height: 34),
-            Container(
-              width: 375.w,
-              color: Colors.white,
-              child: Column(
-                children: List.generate(
-                    3,
-                    (index) => index == 1
-                        ? gline(345, 1)
-                        : SizedBox(
-                            height: 54.5.w,
-                            child: Center(
-                              child: Row(
-                                children: [
-                                  gwb(15),
-                                  getWidthText(index == 0 ? "姓名" : "身份证号", 15,
-                                      AppColor.text3, 90, 1),
-                                  getWidthText(
-                                      index == 0
-                                          ? controller.authData["u_Name"] ?? ""
-                                          : controller.authData["u_IdCard"] ??
-                                              "",
-                                      15,
-                                      AppColor.text2,
-                                      345 - 90 - 1,
-                                      1),
-                                ],
+        body: getInputBodyNoBtn(context,
+            marginTop: 0.w,
+            contentColor: Colors.transparent,
+            children: [
+              sbhRow([getSimpleText("请确认绑定的支付宝账号与实名信息一致", 12, AppColor.text3)], width: 375 - 15 * 2, height: 34),
+              Container(
+                width: 375.w,
+                color: Colors.white,
+                child: Column(
+                  children: List.generate(
+                      3,
+                      (index) => index == 1
+                          ? gline(345, 1)
+                          : SizedBox(
+                              height: 54.5.w,
+                              child: Center(
+                                child: Row(
+                                  children: [
+                                    gwb(15),
+                                    getWidthText(index == 0 ? "姓名" : "身份证号", 15, AppColor.text3, 90, 1),
+                                    getWidthText(index == 0 ? controller.authData["u_Name"] ?? "" : controller.authData["u_IdCard"] ?? "", 15,
+                                        AppColor.text2, 345 - 90 - 1, 1),
+                                  ],
+                                ),
                               ),
-                            ),
-                          )),
+                            )),
+                ),
               ),
+              ghb(10),
+              Container(
+                  color: Colors.white,
+                  child: centClm([
+                    gwb(375),
+                    Container(
+                      width: 375.w,
+                      height: 55.w,
+                      color: Colors.white,
+                      child: Center(
+                          child: Row(
+                        children: [
+                          gwb(15),
+                          getWidthText("储蓄卡号", 15, AppColor.text3, 90, 1),
+                          CustomInput(
+                            width: 345.w - 90.w,
+                            heigth: 55.w,
+                            placeholder: "请输入银行卡号",
+                            textEditCtrl: controller.cardNoInputCtrl,
+                            keyboardType: TextInputType.number,
+                            style: TextStyle(
+                              color: AppColor.text,
+                              fontSize: 15.w,
+                            ),
+                            placeholderStyle: TextStyle(
+                              color: AppColor.assisText,
+                              fontSize: 15.w,
+                            ),
+                          ),
+                        ],
+                      )),
+                    ),
+                    gline(345, 1),
+                    Container(
+                      width: 375.w,
+                      height: 55.w,
+                      color: Colors.white,
+                      child: Center(
+                          child: Row(
+                        children: [
+                          gwb(15),
+                          getWidthText("开户银行", 15, AppColor.text3, 90, 1),
+                          CustomInput(
+                            width: 345.w - 90.w,
+                            heigth: 55.w,
+                            placeholder: "所在银行",
+                            textEditCtrl: controller.bankNameInputCtrl,
+                            keyboardType: TextInputType.text,
+                            style: TextStyle(
+                              color: AppColor.text,
+                              fontSize: 15.w,
+                            ),
+                            placeholderStyle: TextStyle(
+                              color: AppColor.assisText,
+                              fontSize: 15.w,
+                            ),
+                          ),
+                        ],
+                      )),
+                    ),
+                    gline(345, 1),
+                    Container(
+                        width: 375.w,
+                        height: 55.w,
+                        color: Colors.white,
+                        child: Center(
+                            child: Row(children: [
+                          gwb(15),
+                          getWidthText("预留手机号", 15, AppColor.text3, 90, 1),
+                          CustomInput(
+                              width: 345.w - 90.w,
+                              heigth: 55.w,
+                              placeholder: "请输入银行预留手机号",
+                              textEditCtrl: controller.phoneInputCtrl,
+                              keyboardType: TextInputType.phone,
+                              maxLength: 11,
+                              style: TextStyle(color: AppColor.text, fontSize: 15.w),
+                              placeholderStyle: TextStyle(color: AppColor.assisText, fontSize: 15.w))
+                        ])))
+                  ])),
+              ghb(31),
+              GetX<DebitCardAddController>(builder: (_) {
+                return getSubmitBtn("提交", () {
+                  controller.submitAction();
+                }, height: 45, color: AppColor.theme, enable: controller.submitEnable);
+              })
+            ],
+            buttonHeight: 0
+
+            // getBottomBlueSubmitBtn(
+            //   context,
+            //   "提交",
+            //   onPressed: () {
+            //     if (controller.nameInputCtrl.text.isEmpty) {
+            //       ShowToast.normal("请输入姓名");
+            //       return;
+            //     }
+            //     if (controller.nameInputCtrl.text.length < 2 ||
+            //         controller.nameInputCtrl.text.length > 8) {
+            //       ShowToast.normal("姓名应为2到8位");
+            //       return;
+            //     }
+            //     if (controller.cardNoInputCtrl.text.isEmpty) {
+            //       ShowToast.normal("请输入银行卡号");
+            //       return;
+            //     }
+
+            //     if (controller.cardNoInputCtrl.text.length < 16 ||
+            //         controller.cardNoInputCtrl.text.length > 20) {
+            //       ShowToast.normal("银行卡号应为16到20位");
+            //       return;
+            //     }
+
+            //     if (controller.bankNameInputCtrl.text.isEmpty) {
+            //       ShowToast.normal("请输入归属银行名称");
+            //       return;
+            //     }
+            //     controller.bottomPayPassword?.show();
+            //   },
+            // )
             ),
-            ghb(10),
-            Container(
-              color: Colors.white,
-              child: centClm([
-                gwb(375),
-                Container(
-                  width: 375.w,
-                  height: 55.w,
-                  color: Colors.white,
-                  child: Center(
-                      child: Row(
-                    children: [
-                      gwb(15),
-                      getWidthText("储蓄卡号", 15, AppColor.text3, 90, 1),
-                      CustomInput(
-                        width: 345.w - 90.w,
-                        heigth: 55.w,
-                        placeholder: "请输入银行卡号",
-                        textEditCtrl: controller.cardNoInputCtrl,
-                        keyboardType: TextInputType.number,
-                        style: TextStyle(
-                          color: AppColor.text,
-                          fontSize: 15.w,
-                        ),
-                        placeholderStyle: TextStyle(
-                          color: AppColor.assisText,
-                          fontSize: 15.w,
-                        ),
-                      ),
-                    ],
-                  )),
-                ),
-                gline(345, 1),
-                Container(
-                  width: 375.w,
-                  height: 55.w,
-                  color: Colors.white,
-                  child: Center(
-                      child: Row(
-                    children: [
-                      gwb(15),
-                      getWidthText("开户银行", 15, AppColor.text3, 90, 1),
-                      CustomInput(
-                        width: 345.w - 90.w,
-                        heigth: 55.w,
-                        placeholder: "所在银行",
-                        textEditCtrl: controller.bankNameInputCtrl,
-                        keyboardType: TextInputType.text,
-                        style: TextStyle(
-                          color: AppColor.text,
-                          fontSize: 15.w,
-                        ),
-                        placeholderStyle: TextStyle(
-                          color: AppColor.assisText,
-                          fontSize: 15.w,
-                        ),
-                      ),
-                    ],
-                  )),
-                ),
-                gline(345, 1),
-                Container(
-                  width: 375.w,
-                  height: 55.w,
-                  color: Colors.white,
-                  child: Center(
-                      child: Row(
-                    children: [
-                      gwb(15),
-                      getWidthText("预留手机号", 15, AppColor.text3, 90, 1),
-                      CustomInput(
-                        width: 345.w - 90.w,
-                        heigth: 55.w,
-                        placeholder: "请输入银行预留手机号",
-                        textEditCtrl: controller.phoneInputCtrl,
-                        keyboardType: TextInputType.phone,
-                        maxLength: 11,
-                        style: TextStyle(
-                          color: AppColor.text,
-                          fontSize: 15.w,
-                        ),
-                        placeholderStyle: TextStyle(
-                          color: AppColor.assisText,
-                          fontSize: 15.w,
-                        ),
-                      ),
-                    ],
-                  )),
-                ),
-              ]),
-            ),
-            ghb(31),
-            GetX<DebitCardAddController>(builder: (_) {
-              return getSubmitBtn("提交", () {
-                controller.submitAction();
-              },
-                  height: 45,
-                  color: AppColor.theme,
-                  enable: controller.submitEnable);
-            })
-          ],
-          buttonHeight: 0,
-
-          // getBottomBlueSubmitBtn(
-          //   context,
-          //   "提交",
-          //   onPressed: () {
-          //     if (controller.nameInputCtrl.text.isEmpty) {
-          //       ShowToast.normal("请输入姓名");
-          //       return;
-          //     }
-          //     if (controller.nameInputCtrl.text.length < 2 ||
-          //         controller.nameInputCtrl.text.length > 8) {
-          //       ShowToast.normal("姓名应为2到8位");
-          //       return;
-          //     }
-          //     if (controller.cardNoInputCtrl.text.isEmpty) {
-          //       ShowToast.normal("请输入银行卡号");
-          //       return;
-          //     }
-
-          //     if (controller.cardNoInputCtrl.text.length < 16 ||
-          //         controller.cardNoInputCtrl.text.length > 20) {
-          //       ShowToast.normal("银行卡号应为16到20位");
-          //       return;
-          //     }
-
-          //     if (controller.bankNameInputCtrl.text.isEmpty) {
-          //       ShowToast.normal("请输入归属银行名称");
-          //       return;
-          //     }
-          //     controller.bottomPayPassword?.show();
-          //   },
-          // )
-        ),
       ),
     );
   }
